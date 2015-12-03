@@ -14,6 +14,7 @@ override_dh_auto_configure:
   shared linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
 
 override_dh_auto_build:
+	LD_RUN_PATH=OZCL make depend
 	dh_auto_build -- LD_RUN_PATH=OZCL
 
 override_dh_strip:
