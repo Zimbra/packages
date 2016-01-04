@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+export PKG_CONFIG_PATH=OZCL/pkgconfig
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--with-libsodium=OZC \
+	--with-relaxed
+
+override_dh_strip:
+	dh_strip -pzimbra-zeromq-lib --dbg-package=zimbra-zeromq-lib-dbg
+	dh_strip -pzimbra-zeromq --dbg-package=zimbra-zeromq-dbg
+	dh_strip -Nzimbra-zeromq-lib -Nzimbra-zeromq
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

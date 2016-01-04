@@ -1,0 +1,34 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
+	cp -f cbpadmin $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
+	sed -i -e 's|/usr/local/lib/cbpolicyd-2.1|/opt/zimbra/common/lib/policyd-2.1|' \
+	  -e 's|/usr/lib/cbpolicyd-2.1|/opt/zimbra/common/lib/perl5|' \
+	  -e 's|/etc/cbpolicyd/cluebringer.conf|/opt/zimbra/conf/cbpolicyd.conf|' \
+	  -e "s|'/usr/lib64/cbpolicyd-2.1',||" \
+	  $(CURDIR)/debian/$(shell dh_listpackages)/OZCB/cbpadmin
+	cp cbpolicyd $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
+	sed -i -e 's|/usr/local/lib/cbpolicyd-2.1|/opt/zimbra/common/lib/policyd-2.1|' \
+	  -e 's|/usr/lib/cbpolicyd-2.1|/opt/zimbra/common/lib/perl5|' \
+	  -e 's|/etc/cbpolicyd/cluebringer.conf|/opt/zimbra/conf/cbpolicyd.conf|' \
+	  -e 's|/var/run/cbpolicyd/cbpolicyd.pid|/opt/zimbra/log/cbpolicyd.pid|' \
+	  -e 's|/var/log/cbpolicyd/cbpolicyd.log|/opt/zimbra/log/cbpolicyd.log|' \
+	  -e "s|'/usr/lib64/cbpolicyd-2.1',||" \
+	  $(CURDIR)/debian/$(shell dh_listpackages)/OZCB/cbpolicyd
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/policyd-2.1
+	cp -r cbp $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/policyd-2.1
+	cp -r awitpt $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/policyd-2.1
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCS
+	cp -r contrib $(CURDIR)/debian/$(shell dh_listpackages)/OZCS/
+	cp -r docs $(CURDIR)/debian/$(shell dh_listpackages)/OZCS/
+	cp -r database $(CURDIR)/debian/$(shell dh_listpackages)/OZCS/
+	cp -r webui $(CURDIR)/debian/$(shell dh_listpackages)/OZCS/

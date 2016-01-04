@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--with-ssl=OZC \
+	--with-username=zimbra \
+	--with-conf-file=/opt/zimbra/conf/unbound.conf \
+	--with-pidfile=/opt/zimbra/log/unbound.pid \
+	--with-chroot-dir=/opt/zimbra
+
+override_dh_strip:
+	dh_strip -pzimbra-unbound-lib --dbg-package=zimbra-unbound-lib-dbg
+	dh_strip -pzimbra-unbound --dbg-package=zimbra-unbound-dbg
+	dh_strip -Nzimbra-unbound-lib -Nzimbra-unbound
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

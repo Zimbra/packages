@@ -1,0 +1,35 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-LOZCL -Wl,-rpath,OZCL
+export DEB_CFLAGS_MAINT_APPEND=-g -O0
+export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
+
+%:
+	dh $@
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--enable-poll \
+	--enable-adsp_lists \
+	--enable-atps \
+	--enable-rate_limit \
+	--enable-replace_rules \
+	--enable-resign \
+	--enable-sender_macro \
+	--enable-vbr \
+	--enable-default_sender \
+	--enable-rpath \
+	--with-openssl=OZC \
+	--with-milter=OZC \
+	--with-openldap=OZC \
+	--with-sasl=OZC \
+	--without-db
+
+override_dh_strip:
+	dh_strip -pzimbra-opendkim-lib
+	dh_strip -pzimbra-opendkim
+	dh_strip -Nzimbra-opendkim-lib -Nzimbra-opendkim
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

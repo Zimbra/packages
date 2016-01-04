@@ -1,0 +1,48 @@
+Source: zimbra-zeromq
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), pkg-config,
+ zimbra-libsodium-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: http://zeromq.org/
+
+Package: zimbra-zeromq
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-zeromq-lib (= ${binary:Version})
+Description: 0MQ Binaries
+
+Package: zimbra-zeromq-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: 0MQ Libraries
+
+Package: zimbra-zeromq-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-zeromq-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for 0MQ libraries
+
+Package: zimbra-zeromq-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-zeromq-lib (= ${binary:Version}), ${misc:Depends}
+Description: 0MQ development pieces
+
+Package: zimbra-zeromq-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-zeromq (= ${binary:Version}), ${misc:Depends}
+Description: 0MQ binary debug information
+

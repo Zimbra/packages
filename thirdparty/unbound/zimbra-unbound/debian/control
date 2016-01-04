@@ -1,0 +1,48 @@
+Source: zimbra-unbound
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), libexpat1-dev,
+ zimbra-openssl-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: https://www.unbound.net/
+
+Package: zimbra-unbound
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-unbound-lib (= ${binary:Version})
+Description: Unbound Binaries
+
+Package: zimbra-unbound-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-dnscache-base
+Description: Unbound Libraries
+
+Package: zimbra-unbound-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-unbound-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for Unbound libraries
+
+Package: zimbra-unbound-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-unbound-lib (= ${binary:Version}), ${misc:Depends}
+Description: Unbound development pieces
+
+Package: zimbra-unbound-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-unbound (= ${binary:Version}), ${misc:Depends}
+Description: Unbound binary debug information
+
