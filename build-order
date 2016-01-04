@@ -61,12 +61,12 @@ thirdparty/postfix
 thirdparty/rrdtool
 thirdparty/net-snmp
 thirdparty/memcached
-nginx
-unbound
-opendkim
-zeromq
+thirdparty/nginx
+thirdparty/unbound
+thirdparty/opendkim
+thirdparty/zeromq
 Perl/build-order
-cluebringer
+thirdparty/cluebringer
 zimbra/core-components
 zimbra/apache-components
 zimbra/dnscache-components
