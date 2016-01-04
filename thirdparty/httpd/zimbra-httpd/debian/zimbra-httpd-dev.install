@@ -1,0 +1,4 @@
+opt/zimbra/common/include
+opt/zimbra/data/httpd/build
+opt/zimbra/common/conf
+opt/zimbra/common/bin/apxs

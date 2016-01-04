@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--localstatedir=$(ZIMBRA_HOME)/data/tmp
+
+override_dh_strip:
+	dh_strip -pzimbra-rsync --dbg-package=zimbra-rsync-dbg
+	dh_strip -Nzimbra-rsync
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp
+
+override_dh_install:
+	dh_install
+	rm -f $(CURDIR)/debian/zimbra-rsyncOZCB/rsync-config
+

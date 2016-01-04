@@ -1,0 +1,8 @@
+opt/zimbra/common/bin/mdb_copy
+opt/zimbra/common/bin/mdb_dump
+opt/zimbra/common/bin/mdb_load
+opt/zimbra/common/bin/mdb_stat
+opt/zimbra/common/share/man/man1/mdb_copy.1
+opt/zimbra/common/share/man/man1/mdb_dump.1
+opt/zimbra/common/share/man/man1/mdb_load.1
+opt/zimbra/common/share/man/man1/mdb_stat.1

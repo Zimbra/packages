@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+export DEB_CFLAGS_MAINT_APPEND=-D_REENTRANT
+export PATH=OZCB:/usr/sbin:/usr/bin:/sbin:/bin:/usr/bin/X11
+
+%:
+	dh $@
+override_dh_auto_configure:
+	rm -f config/ltconfig config/libtool.m4
+	libtoolize -f -c
+	aclocal -I config -I cmulocal
+	automake -a -c -f
+	autoheader
+	autoconf -f
+	rm -f saslauthd/config/ltconfig
+	cd saslauthd && libtoolize -f -c && \
+	aclocal -I config -I ../cmulocal -I ../config && \
+	automake -a -c -f && \
+	autoheader && \
+	autoconf -f
+	sed -i.bak 's/-lRSAglue //' configure
+	./configure --prefix=OZC \
+	--with-saslauthd=/opt/zimbra/data/sasl2/state \
+	--with-plugindir=OZCL/sasl2 \
+	--with-dblib=no \
+	--with-devrandom=/dev/urandom \
+	--with-gss_impl=heimdal \
+	--with-lib-subdir=lib \
+	--with-openssl=OZC \
+	--with-configdir=/opt/zimbra/conf/sasl2 \
+	--enable-gssapi=OZC \
+	--enable-login \
+	--enable-shared=yes --enable-static=no --without-python
+
+override_dh_strip:
+	dh_strip -pzimbra-cyrus-sasl-lib --dbg-package=zimbra-cyrus-sasl-lib-dbg
+	dh_strip -pzimbra-cyrus-sasl --dbg-package=zimbra-cyrus-sasl-dbg
+	dh_strip -Nzimbra-cyrus-sasl-lib -Nzimbra-cyrus-sasl
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

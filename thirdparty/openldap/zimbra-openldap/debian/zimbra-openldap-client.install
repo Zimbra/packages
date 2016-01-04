@@ -1,0 +1,6 @@
+opt/zimbra/common/bin
+opt/zimbra/common/etc/openldap/ldap.conf
+opt/zimbra/common/etc/openldap/ldap.conf.default
+opt/zimbra/common/share/man/man1
+opt/zimbra/common/share/man/man5/ldap.conf.5
+opt/zimbra/common/share/man/man5/ldif.5

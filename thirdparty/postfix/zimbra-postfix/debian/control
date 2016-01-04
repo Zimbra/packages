@@ -1,0 +1,24 @@
+Source: zimbra-postfix
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7),
+ zimbra-openldap-dev, zimbra-cyrus-sasl-dev, zimbra-openssl-dev,
+ zimbra-mariadb-dev, zimbra-lmdb-dev, libpcre3-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: http://www.postfix.org
+
+Package: zimbra-postfix
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-mta-base
+Description: Postfix Module
+
+Package: zimbra-postfix-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-postfix (= ${binary:Version}), ${misc:Depends}
+Description: Postfix debug information

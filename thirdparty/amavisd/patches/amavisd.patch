@@ -1,0 +1,20 @@
+--- amavisd-new-2.10.1/amavisd.orig	2015-12-16 17:46:20.365987790 -0600
++++ amavisd-new-2.10.1/amavisd	2015-12-16 17:47:08.833986175 -0600
+@@ -12556,7 +12556,7 @@
+           sort map { my $s = $_; $s =~ s/\.pm\z//; $s =~ s{/}{::}g; $s }
+                grep(/\.pm\z/, keys %INC)) {
+     next  if !grep($_ eq $m, qw(Amavis::Conf
+-      Archive::Tar Archive::Zip Compress::Zlib Compress::Raw::Zlib
++      Archive::Zip Compress::Zlib Compress::Raw::Zlib
+       Convert::TNEF Convert::UUlib File::LibMagic
+       MIME::Entity MIME::Parser MIME::Tools Mail::Header Mail::Internet
+       Digest::MD5 Digest::SHA Digest::SHA1 Crypt::OpenSSL::RSA
+@@ -31350,7 +31350,7 @@
+   $retval;
+ }
+ 
+-# DROPED SUPPORT for Archive::Tar; main drawback of this module is: it either
++# DROPPED SUPPORT for Archive::Tar; main drawback of this module is: it either
+ # loads an entire tar into memory (horrors!), or when using extract_archive()
+ # it does not relativize absolute paths (which makes it possible to store
+ # members in any directory writable by uid), and does not provide a way to

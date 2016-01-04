@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+export DH_VERBOSE=1
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/tmp/OZCB
+	mkdir -p $(CURDIR)/debian/tmp/OZCE
+	mkdir -p $(CURDIR)/debian/tmp/OZCS/man/man1
+	make install DESTDIR=$$(pwd)/debian/tmp
+	cp postfix-logwatch $$(pwd)/debian/tmp/OZCB
+	cp postfix-logwatch.conf $$(pwd)/debian/tmp/OZCE
+	cp postfix-logwatch.1 $$(pwd)/debian/tmp/OZCS/man/man1
+	sed -i -e 's|/usr/local/etc|OZCE|' $$(pwd)/debian/tmpOZCB/postfix-logwatch
+	sed -i -e 's|/usr/local/etc|OZCE|' -e 's|/usr/local/bin|OZCB|' $$(pwd)/debian/tmpOZCS/man/man1/postfix-logwatch.1
+	chmod 755 $$(pwd)/debian/tmp/OZCB/postfix-logwatch

@@ -1,0 +1,2 @@
+version=3
+http://us2.php.net/distributions/php-(\d+\.\d+\.\d+).tar.bz2

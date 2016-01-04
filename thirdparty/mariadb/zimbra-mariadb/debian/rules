@@ -1,0 +1,63 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+export DEB_CFLAGS_MAINT_STRIP=-O2
+export DEB_CFLAGS_MAINT_APPEND=-O3 -fno-omit-frame-pointer -pipe -Wall -Wno-uninitialized -DNDEBUG
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+override_dh_auto_configure:
+	/usr/bin/cmake . \
+	-DBUILD_CONFIG=mysql_release \
+	-DCOMPILATION_COMMENT="Zimbra MariaDB binary distribution" \
+	-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE  \
+	-DCMAKE_INSTALL_PREFIX="OZC" \
+	-DCMAKE_INSTALL_RPATH="OZCL" \
+	-DCMAKE_PREFIX_PATH="OZC" \
+	-DCMAKE_SKIP_BUILD_RPATH=FALSE \
+	-DINSTALL_SYSCONFDIR=/opt/zimbra/conf \
+	-DINSTALL_MANDIR=share/man \
+	-DWITH_EMBEDDED_SERVER=OFF \
+	-DWITH_FAST_MUTEXES=ON \
+	-DWITH_JEMALLOC=no \
+	-DWITH_SAFEMALLOC=OFF \
+	-DWITH_SSL=yes \
+	-DPLUGIN_ARCHIVE=NO \
+	-DPLUGIN_ARIA=NO \
+	-DPLUGIN_BLACKHOLE=NO \
+	-DPLUGIN_CONNECT=NO \
+	-DPLUGIN_EXAMPLE=NO \
+	-DPLUGIN_FEDERATED=NO \
+	-DPLUGIN_FEDERATEDX=NO \
+	-DPLUGIN_MROONGA=NO \
+	-DWITHOUT_MROONGA_STORAGE_ENGINE=YES \
+	-DPLUGIN_SPHINX=NO \
+	-DPLUGIN_SPIDER=NO \
+	-DPLUGIN_TOKUDB=NO \
+	-DINSTALL_DOCDIR=share/mysql/docs \
+	-DINSTALL_DOCREADMEDIR=share/mysql/docs \
+	-DINSTALL_INFODIR=share/mysql/docs \
+	-DINSTALL_MYSQLSHAREDIR=share/mysql \
+	-DINSTALL_SHAREDIR=share/mysql \
+	-DINSTALL_SBINDIR=sbin \
+	-DINSTALL_SCRIPTDIR=share/mysql/scripts \
+	-DINSTALL_UNIX_ADDRDIR=/opt/zimbra/data/tmp/mysqldata/mysql.sock
+
+override_dh_strip:
+	dh_strip -pzimbra-mariadb-lib --dbg-package=zimbra-mariadb-lib-dbg
+	dh_strip -pzimbra-mariadb --dbg-package=zimbra-mariadb-dbg
+	dh_strip -Nzimbra-mariadb-lib -Nzimbra-mariadb
+
+override_dh_auto_install:
+	$(MAKE) install DESTDIR=$$(pwd)/debian/tmp
+	rm -f $$(pwd)/debian/tmpOZC/sbin/rcmysql
+	rm -f $$(pwd)/debian/tmpOZCL/libmysqlclient_r.so.18
+	rm -f $$(pwd)/debian/tmpOZCL/libmysqlclient_r.so.18.0.0
+	cd $$(pwd)/debian/tmpOZCL && \
+	ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
+	ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
+
+override_dh_install:
+	dh_install
+	rm -f $(CURDIR)/debian/zimbra-mariadbOZCB/mysql_config
+	rm -f $(CURDIR)/debian/zimbra-mariadbOZCS/man/man1/mysql_config.1

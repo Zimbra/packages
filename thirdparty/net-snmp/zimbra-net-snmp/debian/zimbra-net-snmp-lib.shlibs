@@ -1,0 +1,4 @@
+libnetsnmp 30 (>= VERSION-ITERATION)
+libnetsnmpagent 30 (>= VERSION-ITERATION)
+libnetsnmpmibs 30 (>=  VERSION-ITERATION)
+libnetsnmptrapd 30 (>= VERSION-ITERATION)

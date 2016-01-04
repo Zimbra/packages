@@ -1,0 +1,271 @@
+                 Zimbra authentication mechanism for saslauthd
+                 ---------------------------------------------
+
+    SASL is the Simple Authentication and Security Layer, a method for adding
+    authentication support to connection-based protocols. RFC 2222 describes
+    the SASL protocol.
+
+    Zimbra extends the Cyrus SASL library to provide an authentication 
+    mechanism called `zimbra', and this is the authentication mechanism used
+    by the saslauthd daemon running on a Zimbra server (the -a switch in the
+    saslauthd(8) man page).
+
+                                 Implementation
+                                 --------------
+
+    The zimbra authentication module built into the Cyrus SASL library uses 
+    a SOAP request to a zimbra server in order to perform the authentication
+    for a given user name and password
+
+    In case of multi-node installs, there are more than one mailbox servers,
+    and as such, a corresponding number of URLs of the form 
+    http://<mailbox>/service/soap/ can be used for authentication. Therfore, 
+    the zimbra auth mechanism allows multiple urls to be specified, and it
+    performs the authentication against each of these urls in turn, following
+    a round-robin algorithm with failover, so that the load may be fairly
+    shared between the different servers.
+
+    The following directives provided by the zimbra authentication mechanism
+    affect the way the authentication is performed
+
+                            Configuration Directives
+                            ------------------------
+
+    [-] zimbra_url
+
+        This directive specifies a single URL, or a whitespace-separated 
+        list of URLs that the zimbra authentication mechanism will use in 
+        order to perform the soap requests for authentication
+
+        The URLs specified follow the standard URI pattern as described in 
+        uri(7), the protocols supported are http:// and https://
+
+        The URLs specified in this list are used in a round-robin fashion by 
+        the zimbra authentication mechanism, which means that each successive
+        request for authentication to saslauthd will cause a different URL 
+        to be selected, in order that the load be shared among the different 
+        URLs
+
+        This is a mandatory directive and must identify at least one URL
+
+    [-] zimbra_retry_interval
+
+        This directive specifies the time (in seconds), that the zimbra auth
+        mechanism will wait before reconsidering a bad URL for a round-robin
+
+        This means that in the case where multiple URLs are specified against
+        the zimbra_url directive, and if one of the URLs signals an error 
+        at the time when it was elected by the round-robin mechanism, then 
+        in this case, zimbra auth will fail over to the next URL in the list, 
+        and additionally, will also disregard the URL that failed, for a 
+        configurable interval of time. The rationale behind this is that if 
+        a URL signals an error, then it is likely that the zimbra server 
+        identified by the URL may be down for an extended period of time, in 
+        which case it is more efficient for the authentication to be performed
+        by the remaining URLs in the list
+
+        Note that an error condition in a URL as described above does *not* 
+        imply that the user name and/or password supplied to the authentication 
+        routine was incorrect. Rather, it means that the URL specified itself
+        could not be reached for some reason (either the server was down, or
+        the zimbra service was not running on the specified host/port pair, or
+        the connection to the server timed out, etc)
+
+        In cases where a URL specified in the list is reachable at the time
+        when it is elected via round-robin, then in this case if the username
+        and password specified to the authentication routine was incorrect, 
+        then the zimbra auth mechanism will immediately signal an auth
+        error to the higher level auth request, and will not try the other
+        URLs in the list
+
+        Also note that in case there is only one URL in the list, then the 
+        `zimbra_retry_interval' parameter is ignored, and even if the URL 
+        signals an error, it will still be considered for further auth
+        requests, because it is the only URL available.
+
+        This is an optional directive and defaults to 600 (seconds), that is
+        ten minutes. Increase or decrease this value in saslauthd.conf if you
+        expect a URL to be bad for a lesser or greater amount of time
+
+    [-] zimbra_connect_timeout
+
+        This directive indicates the maximum amount of time, in seconds, that
+        any URL in the `zimbra_url' list is allowed to take for responding to
+        a connection request, before the zimbra auth mechanism will give up on
+        the URL and proceed to the next one for authentication
+
+        Note that if `zimbra_url' identifies multiple URLs, and if one of the
+        URLs takes longer than `zimbra_connect_timeout' seconds to respond
+        to the TCP connection request when its turn comes, then in this case,
+        it is treated as an error condition, and this URL is not considered in
+        round-robin for at least `zimbra_retry_interval' seconds as described
+        in the previous section
+
+        Even if there is only one URL in the `zimbra_url' list, this directive
+        is honoured, and the lone URL is expected to respond to a TCP
+        connection within the time specified. However, in this case, the 
+        `zimbra_retry_interval' directive is ignored, as explained previously
+
+        This directive is optional and defaults to 15 (seconds). You may
+        decrease this value if you expect that the URLs will always respond
+        faster to TCP connection requests
+
+    [-] zimbra_timeout
+
+        This directive indicates the maximum amount of time, in seconds, that
+        any URL in the `zimbra_url' list is allowed to take to respond to the
+        HTTP/SOAP request, before the zimbra auth mechanism will give up on 
+        the URL and proceed to the next one for authentication
+
+        Again, if a URL specified in `zimbra_url' does not resturn an HTTP/SOAP
+        response within the time specified here, then it is treated as an 
+        error condition, and this URL will not be considered for round-robin
+        for at least `zimbra_retry_interval', unless this URL is the only one
+        in the list, in which case the zimbra_retry_interval is ignored
+
+        This directive is optional, and defaults to 45 (seconds)
+
+    [-] zimbra_cert_check
+
+        This boolean directive (0/1 or on/off or y/n or t/f) indicates that,
+        if any URL in the `zimbra_url' has the https:// prefix, then the 
+        zimbra auth mechanism should verify the authenticity of the server's
+        certificate
+
+        This value is optional, and defaults to off
+
+    [-] zimbra_cert_file
+
+        If zimbra_cert_check is on, then this directive indicates the name of
+        a file holding one or more certificates with which to verify the
+        server's cerficate
+
+        If zimbra_cert_check is off, then this directive is ignored
+
+        There is no default value for this directive, it must be specified
+        and refer to a valid certificate if zimbra_cert_check is on
+
+    [-] zimbra_dump_xml
+
+        This boolean directive causes saslauthd to print diagnostic information
+        about the HTTP/SOAP request/response on stdout. Set this directive
+        to on only if you are running saslauthd in the foreground with the 
+        `-d' command line option (see saslauthd(8) for details)
+
+        This directive is optional, and defaults to off
+
+                                  Round-Robin
+                                  -----------
+
+    As mentioned previously, the zimbra authentication mechanism elects each
+    URL in turn using round-robin, and fails over to the next URL in turn, in
+    case a URL throws an error when its turn comes.
+
+    This section describes the internal data structures and the flow maintained
+    by the zimbra auth mechanism to effect this round-robin with failover
+
+    Zimbra auth maintains two internal lists of urls, the `good' and the `bad'
+    list. Both lists are circular, doubly linked lists. The good list starts
+    off initially with all the specified URLs in the order that they appeared
+    against the zimbra_url directive. The bad list starts off empty, so that
+    the initial state is --
+
+                                      good
+
+              /-<=> [U1] <=> [U2] <=> [U3] <=> ... <=> [Un] <=>-\
+              \      ^                                          /
+               \-----------------------------------------------/
+                     
+                                      bad
+
+                                <--- empty --->
+
+    ... where U1, U2, ... Un are the URLs, the <=> indicates the doubly linked
+    list, and Un is linked back to U1 because it is circular
+
+    The caret (^) indicates the round-robin position, and identifies the URL
+    that will next be elected via round-robin for authentication (U1 in this
+    case).
+
+    Over time, if none of the URLs in the good list are in any error, the round
+    robin counter will keep moving down the good list from U1 to U2, and so on,
+    to Un, after which it will cycle back to U1. 
+
+    However, over time, if say, U2 and U5 indicate errors, then the lists
+    will look like
+
+                                      good
+
+              /-<=> [U1] <=> [U3] <=> [U4] <=> [U6] <=> [Un] <=>-\
+              \                                 ^               /
+               \-----------------------------------------------/
+ 
+                                      bad
+
+                           /-<=> [U2] <=> [U5] <=>-\
+                           \      ^                /
+                            \---------------------/
+ 
+    The above figure indicates that U2 and U5 have been removed from the good
+    list and have been placed onto the bad. The figure also indicates that the
+    next good url that will be tried is U6, which also now happens to be the
+    `head' of the good list (since the list is circular)
+
+    In addition, note the caret (^) positioning in the bad list. The zimbra
+    authentication mechanism always adds an error URL to the *end* of the 
+    bad list, and therefore the figure above indicates that first U2 caused
+    an error, and after that, U5 caused an error, so that U2 is at the head 
+    of the bad list in the figure above, and U5 is at the tail
+
+    In addition, the caret positioning indicates that the next URL that will be
+    taken out of the bad list (when zimbra_retry_interval elapses), is U2
+
+    Notice that the URLs that went bad first are closer to the head of the
+    bad list, with the eldest bad URL being the head of the bad list, and the
+    youngest bad URL bringing up the rear
+
+    As a consequence, since the eldest bad URL is at the head of the bad list,
+    it will be the first URL to be removed when the zimbra_retry_interval time
+    elapses. When that happens, the URL is removed from the head of the bad
+    list, and placed onto the *tail* of the good list, so that the recently
+    promoted bad URL has time to recover before its turn comes via round-robin
+
+    Over time, it may also happen that all the URLs specified have encountered
+    errors, but the `zimbra_retry_interval' time has not yet elapsed, so that
+    the good list is empty, and the bad list contains the URLs in the order
+    that they went bad. In this case, the lists might look like
+
+                                      good
+
+                                <--- empty --->
+
+                                      bad
+
+              /-<=> [U4] <=> [U5] <=> [U1] <=> ... <=> [Un] <=>-\
+              \      ^                                          /
+               \-----------------------------------------------/
+                     
+
+    In this case, when the next authentication request comes in, the zimbra
+    auth mechanism will be forced to pull out a URL from the head of the bad
+    list (U4 in this case), *even if* the `zimbra_retry_interval' period has
+    not yet elapsed, this is so that the authentication should have a chance
+    to succeed. If U4 is still unresponsive at this time, then it is once again
+    added to the bad list, but at the tail, so that the good list becomes
+    empty again, but the bad list is headed by the next URL in sequence
+    (U5 in this case), and is tailed by the URL that was most recently added
+    (back) onto the list, which is U4 in this case
+
+                                   Fail-over
+                                   ---------
+
+    The zimbra auth mechanism fails over to the next URL in the good list if
+    the previously chosen URL indicated an error.  It is easy to see from the
+    above flow, that even if the good list becomes empty, even in this case,
+    the first `n' URLs tried will always yield unique results. It follows, 
+    therefore, that in order to break out of the infinite loop that will result
+    in traversing a circular list, the higher level authentication function
+    should keep failing over to the next URL in sequence, until it encounters
+    again the first URL that was initially chosen
+
+                                      ***

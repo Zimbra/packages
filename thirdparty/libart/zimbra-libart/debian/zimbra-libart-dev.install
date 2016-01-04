@@ -1,0 +1,6 @@
+opt/zimbra/common/bin
+opt/zimbra/common/include
+opt/zimbra/common/lib/pkgconfig
+opt/zimbra/common/lib/*.a
+opt/zimbra/common/lib/*.la
+opt/zimbra/common/lib/*.so

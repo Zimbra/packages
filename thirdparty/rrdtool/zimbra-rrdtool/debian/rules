@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+export PKG_CONFIG_PATH=OZCL/pkgconfig
+export DEB_CFLAGS_MAINT_APPEND=-fPIC
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--disable-tcl --disable-ruby --disable-python \
+	--with-perl-options="INSTALL_BASE=OZC LIB=OZCL/perl5 \
+	LIBS='-LOZCL -lm -lpng -lz -lfreetype' INSTALLSITEMAN3DIR='OZCS/man/man3'"
+
+override_dh_strip:
+	dh_strip -pzimbra-rrdtool-lib --dbg-package=zimbra-rrdtool-lib-dbg
+	dh_strip -pzimbra-rrdtool --dbg-package=zimbra-rrdtool-dbg
+	dh_strip -Nzimbra-rrdtool-lib -Nzimbra-rrdtool
+
+PERL_ARCHNAME := $(shell perl -MConfig -e 'print $$Config{archname}')
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp
+	rm -f $(CURDIR)/debian/tmp/OZCL/perl5/$(PERL_ARCHNAME)/perllocal.pod
+	rm -f $(CURDIR)/debian/tmp/OZCL/perl5/$(PERL_ARCHNAME)/auto/*/.packlist

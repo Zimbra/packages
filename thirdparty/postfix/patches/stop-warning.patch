@@ -1,0 +1,42 @@
+--- postfix-3.0.3/conf/postfix-script.orig	2015-11-22 15:41:29.286128964 -0600
++++ postfix-3.0.3/conf/postfix-script	2015-11-22 17:25:41.537211244 -0600
+@@ -254,7 +254,7 @@
+ 
+ 	# Check Postfix root-owned directory owner/permissions.
+ 
+-	find $queue_directory/. $queue_directory/pid \
++	find $queue_directory/. \
+ 	    -prune ! -user root \
+ 	    -exec $WARN not owned by root: {} \;
+ 
+@@ -264,18 +264,23 @@
+ 
+ 	# Check Postfix root-owned directory tree owner/permissions.
+ 
+-	todo="$config_directory/."
++	todo=""
+ 	test -n "$check_shared_files" && {
+-		todo="$daemon_directory/. $meta_directory/. $todo"
++		todo="$daemon_directory/. $meta_directory/."
+ 		test "$shlib_directory" = "no" || 
+ 		    todo="$shlib_directory/. $todo"
+ 	}
++	if [ x"$todo" != "x" ]
++	then
++		todo=`echo "$todo" | tr ' ' '\12' | sort -u`
++		find $todo -path /opt/zimbra/common/conf/. -prune -o ! -user root \
++	    	-exec $WARN not owned by root: {} \;
++	fi
++	todo="$todo $config_directory/."
+ 	todo=`echo "$todo" | tr ' ' '\12' | sort -u`
+-
+-	find $todo ! -user root \
+-	    -exec $WARN not owned by root: {} \;
+-
+-	find $todo \( -perm -020 -o -perm -002 \) \
++	find $todo  -path /opt/zimbra/common/libexec/./openldap -prune -o \
++            -path /opt/zimbra/common/conf/. -prune -o \
++            \( -perm -020 -o -perm -002 \) \
+ 	    -exec $WARN group or other writable: {} \;
+ 
+ 	# Check Postfix mail_owner-owned directory tree owner/permissions.

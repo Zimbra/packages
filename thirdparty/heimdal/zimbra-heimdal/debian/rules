@@ -1,0 +1,66 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-LOZCL -Wl,-rpath,OZCL
+export DEB_CFLAGS_MAINT_APPEND=-D_REENTRANT
+export DEB_CXXFLAGS_MAINT_APPEND=-D_REENTRANT
+export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
+
+%:
+	dh $@
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--sysconfdir=/etc \
+	--enable-shared \
+	--enable-pthread-support \
+	--disable-berkeley-db \
+	--disable-ndbm-db \
+	--disable-afs-support \
+	--without-readline \
+	--without-openldap \
+	--without-hesiod \
+	--enable-static=no
+	
+override_dh_auto_build:
+	$(MAKE) -C include
+	$(MAKE) -C base
+	$(MAKE) -C lib/roken
+	$(MAKE) -C lib/vers
+	$(MAKE) -C lib/com_err
+	$(MAKE) -C lib/asn1
+	$(MAKE) -C lib/libedit
+	$(MAKE) -C lib/sl
+	$(MAKE) -C lib/hcrypto
+	$(MAKE) -C lib/wind
+	$(MAKE) -C lib/hx509
+	$(MAKE) -C lib/sqlite
+	$(MAKE) -C lib/ipc
+	$(MAKE) -C lib/krb5
+	$(MAKE) -C lib/ntlm
+	$(MAKE) -C lib/gssapi
+
+override_dh_strip:
+	dh_strip -pzimbra-heimdal-lib --dbg-package=zimbra-heimdal-lib-dbg
+	dh_strip -pzimbra-heimdal --dbg-package=zimbra-heimdal-dbg
+	dh_strip -Nzimbra-heimdal-lib -Nzimbra-heimdal
+
+override_dh_auto_install:
+	$(MAKE) -C include install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C base install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/roken install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/com_err install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/asn1 install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/libedit install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/sl install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/hcrypto install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/wind install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/hx509 install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/sqlite install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/ipc install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/krb5 install DESTDIR=$$(pwd)/debian/tmp
+	$(MAKE) -C lib/ntlm install DESTDIR=$$(pwd)/debian/tmp
+	mkdir -p $$(pwd)/debian/tmpOZCS/man/cat5/mech
+	mkdir -p $$(pwd)/debian/tmpOZCS/man/man5/mech
+	$(MAKE) -C lib/gssapi install DESTDIR=$$(pwd)/debian/tmp 
+

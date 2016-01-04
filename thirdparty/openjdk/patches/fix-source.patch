@@ -1,0 +1,13 @@
+--- jdk8u60/common/bin/hgforest.sh.orig	2015-08-10 16:29:42.271352215 +0000
++++ jdk8u60/common/bin/hgforest.sh	2015-08-10 16:36:53.427337849 +0000
+@@ -334,8 +334,8 @@
+             done
+           fi
+           # run the clone command.
+-          echo "hg${global_opts} clone ${clone_newrepo} ${i}" > ${status_output}
+-          (PYTHONUNBUFFERED=true hg${global_opts} clone ${clone_newrepo} ${i}; echo "$?" > ${tmp}/${repopidfile}.pid.rc ) 2>&1 &
++          echo "hg${global_opts} clone ${command_args} ${clone_newrepo} ${i}" > ${status_output}
++          (PYTHONUNBUFFERED=true hg${global_opts} clone ${command_args} ${clone_newrepo} ${i}; echo "$?" > ${tmp}/${repopidfile}.pid.rc ) 2>&1 &
+         else
+           # run the command.
+           echo "cd ${i} && hg${global_opts} ${command} ${command_args}" > ${status_output}

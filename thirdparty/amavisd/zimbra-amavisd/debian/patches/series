@@ -1,0 +1,5 @@
+amavisd.patch
+amavis-mc.patch
+perl-path.patch
+socketpath.patch
+zmq-sock.patch

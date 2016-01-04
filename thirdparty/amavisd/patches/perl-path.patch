@@ -1,0 +1,20 @@
+--- amavisd-new-2.9.0/amavisd-status.orig	2015-03-05 16:30:36.966044097 -0600
++++ amavisd-new-2.9.0/amavisd-status	2015-03-05 16:30:36.966044097 -0600
+@@ -47,6 +47,7 @@
+ use warnings;
+ use warnings FATAL => qw(utf8 void);
+ no warnings 'uninitialized';
++use lib "/opt/zimbra/common/lib/perl5";
+ 
+ use Errno qw(ESRCH ENOENT);
+ use POSIX qw(strftime);
+--- amavisd-new-2.10.1/amavisd-snmp-subagent-zmq.orig	2015-12-05 14:25:04.199464973 -0600
++++ amavisd-new-2.10.1/amavisd-snmp-subagent-zmq	2015-12-05 14:25:32.159464041 -0600
+@@ -48,6 +48,7 @@
+ use warnings;
+ use warnings FATAL => qw(utf8 void);
+ no warnings 'uninitialized';
++use lib "/opt/zimbra/common/lib/perl5";
+ 
+ use Errno qw(ESRCH ENOENT EACCES EEXIST);
+ use POSIX ();

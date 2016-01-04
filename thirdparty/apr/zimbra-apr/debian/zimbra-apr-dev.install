@@ -1,0 +1,8 @@
+opt/zimbra/common/bin/apr-1-config
+opt/zimbra/common/build-1
+opt/zimbra/common/include
+opt/zimbra/common/lib/*.a
+opt/zimbra/common/lib/*.la
+opt/zimbra/common/lib/*.so
+opt/zimbra/common/lib/apr.exp
+opt/zimbra/common/lib/pkgconfig

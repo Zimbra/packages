@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--with-apxs2=OZCB/apxs \
+	--with-config-file-path=/opt/zimbra/conf \
+	--with-pspell=OZC \
+	--with-libxml-dir=OZC \
+	--enable-maintainer-zts
+	sed -i.bak -e 's|SYSCONFDIR=\x27\x24\x28INSTALL_ROOT\x29OZC/conf\x27|SYSCONFDIR=\x27OZC/conf\x27|g' Makefile
+
+override_dh_strip:
+	dh_strip -pzimbra-php --dbg-package=zimbra-php-dbg
+	dh_strip -Nzimbra-php
+
+override_dh_auto_install:
+	make install INSTALL_ROOT=$$(pwd)/debian/tmp

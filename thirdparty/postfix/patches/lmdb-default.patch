@@ -1,0 +1,20 @@
+--- postfix-2.11.4/src/global/mail_params.h.orig	2015-02-12 15:13:48.825636015 -0600
++++ postfix-2.11.4/src/global/mail_params.h	2015-02-12 15:13:57.861635714 -0600
+@@ -2658,7 +2658,7 @@
+ extern char *var_verify_service;
+ 
+ #define VAR_VERIFY_MAP			"address_verify_map"
+-#define DEF_VERIFY_MAP			"btree:$data_directory/verify_cache"
++#define DEF_VERIFY_MAP			"lmdb:$data_directory/verify_cache"
+ extern char *var_verify_map;
+ 
+ #define VAR_VERIFY_POS_EXP		"address_verify_positive_expire_time"
+@@ -3372,7 +3372,7 @@
+   * postscreen(8)
+   */
+ #define VAR_PSC_CACHE_MAP	"postscreen_cache_map"
+-#define DEF_PSC_CACHE_MAP	"btree:$data_directory/postscreen_cache"
++#define DEF_PSC_CACHE_MAP	"lmdb:$data_directory/postscreen_cache"
+ extern char *var_psc_cache_map;
+ 
+ #define VAR_SMTPD_SERVICE	"smtpd_service_name"

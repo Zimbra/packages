@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--with-apr=OZCB/apr-1-config \
+	--with-crypto \
+	--with-openssl=OZC
+
+override_dh_strip:
+	dh_strip -pzimbra-apr-util-lib --dbg-package=zimbra-apr-util-lib-dbg
+	dh_strip -Nzimbra-apr-util-lib
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

@@ -1,0 +1,3 @@
+opt/zimbra/common/include/lmdb.h
+opt/zimbra/common/lib/liblmdb.a
+opt/zimbra/common/lib/liblmdb.so

@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+override_dh_auto_configure:
+	./configure --prefix=OZC
+
+override_dh_strip:
+	dh_strip -pzimbra-aspell-lib --dbg-package=zimbra-aspell-lib-dbg
+	dh_strip -pzimbra-aspell --dbg-package=zimbra-aspell-dbg
+	dh_strip -Nzimbra-aspell-lib -Nzimbra-aspell
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

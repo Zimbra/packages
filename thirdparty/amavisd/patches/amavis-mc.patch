@@ -1,0 +1,31 @@
+--- amavisd-new-2.9.0/amavis-mc.orig	2015-03-05 16:30:36.918020099 -0600
++++ amavisd-new-2.9.0/amavis-mc	2015-03-05 16:30:36.914018098 -0600
+@@ -47,6 +47,7 @@
+ use warnings;
+ use warnings FATAL => qw(utf8 void);
+ no warnings 'uninitialized';
++use lib "/opt/zimbra/common/lib/perl5";
+ 
+ use vars qw($VERSION);  $VERSION = 2.008002;
+ 
+@@ -70,16 +71,16 @@
+ 
+ ### USER CONFIGURABLE:
+ 
+-$daemon_user  = 'vscan';
+-$daemon_group = 'vscan';
++$daemon_user  = 'zimbra';
++$daemon_group = 'zimbra';
+ 
+-$pid_file = '/var/amavis/amavis-mc.pid';
++$pid_file = '/opt/zimbra/log/amavis-mc.pid';
+ 
+ $log_level = 0;
+ $syslog_ident = 'amavis-mc';
+ $syslog_facility = LOG_MAIL;
+ 
+-@path = qw(/usr/local/sbin /usr/local/bin /usr/sbin /sbin /usr/bin /bin);
++@path = qw(/opt/zimbra/common/sbin /usr/local/sbin /usr/local/bin /usr/sbin /sbin /usr/bin /bin);
+ 
+ @services = (
+   { cmd => 'amavis-services msg-forwarder' },

@@ -1,0 +1,10 @@
+opt/zimbra/common/bin/apu-1-config
+opt/zimbra/common/include
+opt/zimbra/common/lib/*.a
+opt/zimbra/common/lib/*.la
+opt/zimbra/common/lib/*.so
+opt/zimbra/common/lib/aprutil.exp
+opt/zimbra/common/lib/pkgconfig
+opt/zimbra/common/lib/apr-util-1/*.a
+opt/zimbra/common/lib/apr-util-1/*.la
+

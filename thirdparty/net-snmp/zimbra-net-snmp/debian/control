@@ -1,0 +1,48 @@
+Source: zimbra-net-snmp
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7),
+ zimbra-openssl-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: http://www.net-snmp.org/
+
+Package: zimbra-net-snmp
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-net-snmp-lib (= ${binary:Version})
+Description: NetSNMP Binaries
+
+Package: zimbra-net-snmp-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-snmp-base
+Description: NetSNMP Libraries
+
+Package: zimbra-net-snmp-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-net-snmp-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for NetSNMP libraries
+
+Package: zimbra-net-snmp-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-net-snmp-lib (= ${binary:Version}), ${misc:Depends}
+Description: NetSNMP development pieces
+
+Package: zimbra-net-snmp-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-net-snmp (= ${binary:Version}), ${misc:Depends}
+Description: NetSNMP binary debug information
+

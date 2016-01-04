@@ -1,0 +1,2 @@
+version=3
+http://downloads.sourceforge.net/project/clamav/clamav/(\d+\.\d+\.\d+)/clamav-(\d+\.\d+\.\d+)\.tar\.gz

@@ -1,0 +1,2 @@
+version=3
+https://download.libsodium.org/libsodium/releases/libsodium-(\d+\.\d+\.\d+)\.tar\.gz

@@ -1,0 +1,4 @@
+opt/zimbra/common/include
+opt/zimbra/common/lib/*.la
+opt/zimbra/common/lib/libdb.so
+opt/zimbra/common/lib/libdb-5.so

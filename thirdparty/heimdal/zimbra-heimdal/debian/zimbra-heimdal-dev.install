@@ -1,0 +1,3 @@
+opt/zimbra/common/lib/*.so
+opt/zimbra/common/lib/*.la
+opt/zimbra/common/include

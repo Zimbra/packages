@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCS/man/man1
+	cp -f pflogsumm.pl $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
+	cp -f pflogsumm.1 $(CURDIR)/debian/$(shell dh_listpackages)/OZCS/man/man1
+	sed -i -e '/=head1 NAME/ i use lib qw(/opt/zimbra/common/lib/perl5);' $(CURDIR)/debian/$(shell dh_listpackages)/OZCB/pflogsumm.pl

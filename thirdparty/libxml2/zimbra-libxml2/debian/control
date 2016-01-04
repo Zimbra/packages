@@ -1,0 +1,47 @@
+Source: zimbra-libxml2
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), libz-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  http://www.xmlsoft.org
+
+Package: zimbra-libxml2
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-libxml2-lib (= ${binary:Version})
+Description: LibXML2 Binaries
+
+Package: zimbra-libxml2-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: LibXML2 Libraries
+
+Package: zimbra-libxml2-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libxml2-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for LibXML2 libraries
+
+Package: zimbra-libxml2-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libxml2-lib (= ${binary:Version}), ${misc:Depends}
+Description: LibXML2 development pieces
+
+Package: zimbra-libxml2-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libxml2 (= ${binary:Version}), ${misc:Depends}
+Description: LibXML2 binary debug information
+

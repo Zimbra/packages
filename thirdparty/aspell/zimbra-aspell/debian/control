@@ -1,0 +1,47 @@
+Source: zimbra-aspell
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), libncurses5-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: http://aspell.net/
+
+Package: zimbra-aspell
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-aspell-lib (= ${binary:Version})
+Description: Aspell Binaries
+
+Package: zimbra-aspell-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-spell-base
+Description: Aspell Libraries
+
+Package: zimbra-aspell-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-aspell-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for Aspell libraries
+
+Package: zimbra-aspell-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-aspell-lib (= ${binary:Version}), ${misc:Depends}
+Description: Aspell development pieces
+
+Package: zimbra-aspell-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-aspell (= ${binary:Version}), ${misc:Depends}
+Description: Aspell binary debug information
+

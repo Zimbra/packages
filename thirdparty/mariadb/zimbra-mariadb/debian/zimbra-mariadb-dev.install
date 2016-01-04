@@ -1,0 +1,5 @@
+opt/zimbra/common/bin/mysql_config
+opt/zimbra/common/include
+opt/zimbra/common/lib/*.a
+opt/zimbra/common/lib/*.so
+opt/zimbra/common/share/man/man1/mysql_config.1

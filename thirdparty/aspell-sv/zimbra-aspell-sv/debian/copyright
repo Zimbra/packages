@@ -1,0 +1,35 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: http://aspell.net/http://aspell.net/
+Files: *
+Copyright: 1998, 1999, 2000, 2001, 2002 Skåne Sjælland Linux User Group
+License: LGPL-2.1
+
+Files: debian/*
+Copyright: 2015, Zimbra Packaging Services <packaging-devel@zimbra.com>
+License: GPL-2
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+ .
+ On Debian systems, the complete text of version 2 of the GNU General
+ Public License can be found in usr/share/common-licenses/GPL-2.
+
+License: LGPL-2.1
+ This dictionary is free software; you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License (version 2.1)
+ as published by the Free Software Foundation.
+ .
+ This dictionary is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public License
+ along with this dictionary; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ .
+ On Debian systems, the complete text of version 2.1 of the GNU Lesser
+ General Public License can be found in usr/share/common-licenses/LGPL-2.1.

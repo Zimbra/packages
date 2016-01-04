@@ -1,0 +1,30 @@
+zimbra-openjdk-cacerts (1.0.4-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Support running zmcertmgr as user zimbra instead of root
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 14 Dec 2015 00:00:00 +0000
+
+zimbra-openjdk-cacerts (1.0.3-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Enhance upgrade check
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 7 Dec 2015 00:00:00 +0000
+
+zimbra-openjdk-cacerts (1.0.2-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Ensure that on upgrades of the zimbra-openjdk-cacerts package, that the keystore is updated
+  * Ensure that on upgrades of the zimbra-openjdk-cacerts package, that the old keystore is backed up
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 7 Dec 2015 00:00:00 +0000
+
+zimbra-openjdk-cacerts (1.0.1-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Updated to include full CA Certs from Mozilla CA list
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 2 Dec 2015 00:00:00 +0000
+
+zimbra-openjdk-cacerts (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 9 Sep 2015 00:00:00 +0000

@@ -1,0 +1,14 @@
+#!/bin/bash
+if [ "$1" = configure ]; then
+  /bin/chown zimbra:zimbra /opt/zimbra/common/lib/jvm/java/jre/lib/security/cacerts
+  /bin/chmod 644 /opt/zimbra/common/lib/jvm/java/jre/lib/security/cacerts
+  if [ "$2" != "" ]; then
+    if [ -x /opt/zimbra/bin/zmcertmgr ]; then
+      # Run as zimbra, extract CA to /opt/zimbra/conf/ca
+      /bin/su - zimbra -c '/opt/zimbra/bin/zmcertmgr createca'
+      # Run as zimbra, update OpenJDK cacerts file with the CA stored in LDAP
+      /bin/su - zimbra -c '/opt/zimbra/bin/zmcertmgr deployca --localonly'
+    fi
+  fi
+fi
+exit 0

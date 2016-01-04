@@ -1,0 +1,4 @@
+libevent-2.0 5 zimbra-libevent-lib (>= VERSION-ITERATION)
+libevent_pthreads-2.0 5 zimbra-libevent-lib (>= VERSION-ITERATION)
+libevent_core-2.0 5 zimbra-libevent-lib (>= VERSION-ITERATION)
+libevent_extra-2.0 5 zimbra-libevent-lib (>= VERSION-ITERATION)

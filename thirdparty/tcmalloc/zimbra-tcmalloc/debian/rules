@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--enable-minimal \
+	--enable-static=no \
+	--mandir="OZCS/man"
+
+override_dh_strip:
+	dh_strip -pzimbra-tcmalloc-lib --dbg-package=zimbra-tcmalloc-lib-dbg
+	dh_strip -Nzimbra-tcmalloc-lib
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

@@ -1,0 +1,32 @@
+Source: zimbra-libart
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  http://ftp.gnome.org/pub/gnome/sources/libart_lgpl/
+
+Package: zimbra-libart-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: libart Libraries
+
+Package: zimbra-libart-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libart-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for libart libraries
+
+Package: zimbra-libart-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libart-lib (= ${binary:Version}), ${misc:Depends}
+Description: libart development pieces

@@ -1,0 +1,10 @@
+--- aspell-fr-0.50-3/configure.orig	2015-06-10 21:44:06.282328130 +0000
++++ aspell-fr-0.50-3/configure	2015-06-10 21:44:56.458326458 +0000
+@@ -41,6 +41,7 @@
+       fi	
+       # Taken from autoconf 2.50
+       envvar=`expr "x$option" : 'x\([^=]*\)='`
++      optarg=`expr "x$option" : 'x[^=]*=\(.*\)'`
+       # Reject names that are not valid shell variable names.
+       expr "x$envvar" : ".*[^_$cr_alnum]" >/dev/null &&
+         { echo "$as_me: error: invalid variable name: $envvar" >&2

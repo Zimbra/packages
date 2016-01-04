@@ -1,0 +1,49 @@
+Source: zimbra-rrdtool
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), libz-dev, libbz2-dev,
+ zimbra-libpng-dev, zimbra-libart-dev,
+ zimbra-freetype-dev, pkg-config
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  https://oss.oetiker.ch/rrdtool/
+
+Package: zimbra-rrdtool
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-rrdtool-lib (= ${binary:Version})
+Description: RRDTool Binaries
+
+Package: zimbra-rrdtool-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: RRDTool Libraries
+
+Package: zimbra-rrdtool-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-rrdtool-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for RRDTool libraries
+
+Package: zimbra-rrdtool-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-rrdtool-lib (= ${binary:Version}), ${misc:Depends}
+Description: RRDTool development pieces
+
+Package: zimbra-rrdtool-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-rrdtool (= ${binary:Version}), ${misc:Depends}
+Description: RRDTool binary debug information
+

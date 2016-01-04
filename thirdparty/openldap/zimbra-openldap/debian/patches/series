@@ -1,0 +1,7 @@
+ITS5037.patch
+writers.patch
+ITS7683.patch
+ITS8054.patch
+ITS8336.patch
+threadpool.patch
+liblmdb-soname.patch

@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+export DEB_CFLAGS_MAINT_APPEND=-fPIC
+
+%:
+	dh $@
+override_dh_auto_configure:
+	./configure --prefix=OZC
+
+override_dh_strip:
+	dh_strip -pzimbra-freetype-lib --dbg-package=zimbra-freetype-lib-dbg
+	dh_strip -Nzimbra-freetype-lib
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

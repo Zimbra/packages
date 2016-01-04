@@ -1,0 +1,25 @@
+Source: zimbra-php
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7),
+ zimbra-httpd-dev, zimbra-libxml2-dev,
+ zimbra-aspell-dev, zimbra-aspell,
+ libz-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  http://php.apache.org
+
+Package: zimbra-php
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-spell-base
+Description: PHP Apache Module
+
+Package: zimbra-php-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-php (= ${binary:Version}), ${misc:Depends}
+Description: PHP Apache Module debug information

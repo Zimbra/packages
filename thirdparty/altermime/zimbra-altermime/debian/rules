@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+override_dh_strip:
+	dh_strip -pzimbra-altermime --dbg-package=zimbra-altermime-dbg
+	dh_strip -Nzimbra-altermime
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/tmpOZCB
+	cp -f altermime $(CURDIR)/debian/tmpOZCB

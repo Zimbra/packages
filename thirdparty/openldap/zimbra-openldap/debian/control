@@ -1,0 +1,100 @@
+Source: zimbra-openldap
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev,
+ zimbra-cyrus-sasl-dev, zimbra-libltdl-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: http://www.openldap.org/
+
+Package: zimbra-openldap-server
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-openldap-lib (= ${binary:Version}),
+ zimbra-ldap-base
+Description: OpenLDAP Server Binaries
+
+Package: zimbra-openldap-server-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-openldap-server (= ${binary:Version}), ${misc:Depends}
+Description: OpenLDAP binary debug information
+
+Package: zimbra-openldap-client
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-openldap-lib (= ${binary:Version})
+Description: OpenLDAP Client Binaries
+
+Package: zimbra-openldap-client-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-openldap-client (= ${binary:Version}), ${misc:Depends}
+Description: OpenLDAP binary debug information
+
+Package: zimbra-openldap-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: OpenLDAP Libraries
+
+Package: zimbra-openldap-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-openldap-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for OpenLDAP libraries
+
+Package: zimbra-openldap-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-openldap-lib (= ${binary:Version}), ${misc:Depends}
+Description: OpenLDAP development pieces
+
+Package: zimbra-lmdb
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-ldap-base
+Description: LMDB Binaries
+
+Package: zimbra-lmdb-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-lmdb (= ${binary:Version}), ${misc:Depends}
+Description: LMDB binary debug information
+
+Package: zimbra-lmdb-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: LMDB Libraries
+
+Package: zimbra-lmdb-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-lmdb-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for LMDB libraries
+
+Package: zimbra-lmdb-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-lmdb-lib (= ${binary:Version}), ${misc:Depends}
+Description: LMDB development pieces

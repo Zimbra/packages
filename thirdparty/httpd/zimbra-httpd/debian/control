@@ -1,0 +1,33 @@
+Source: zimbra-httpd
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7),
+ zimbra-apr-dev, zimbra-apr-util-dev,
+ libz-dev, libpcre3-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  http://httpd.apache.org
+
+Package: zimbra-httpd
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-apache-base
+Description: Apache HTTPD Binaries
+
+Package: zimbra-httpd-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-httpd (= ${binary:Version}), ${misc:Depends}, zimbra-apr-dev,
+ zimbra-apr-util-dev
+Description: Apache HTTPD development pieces
+
+Package: zimbra-httpd-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-httpd (= ${binary:Version}), ${misc:Depends}
+Description: Apache HTTPD binary debug information

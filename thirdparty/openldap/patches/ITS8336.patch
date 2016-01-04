@@ -1,0 +1,31 @@
+From 58d1fd4c73c96ef3097816e975b3d421ead4d86e Mon Sep 17 00:00:00 2001
+From: Howard Chu <hyc@openldap.org>
+Date: Tue, 8 Dec 2015 18:17:24 +0000
+Subject: [PATCH] ITS#8336 fix page_search_root assert on FreeDB
+
+Let "illegal" branch pages thru on the FreeDB - the condition
+is only temporary and will be fixed by the time rebalance finishes.
+---
+ libraries/liblmdb/mdb.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/libraries/liblmdb/mdb.c b/libraries/liblmdb/mdb.c
+index 0c93c37..c603654 100644
+--- a/libraries/liblmdb/mdb.c
++++ b/libraries/liblmdb/mdb.c
+@@ -5434,7 +5434,11 @@ mdb_page_search_root(MDB_cursor *mc, MDB_val *key, int flags)
+ 		indx_t		i;
+ 
+ 		DPRINTF(("branch page %"Z"u has %u keys", mp->mp_pgno, NUMKEYS(mp)));
+-		mdb_cassert(mc, NUMKEYS(mp) > 1);
++		/* Don't assert on branch pages in the FreeDB. We can get here
++		 * while in the process of rebalancing a FreeDB branch page; we must
++		 * let that proceed. ITS#8336
++		 */
++		mdb_cassert(mc, !mc->mc_dbi || NUMKEYS(mp) > 1);
+ 		DPRINTF(("found index 0 to page %"Z"u", NODEPGNO(NODEPTR(mp, 0))));
+ 
+ 		if (flags & (MDB_PS_FIRST|MDB_PS_LAST)) {
+-- 
+1.7.10.4
+

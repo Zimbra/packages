@@ -1,0 +1,32 @@
+Source: zimbra-libsodium
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  https://download.libsodium.org/doc/
+
+Package: zimbra-libsodium-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: libsodium Libraries
+
+Package: zimbra-libsodium-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libsodium-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for libsodium libraries
+
+Package: zimbra-libsodium-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libsodium-lib (= ${binary:Version}), ${misc:Depends}
+Description: libsodium development pieces

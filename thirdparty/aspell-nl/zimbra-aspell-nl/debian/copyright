@@ -1,0 +1,44 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: http://aspell.net/http://aspell.net/
+Files: *
+License: Public Domain
+
+Files: debian/*
+Copyright: 2015, Zimbra Packaging Services <packaging-devel@zimbra.com>
+License: GPL-2
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option)
+ any later version.
+ .
+ On Debian systems, the complete text of version 2 of the GNU General
+ Public License can be found in usr/share/common-licenses/GPL-2.
+
+License: Public Domain
+ The nl-aspell package includes the GPL COPYRIGHT file but no explicit copyright
+ notice.  Since he was using autoconf this could have been added automatically.
+ .
+ One of the main word lists he used had the following copyright notice:
+ .
+ Copyright (C) 1996: Dutch word lists (woorden) and Dutch hyphenation
+ patterns (patronen) Nederlandstalige TeX Gebruikersgroep, Postbus 394,
+ 1740 AJ Schagen, The Netherlands.
+ .
+ Copyright (C) 1993 - 1996: sorting, merging and hyphenation software
+ (hyphtools) Piet Tutelaers.
+ .
+ All provided material can be used freely. Copying is only allowed if
+ the package is distributed complete and unchanged. We plan to update
+ the package on a regular basis. Bug reports and bugfixes are welcomed.
+ .
+ --Piet
+ .
+ 22 November 1996
+ .
+ internet: rcpt@urc.tue.nl      __o      Piet Tutelaers
+                              _\<,_     Computer Center       Room  RC 1.82
+ 			     phone:  +31 (0)40 2474541   (_)/ (_)
+ Eindhoven University of  Technology
+ fax:    +31 (0)40 2434438  Save nature  P.O. Box 513, 5600 MB Eindhoven, NL

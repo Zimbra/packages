@@ -1,0 +1,2 @@
+version=3
+https://downloads.mariadb.org/f/mariadb-(\d+\.\d+\.\d+)\.tar\.gz

@@ -1,0 +1,2 @@
+version=3
+http://iweb.dl.sourceforge.net/project/net-snmp/net-snmp/(\d+\.\d+\.\d+)/net-snmp-(\d+\.\d+\.\d+).tar.gz

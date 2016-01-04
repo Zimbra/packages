@@ -1,0 +1,44 @@
+Index: postfix-3.0.3/src/xsasl/xsasl_cyrus_server.c
+===================================================================
+--- postfix-3.0.3.orig/src/xsasl/xsasl_cyrus_server.c	2015-12-10 01:40:10.979876845 +0000
++++ postfix-3.0.3/src/xsasl/xsasl_cyrus_server.c	2015-12-10 01:43:03.467880495 +0000
+@@ -259,8 +259,6 @@
+ 				             XSASL_SERVER_CREATE_ARGS *args)
+ {
+     const char *myname = "xsasl_cyrus_server_create";
+-    char   *server_address;
+-    char   *client_address;
+     sasl_conn_t *sasl_conn = 0;
+     XSASL_CYRUS_SERVER *server = 0;
+     int     sasl_status;
+@@ -291,27 +289,13 @@
+ #define NO_SESSION_CALLBACKS	((sasl_callback_t *) 0)
+ #define NO_AUTH_REALM		((char *) 0)
+ 
+-#if SASL_VERSION_MAJOR >= 2 && defined(USE_SASL_IP_AUTH)
+-
+-    /*
+-     * Get IP addresses of local and remote endpoints for SASL.
+-     */
+-#error "USE_SASL_IP_AUTH is not implemented"
+-
+-#else
+-
+-    /*
+-     * Don't give any IP address information to SASL.  SASLv1 doesn't use it,
+-     * and in SASLv2 this will disable any mechanisms that do.
+-     */
+-    server_address = 0;
+-    client_address = 0;
+-#endif
+ 
++    msg_warn("server_addr=%s, client_addr=%s",
++         args->server_addr, args->client_addr);
+     if ((sasl_status =
+ 	 SASL_SERVER_NEW(args->service, var_myhostname,
+ 			 args->user_realm ? args->user_realm : NO_AUTH_REALM,
+-			 server_address, client_address,
++			 args->server_addr, args->client_addr,
+ 			 NO_SESSION_CALLBACKS, NO_SECURITY_LAYERS,
+ 			 &sasl_conn)) != SASL_OK) {
+ 	msg_warn("SASL per-connection server initialization: %s",

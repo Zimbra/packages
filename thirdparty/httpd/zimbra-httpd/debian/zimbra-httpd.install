@@ -1,0 +1,4 @@
+opt/zimbra/common/bin
+opt/zimbra/common/share
+opt/zimbra/common/lib/apache2/modules
+opt/zimbra/data

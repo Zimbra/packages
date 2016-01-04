@@ -1,0 +1,74 @@
+                  Testing the Zimbra Authentication Mechanism
+                  -------------------------------------------
+
+    The sasl configuration file for zimbra defaults to
+    /opt/zimbra/cyrus-sasl/etc/saslauthd.conf -- this file contains the 
+    configuration directives specified in the IMPLEMENTATION document
+
+    saslauthd messages go into syslog. Check /var/log/messages for saslauthd
+    messages, and adjust syslog.conf (see syslog.conf(5)) to display messages
+    at level LOG_DEBUG
+
+                                  Round-robin
+                                  -----------
+
+    If you have a development system of Zimbra, then your auth URL should look
+    like http://localhost:7070/service/soap/ -- if you have a production 
+    system, then just http://localhost/service/soap/
+
+    If you have a multi-node install, specify all the URLs against zimbra_url
+    in the saslauthd.conf as follows:
+
+    zimbra_url: http://s1/service/soap/ http://s2/service/soap/ ...
+
+    If you don't have a multi-node install, you can easily set up ssh port
+    forwarding so that you can forward other TCP ports to port 80 (or 7070, if
+    you have a development system), on localhost:
+
+    $ ssh -g -L 8070:localhost:7070 you@localhost
+    $ ssh -g -L 8071:localhost:7070 you@localhost
+
+    This will cause SSH to forward local ports 8070 and 8071 to port 7070 on
+    localhost, so that you can treat localhost:8070 and localhost:8071 as 
+    identical representations of localhost:80, and so your zimbra_url can
+    contain these urls:
+
+    zimbra_url: http://localhost:7070/service/soap/ http://localhost:8071/service/soap/ http://localhost:8072/service/soap/
+
+    Further, set the zimbra_connect_timeout, zimbra_timeout, and 
+    zimbra_retry_interval to appropriate values. To test the failover, either
+    specify a non-reachable URL in the zimbra_url list, or otherwise configure
+    iptables and ip6tables to drop or reject connections to the legitimate 
+    ports. 
+
+                               Running saslauthd
+                               -----------------
+
+    (+) Typical invocation for saslauthd is:
+            $ /opt/zimbra/cyrus-sasl/sbin/saslauthd -r -a zimbra
+
+        which will cause saslauthd to start (by default) 5 worker processes
+
+    (+) To start only a single worker process, use the -n switch:
+            $ /opt/zimbra/cyrus-sasl/sbin/saslauthd -n 1 -r -a zimbra
+
+    (+) To run in foreground mode, use the -d switch:
+            $ /opt/zimbra/cyrus-sasl/sbin/saslauthd -d -n 1 -r -a zimbra
+
+                               Testing saslauthd
+                               -----------------
+
+    You can test saslauthd by using the command line tool testsaslauthd:
+    $ /usr/sbin/testsaslauthd -s zimbra -f /opt/zimbra/cyrus-sasl/state/mux \
+      -u user1@my-domain.com -p test123
+
+    See /var/log/messages for details, notice the debug messages when zimbra
+    auth fails over to next available URL
+
+    Also note that if `n' URLs are present in the list, then at best, only
+    one URL will be used in order to authenticate (in case the URL is 
+    reachable without any error), whereas in the worst case, where no URL is
+    reachable, no more than `n' URLs will be attempted before zimbra 
+    authentication gives up and reports an error
+
+                                      ***

@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+export DH_VERBOSE=1
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+	cd libmilter && \
+	./Build -c
+
+override_dh_auto_install:
+	mkdir -p $$(pwd)/debian/tmpOZCL
+	mkdir -p $$(pwd)/debian/tmpOZCI/libmilter
+	cd obj.*/libmilter && \
+	cp libmilter.a $$(pwd)/../../debian/tmpOZCL
+	cd include/libmilter && \
+	cp -p * $$(pwd)/../../debian/tmpOZCI/libmilter

@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--enable-shared=yes --enable-static=no --without-python
+
+override_dh_strip:
+	dh_strip -pzimbra-libxml2-lib --dbg-package=zimbra-libxml2-lib-dbg
+	dh_strip -pzimbra-libxml2 --dbg-package=zimbra-libxml2-dbg
+	dh_strip -Nzimbra-libxml2-lib -Nzimbra-libxml2
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp
+
+override_dh_install:
+	dh_install
+	rm -f $(CURDIR)/debian/zimbra-libxml2OZCB/xml2-config
+

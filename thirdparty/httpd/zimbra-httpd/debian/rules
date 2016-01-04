@@ -1,0 +1,34 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--with-apr=OZCB/apr-1-config \
+	--with-apr-util=OZCB/apu-1-config \
+	--mandir=OZCS/man \
+	--libexecdir=OZCL/apache2/modules \
+	--datadir=/opt/zimbra/data/httpd \
+	--enable-so \
+	--with-mpm=event \
+	--enable-mpms-shared="all"
+
+override_dh_strip:
+	dh_strip -pzimbra-httpd --dbg-package=zimbra-httpd-dbg
+	dh_strip -Nzimbra-httpd
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp
+	mkdir -p $$(pwd)/debian/tmp/opt/zimbra/data/httpd/conf
+	mv $$(pwd)/debian/tmp/OZC/conf/mime.types $$(pwd)/debian/tmp/opt/zimbra/data/httpd/conf/
+	mv $$(pwd)/debian/tmp/OZC/conf/magic $$(pwd)/debian/tmp/opt/zimbra/data/httpd/conf/
+
+override_dh_install:
+	dh_install
+	rm -rf $(CURDIR)/debian/zimbra-httpd/opt/zimbra/data/httpd/build
+	rm -f $(CURDIR)/debian/zimbra-httpdOZCB/apxs

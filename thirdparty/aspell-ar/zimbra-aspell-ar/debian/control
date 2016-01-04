@@ -1,0 +1,14 @@
+Source: zimbra-aspell-ar
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-aspell
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: http://aspell.net/
+
+Package: zimbra-aspell-ar
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-aspell
+Description: Aspell Arabic Dictionary

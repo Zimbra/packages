@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+override_dh_auto_configure:
+	./configure --vars ASPELL=OZCB/aspell \
+	PREZIP=OZCB/prezip-bin
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp
+	echo "add zimbra.rws" >>$$(pwd)/debian/tmpOZCL/aspell-0.60/en.multi
+	echo "add zimbra.rws" >>$$(pwd)/debian/tmpOZCL/aspell-0.60/en_US.multi

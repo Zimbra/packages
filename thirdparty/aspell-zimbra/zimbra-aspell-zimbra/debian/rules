@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/aspell-0.60
+	echo -e "Zimbra\nzimlet\nzimlets\nComcast\nVMware\nSynacor\nZimbra" | /opt/zimbra/common/bin/aspell create master --lang=en \
+	  $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/aspell-0.60/zimbra.rws

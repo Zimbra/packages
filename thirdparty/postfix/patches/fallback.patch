@@ -1,0 +1,61 @@
+--- postfix-2.11.1/src/global/mail_params.h.orig	2014-08-04 22:32:01.257859398 -0500
++++ postfix-2.11.1/src/global/mail_params.h	2014-08-04 22:35:29.097852966 -0500
+@@ -198,7 +198,8 @@
+ 
+ #define VAR_SMTP_FALLBACK	"smtp_fallback_relay"
+ #define DEF_SMTP_FALLBACK	"$fallback_relay"
+-#define VAR_LMTP_FALLBACK	"smtp_fallback_relay"
++#define VAR_LMTP_FALLBACK	"lmtp_fallback_relay"
++#define DEF_LMTP_FALLBACK	""
+ #define DEF_FALLBACK_RELAY	""
+ extern char *var_fallback_relay;
+ 
+--- postfix-2.11.1/src/smtp/lmtp_params.c.orig	2014-08-04 22:35:48.009852336 -0500
++++ postfix-2.11.1/src/smtp/lmtp_params.c	2014-08-04 22:36:19.009851303 -0500
+@@ -1,5 +1,6 @@
+     static const CONFIG_STR_TABLE lmtp_str_table[] = {
+ 	VAR_NOTIFY_CLASSES, DEF_NOTIFY_CLASSES, &var_notify_classes, 0, 0,
++	VAR_LMTP_FALLBACK, DEF_LMTP_FALLBACK, &var_fallback_relay, 0, 0,
+ 	VAR_BESTMX_TRANSP, DEF_BESTMX_TRANSP, &var_bestmx_transp, 0, 0,
+ 	VAR_ERROR_RCPT, DEF_ERROR_RCPT, &var_error_rcpt, 1, 0,
+ 	VAR_LMTP_SASL_PASSWD, DEF_LMTP_SASL_PASSWD, &var_smtp_sasl_passwd, 0, 0,
+--- postfix-2.11.1/src/smtp/smtp_connect.c.orig	2014-08-04 22:36:32.661850848 -0500
++++ postfix-2.11.1/src/smtp/smtp_connect.c	2014-08-04 22:38:18.977847306 -0500
+@@ -779,9 +779,7 @@
+     if (sites->argc == 0)
+ 	msg_panic("null destination: \"%s\"", nexthop);
+     non_fallback_sites = sites->argc;
+-    /* When we are lmtp(8) var_fallback_relay is null */
+-    if (smtp_mode)
+-	argv_split_append(sites, var_fallback_relay, CHARS_COMMA_SP);
++    argv_split_append(sites, var_fallback_relay, CHARS_COMMA_SP);
+ 
+     /*
+      * Don't give up after a hard host lookup error until we have tried the
+@@ -1056,7 +1054,7 @@
+ 	 * Pay attention to what could be configuration problems, and pretend
+ 	 * that these are recoverable rather than bouncing the mail.
+ 	 */
+-	else if (!SMTP_HAS_SOFT_DSN(why) && smtp_mode) {
++	else if (!SMTP_HAS_SOFT_DSN(why)) {
+ 
+ 	    /*
+ 	     * The fall-back destination did not resolve as expected, or it
+@@ -1072,7 +1070,7 @@
+ 	     * The next-hop relayhost did not resolve as expected, or it is
+ 	     * refusing to talk to us, or mail for it loops back to us.
+ 	     */
+-	    else if (strcmp(sites->argv[0], var_relayhost) == 0) {
++	    else if (smtp_mode && strcmp(sites->argv[0], var_relayhost) == 0) {
+ 		msg_warn("%s configuration problem", VAR_RELAYHOST);
+ 		vstring_strcpy(why->status, "4.3.5");
+ 		/* XXX Keep the diagnostic code and MTA. */
+@@ -1082,7 +1080,7 @@
+ 	     * Mail for the next-hop destination loops back to myself. Pass
+ 	     * the mail to the best_mx_transport or bounce it.
+ 	     */
+-	    else if (SMTP_HAS_LOOP_DSN(why) && *var_bestmx_transp) {
++	    else if (smtp_mode && SMTP_HAS_LOOP_DSN(why) && *var_bestmx_transp) {
+ 		dsb_reset(why);			/* XXX */
+ 		state->status = deliver_pass_all(MAIL_CLASS_PRIVATE,
+ 						 var_bestmx_transp,

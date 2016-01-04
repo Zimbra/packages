@@ -1,0 +1,3 @@
+opt/zimbra/common/include
+opt/zimbra/common/lib/pkgconfig
+opt/zimbra/common/lib/*.la

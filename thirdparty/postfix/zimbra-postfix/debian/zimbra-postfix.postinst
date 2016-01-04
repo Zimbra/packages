@@ -1,0 +1,15 @@
+#!/bin/bash
+if [ "$1" = configure ]; then
+  /bin/chgrp postdrop /opt/zimbra/common/sbin/postdrop
+  /bin/chgrp postdrop /opt/zimbra/common/sbin/postqueue
+  /bin/chgrp zimbra /opt/zimbra/common/conf
+  /bin/chmod 2755 /opt/zimbra/common/sbin/postdrop
+  /bin/chmod 2755 /opt/zimbra/common/sbin/postqueue
+  /bin/chmod 775 /opt/zimbra/common/conf
+  /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/master.cf
+  /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/main.cf
+  if [ "$2" != "" ]; then
+    /opt/zimbra/libexec/configrewrite mta
+  fi
+fi
+exit 0

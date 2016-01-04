@@ -1,0 +1,2 @@
+libtcmalloc_minimal 4 zimbra-tcmalloc-lib (>= VERSION-ITERATION)
+libtcmalloc_minimal_debug 4 zimbra-tcmalloc-lib (>= VERSION-ITERATION)

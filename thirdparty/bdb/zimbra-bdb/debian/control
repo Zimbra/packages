@@ -1,0 +1,47 @@
+Source: zimbra-bdb
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/downloads/index.html
+
+Package: zimbra-bdb
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-bdb-lib (= ${binary:Version})
+Description: Berkeley DB Binaries
+
+Package: zimbra-bdb-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: Berkeley DB Libraries
+
+Package: zimbra-bdb-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-bdb-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for Berkeley DB libraries
+
+Package: zimbra-bdb-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-bdb-lib (= ${binary:Version}), ${misc:Depends}
+Description: Berkeley DB development pieces
+
+Package: zimbra-bdb-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-bdb (= ${binary:Version}), ${misc:Depends}
+Description: Berkeley DB binary debug information
+

@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+export PKG_CONFIG_PATH=OZCL/pkgconfig
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC
+
+override_dh_strip:
+	dh_strip -pzimbra-memcached --dbg-package=zimbra-memcached-dbg
+	dh_strip -Nzimbra-memcached
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp

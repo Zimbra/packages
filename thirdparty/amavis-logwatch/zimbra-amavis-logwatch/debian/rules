@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+export DH_VERBOSE=1
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/tmpOZCB
+	mkdir -p $(CURDIR)/debian/tmpOZCE
+	mkdir -p $(CURDIR)/debian/tmpOZCS/man/man1
+	cp amavis-logwatch $$(pwd)/debian/tmp/OZCB
+	cp amavis-logwatch.conf $$(pwd)/debian/tmp/OZCE
+	cp amavis-logwatch.1 $$(pwd)/debian/tmp/OZCS/man/man1
+	sed -i -e 's|/usr/local/etc|OZCE|' $$(pwd)/debian/tmpOZCB/amavis-logwatch
+	sed -i -e 's|/usr/local/etc|OZCE|' -e 's|/usr/local/bin|OZCB|' $$(pwd)/debian/tmpOZCS/man/man1/amavis-logwatch.1
+	chmod 755 $$(pwd)/debian/tmp/OZCB/amavis-logwatch

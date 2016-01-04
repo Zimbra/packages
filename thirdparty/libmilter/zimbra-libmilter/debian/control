@@ -1,0 +1,16 @@
+Source: zimbra-libmilter
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  https://www.sendmail.com/sm/open_source/
+
+Package: zimbra-libmilter-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Depends: zimbra-base
+Multi-Arch: same
+Description: libmilter development pieces

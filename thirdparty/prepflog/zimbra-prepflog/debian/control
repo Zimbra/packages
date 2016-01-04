@@ -1,0 +1,22 @@
+Source: zimbra-prepflog
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 2.9.0
+Homepage: http://www.voipsupport.it/pmwiki/pmwiki.php?n=Linux.PrePflog
+
+Package: zimbra-prepflog
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base,
+ zimbra-perl-base, zimbra-perl-date-calc
+Description: prepflog.pl - Pre-processor for pflogsumm
+ The script sanitizes mail log files that are to be passed to pflogsumm or awstats
+ disregarding the lines relating to the re-injection of messages into postfix. I
+ use it with amavisd-new configured as a postfix after queue content filter which
+ does anti spam checks through spamassassin and antivirus checks through a third
+ party virus checker. If your postfix setup requires additional content filters
+ resulting in 3 or more passages of the same message through postfix, this script
+ will not work for you.

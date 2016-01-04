@@ -1,0 +1,7 @@
+opt/zimbra/common/bin/xml2-config
+opt/zimbra/common/include
+opt/zimbra/common/lib/*.la
+opt/zimbra/common/lib/*.so
+opt/zimbra/common/lib/cmake
+opt/zimbra/common/lib/pkgconfig
+opt/zimbra/common/lib/xml2Conf.sh

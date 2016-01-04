@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	cd build_unix && \
+	../dist/configure --prefix=OZC \
+	--enable-posixmutexes --with-mutex=POSIX/pthreads \
+	--disable-static
+
+override_dh_strip:
+	dh_strip -pzimbra-bdb-lib --dbg-package=zimbra-bdb-lib-dbg
+	dh_strip -pzimbra-bdb --dbg-package=zimbra-bdb-dbg
+	dh_strip -Nzimbra-bdb-lib -Nzimbra-bdb
+
+override_dh_auto_install:
+	cd build_unix && \
+	make install DESTDIR=$$(pwd)/../debian/tmp

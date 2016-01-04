@@ -1,0 +1,24 @@
+Source: zimbra-libbsd
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  http://libbsd.freedesktop.org/wiki/
+
+Package: zimbra-libbsd-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: libbsd Libraries
+
+Package: zimbra-libbsd-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-libbsd-lib (= ${binary:Version}), ${misc:Depends}
+Description: libbsd development pieces

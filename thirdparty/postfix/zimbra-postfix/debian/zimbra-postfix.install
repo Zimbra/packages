@@ -1,0 +1,4 @@
+opt/zimbra/common/conf
+opt/zimbra/common/libexec
+opt/zimbra/common/sbin
+opt/zimbra/common/share

@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+export DH_VERBOSE=1
+
+# Ensure rpath is set correctly
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/tmpOZC/sbin
+	cp amavisd $$(pwd)/debian/tmpOZC/sbin
+	cp amavisd-release $$(pwd)/debian/tmpOZC/sbin
+	cp amavis-mc $$(pwd)/debian/tmpOZC/sbin
+	cp amavis-services $$(pwd)/debian/tmpOZC/sbin
+	cp amavisd-status $$(pwd)/debian/tmpOZC/sbin
+	cp amavisd-snmp-subagent-zmq $$(pwd)/debian/tmpOZC/sbin

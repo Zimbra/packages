@@ -1,0 +1,12 @@
+--- amavisd-new-2.9.0/amavisd-release.orig	2015-03-05 16:30:36.962042097 -0600
++++ amavisd-new-2.9.0/amavisd-release	2015-03-05 16:30:36.962042097 -0600
+@@ -86,7 +86,8 @@
+ 
+   $log_level = 1;
+ # $socketname = '127.0.0.1:9998';
+-  $socketname = '/var/amavis/amavisd.sock';
++#  $socketname = '/var/amavis/amavisd.sock';
++$socketname = '/opt/zimbra/data/amavisd/amavisd.sock';
+ 
+ ### END OF USER CONFIGURABLE
+ }

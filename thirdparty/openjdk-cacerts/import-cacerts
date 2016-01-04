@@ -1,0 +1,99 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Getopt::Long;
+use File::Temp;
+
+my ( $help, $file, $outdir );
+my $opts_good = GetOptions(
+  'h|help'   => \$help,
+  'f|file=s' => \$file,
+  'o|out=s' => \$outdir,
+);
+
+sub usage() {
+  print "Usage $0: -f certdata.txt -o outputdir\n";
+  print "Splits out the certificates from Mozilla's certdata.txt\n";
+  print "It then loads them into the empty ca keystore for use with OpenJDK\n";
+  exit;
+}
+
+if ( !$opts_good  || $help || !($file) ) {
+  usage();
+}
+
+open( DERFH, "<$file" ) or die "Unable to open $file\n";
+my $tmpdir = File::Temp->newdir( CLEANUP => 0, DIR => "$outdir" );
+my $tmpfile;
+my $der = "";
+
+# Pull out individual CA Certs into distinct files
+my $begin = 0;
+while (<DERFH>) {
+  if ( $_ =~ /^BEGINDATA$/ ) {
+    $begin = 1;
+    next;
+  }
+  if ($begin) {
+    $der .= $_;
+  }
+  if ( $_ =~ /^CKA_TRUST_STEP_UP_APPROVED/ && $begin ) {
+    $tmpfile =
+      File::Temp->new( DIR => $tmpdir, SUFFIX => ".der", UNLINK => 0 );
+    print $tmpfile $der;
+    close $tmpfile;
+    $der = "";
+  }
+}
+close DERFH;
+
+# Purge all untrusted CA Certs
+my @untrusted = qx(egrep -l "TRUST_UNKNOWN|NOT_TRUSTED" $tmpdir/*.der);
+foreach my $untrust (@untrusted) {
+  chomp($untrust);
+  unlink $untrust or warn "Could not unlink untrusted cert $untrust: $!";
+}
+
+my @trusted = glob("$tmpdir/*.der");
+my $tmpd = File::Temp->newdir( CLEANUP => 0, DIR => "$outdir" );
+
+$der   = "";
+$begin = 0;
+
+# Convert the split out CAs into true DER format
+foreach my $trust (@trusted) {
+  chomp($trust);
+  open( DERFH, "<$trust" ) or die "Unable to open $trust: $!";
+  while (<DERFH>) {
+    if ( $_ =~ /^CKA_VALUE MULTILINE_OCTAL/ ) {
+      $begin = 1;
+    }
+    elsif ( $_ !~ /^END/ && $begin ) {
+      my @bytestrings = split(/\\/);
+      foreach my $byte (@bytestrings) {
+        chomp($byte);
+        $der .= sprintf( "%c", oct($byte) ) unless $byte eq '';
+      }
+    }
+    elsif ( $_ =~ /^END/ && $begin ) {
+      $tmpfile =
+        File::Temp->new( DIR => $tmpd, SUFFIX => ".der", UNLINK => 0 );
+      print $tmpfile $der;
+      close $tmpfile;
+      $begin = 0;
+      $der   = "";
+    }
+  }
+  close DERFH;
+  unlink($trust);
+}
+rmdir($tmpdir) or die "Unable to remove $tmpdir: $!\n";
+
+# Load DER formatted certs into our CA Cert file
+my @dercerts = glob("$tmpd/*.der");
+foreach my $cert (@dercerts) {
+  chomp($cert);
+  qx(/opt/zimbra/common/bin/keytool -noprompt -import -alias $cert -keystore $outdir/zimbra-openjdk-cacerts/cacerts -storepass 'changeit' -file $cert >/dev/null 2>&1);
+  unlink($cert);
+}
+rmdir($tmpd) or die "Unable to remove $tmpd: $!\n";

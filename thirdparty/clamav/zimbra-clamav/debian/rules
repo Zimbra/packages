@@ -1,0 +1,32 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-LOZCL -Wl,-rpath,OZCL
+export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--libdir=OZCL \
+	--with-openssl=OZC \
+	--with-xml=OZC \
+	--with-user=zimbra \
+	--with-group=zimbra \
+	--with-included-ltdl \
+	--disable-clamav \
+	--enable-milter
+
+override_dh_strip:
+	dh_strip -pzimbra-clamav-lib --dbg-package=zimbra-clamav-lib-dbg
+	dh_strip -pzimbra-clamav --dbg-package=zimbra-clamav-dbg
+	dh_strip -Nzimbra-clamav-lib -Nzimbra-clamav
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp
+
+override_dh_install:
+	dh_install
+	rm -f $(CURDIR)/debian/zimbra-clamavOZCB/clamav-config

@@ -1,0 +1,120 @@
+From afa9a9c3e019f1525a26d205f6a395b1b7a89577 Mon Sep 17 00:00:00 2001
+From: Howard Chu <hyc@openldap.org>
+Date: Tue, 3 Feb 2015 08:21:13 +0000
+Subject: [PATCH] Use batched write txns in refresh
+
+Experimental - write 500 updates per txn instead of 1:1
+---
+ servers/slapd/back-mdb/back-mdb.h |    1 +
+ servers/slapd/back-mdb/id2entry.c |    9 +++++++--
+ servers/slapd/syncrepl.c          |   34 ++++++++++++++++++++++++++++++++--
+ 3 files changed, 40 insertions(+), 4 deletions(-)
+
+diff --git a/servers/slapd/back-mdb/back-mdb.h b/servers/slapd/back-mdb/back-mdb.h
+index f07428f..8fe2561 100644
+--- a/servers/slapd/back-mdb/back-mdb.h
++++ b/servers/slapd/back-mdb/back-mdb.h
+@@ -115,6 +115,7 @@ typedef struct mdb_op_info {
+ } mdb_op_info;
+ #define MOI_READER	0x01
+ #define MOI_FREEIT	0x02
++#define MOI_KEEPER	0x04
+ 
+ /* Copy an ID "src" to pointer "dst" in big-endian byte order */
+ #define MDB_ID2DISK( src, dst )	\
+diff --git a/servers/slapd/back-mdb/id2entry.c b/servers/slapd/back-mdb/id2entry.c
+index 4792d6f..d080f3f 100644
+--- a/servers/slapd/back-mdb/id2entry.c
++++ b/servers/slapd/back-mdb/id2entry.c
+@@ -284,7 +284,7 @@ int mdb_entry_release(
+ 				mdb_entry_return( op, e );
+ 				moi = (mdb_op_info *)oex;
+ 				/* If it was setup by entry_get we should probably free it */
+-				if ( moi->moi_flag & MOI_FREEIT ) {
++				if (( moi->moi_flag & (MOI_FREEIT|MOI_KEEPER)) == MOI_FREEIT ) {
+ 					moi->moi_ref--;
+ 					if ( moi->moi_ref < 1 ) {
+ 						mdb_txn_reset( moi->moi_txn );
+@@ -541,7 +541,12 @@ int mdb_txn( Operation *op, int txnop, OpExtra **ptr )
+ 
+ 	switch( txnop ) {
+ 	case SLAP_TXN_BEGIN:
+-		return mdb_opinfo_get( op, mdb, 0, moip );
++		rc = mdb_opinfo_get( op, mdb, 0, moip );
++		if ( !rc ) {
++			moi = *moip;
++			moi->moi_flag |= MOI_KEEPER;
++		}
++		return rc;
+ 	case SLAP_TXN_COMMIT:
+ 		rc = mdb_txn_commit( moi->moi_txn );
+ 		op->o_tmpfree( moi, op->o_tmpmemctx );
+diff --git a/servers/slapd/syncrepl.c b/servers/slapd/syncrepl.c
+index 255ca5b..e01297b 100644
+--- a/servers/slapd/syncrepl.c
++++ b/servers/slapd/syncrepl.c
+@@ -110,6 +110,10 @@ typedef struct syncinfo_s {
+ 	int			si_refreshDelete;
+ 	int			si_refreshPresent;
+ 	int			si_refreshDone;
++	int			si_refreshCount;
++	time_t		si_refreshBeg;
++	time_t		si_refreshEnd;
++	OpExtra		*si_refreshTxn;
+ 	int			si_syncdata;
+ 	int			si_logstate;
+ 	int			si_lazyCommit;
+@@ -736,6 +740,11 @@ do_syncrep1(
+ 	}
+ 
+ 	si->si_refreshDone = 0;
++	si->si_refreshBeg = slap_get_time();
++	si->si_refreshCount = 0;
++	si->si_refreshTxn = NULL;
++	Debug( LDAP_DEBUG_ANY, "do_syncrep1: %s starting refresh\n",
++		si->si_ridtxt, 0, 0 );
+ 
+ 	rc = ldap_sync_search( si, op->o_tmpmemctx );
+ 
+@@ -1267,6 +1276,15 @@ do_syncrep2(
+ 					{
+ 						si->si_refreshDone = 1;
+ 					}
++					if ( si->si_refreshDone ) {
++						if ( si->si_refreshCount ) {
++							LDAP_SLIST_REMOVE( &op->o_extra, si->si_refreshTxn, OpExtra, oe_next );
++							op->o_bd->bd_info->bi_op_txn( op, SLAP_TXN_COMMIT, &si->si_refreshTxn );
++						}
++						si->si_refreshEnd = slap_get_time();
++	Debug( LDAP_DEBUG_ANY, "do_syncrep1: %s finished refresh\n",
++		si->si_ridtxt, 0, 0 );
++					}
+ 					ber_scanf( ber, /*"{"*/ "}" );
+ 					if ( abs(si->si_type) == LDAP_SYNC_REFRESH_AND_PERSIST &&
+ 						si->si_refreshDone )
+@@ -2933,8 +2951,20 @@ syncrepl_entry(
+ 		slap_queue_csn( op, syncCSN );
+ 	}
+ 
+-	if ( !si->si_refreshDone && si->si_lazyCommit )
+-		op->o_lazyCommit = SLAP_CONTROL_NONCRITICAL;
++	if ( !si->si_refreshDone ) {
++		if ( si->si_lazyCommit )
++			op->o_lazyCommit = SLAP_CONTROL_NONCRITICAL;
++		if ( si->si_refreshCount == 500 ) {
++			LDAP_SLIST_REMOVE( &op->o_extra, si->si_refreshTxn, OpExtra, oe_next );
++			op->o_bd->bd_info->bi_op_txn( op, SLAP_TXN_COMMIT, &si->si_refreshTxn );
++			si->si_refreshCount = 0;
++			si->si_refreshTxn = NULL;
++		}
++		if ( !si->si_refreshCount ) {
++			op->o_bd->bd_info->bi_op_txn( op, SLAP_TXN_BEGIN, &si->si_refreshTxn );
++		}
++		si->si_refreshCount++;
++	}
+ 
+ 	slap_op_time( &op->o_time, &op->o_tincr );
+ 	switch ( syncstate ) {
+-- 
+1.7.10.4
+

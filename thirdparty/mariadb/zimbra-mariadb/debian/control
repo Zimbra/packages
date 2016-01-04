@@ -1,0 +1,47 @@
+Source: zimbra-mariadb
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev, libaio-dev, libncurses5-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: https://www.mariadb.org
+
+Package: zimbra-mariadb
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${perl:Depends}, ${misc:Depends}, zimbra-mariadb-lib (= ${binary:Version}),
+ zimbra-store-base | zimbra-mta-base
+Description: MariaDB Binaries
+
+Package: zimbra-mariadb-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: MariaDB Libraries
+
+Package: zimbra-mariadb-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-mariadb-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for mariadb libraries
+
+Package: zimbra-mariadb-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-mariadb-lib (= ${binary:Version}), ${misc:Depends}
+Description: MariaDB development pieces
+
+Package: zimbra-mariadb-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-mariadb (= ${binary:Version}), ${misc:Depends}
+Description: MariaDB binary debug information

@@ -1,0 +1,2 @@
+version=3
+ftp://ftp.cyrusimap.org/cyrus-sasl/cyrus-sasl-(\d+\.\d+\.\d+)\.tar\.gz

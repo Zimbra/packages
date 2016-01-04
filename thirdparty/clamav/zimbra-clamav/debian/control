@@ -1,0 +1,48 @@
+Source: zimbra-clamav
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev, zimbra-libxml2-dev,
+ libz-dev, zimbra-libmilter-dev, libncurses5-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage: http://www.clamav.net/
+
+Package: zimbra-clamav
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-clamav-lib (= ${binary:Version})
+Description: ClamAV Binaries
+
+Package: zimbra-clamav-lib
+Section: libs
+Priority: important
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-mta-base
+Description: ClamAV Libraries
+
+Package: zimbra-clamav-lib-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-clamav-lib (= ${binary:Version}), ${misc:Depends}
+Description: Debug information for ClamAV libraries
+
+Package: zimbra-clamav-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-clamav-lib (= ${binary:Version}), ${misc:Depends}
+Description: ClamAV development pieces
+
+Package: zimbra-clamav-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-clamav (= ${binary:Version}), ${misc:Depends}
+Description: ClamAV binary debug information
+

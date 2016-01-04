@@ -1,0 +1,2 @@
+librrd 2 zimbra-rrdtool-lib (>= VERSION-ITERATION)
+librrd_th 2 zimbra-rrdtool-lib (>= VERSION-ITERATION)
