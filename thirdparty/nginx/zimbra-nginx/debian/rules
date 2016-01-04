@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	./configure --prefix=OZC \
+	--with-cc-opt="-g -IOZCI" \
+	--with-ld-opt="-Wl,-rpath,OZCL -LOZCL" \
+	--with-debug \
+	--with-ipv6 \
+	--with-http_ssl_module \
+	--with-http_stub_status_module \
+	--with-pcre \
+	--with-http_upstream_zmauth_module \
+	--with-http_zm_sso_module \
+	--with-http_spdy_module \
+	--with-mail \
+	--with-mail-sasl \
+	--with-mail_ssl_module \
+	--error-log-path=/opt/zimbra/log/nginx.log \
+	--http-log-path=/opt/zimbra/log/nginx.access.log \
+	--http-client-body-temp-path=/opt/zimbra/data/tmp/nginx/client \
+	--http-proxy-temp-path=/opt/zimbra/data/tmp/nginx/proxy \
+	--http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
+	--without-http_scgi_module \
+	--without-http_uwsgi_module \
+	--add-module=modules/nviennot-nginx-tcp-keepalive
+
+override_dh_strip:
+	dh_strip -pzimbra-nginx --dbg-package=zimbra-nginx-dbg
+	dh_strip -Nzimbra-nginx
+
+override_dh_auto_install:
+	make install DESTDIR=$$(pwd)/debian/tmp
+	mkdir -p  $(CURDIR)/debian/tmp/opt/zimbra/data/nginx
+	mv $(CURDIR)/debian/tmpOZC/html $(CURDIR)/debian/tmp/opt/zimbra/data/nginx/

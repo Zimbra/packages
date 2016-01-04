@@ -1,0 +1,75 @@
+                     Instructions for building nginx-zimbra
+                     --------------------------------------
+
+    [*]  Zimbra Nginx code currently builds only on linux hosts. Do not try this on MACOSX
+    
+    [*]  Assuming p4 is installed & setup properly on your linux host, 
+         Check out //depot/zimbra/<zimbra branch>/ThirdParty/nginx/ (if you don't care which branch, just use main),
+         //depot/zimbra/<zimbra branch>/ThirdParty/beta_versions.def & //depot/zimbra/<zimbra branch>/ThirdParty/versions.def
+         (Notice that both versions.def & beta_versions.def is one level above the 'nginx' dir and directly under 'ThirdParty' 
+
+    [*]  Build latest nginx
+
+         $ $ cd <path_to_depot_main>/ThirdParty/nginx/
+         $ make
+         
+         This does a cd to 'nginx-<NGINX_VERSION>-zimbra' where <NGINX_VERSION> refers to the 'NGINX_VERSION' defined in versions.def/beta_versions.def. 
+         (See the `docs/SUPPORTED' document for details about the current nginx revision). It also does the configuration for you by running ./configure 
+         with the following options
+         (cd nginx-<NGINX_VERSION>-zimbra; \
+            ./configure \
+            --prefix=/opt/zimbra/nginx-<NGINX_VERSION>-zimbra \
+            --with-cc-opt="-g -I/opt/zimbra/cyrus-sasl-2.1.26.2z/include -I/opt/zimbra/openssl-1.0.1i/include " \
+            --with-ld-opt="-L/opt/zimbra/cyrus-sasl-2.1.26.2z/lib -L/opt/zimbra/openssl-1.0.1i/lib " \
+            --with-debug \
+            --with-ipv6 \
+            --with-http_ssl_module \
+            --with-http_stub_status_module \
+            --with-pcre \
+            --with-http_upstream_zmauth_module \
+            --with-http_zm_sso_module \
+            --with-mail \
+            --with-mail-sasl \
+            --with-mail_ssl_module \
+            --error-log-path=/opt/zimbra/log/nginx.log \
+            --http-log-path=/opt/zimbra/log/nginx.access.log \
+            --http-client-body-temp-path=/opt/zimbra/data/tmp/nginx/client \
+            --http-proxy-temp-path=/opt/zimbra/data/tmp/nginx/proxy \
+            --http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
+            --without-http_scgi_module \
+            --without-http_uwsgi_module \
+            --add-module=/kpariani/zimbra/p4/main/ThirdParty/nginx/nviennot-nginx-tcp-keepalive;)
+         
+         <Error>: In case you get the following error asking for missing PCRE library
+         ./configure: error: the HTTP rewrite module requires the PCRE library.
+            You can either disable the module by using --without-http_rewrite_module
+            option, or install the PCRE library into the system, or build the PCRE library
+            statically from the source with nginx by using --with-pcre=<path> option.
+            make: *** [build] Error 1
+         <Solution>: Install PCRE lib by running 'apt-get install libpcre3 libpcre3-dev' on Ubuntu or its equivalent on RHEL,SLES
+         
+         <Error>: In case you get the following error asking for missing zlib library
+         ./configure: error: the HTTP gzip module requires the zlib library.
+            You can either disable the module by using --without-http_gzip_module
+            option, or install the zlib library into the system, or build the zlib library
+            statically from the source with nginx by using --with-zlib=<path> option.
+            make: *** [build] Error 1
+         <Solution>: Install zlib lib by running 'apt-get install libgcrypt11-dev zlib1g-dev' on Ubuntu or its equivalent on RHEL,SLES
+         
+         Also looking at the setting of '--with-cc-opt' flag above, you can see that the build will work only if you already have the 
+         cyrus-sasl & openssl libraries pre-installed under /opt/zimbra
+         
+         If the build goes through fine, you will see a symlink like this
+         /opt/zimbra/nginx/ -> /opt/zimbra/nginx-<NGINX_VERSION>-zimbra/
+         
+         $ sudo make dev-install
+
+         This will install nginx onto your system under the directory
+         /opt/zimbra/nginx/
+
+    [*]  Build older versions of nginx
+         Alternatively, older versions of nginx source can also be built by setting NGINX_VERSION in ThirdParty/versions.def & ThirdParty/beta_versions.def
+         to a supported version and then issuing 'make' again
+
+                                      ***
+
