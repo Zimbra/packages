@@ -1,2 +1,0 @@
-version=3
-opts=pgpsigurlmangle=s/$/.asc/ https://www.openssl.org/source/openssl-(\d+\.\d+\.\d+[a-z]?)\.tar\.gz
