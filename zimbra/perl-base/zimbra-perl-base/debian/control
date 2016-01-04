@@ -1,0 +1,15 @@
+Source: zimbra-perl-base
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-perl-base
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, perl,
+ zimbra-base
+Description: Zimbra Perl Base
+ Zimbra Perl Base is used as a simple method to allow removing
+ all the zimbra specific perl modules.  It in itself has no
+ actual contents.
