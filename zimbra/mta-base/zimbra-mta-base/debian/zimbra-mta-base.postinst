@@ -1,0 +1,44 @@
+#!/bin/bash
+if [ "$1" = configure ]; then
+  grp_exists() {
+    if [ -x /usr/bin/getent ]
+    then
+      getent group $1 >/dev/null 2>&1
+      FOUND=$?
+    else
+      egrep -q "^$1:" /etc/group
+      FOUND=$?
+    fi
+    return $FOUND
+  }
+
+  acct_exists() {
+    if [ -x /usr/bin/getent ]
+    then
+      getent passwd $1 >/dev/null 2>&1
+      return $?
+    else
+      egrep -q "^$1:" /etc/passwd
+      return $?
+    fi
+  }
+
+  grp_exists postfix
+  if [ $? != 0 ]; then
+          groupadd -r postfix
+  fi
+
+  grp_exists postdrop
+  if [ $? != 0 ]; then
+          groupadd -r postdrop
+  fi
+
+  acct_exists postfix
+  if [ $? != 0 ]; then
+          useradd -r -g postfix -d /opt/zimbra/postfix postfix
+          /bin/rm -rf /opt/zimbra/postfix
+  fi
+
+  usermod -a -G postfix,tty zimbra
+fi
+exit 0

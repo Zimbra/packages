@@ -1,0 +1,13 @@
+Source: zimbra-base
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Depends: passwd, adduser
+Standards-Version: 3.9.5
+
+Package: zimbra-base
+Architecture: all
+Description: Zimbra Base
+ Zimbra Base is used as a simple method to allow removing
+ all the zimbra specific third party packages.

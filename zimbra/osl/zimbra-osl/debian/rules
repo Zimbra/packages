@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/docs
+	cp open_source_licenses.txt $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/docs

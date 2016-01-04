@@ -1,0 +1,38 @@
+#!/bin/bash
+if [ "$1" = configure ]; then
+  grp_exists() {
+    if [ -x /usr/bin/getent ]
+    then
+      getent group $1 >/dev/null 2>&1
+      FOUND=$?
+    else
+      egrep -q "^$1:" /etc/group
+      FOUND=$?
+    fi
+    return $FOUND
+  }
+
+  acct_exists() {
+    if [ -x /usr/bin/getent ]
+    then
+      getent passwd $1 >/dev/null 2>&1
+      return $?
+    else
+      egrep -q "^$1:" /etc/passwd
+      return $?
+    fi
+  }
+
+  grp_exists zimbra
+  if [ $? != 0 ]; then
+          groupadd -r zimbra
+  fi
+
+  acct_exists zimbra
+  if [ $? != 0 ]; then
+          useradd -r -g zimbra -G tty -d /opt/zimbra -s /bin/bash zimbra
+  else
+          usermod -g zimbra -d /opt/zimbra -s /bin/bash zimbra
+  fi
+fi
+exit 0

@@ -1,0 +1,14 @@
+Source: zimbra-ldap-components
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-ldap-components
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ zimbra-ldap-base, zimbra-lmdb, zimbra-openldap-server
+Description: Zimbra components for ldap package
+ Zimbra ldap components pulls in all the packages used by
+ zimbra-ldap

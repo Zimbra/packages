@@ -1,0 +1,17 @@
+Source: zimbra-os-requirements
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-os-requirements
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ coreutils, file, libaio1, libexpat1, libidn11, libpcre3, libstdc++6,
+ netcat-openbsd, pax, perl, procps, resolvconf, sudo,
+ sysstat, unzip, zimbra-base, libsocket6-perl,
+ OSDEPS
+Description: Zimbra OS Requirements
+ Zimbra OS requirements is used as a simple method to pull in all
+ OS required core packages

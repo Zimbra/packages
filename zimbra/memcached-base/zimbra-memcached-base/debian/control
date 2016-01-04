@@ -1,0 +1,14 @@
+Source: zimbra-memcached-base
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-memcached-base
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ zimbra-base
+Description: Zimbra memcached Base
+ Zimbra memcached Base is used as a simple method to allow removing
+ all the zimbra-memcached specific packages

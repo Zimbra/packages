@@ -1,0 +1,14 @@
+Source: zimbra-store-components
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-store-components
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ zimbra-store-base, zimbra-mariadb
+Description: Zimbra components for store package
+ Zimbra store components pulls in all the packages used by
+ zimbra-store

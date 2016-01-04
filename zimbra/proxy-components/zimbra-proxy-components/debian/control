@@ -1,0 +1,14 @@
+Source: zimbra-proxy-components
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-proxy-components
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ zimbra-proxy-base, zimbra-nginx
+Description: Zimbra components for proxy package
+ Zimbra proxy components pulls in all the packages used by
+ zimbra-proxy

@@ -1,0 +1,14 @@
+Source: zimbra-osl
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-osl
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ zimbra-base
+Description: Opensource Licenses
+ This file contains the licenses for the open source 3rd party
+ software used by Zimbra
