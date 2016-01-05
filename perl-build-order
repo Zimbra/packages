@@ -53,7 +53,7 @@ Makefile.etiny
 Makefile.lmoreutils
 Makefile.cinifiles
 Makefile.cclan
-Makefile.bvector
+thirdparty/perl-bit-vector
 Makefile.dcalc
 Makefile.dmanip
 Makefile.usyslog
@@ -66,7 +66,7 @@ Makefile.ftail
 Makefile.fgrep
 Makefile.duuid
 Makefile.csaltedhash
-Makefile.azip
+thirdparty/perl-archive-zip
 Makefile.error
 Makefile.xparser
 Makefile.xsbase
@@ -93,7 +93,7 @@ Makefile.nclite
 Makefile.cfastmmap
 Makefile.pprocesstable
 Makefile.nldapapi
-Makefile.berkeleydb
+thirdparty/perl-berkeleydb
 Makefile.db_file
 Makefile.dmysql
 Makefile.mspf
