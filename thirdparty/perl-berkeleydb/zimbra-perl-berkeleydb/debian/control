@@ -1,0 +1,18 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-bdb-dev
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: BerkeleyDB - Perl extension for Berkeley DB version 2, 3, 4 or 5
+ This Perl module provides an interface to most of the functionality available
+ in Berkeley DB versions 2, 3, 5 and 6. In general it is safe to assume that
+ the interface provided here to be identical to the Berkeley DB interface. The
+ main changes have been to make the Berkeley DB API work in a Perl way. Note
+ that if you are using Berkeley DB 2.x, the new features available in Berkeley
+ DB 3.x or later are not available via this module.
