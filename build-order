@@ -65,7 +65,7 @@ thirdparty/nginx
 thirdparty/unbound
 thirdparty/opendkim
 thirdparty/zeromq
-Perl/build-order
+perl-build-order
 thirdparty/cluebringer
 zimbra/core-components
 zimbra/apache-components
