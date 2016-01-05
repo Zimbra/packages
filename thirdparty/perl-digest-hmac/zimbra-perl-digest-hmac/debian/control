@@ -1,0 +1,20 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-digest-sha1
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-digest-sha1
+Description: Digest::HMAC - Keyed-Hashing for Message Authentication
+ HMAC is used for message integrity checks between two parties that
+ share a secret key, and works in combination with some other Digest
+ algorithm, usually MD5 or SHA-1.  The HMAC mechanism is described in
+ RFC 2104.
+ .
+ The Digest::HMAC module follow the common Digest:: interface, but the
+ constructor takes the secret key and the name of some other simple
+ Digest:: module as argument.

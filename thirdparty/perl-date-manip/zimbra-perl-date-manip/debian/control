@@ -1,0 +1,18 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, libtest-inter-perl
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Date::Manip - Date manipulation routines
+ Date::Manip is a series of modules designed to make any common date/time
+ operation easy to do. Operations such as comparing two times,
+ determining a date a given amount of time from another, or parsing
+ international times are all easily done. It deals with time as it is
+ used in the Gregorian calendar (the one currently in use) with full
+ support for time changes due to daylight saving time

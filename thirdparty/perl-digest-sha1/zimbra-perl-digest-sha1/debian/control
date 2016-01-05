@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Digest::SHA1 - Perl interface to the SHA-1 algorithm
+ The Digest::SHA1 module allows you to use the NIST SHA-1 message
+ digest algorithm from within Perl programs.  The algorithm takes as
+ input a message of arbitrary length and produces as output a 160-bit
+ "fingerprint" or "message digest" of the input.

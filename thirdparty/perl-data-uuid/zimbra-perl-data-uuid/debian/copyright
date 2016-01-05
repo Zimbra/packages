@@ -1,0 +1,42 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://metacpan.org/release/MODNAME
+Upstream-Contact: rjbs@cpan.org
+Upstream-Name: MODNAME
+
+Files: *
+Copyright:
+ Copyright (C) 2015 Ricardo Signes
+ Copyright (C) 2001-2013, Alexander Golomshtok
+ Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
+ Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+ Copyright (c) 1998 Microsoft.
+License: MIT
+
+Files: debian/*
+Copyright: 2015, Zimbra Packaging Services <packaging-devel@zimbra.com>
+License: GPL-2
+
+License: MIT
+ To anyone who acknowledges that this file is provided "AS IS"
+ without any express or implied warranty: permission to use, copy,
+ modify, and distribute this file for any purpose is hereby
+ granted without fee, provided that the above copyright notices and
+ this notice appears in all source code copies, and that none of
+ the names of Open Software Foundation, Inc., Hewlett-Packard
+ Company, Microsoft, or Digital Equipment Corporation be used in
+ advertising or publicity pertaining to distribution of the software
+ without specific, written prior permission. Neither Open Software
+ Foundation, Inc., Hewlett-Packard Company, Microsoft, nor Digital
+ Equipment Corporation makes any representations about the
+ suitability of this software for any purpose.
+ .
+ The same terms apply to this code.
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 2 can be found in `/usr/share/common-licenses/GPL-2'.

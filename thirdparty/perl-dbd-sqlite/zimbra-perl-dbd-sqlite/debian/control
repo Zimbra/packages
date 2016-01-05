@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-dbi
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ zimbra-perl-dbi
+Description: DBD::SQLite - Self-contained RDBMS in a DBI Driver
+ DBD::SQLite is a Perl DBI driver for SQLite, that includes the entire thing in the
+ distribution. So in order to get a fast transaction capable RDBMS working for
+ your perl project you simply have to install this module, and nothing else.
