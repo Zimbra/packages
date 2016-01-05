@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Crypt-OpenSSL-RSA   .*/Crypt-OpenSSL-RSA-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz|zip)$

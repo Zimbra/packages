@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Convert-ASN1   .*/Convert-ASN1-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz|zip)$

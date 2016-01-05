@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Crypt-OpenSSL-Random   .*/Crypt-OpenSSL-Random-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz|zip)$

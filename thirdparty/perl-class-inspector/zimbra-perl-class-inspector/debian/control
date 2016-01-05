@@ -1,0 +1,17 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Class::Inspector - Get information about a class and its structure
+ Class::Inspector allows you to get information about a loaded class. Most or all of
+ this information can be found in other ways, but they aren't always very friendly,
+ and usually involve a relatively high level of Perl wizardry, or strange and unusual
+ looking code. Class::Inspector attempts to provide an easier, more friendly interface
+ to this information.

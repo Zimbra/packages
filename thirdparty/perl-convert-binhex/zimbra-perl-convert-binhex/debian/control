@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Convert::BinHex - extract data from Macintosh BinHex files
+ BinHex is a format used by Macintosh for transporting Mac files safely
+ through electronic mail, as short-lined, 7-bit, semi-compressed data
+ streams. Ths module provides a means of converting those data streams
+ back into into binary data.

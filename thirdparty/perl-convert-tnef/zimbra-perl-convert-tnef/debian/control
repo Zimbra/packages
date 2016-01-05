@@ -1,0 +1,17 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-mime-tools,
+ zimbra-perl-io-stringy
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-mime-tools,
+ zimbra-perl-io-stringy
+Description: Convert::TNEF - Perl module to read TNEF files
+ TNEF stands for Transport Neutral Encapsulation Format, and if you've
+ ever been unfortunate enough to receive one of these files as an email
+ attachment, you may want to use this module.

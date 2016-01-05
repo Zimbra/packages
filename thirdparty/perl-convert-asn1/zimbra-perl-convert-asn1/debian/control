@@ -1,0 +1,13 @@
+Source: zimbra-perl-convert-asn1
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, libtest-simple-perl,
+ zimbra-perl-math-bigint
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Convert-ASN1
+
+Package: zimbra-perl-convert-asn1
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-math-bigint
+Description: ASN.1 Encode/Decode library

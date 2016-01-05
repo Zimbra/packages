@@ -1,0 +1,13 @@
+Source: zimbra-perl-compress-raw-zlib
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Compress-Raw-Bzip2
+
+Package: zimbra-perl-compress-raw-zlib
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Compress::Raw::Zlib - Low-Level Interface to zlib compression library
+ This module provides a Perl interface to the zlib compression library.

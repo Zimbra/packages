@@ -1,0 +1,14 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Cache::FastMmap - Uses an mmap'ed file to act as a shared memory interprocess cache
+ In multi-process environments (eg mod_perl, forking daemons, etc), it's common
+ to want to cache information, but have that cache shared between processes.

@@ -1,0 +1,13 @@
+Source: zimbra-perl-crypt-openssl-rsa
+Section: perl
+Priority: optional
+Maintainer: Zimbra <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-openssl-dev
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Crypt-OpenSSL-RSA
+
+Package: zimbra-perl-crypt-openssl-rsa
+Architecture: any
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-base
+Description: Crypt::OpenSSL::RSA provides the ability to do RSA encoding using
+ the OpenSSL libraries

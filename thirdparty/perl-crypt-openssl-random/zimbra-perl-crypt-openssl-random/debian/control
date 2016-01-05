@@ -1,0 +1,13 @@
+Source: zimbra-perl-crypt-openssl-random
+Section: perl
+Priority: optional
+Maintainer: Zimbra <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-openssl-dev
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Crypt-OpenSSL-Random
+
+Package: zimbra-perl-crypt-openssl-random
+Architecture: any
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Crypt::OpenSSL::Random provides the ability to seed and query the OpenSSL
+ library's pseudo-random number generator.

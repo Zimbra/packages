@@ -1,0 +1,17 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Carp::Clan - Report errors from perspective of caller of a "clan" of modules
+ This module reports errors from the perspective of the caller of a
+ "clan" of modules, similar to "Carp.pm" itself. But instead of giving
+ it a number of levels to skip on the calling stack, you give it a
+ pattern to characterize the package names of the "clan" of modules
+ which shall never be blamed for any error.
