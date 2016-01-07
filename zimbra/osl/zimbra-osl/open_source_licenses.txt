@@ -48,7 +48,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> freetype-2.4.9
    >>> ganymed-ssh2-build210-none
    >>> gifencoder-none
-   >>> google-perftools-2.2
+   >>> google-perftools-2.4
    >>> heimdal-1.5.3
    >>> ical4j-0.9.16
    >>> icu4j-4.8.1.1
@@ -1381,7 +1381,7 @@ SUCH DAMAGE.
  University of Illinois, Urbana-Champaign.
 
 
->>> google-perftools-2.2
+>>> google-perftools-2.4
 
 Copyright (c) 2005, Google Inc.
 All rights reserved.
