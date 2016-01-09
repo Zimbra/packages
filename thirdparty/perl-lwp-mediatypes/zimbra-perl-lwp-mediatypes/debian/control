@@ -1,0 +1,14 @@
+Source: zimbra-perl-lwp-mediatypes
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/LWP-MediaTypes
+
+Package: zimbra-perl-lwp-mediatypes
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: LWP::MediaTypes - guess media type for a file or a URL
+ This module provides functions for handling media (also known as MIME)
+ types and encodings.
