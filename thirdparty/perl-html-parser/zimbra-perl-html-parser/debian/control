@@ -1,0 +1,15 @@
+Source: zimbra-perl-html-parser
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/HTML-Parser
+
+Package: zimbra-perl-html-parser
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: HTML::Parser - HTML extraction tools
+ The HTML-Parser distribution is is a collection
+ of modules that parse and extract information
+ from HTML documents.

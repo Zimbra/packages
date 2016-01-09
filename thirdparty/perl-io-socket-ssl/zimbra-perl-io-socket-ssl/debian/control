@@ -1,0 +1,19 @@
+Source: zimbra-perl-io-socket-ssl
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay,
+ zimbra-perl-io-socket-ip
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/IO-Socket-SSL
+
+Package: zimbra-perl-io-socket-ssl
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-mozilla-ca,
+ zimbra-perl-net-ssleay, zimbra-perl-io-socket-ip
+Description: SSL sockets with IO::Socket interface
+ IO::Socket::SSL makes using SSL/TLS much easier by wrapping the
+ necessary functionality into the familiar IO::Socket interface and
+ providing secure defaults whenever possible. This way, existing
+ applications can be made SSL-aware without much effort, at least if
+ you do blocking I/O and don't use select or poll.

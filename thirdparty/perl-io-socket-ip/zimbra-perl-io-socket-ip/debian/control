@@ -1,0 +1,17 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-socket
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ zimbra-perl-socket
+Description: IO::Socket::IP - Family-neutral IP socket supporting both IPv4 and IPv6
+ This module provides a protocol-independent way to use IPv4 and IPv6 sockets,
+ intended as a replacement for IO::Socket::INET. Most constructor arguments
+ and methods are provided in a backward-compatible way. For a list of known
+ differences, see the IO::Socket::INET INCOMPATIBILITES section below.

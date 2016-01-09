@@ -1,0 +1,18 @@
+Source: zimbra-perl-http-daemon
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-http-date, zimbra-perl-http-message,
+ zimbra-perl-lwp-mediatypes
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/HTTP-Daemon
+
+Package: zimbra-perl-http-daemon
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-http-date,
+ zimbra-perl-http-message, zimbra-perl-lwp-mediatypes
+Description: HTTP::Daemon - a simple http server class
+ Instances of the HTTP::Daemon class are HTTP/1.1 servers that listen
+ on a socket for incoming requests. The HTTP::Daemon is a subclass of
+ IO::Socket::INET, so you can perform socket operations directly on it
+ too.

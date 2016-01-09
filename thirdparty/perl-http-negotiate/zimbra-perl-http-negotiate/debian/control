@@ -1,0 +1,17 @@
+Source: zimbra-perl-http-negotiate
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-http-message
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/HTTP-Negotiate
+
+Package: zimbra-perl-http-negotiate
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-http-message
+Description: HTTP::Negotiate - choose a variant to serve
+ This module provides a complete implementation of the HTTP content
+ negotiation algorithm specified in draft-ietf-http-v11-spec-00.ps
+ chapter 12. Content negotiation allows for the selection of a preferred
+ content representation based upon attributes of the negotiable variants
+ and the value of the various Accept* header fields in the request.

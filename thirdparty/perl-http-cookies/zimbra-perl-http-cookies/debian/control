@@ -1,0 +1,16 @@
+Source: zimbra-perl-http-cookies
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-http-date, zimbra-perl-http-message
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/HTTP-Cookies
+
+Package: zimbra-perl-http-cookies
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-http-date,
+ zimbra-perl-http-message
+Description: HTTP::Cookies - HTTP cookie jars
+ This class is for objects that represent a "cookie jar" -- that is, a
+ database of all the HTTP cookies that a given LWP::UserAgent object
+ knows about.

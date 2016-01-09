@@ -1,0 +1,18 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-geography-countries
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ zimbra-perl-geography-countries
+Description: IP::Country - fast lookup of country codes from IP addresses
+ This module comes bundled with a database of countries where various IP addresses
+ have been assigned. Although the country of assignment will probably be the
+ country associated with a large ISP rather than the client herself, this is
+ probably good enough for most log analysis applications, and under test has
+ proved to be as accurate as reverse-DNS and WHOIS lookup.

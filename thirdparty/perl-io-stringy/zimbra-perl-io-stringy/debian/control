@@ -1,0 +1,15 @@
+Source: zimbra-perl-io-stringy
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/IO-stringy
+
+Package: zimbra-perl-io-stringy
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: IO-stringy - I/O on in-core objects like strings and arrays
+ This toolkit primarily provides modules for performing both traditional
+ and object-oriented i/o) on things *other* than normal filehandles; in
+ particular, IO::Scalar, IO::ScalarArray, and IO::Lines.

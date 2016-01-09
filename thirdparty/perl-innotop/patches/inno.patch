@@ -1,0 +1,99 @@
+--- innotop-1.9.1/innotop.orig	2014-04-01 16:36:39.000000000 -0500
++++ innotop-1.9.1/innotop	2014-05-14 18:58:59.000000000 -0500
+@@ -470,7 +470,7 @@
+    # too many locks to print, the output might be truncated)
+ 
+    my $time_text;
+-   if ( $mysqlversion =~ /^5\.6/ ) {
++   if ( ($mysqlversion =~ /^5\.6/) || ($mysqlversion =~ /^10\.[01]/) ) {
+       ( $time_text ) = $fulltext =~ m/^([0-9-]* [0-9:]*) [0-9a-f]* INNODB MONITOR OUTPUT/m;
+       $innodb_data{'ts'} = [ parse_innodb_timestamp_56( $time_text ) ];
+    } else {
+@@ -638,7 +638,7 @@
+    return 0 unless $fulltext;
+ 
+    my ( $ts, $type );
+-   if ( $mysqlversion =~ /^5.6/ ) {
++   if ( ($mysqlversion =~ /^5.6/) || ($mysqlversion =~ /^10\.[01]/) ) {
+       ( $ts, $type ) = $fulltext =~ m/^([0-9-]* [0-9:]*)\s[0-9a-f]*\s+(\w+)/m;
+       $section->{'ts'} = [ parse_innodb_timestamp_56( $ts ) ];
+    } else {
+@@ -890,7 +890,7 @@
+ }
+ 
+ sub parse_dl_section {
+-   my ( $dl, $complete, $debug, $full ) = @_;
++   my ( $dl, $complete, $debug, $full, $mysqlversion ) = @_;
+    return unless $dl;
+    my $fulltext = $dl->{'fulltext'};
+    return 0 unless $fulltext;
+@@ -898,7 +898,12 @@
+    my ( $ts ) = $fulltext =~ m/^$s$/m;
+    return 0 unless $ts;
+ 
+-   $dl->{'ts'} = [ parse_innodb_timestamp( $ts ) ];
++   if ( ($mysqlversion =~ /^5\.6/) || ($mysqlversion =~ /^10\.[01]/) ) {
++      $dl->{'ts'} = [ parse_innodb_timestamp_56( $ts ) ];
++   }
++   else {
++      $dl->{'ts'} = [ parse_innodb_timestamp( $ts ) ];
++   }
+    $dl->{'timestring'} = ts_to_string($dl->{'ts'});
+    $dl->{'txns'} = {};
+ 
+@@ -5116,6 +5121,7 @@
+ sub display_B {
+    my @display_lines;
+    my @cxns = get_connections();
++   get_status_info(@cxns);
+    get_innodb_status(\@cxns);
+ 
+    my @buffer_pool;
+@@ -5226,6 +5232,7 @@
+ sub display_D {
+    my @display_lines;
+    my @cxns = get_connections();
++   get_status_info(@cxns);
+    get_innodb_status(\@cxns);
+ 
+    my @deadlock_transactions;
+@@ -5290,6 +5297,7 @@
+ sub display_F {
+    my @display_lines;
+    my ( $cxn ) = get_connections();
++   get_status_info($cxn);
+    get_innodb_status([$cxn]);
+    my $innodb_status = $vars{$cxn}->{$clock};
+ 
+@@ -5324,6 +5332,7 @@
+ sub display_I {
+    my @display_lines;
+    my @cxns = get_connections();
++   get_status_info(@cxns);
+    get_innodb_status(\@cxns);
+ 
+    my @io_threads;
+@@ -5425,6 +5434,7 @@
+ sub display_L {
+    my @display_lines;
+    my @cxns = get_connections();
++   get_status_info(@cxns);
+    get_innodb_status(\@cxns);
+ 
+    my @innodb_locks;
+@@ -5635,6 +5645,7 @@
+ sub display_R {
+    my @display_lines;
+    my @cxns = get_connections();
++   get_status_info(@cxns);
+    get_innodb_status(\@cxns);
+ 
+    my @row_operations;
+@@ -5706,6 +5717,7 @@
+    my %wanted  = map { $_ => 1 } @visible;
+ 
+    my @cxns = get_connections();
++   get_status_info(@cxns);
+ 
+    # If the header is to be shown, buffer pool data is required.
+    get_innodb_status( \@cxns, [ $wanted{t_header} ? qw(bp) : () ] );

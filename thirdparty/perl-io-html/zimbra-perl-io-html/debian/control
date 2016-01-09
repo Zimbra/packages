@@ -1,0 +1,15 @@
+Source: zimbra-perl-io-html
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/IO-HTML
+
+Package: zimbra-perl-io-html
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: IO::HTML - Open an HTML file with automatic charset detection 
+ This module opens a file and performs automatic charset detection
+ based on the HTML5 algorithm.  You can then pass the filehandle to
+ HTML::Parser or a related module (or just read it yourself)

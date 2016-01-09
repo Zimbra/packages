@@ -1,0 +1,15 @@
+Source: zimbra-perl-http-date
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/HTTP-Date
+
+Package: zimbra-perl-http-date
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: HTTP::Date - date conversion routines 
+ This module provides functions that deal the date formats used by the
+ HTTP protocol (and then some more). Only the first two functions,
+ time2str() and str2time(), are exported by default.

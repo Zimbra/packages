@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+PERL_ARCHNAME := $(shell perl -MConfig -E 'say $$Config{archname}')
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC LIB=OZCL/perl5 \
+	  INSTALLSITEMAN1DIR=OZCS/man/man1 INSTALLSITEMAN3DIR=OZCS/man/man3 \
+	  INSTALLMAN1DIR=OZCS/man/man1 INSTALLVENDORMAN1DIR=OZCS/man/man1 \
+	  INSTALLMAN3DIR=OZCS/man/man3 INSTALLVENDORMAN3DIR=OZCS/man/man3
+
+# dh_perl needs to know about our custom location for modules
+override_dh_perl:
+	dh_perl OZCL/perl5
+
+override_dh_auto_install:
+	dh_auto_install
+	rm -f $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/perl5/$(PERL_ARCHNAME)/perllocal.pod
+	rm -f $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/perl5/$(PERL_ARCHNAME)/auto/*/*/.packlist
