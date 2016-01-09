@@ -1,0 +1,14 @@
+Source: zimbra-perl-file-listing
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-http-date
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/File-Listing
+
+Package: zimbra-perl-file-listing
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-http-date
+Description: File::Listing - parse directory listing
+ This module exports a single function called parse_dir(), which can be
+ used to parse directory listings.

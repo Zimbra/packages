@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: File::Grep - Find matches to a pattern in a series of files and related functions
+ File::Grep provides similar functionality as perl's builtin grep, map,
+ and foreach commands, but iterating over a passed filelist instead of
+ arrays.  While trivial, this module can provide a quick dropin when
+ such functionality is needed.
