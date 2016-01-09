@@ -1,0 +1,14 @@
+Source: zimbra-perl-encode-locale
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Encode-Locale
+
+Package: zimbra-perl-encode-locale
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Encode::Locale - Determine the locale encoding
+ The purpose of this Perl module is try determine what encodings should be used
+ when interfacing to various external interfaces.

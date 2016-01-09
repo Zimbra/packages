@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Email-Date-Format .*/Email-Date-Format-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz)$

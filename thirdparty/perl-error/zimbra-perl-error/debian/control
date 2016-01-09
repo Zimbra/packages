@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Error - Error/exception handling in an OO-ish way
+ The Error package provides two interfaces. Firstly Error provides
+ a procedural interface to exception handling. Secondly Error is a
+ base class for errors/exceptions that can either be thrown, for
+ subsequent catch, or can simply be recorded.
