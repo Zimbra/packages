@@ -1,0 +1,16 @@
+Source: zimbra-perl-mime-lite
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-mime-types,
+ zimbra-perl-email-date-format, zimbra-perl-mailtools
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MIME-Lite
+
+Package: zimbra-perl-mime-lite
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-mime-types,
+ zimbra-perl-email-date-format, zimbra-perl-mailtools
+Description: MIME-Lite - low-calorie MIME generator
+ Create and send using the default send method for your OS a single-part
+ message.

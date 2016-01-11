@@ -1,0 +1,13 @@
+Source: zimbra-perl-mailtools
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-timedate
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MailTools
+
+Package: zimbra-perl-mailtools
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-timedate
+Description: MailTools - mail related modules
+ MailTools is a set of Perl modules related to mail applications

@@ -1,0 +1,15 @@
+Source: zimbra-perl-mime-types
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MIME-Types
+
+Package: zimbra-perl-mime-types
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: MIME-Types - Definition of MIME Types
+ A start for a more detailed data-structure to keep knowledge
+ about various data types are defined by MIME.  Some basic
+ treatments with mime types are implemented.

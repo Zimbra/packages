@@ -1,0 +1,18 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-mailtools,
+ zimbra-perl-convert-binhex
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ zimbra-perl-mailtools, zimbra-perl-convert-binhex
+Description: IME-tools - modules for parsing (and creating!) MIME entities
+ MIME-tools is a collection of Perl5 MIME:: modules for parsing,
+ decoding, *and generating* single- or multipart (even nested multipart)
+ MIME messages. (Yes, kids, that means you can send messages with
+ attached GIF files).

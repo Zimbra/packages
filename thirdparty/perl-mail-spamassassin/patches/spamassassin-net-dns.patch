@@ -1,0 +1,290 @@
+Index: Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/DKIM.pm
+===================================================================
+--- Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/DKIM.pm	(revision 1715128)
++++ Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/DKIM.pm	(revision 1715246)
+@@ -794,7 +794,8 @@
+         # Only do so if EDNS0 provides a reasonably-sized UDP payload size,
+         # as our interface does not provide a DNS fallback to TCP, unlike
+         # the Net::DNS::Resolver::send which does provide it.
+-        my $res = $self->{main}->{resolver}->get_resolver;
++        my $res = $self->{main}->{resolver};
++        dbg("dkim: providing our own resolver: %s", ref $res);
+         Mail::DKIM::DNS::resolver($res);
+       }
+     }
+Index: Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/DnsResolver.pm
+===================================================================
+--- Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/DnsResolver.pm	(revision 1715128)
++++ Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/DnsResolver.pm	(revision 1715246)
+@@ -592,6 +592,9 @@
+   };
+ 
+   if ($packet) {
++    # RD flag needs to be set explicitly since Net::DNS 1.01, Bug 7223	
++    $packet->header->rd(1);
++
+   # my $udp_payload_size = $self->{res}->udppacketsize;
+     my $udp_payload_size = $self->{conf}->{dns_options}->{edns};
+     if ($udp_payload_size && $udp_payload_size > 512) {
+@@ -674,7 +674,7 @@
+ 
+   my $id = $self->{resolver}->bgsend($domain, $type, undef, sub {
+         my ($reply, $reply_id, $timestamp) = @_;
+-        $self->got_a_reply ($reply, $reply_id);
++        $self->got_a_reply($reply, $reply_id);
+       });
+ 
+ The callback can ignore the reply as an invalid packet sent to the listening
+@@ -725,6 +725,37 @@
+ 
+ ###########################################################################
+ 
++=item $id = $res->bgread()
++
++Similar to C<Net::DNS::Resolver::bgread>.  Reads a DNS packet from
++a supplied socket, decodes it, and returns a Net::DNS::Packet object
++if successful.  Dies on error.
++
++=cut
++
++sub bgread() {
++  my ($self) = @_;
++  my $sock = $self->{sock};
++  my $packetsize = $self->{res}->udppacketsize;
++  $packetsize = 512  if $packetsize < 512;  # just in case
++  my $data = '';
++  my $peeraddr = $sock->recv($data, $packetsize+256);  # with some size margin for troubleshooting
++  defined $peeraddr or die "bgread: recv() failed: $!";
++  my $peerhost = $sock->peerhost;
++  $data ne '' or die "bgread: received empty packet from $peerhost";
++  dbg("dns: bgread: received %d bytes from %s", length($data), $peerhost);
++  my($answerpkt, $decoded_length) = Net::DNS::Packet->new(\$data);
++  $answerpkt or die "bgread: decoding DNS packet failed: $@";
++  $answerpkt->answerfrom($peerhost);
++  if ($decoded_length ne length($data)) {
++    warn sprintf("bgread: received a %d bytes packet from %s, decoded %d bytes\n",
++                 length($data), $peerhost, $decoded_length);
++  }
++  return $answerpkt;
++}
++
++###########################################################################
++
+ =item $nfound = $res->poll_responses()
+ 
+ See if there are any C<bgsend> reply packets ready, and return
+@@ -772,13 +803,25 @@
+     $timeout = 0;  # next time around collect whatever is available, then exit
+     last  if $nfound == 0;
+ 
+-    my $packet = $self->{res}->bgread($self->{sock});
++    my $packet;
++    eval {
++      $packet = $self->bgread();
++    } or do {
++      undef $packet;
++      my $eval_stat = $@ ne '' ? $@ : "errno=$!";  chomp $eval_stat;
++      # resignal if alarm went off
++      die $eval_stat  if $eval_stat =~ /__alarm__ignore__\(.*\)/s;
++      info("dns: bad dns reply: %s", $eval_stat);
++    };
+ 
++#   Bug 7265, use our own bgread()
++#   my $packet = $self->{res}->bgread($self->{sock});
++
+     if (!$packet) {
+-      my $dns_err = $self->{res}->errorstring;
+-      # resignal if alarm went off
+-      die "dns (3) $dns_err\n"  if $dns_err =~ /__alarm__ignore__\(.*\)/s;
+-      info("dns: bad dns reply: $dns_err");
++      # error already reported above
++#     my $dns_err = $self->{res}->errorstring;
++#     die "dns (3) $dns_err\n"  if $dns_err =~ /__alarm__ignore__\(.*\)/s;
++#     info("dns: bad dns reply: $dns_err");
+     } else {
+       my $header = $packet->header;
+       if (!$header) {
+--- Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Dns.pm	2015/08/04 22:46:27	1694121
++++ Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Dns.pm	2015/08/04 23:10:16	1694122
+@@ -171,7 +171,7 @@
+   if (substr($rule, 0, 2) eq "__") {
+     # don't bother with meta rules
+   } elsif ($answer->type eq 'TXT') {
+-    # txtdata returns a non- zone-file-format encoded result, unlike rdatastr;
++    # txtdata returns a non- zone-file-format encoded result, unlike rdstring;
+     # avoid space-separated RDATA <character-string> fields if possible,
+     # txtdata provides a list of strings in a list context since Net::DNS 0.69
+     $log = join('',$answer->txtdata);
+@@ -215,12 +215,14 @@
+ 
+   my $qname = $question->qname;
+ 
+-  # txtdata returns a non- zone-file-format encoded result, unlike rdatastr;
++  # txtdata returns a non- zone-file-format encoded result, unlike rdstring;
+   # avoid space-separated RDATA <character-string> fields if possible,
+   # txtdata provides a list of strings in a list context since Net::DNS 0.69
+   #
+-  my $rdatastr = $answer->UNIVERSAL::can('txtdata') ? join('',$answer->txtdata)
+-                                                    : $answer->rdatastr;
++  # rdatastr() is historical/undocumented, use rdstring() since Net::DNS 0.69
++  my $rdatastr = $answer->UNIVERSAL::can('txtdata')  ? join('',$answer->txtdata)
++               : $answer->UNIVERSAL::can('rdstring') ? $answer->rdstring
++                                                     : $answer->rdatastr;
+   if (defined $qname && defined $rdatastr) {
+     my $qclass = $question->qclass;
+     my $qtype = $question->qtype;
+@@ -267,8 +269,13 @@
+     my $answ_type = $answer->type;
+     # TODO: there are some CNAME returns that might be useful
+     next if ($answ_type ne 'A' && $answ_type ne 'TXT');
+-    # skip any A record that isn't on 127/8
+-    next if ($answ_type eq 'A' && $answer->rdatastr !~ /^127\./);
++    if ($answ_type eq 'A') {
++      # Net::DNS::RR::A::address() is available since Net::DNS 0.69
++      my $ip_address = $answer->UNIVERSAL::can('address') ? $answer->address
++                                                          : $answer->rdatastr;
++      # skip any A record that isn't on 127.0.0.0/8
++      next if $ip_address !~ /^127\./;
++    }
+     for my $rule (@{$rules}) {
+       $self->dnsbl_hit($rule, $question, $answer);
+     }
+@@ -284,12 +291,14 @@
+ sub process_dnsbl_set {
+   my ($self, $set, $question, $answer) = @_;
+ 
+-  # txtdata returns a non- zone-file-format encoded result, unlike rdatastr;
++  # txtdata returns a non- zone-file-format encoded result, unlike rdstring;
+   # avoid space-separated RDATA <character-string> fields if possible,
+   # txtdata provides a list of strings in a list context since Net::DNS 0.69
+   #
+-  my $rdatastr = $answer->UNIVERSAL::can('txtdata') ? join('',$answer->txtdata)
+-                                                    : $answer->rdatastr;
++  # rdatastr() is historical/undocumented, use rdstring() since Net::DNS 0.69
++  my $rdatastr = $answer->UNIVERSAL::can('txtdata')  ? join('',$answer->txtdata)
++               : $answer->UNIVERSAL::can('rdstring') ? $answer->rdstring
++                                                     : $answer->rdatastr;
+ 
+   while (my ($subtest, $rule) = each %{ $self->{dnspost}->{$set} }) {
+     next if $self->{tests_already_hit}->{$rule};
+--- Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/AskDNS.pm	2015/08/04 22:46:27	1694121
++++ Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/AskDNS.pm	2015/08/04 23:10:16	1694122
+@@ -539,7 +539,7 @@
+     @answer = ( undef );
+   }
+ 
+-  # NOTE:  $rr->rdatastr returns the result encoded in a DNS zone file
++  # NOTE:  $rr->rdstring returns the result encoded in a DNS zone file
+   # format, i.e. enclosed in double quotes if a result contains whitespace
+   # (or other funny characters), and may use \DDD encoding or \X quoting as
+   # per RFC 1035.  Using $rr->txtdata instead avoids this unnecessary encoding
+@@ -566,19 +566,24 @@
+       # special case, no answer records, only rcode can be tested
+     } else {
+       $rr_type = uc $rr->type;
+-      if ($rr->UNIVERSAL::can('txtdata')) {  # TXT, SPF
+-        # join with no intervening spaces, as per RFC 5518
++      if ($rr_type eq 'A') {
++        # Net::DNS::RR::A::address() is available since Net::DNS 0.69
++        $rr_rdatastr = $rr->UNIVERSAL::can('address') ? $rr->address
++                                                      : $rr->rdatastr;
++        if ($rr_rdatastr =~ m/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/) {
++          $rdatanum = Mail::SpamAssassin::Util::my_inet_aton($rr_rdatastr);
++        }
++      } elsif ($rr->UNIVERSAL::can('txtdata')) {
++        # TXT, SPF: join with no intervening spaces, as per RFC 5518
+         if ($txtdata_can_provide_a_list || $rr_type ne 'TXT') {
+           $rr_rdatastr = join('', $rr->txtdata);  # txtdata() in list context!
+         } else {  # char_str_list() is only available for TXT records
+           $rr_rdatastr = join('', $rr->char_str_list);  # historical
+         }
+       } else {
+-        $rr_rdatastr = $rr->rdatastr;
+-        if ($rr_type eq 'A' &&
+-            $rr_rdatastr =~ m/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/) {
+-          $rdatanum = Mail::SpamAssassin::Util::my_inet_aton($rr_rdatastr);
+-        }
++        # rdatastr() is historical, use rdstring() since Net::DNS 0.69
++        $rr_rdatastr = $rr->UNIVERSAL::can('rdstring') ? $rr->rdstring
++                                                       : $rr->rdatastr;
+       }
+     # dbg("askdns: received rr type %s, data: %s", $rr_type, $rr_rdatastr);
+     }
+Index: URIDNSBL.pm
+===================================================================
+--- Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/URIDNSBL.pm	(revision 1671621)
++++ Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/URIDNSBL.pm	(revision 1694129)
+@@ -942,9 +942,8 @@
+     next unless (defined($str) && defined($dom));
+     dbg("uridnsbl: got($j) NS for $dom: $str");
+ 
+-    if ($str =~ /IN\s+NS\s+(\S+)/) {
+-      my $nsmatch = lc $1;
+-      $nsmatch =~ s/\.$//;
++    if ($rr->type eq 'NS') {
++      my $nsmatch = lc $rr->nsdname;  # available since at least Net::DNS 0.14
+       my $nsrhblstr = $nsmatch;
+       my $fullnsrhblstr = $nsmatch;
+ 
+@@ -1010,25 +1009,19 @@
+     dbg("uridnsbl: complete_a_lookup aborted %s", $ent->{key});
+     return;
+   }
+-
+   dbg("uridnsbl: complete_a_lookup %s", $ent->{key});
++  $hname = ''  if !defined $hname;
++  my $j = 0;
+   my @answer = $pkt->answer;
+-  my $j = 0;
+   foreach my $rr (@answer) {
+     $j++;
+-    my $str = $rr->string;
+-    if (!defined $hname) {
+-      warn "complete_a_lookup-1: $j, (hname is undef), $str";
+-    } elsif (!defined $str) {
+-      warn "complete_a_lookup-2: $j, $hname, (str is undef)";
+-      next;
+-    }
+-    dbg("uridnsbl: complete_a_lookup got(%d) A for %s: %s", $j,$hname,$str);
+-
+-    local $1;
+-    if ($str =~ /IN\s+A\s+(\S+)/) {
+-      $self->lookup_dnsbl_for_ip($pms, $ent->{obj}, $1);
+-    }
++    next if $rr->type ne 'A';
++    # Net::DNS::RR::A::address() is available since Net::DNS 0.69
++    my $ip_address = $rr->UNIVERSAL::can('address') ? $rr->address
++                                                    : $rr->rdatastr;
++    dbg("uridnsbl: complete_a_lookup got(%d) A for %s: %s",
++        $j, $hname, $ip_address);
++    $self->lookup_dnsbl_for_ip($pms, $ent->{obj}, $ip_address);
+   }
+ }
+ 
+@@ -1038,7 +1031,8 @@
+   my ($self, $pms, $obj, $ip) = @_;
+ 
+   local($1,$2,$3,$4);
+-  $ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;
++  $ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/
++    or warn "lookup_dnsbl_for_ip: not an IPv4 address: $ip\n";
+   my $revip = "$4.$3.$2.$1";
+ 
+   my $conf = $pms->{conf};
+@@ -1100,12 +1094,14 @@
+     my $rr_type = $rr->type;
+ 
+     if ($rr_type eq 'A') {
+-      $rdatastr = $rr->rdatastr;
++      # Net::DNS::RR::A::address() is available since Net::DNS 0.69
++      $rdatastr = $rr->UNIVERSAL::can('address') ? $rr->address
++                                                 : $rr->rdatastr;
+       if ($rdatastr =~ m/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) {
+         $rdatanum = Mail::SpamAssassin::Util::my_inet_aton($rdatastr);
+       }
+     } elsif ($rr_type eq 'TXT') {
+-      # txtdata returns a non- zone-file-format encoded result, unlike rdatastr;
++      # txtdata returns a non- zone-file-format encoded result, unlike rdstring;
+       # avoid space-separated RDATA <character-string> fields if possible;
+       # txtdata provides a list of strings in list context since Net::DNS 0.69
+       $rdatastr = join('',$rr->txtdata);
