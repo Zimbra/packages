@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: NetAddr::IP - Manages IPv4 and IPv6 addresses and subnets
+ This module provides an object-oriented abstraction on top of IP
+ addresses or IP subnets that allows for easy manipulations.
+ Version 4.xx of NetAddr::IP will work with older versions of Perl
+ and is compatible with Math::BigInt.

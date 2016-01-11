@@ -1,0 +1,20 @@
+Source: zimbra-perl-net-server
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Net-Server
+
+Package: zimbra-perl-net-server
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: an extensible, generic Perl server engine
+ Net::Server attempts to be a generic server as in Net::Daemon and
+ NetServer::Generic. It includes with it the ability to run as an
+ inetd process (Net::Server::INET), a single connection server
+ (Net::Server or Net::Server::Single), a forking server
+ (Net::Server::Fork), a preforking server which maintains a constant
+ number of preforked children (Net::Server::PreForkSimple), or as a
+ managed preforking server which maintains the number of children
+ based on server load (Net::Server::PreFork).

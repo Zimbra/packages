@@ -1,0 +1,16 @@
+Source: zimbra-perl-net-ssleay
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-openssl-dev
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Net-SSLeay
+
+Package: zimbra-perl-net-ssleay
+Architecture: any
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Perl extension for using OpenSSL
+ The Net::SSLeay module basically comprises:
+ - High level functions for accessing web servers (by using HTTP/HTTPS)
+ - Low level API (mostly mapped 1:1 to openssl's C functions)
+ - Convenience functions (related to low level API but with more perl friendly interface)

@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/perl-ldap .*/perl-ldap-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz)$

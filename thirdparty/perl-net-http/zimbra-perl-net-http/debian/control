@@ -1,0 +1,16 @@
+Source: zimbra-perl-net-http
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-uri, zimbra-perl-io-socket-ssl
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Net-HTTP
+
+Package: zimbra-perl-net-http
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-uri, zimbra-perl-io-socket-ssl
+Description: Net::HTTP - Low-level HTTP connection (client)
+ The Net::HTTP class is a low-level HTTP client. An instance of the
+ Net::HTTP class represents a connection to an HTTP server. The HTTP
+ protocol is described in RFC 2616. The Net::HTTP class supports
+ HTTP/1.0 and HTTP/1.1

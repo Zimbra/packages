@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, libidn11-dev
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ libidn11
+Description:  Net::LibIDN - Perl bindings for GNU Libidn
+ Provides bindings for GNU Libidn, a C library for handling
+ Internationalized Domain Names according to IDNA (RFC 3490),
+ in a way very much inspired by Turbo Fredriksson's PHP-IDN.

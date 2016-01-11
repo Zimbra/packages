@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Net-SSLeay .*/Net-SSLeay-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz)$

@@ -1,0 +1,57 @@
+--- perl-ldap-0.53/lib/Net/LDAP.pod.orig	2013-01-26 09:19:02.000000000 -0800
++++ perl-ldap-0.53/lib/Net/LDAP.pod	2013-01-28 10:46:24.657106331 -0800
+@@ -97,6 +97,19 @@
+ 
+ Failures in changing the socket's SO_KEEPALIVE option are ignored.
+ 
++=item keepalive_idle =E<gt> N
++The time (in seconds) the connection needs to remain idle before TCP
++starts sending keepalive probes, if the socket option SO_KEEPALIVE has
++been set on this socket.  Only works if Socket::Linux is available.
++
++=item keepalive_interval =E<gt> N
++The time (in seconds) between individual keepalive probes. Only works
++if Socket::Linux is available.
++
++=item keepalive_probe =E<gt> N
++The maximum number of keepalive probes TCP should send before dropping
++the connection. Only works if Socket::Linux is available.
++
+ =item timeout =E<gt> N
+ 
+ Timeout passed to L<IO::Socket> when connecting the remote server.
+--- perl-ldap-0.65/lib/Net/LDAP.pm.orig	2015-04-06 12:41:53.000000000 -0500
++++ perl-ldap-0.65/lib/Net/LDAP.pm	2015-11-05 15:38:11.807644909 -0600
+@@ -5,7 +5,7 @@
+ package Net::LDAP;
+ 
+ use strict;
+-use Socket qw(AF_INET AF_INET6 AF_UNSPEC SOL_SOCKET SO_KEEPALIVE);
++use Socket qw(AF_INET AF_INET6 AF_UNSPEC SOL_SOCKET SO_KEEPALIVE IPPROTO_TCP);
+ use IO::Socket;
+ use IO::Select;
+ use Tie::Hash;
+@@ -28,6 +28,8 @@
+ 			   LDAP_UNAVAILABLE
+ 			);
+
++use constant CAN_LINUX => do { local $SIG{__DIE__}; eval { require Socket::Linux }; };
++
+ # check for IPv6 support: prefer IO::Socket::IP 0.20+ over IO::Socket::INET6
+ use constant CAN_IPV6 => do {
+                            local $SIG{__DIE__};
+@@ -130,6 +132,14 @@
+ 
+   $obj->{net_ldap_socket}->setsockopt(SOL_SOCKET, SO_KEEPALIVE, $arg->{keepalive} ? 1 : 0)
+     if (defined($arg->{keepalive}));
++  if (CAN_LINUX && $arg->{keepalive}) {
++    $obj->{net_ldap_socket}->setsockopt(IPPROTO_TCP, Socket::Linux->TCP_KEEPIDLE, $arg->{keepalive_idle})
++      if (defined($arg->{keepalive_idle}));
++    $obj->{net_ldap_socket}->setsockopt(IPPROTO_TCP, Socket::Linux->TCP_KEEPINTVL, $arg->{keepalive_interval})
++      if (defined($arg->{keepalive_interval}));
++    $obj->{net_ldap_socket}->setsockopt(IPPROTO_TCP, Socket::Linux->TCP_KEEPCNT, $arg->{keepalive_probe})
++      if (defined($arg->{keepalive_probe}));
++  }
+ 
+   $obj->{net_ldap_rawsocket} = $obj->{net_ldap_socket};
+   $obj->{net_ldap_resp}    = {};

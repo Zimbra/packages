@@ -1,0 +1,197 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://metacpan.org/release/perl-ldap
+Upstream-Contact: Peter Marschall <peter@adpm.de>
+Upstream-Name: perl-ldap
+
+Files: *
+Copyright: 1997-2011, Graham Barr <gbarr@cpan.org>
+License: Artistic or GPL-1+
+
+Files: debian/*
+Copyright: 2015, Zimbra Packaging Services <packaging-devel@zimbra.com>
+License: GPL-2
+
+Files: inc/Module/*
+Copyright:
+ 2002-2012, Adam Kennedy <adamk@cpan.org>
+ 2002-2012, Audrey Tang <autrijus@autrijus.org>
+ 2002-2012, Brian Ingerson <ingy@cpan.org>
+License: Artistic or GPL-1+
+
+Files: lib/LWP/Protocol/ldap.pm
+ lib/Net/LDAP/FAQ.pod
+Copyright:
+ 1998-2004, Graham Barr <gbarr@cpan.org>
+ 2012, Peter Marschall <peter@adpm.de>
+License: Artistic or GPL-1+
+
+Files: contrib/LWPsearch.pl
+ contrib/schema2ad.pl
+ lib/LWP/Protocol/ldapi.pm
+ lib/LWP/Protocol/ldaps.pm
+ lib/Net/LDAP/Control/Assertion.pm
+ lib/Net/LDAP/Control/DontUseCopy.pm
+ lib/Net/LDAP/Control/EntryChange.pm
+ lib/Net/LDAP/Control/ManageDsaIT.pm
+ lib/Net/LDAP/Control/MatchedValues.pm
+ lib/Net/LDAP/Control/PersistentSearch.pm
+ lib/Net/LDAP/Control/PostRead.pm
+ lib/Net/LDAP/Control/PreRead.pm
+ lib/Net/LDAP/Control/Relax.pm
+ lib/Net/LDAP/Extension/Cancel.pm
+ lib/Net/LDAP/Extra/*
+Copyright: 2004-2014, Peter Marschall <peter@adpm.de>
+License: Artistic or GPL-1+
+
+Files: lib/Net/LDAP/Control/PasswordPolicy.pm
+ lib/Net/LDAP/Security.pod
+Copyright: 2001-2008, Chris Ridd <chris.ridd@isode.com>
+License: Artistic or GPL-1+
+
+Files: lib/Net/LDAP/Control/SyncDone.pm
+ lib/Net/LDAP/Control/SyncRequest.pm
+ lib/Net/LDAP/Control/SyncState.pm
+ lib/Net/LDAP/Intermediate.pm
+ lib/Net/LDAP/Intermediate/SyncInfo.pm
+Copyright: 2008, Mathieu Parent <math.parent@gmail.com>
+License: Artistic or GPL-1+
+
+Files: lib/Net/LDAP/Extension/Refresh.pm
+Copyright: 2010, Etienne Bagnoud <etienne.bagnoud@irovision.ch>
+License: Artistic or GPL-1+
+
+Files: lib/Net/LDAP/FilterMatch.pm
+Copyright: 2005-2006, Hans Klunder <hans.klunder@bigfoot.com>
+ 2005-2012, Peter Marschall <peter@adpm.de>
+License: Artistic or GPL-1+
+
+Files: lib/Net/LDAPI.pm
+Copyright:
+ 2003-2004, Derrik Pates <dpates@dsdk12.net>
+ 2003-2004, Graham Barr <gbarr@cpan.org>
+License: Artistic or GPL-1+
+
+Files: lib/Net/LDAPS.pm
+ lib/Net/LDAP/RootDSE.pm
+Copyright:
+ 2000-2004, Chris Ridd <chris.ridd@isode.com>
+ 2000-2004, Graham Barr <gbarr@cpan.org>
+License: Artistic or GPL-1+
+
+Files: lib/Net/LDAP/Util.pm
+Copyright:
+ 1999-2004, Graham Barr <gbarr@pobox.com>
+ 1999-2004, Norbert Klasen <norbert.klasen@daasi.de>
+License: Artistic or GPL-1+
+
+Files: contrib/jpegDisplay.pl
+ contrib/jpegLoad.pl
+ contrib/tklkup
+Copyright: 1999-2003, Clif Harden <charden@pobox.com>
+License: Artistic or GPL-1+
+
+Files: contrib/simple-proxy.pl
+Copyright: 2006, Hans Klunder <hans.klunder@bigfoot.com>
+License: Artistic or GPL-1+
+
+Files: contrib/ldapmodify.pl
+ contrib/ldifdiff.pl
+ contrib/ldifsort.pl
+ contrib/ldifuniq.pl
+Copyright: Kartik Subbarao <subbarao@computer.org>
+License: Artistic or GPL-1+
+
+Files: contrib/recursive-ldap-delete.pl
+Copyright:
+ Mike Jackson <mj@sci.fi>
+ Peter Marschall <peter@adpm.de>
+License: Artistic or GPL-1+
+
+Files: contrib/isMember.pl
+ contrib/printMembers.pl
+Copyright: Mark Wilcox <mark@mjwilcox.com>
+License: Artistic or GPL-1+
+
+Files: data/*.schema
+Copyright: 1998-2012, The OpenLDAP Foundation
+License: OpenLDAP
+
+Files: data/core.schema
+Copyright:
+ 1998-2012, The OpenLDAP Foundation
+ 1997-2006, (Portions) The Internet Society
+License: OpenLDAP
+
+License: Artistic
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the Artistic License, which comes with Perl.
+ .
+ On Debian systems, the complete text of the Artistic License can be
+ found in `/usr/share/common-licenses/Artistic'.
+
+License: GPL-1+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 1, or (at your option)
+ any later version.
+ .
+ On Debian systems, the complete text of version 1 of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-1'.
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+
+License: OpenLDAP
+ The OpenLDAP Public License
+   Version 2.8, 17 August 2003
+ .
+ Redistribution and use of this software and associated documentation
+ ("Software"), with or without modification, are permitted provided
+ that the following conditions are met:
+ .
+ 1. Redistributions in source form must retain copyright statements
+    and notices,
+ .
+ 2. Redistributions in binary form must reproduce applicable copyright
+    statements and notices, this list of conditions, and the following
+    disclaimer in the documentation and/or other materials provided
+    with the distribution, and
+ .
+ 3. Redistributions must contain a verbatim copy of this document.
+ .
+ The OpenLDAP Foundation may revise this license from time to time.
+ Each revision is distinguished by a version number.  You may use
+ this Software under terms of this license revision or under the
+ terms of any subsequent revision of the license.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE OPENLDAP FOUNDATION AND ITS
+ CONTRIBUTORS ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT
+ SHALL THE OPENLDAP FOUNDATION, ITS CONTRIBUTORS, OR THE AUTHOR(S)
+ OR OWNER(S) OF THE SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+ .
+ The names of the authors and copyright holders must not be used in
+ advertising or otherwise to promote the sale, use or other dealing
+ in this Software without specific, written prior permission.  Title
+ to copyright in this Software shall at all times remain with copyright
+ holders.
+ .
+ OpenLDAP is a registered trademark of the OpenLDAP Foundation.
+ .
+ Copyright 1999-2003 The OpenLDAP Foundation, Redwood City,
+ California, USA.  All Rights Reserved.  Permission to copy and
+ distribute verbatim copies of this document is granted.

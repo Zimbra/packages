@@ -1,0 +1,12 @@
+Source: zimbra-perl-parent
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/parent
+
+Package: zimbra-perl-parent
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: parent - Establish an ISA relationship with base classes at compile time

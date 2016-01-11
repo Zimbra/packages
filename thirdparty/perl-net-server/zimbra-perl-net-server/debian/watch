@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Net-Server .*/Net-Server-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz)$

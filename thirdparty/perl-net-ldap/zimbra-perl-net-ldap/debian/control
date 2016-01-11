@@ -1,0 +1,18 @@
+Source: zimbra-perl-net-ldap
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-convert-asn1,
+ zimbra-perl-socket-linux
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/perl-ldap
+
+Package: zimbra-perl-net-ldap
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-convert-asn1,
+ zimbra-perl-socket-linux
+Description: a client LDAP services API
+ Net::LDAP is a collection of modules that implements a LDAP services
+ API for Perl programs. The module may be used to search directories or
+ perform maintenance functions such as adding, deleting or modifying
+ entries.

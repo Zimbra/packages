@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Net-CIDR   .*/Net-CIDR-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz|zip)$

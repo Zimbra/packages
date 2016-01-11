@@ -1,0 +1,18 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-digest-hmac,
+ zimbra-perl-digest-sha1, zimbra-perl-io-socket-inet6
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-digest-hmac,
+ zimbra-perl-digest-sha1, zimbra-perl-io-socket-inet6
+Description: Net::DNS - Perl Interface to the Domain Name System
+ Net::DNS is a DNS resolver implemented in Perl. It allows the programmer
+ to perform nearly any type of DNS query from a Perl script. For details
+ and examples, please read the Net::DNS manual page.
+

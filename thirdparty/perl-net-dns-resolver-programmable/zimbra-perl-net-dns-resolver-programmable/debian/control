@@ -1,0 +1,17 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-net-dns
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ zimbra-perl-net-dns
+Description: Net::DNS::Resolver::Programmable - programmable DNS resolver class for offline emulation of DNS
+ Net::DNS::Resolver::Programmable is a Net::DNS::Resolver descendant class that
+ allows a virtual DNS to be emulated instead of querying the real DNS.  A set
+ of static DNS records may be supplied, or arbitrary code may be specified as a
+ means for retrieving DNS records, or even generating them on the fly.

@@ -1,0 +1,43 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://metacpan.org/release/MODNAME
+Upstream-Contact: olaf@net-dns.org
+Upstream-Name: MODNAME
+
+Files: *
+Copyright:
+ Copyright (c)1997-2000 Michael Fuhr.
+ Portions Copyright (c)2002,2003 Chris Reinhardt.
+ Portions Copyright (c)2005 Olaf Kolkman (RIPE NCC)
+ Portions Copyright (c)2006 Olaf Kolkman (NLnet Labs)
+ Portions Copyright (c)2014 Dick Franks
+License: MIT
+
+Files: debian/*
+Copyright: 2015, Zimbra Packaging Services <packaging-devel@zimbra.com>
+License: GPL-2
+
+License: MIT
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted, provided
+ that the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation, and that the name of the author not be used in advertising
+ or publicity pertaining to distribution of the software without specific
+ prior written permission.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ DEALINGS IN THE SOFTWARE.
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 2 can be found in `/usr/share/common-licenses/GPL-2'.

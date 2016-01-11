@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+# Notes/Workarounds:
+# * avoid prompt about network tests by setting PERL_MM_USE_DEFAULT=1
+override_dh_auto_configure:
+	PERL_MM_USE_DEFAULT=1 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
+	  INSTALLSITEMAN1DIR=OZCS/man/man1 INSTALLSITEMAN3DIR=OZCS/man/man3 \
+	  LIB=OZCL/perl5
+
+override_dh_auto_build:
+	LD_RUN_PATH=OZCL make
+
+# these need to know about our custom location for modules
+override_dh_perl:
+	dh_perl OZCL/perl5
+
+override_dh_auto_test:
+	PERL5LIB=OZCL/perl5 dh_auto_test
+
+# remove .packlist and perllocal.pod
+#  $(DESTINSTALLSITEARCH)/auto/$(FULLEXT)/.packlist
+#  $(DESTINSTALLSITEARCH)/perllocal.pod
+PERL_ARCHNAME := $(shell perl -MConfig -e 'print $$Config{archname}')
+override_dh_auto_install:
+	dh_auto_install
+	rm -rf $(CURDIR)/debian/$(shell dh_listpackages)OZCL/perl5/$(PERL_ARCHNAME)
