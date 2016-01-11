@@ -1,0 +1,13 @@
+Source: zimbra-perl-timedate
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/TimeDate
+
+Package: zimbra-perl-timedate
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: TimeDate - Date formatting subroutines
+ Date formatting subroutines

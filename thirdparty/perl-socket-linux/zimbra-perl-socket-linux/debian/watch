@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Socket-Linux   .*/Socket-Linux-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz|zip)$

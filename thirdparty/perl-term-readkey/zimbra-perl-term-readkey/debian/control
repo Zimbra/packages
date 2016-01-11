@@ -1,0 +1,19 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Term::ReadKey - A perl module for simple terminal control
+ Term::ReadKey is a compiled perl module dedicated to providing simple control
+ over terminal driver modes (cbreak, raw, cooked, etc.,) support for non-blocking
+ reads, if the architecture allows, and some generalized handy functions for
+ working with terminals. One of the main goals is to have the functions as
+ portable as possible, so you can just plug in "use Term::ReadKey" on any
+ architecture and have a good likelihood of it working.
+

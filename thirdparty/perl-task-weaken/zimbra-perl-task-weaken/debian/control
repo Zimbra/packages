@@ -1,0 +1,19 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Task::Weaken - Ensure that a platform has weaken support
+ One recurring problem in modules that use Scalar::Util's weaken function
+ is that it is not present in the pure-perl variant.
+ While this isn't necesarily always a problem in a straight CPAN-based
+ Perl environment, some operating system distributions only include the
+ pure-Perl versions, don't include the XS version, and so weaken is then
+ "missing" from the platform, despite passing a dependency on Scalar::Util
+ successfully.

@@ -1,0 +1,20 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-date-calc,
+ zimbra-perl-file-tail, zimbra-perl-date-manip, zimbra-perl-timedate
+Standards-Version: 3.9.5
+Homepage: http://sourceforge.net/projects/swatch/
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ zimbra-perl-base, zimbra-perl-date-calc, zimbra-perl-file-tail,
+ zimbra-perl-date-manip, zimbra-perl-timedate
+Description: swatchdog - Simple Log Watcher
+ swatchdog.pl started out as swatch, the "simple watchdog" for activity
+ monitoring log files produced by UNIX's syslog facility. It has since
+ been evolving into a utility that can monitor just about any type of
+ log. The name has been changed to satisfy a request made by the old
+ Swiss watch company.

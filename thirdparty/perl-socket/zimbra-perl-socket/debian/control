@@ -1,0 +1,12 @@
+Source: zimbra-perl-socket
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, libtest-simple-perl
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Socket
+
+Package: zimbra-perl-socket
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Networking constants and support function

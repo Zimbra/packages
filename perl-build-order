@@ -2,14 +2,14 @@ zimbra/perl-base
 thirdparty/perl-crypt-openssl-random
 thirdparty/perl-crypt-openssl-rsa
 thirdparty/perl-net-cidr
-Makefile.slinux
+thirdparty/perl-socket-linux
 thirdparty/perl-net-libidn
 thirdparty/perl-math-bigint
 thirdparty/perl-convert-asn1
  RHEL6 only:
- Makefile.storable
+ thirdparty/perl-storable
  thirdparty/perl-extutils-constant
-Makefile.socket
+thirdparty/perl-socket
 thirdparty/perl-io-socket-inet6
 thirdparty/perl-io-socket-ip
 thirdparty/perl-net-ssleay
@@ -22,7 +22,7 @@ thirdparty/perl-io-socket-ssl
 thirdparty/perl-dbi
 thirdparty/perl-html-parser
 thirdparty/perl-parent
-Makefile.uri
+thirdparty/perl-uri
 thirdparty/perl-net-http
 thirdparty/perl-lwp-mediatypes
 thirdparty/perl-encode-locale
@@ -40,7 +40,7 @@ Makefile.wrobotrules
 thirdparty/perl-libwww
 thirdparty/perl-lwp-protocol-https
 thirdparty/perl-io-stringy
-Makefile.timedate
+thirdparty/perl-timedate
 thirdparty/perl-mailtools
 thirdparty/perl-mime-types
 thirdparty/perl-email-date-format
@@ -56,7 +56,7 @@ thirdparty/perl-carp-clan
 thirdparty/perl-bit-vector
 thirdparty/perl-date-calc
 thirdparty/perl-date-manip
-Makefile.usyslog
+thirdparty/perl-unix-syslog
 thirdparty/perl-digest-sha1
 thirdparty/perl-digest-hmac
 thirdparty/perl-convert-tnef
@@ -83,12 +83,12 @@ thirdparty/perl-ip-country
 thirdparty/perl-dbd-sqlite
 thirdparty/perl-filesys-df
 thirdparty/perl-encode-detect
-Makefile.ugetrusage
+thirdparty/perl-unix-getrusage
 thirdparty/perl-class-inspector
-Makefile.tweaken
+thirdparty/perl-task-weaken
 Makefile.xplite
-Makefile.slite
-Makefile.treadkey
+thirdparty/perl-soap-lite
+thirdparty/perl-term-readkey
 thirdparty/perl-net-cidr-lite
 thirdparty/perl-cache-fastmmap
 thirdparty/perl-proc-processtable
@@ -98,6 +98,6 @@ thirdparty/perl-db-file
 thirdparty/perl-dbd-mysql
 thirdparty/perl-mail-spf
 thirdparty/perl-mail-spamassassin
-Makefile.swatchdog
+thirdparty/perl-swatchdog
 thirdparty/perl-innotop
 zimbra/perl

@@ -1,0 +1,15 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Unix::Getrusage - Perl interface to the Unix getrusage system call
+ Both getrusage and getrusage_children (no arguments) return what the getrusage() call
+ returns: ressource utilization of either the calling process or its children. They
+ return hash references (to avoid unneccessary copying) of the rusage struct.

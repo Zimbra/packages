@@ -1,0 +1,15 @@
+Source: zimbra-perl-uri
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-parent
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/URI
+
+Package: zimbra-perl-uri
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-parent
+Description: URI - Uniform Resource Identifiers (absolute and relative)
+ This module implements the "URI" class. Objects of this class represent
+ "Uniform Resource Identifier references" as specified in RFC 2396 (and
+ updated by RFC 2732).
