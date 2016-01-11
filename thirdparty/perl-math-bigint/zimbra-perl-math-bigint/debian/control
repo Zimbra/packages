@@ -1,0 +1,12 @@
+Source: zimbra-perl-math-bigint
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, libtest-simple-perl
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Math-BigInt
+
+Package: zimbra-perl-math-bigint
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Arbitrary size integer/float math package 

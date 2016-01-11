@@ -1,0 +1,239 @@
+# This document lists why the various perl modules built by Zimbra are required.
+#
+innotop: is used for providing useful information into the workings of MariaDB.
+TermReadKey: is a requirement for innotop
+#
+#
+# Amavis 2.9 requirements:
+Archive::Tar (Core)
+Exporter (Core)
+POSIX (Core)
+Fcntl (Core)
+Socket (Core)
+Errno (Core)
+Carp (Core)
+Carp::Heavy (Core)
+Digest::MD5 (Core)
+Digest::SHA (Core)
+Time::HiRes (Core)
+IO::Handle (Core)
+IO::File (Core)
+IO::Socket (Core)
+IO::Socket::UNIX (Core)
+Digest::MD5 (Core)
+File::Basename (Core)
+File::Temp (Core)
+Compress::Zlib (Core)
+Compress::Raw::Zlib (Core)
+MIME::Base64 (Core)
+MIME::QuotedPrint (Core)
+PerlIO (Core)
+PerlIO::scalar (Core)
+MIME::Words (MIME-tools)
+MIME::Head (MIME-tools)
+MIME::Body (MIME-tools)
+MIME::Entity (MIME-tools)
+MIME::Parser (MIME-tools)
+MIME::Decoder (MIME-tools)
+MIME::Decoder::Base64 (MIME-tools)
+MIME::Decoder::Binary (MIME-tools)
+MIME::Decoder::QuotedPrint (MIME-tools)
+MIME::Decoder::NBit (MIME-tools)
+MIME::Decoder::UU (MIME-tools)
+MIME::Decoder::Gzip64 (MIME-tools)
+MIME::Decoder::BinHex (MIME-tools)
+MIME::Tools (MIME-tools)
+Net::Server (Net-Server)
+Net::Server::PreFork (Net-Server)
+IO::Stringy
+Unix::Syslog
+ZMQ::Constants
+ZMQ-LibZMQ3-1.19
+Unix::Getrusage
+Archive::Zip
+Convert::TNEF
+Convert::UUlib
+Mail::Header (MailTools, via Mail::Mailer)
+Mail::Internet (MailTools, via Mail::Mailer)
+Digest::SHA1
+IO::Socket::IP
+IO::Socket::SSL
+NetAddr::IP
+Net::DNS
+Net::SSLeay
+Net::LDAP
+Mail::SpamAssassin
+Mail::DKIM::Verifier (Mail::DKIM)
+Mail::DKIM::Signer (Mail::DKIM)
+Mail::SPF
+Mail::SPF::Query
+URI
+DBI
+BerkeleyDB
+DB_File
+
+Crypt::OpenSSL::Random (Required by Crypt::OpenSSL::RSA)
+Devel::CheckLib (Required by Crypt::OpenSSL::Random to build)
+Crypt::OpenSSL::RSA (Required by Amavis and Mail::DKIM)
+
+# SpamAssassin (3.4.0) requirement:
+Config (Core)
+Cwd (Core)
+Digest::SHA (Core)
+Errno (Core)
+Fcntl (Core)
+File::Basename (Core)
+File::Path (Core)
+File::Spec (Core)
+IO::File (Core)
+IO::Handle (Core)
+IO::Socket (Core)
+IO::Socket::UNIX (Core)
+MIME::Base64 (Core)
+POSIX (Core)
+Socket (Core)
+Sys::Hostname (Core)
+Sys::Syslog (Core)
+Time::HiRes (Core)
+Time::Local (Core)
+DB_File
+Digest::SHA1
+Encode::Detect
+HTML::Parser (3.43+)
+IP::Country
+Geography::Countries
+Mail::SPF
+NetAddr::IP (4.000+)
+Net::DNS
+Net::DNS::Resolver
+Net::SMTP (Core)
+LWP (via LWP::UserAgent)
+Net::HTTP
+HTTP::Date
+IO::Zlib (Core)
+
+
+# Unknown
+DBD::mysql (Unknown)
+DBI::DBD (Required by DBD::mysql)
+
+# Swatch
+Date::Calc
+Date::Manip
+
+# Date::Manip
+Test::Inter
+
+# Date::Calc
+Bit::Vector
+Carp::Clan
+
+# Net-Server
+Net::CIDR
+
+# Net::LDAP
+Socket::Linux
+Convert::ASN1
+IO::Socket::SSL
+Time::Local (Core)
+LWP::MediaTypes
+
+# Convert::ASN1
+Math::BigInt
+
+# IO::Socket::SSL
+Mozilla::CA
+
+# HTTP::Message
+IO::Compress (Via IO::Compress::Base)
+
+# IO::Compress
+Compress::Raw::Zlib
+Compress::Raw::Bzip2
+
+# LWP
+Encode::Locale
+File::Listing
+HTTP::Cookies
+HTTP::Daemon
+HTTP::Date
+HTTP::Headers
+HTTP::Message
+HTTP::Negotiate
+IO::HTML
+LWP::MediaTypes
+LWP::Protcol::https
+WWW::RobotRules
+
+# MIME::Tools
+Convert::BinHex
+
+# Test::Most
+Test::Deep
+Test::Harness
+Test::Exception
+Exception::Class
+Test::Differences
+Test::Warn
+
+# Test::Exception
+Sub::Uplevel
+
+# Exception::Class
+Devel::StackTrace
+Class::Data::Inheritable
+
+# Test::Differences
+Text::Diff
+Capture::Tiny
+
+# Text::Diff
+Algorithm::Diff
+
+# Net::DNS
+Digest::HMAC
+IO::Socket::IP
+
+# Mail::SPF
+Error
+NetAddr::IP
+Net::DNS
+Net::DNS::Resolver::Programmable
+
+# XML::Simple
+XML::SAX
+XML::SAX::Expat
+XML::SAX::Base
+XML::SAX::NamespaceSupport
+
+# XML::SAX
+XML::Parser
+
+# cluebringer
+Cache::FastMmap
+Config::IniFiles
+Date::Parse (TimeDate)
+DBI
+Mail::SPF
+Net::CIDR
+Net::DNS
+Net::Server
+
+# Config::IniFiles
+List::MoreUtils
+Exporter::Tiny
+
+# URI
+parent
+
+# SOAP::Lite (PS team)
+IO::SessionData
+MIME::Types
+Email::Date::Format
+MIME::Lite
+Class::Inspector
+Task::Weaken
+XML::Parser::Lite
+
+# Convert::UUlib
+Canary::Stability

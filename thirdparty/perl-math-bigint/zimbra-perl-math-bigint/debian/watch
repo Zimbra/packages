@@ -1,0 +1,2 @@
+version=3
+https://metacpan.org/release/Math-BigInt   .*/Math-BigInt-v?(\d[\d.-]*)\.(?:tar(?:\.gz|\.bz2)?|tgz|zip)$

@@ -1,0 +1,15 @@
+Source: zimbra-perl-mozilla-ca
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/Mozilla-CA
+
+Package: zimbra-perl-mozilla-ca
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: Mozilla's CA cert bundle in PEM format
+ Mozilla::CA provides a copy of Mozilla's bundle of Certificate
+ Authority certificates in a form that can be consumed by modules
+ and libraries based on OpenSSL

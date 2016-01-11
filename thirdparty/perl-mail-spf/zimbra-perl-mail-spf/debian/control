@@ -1,0 +1,20 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-error,
+ zimbra-perl-netaddr-ip, zimbra-perl-net-dns, zimbra-perl-net-dns-resolver-programmable
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ zimbra-perl-error, zimbra-perl-netaddr-ip, zimbra-perl-net-dns,
+ zimbra-perl-net-dns-resolver-programmable
+Description: Mail::SPF - An object-oriented implementation of Sender Policy Framework
+ Mail::SPF is an object-oriented implementation of Sender Policy Framework (SPF).
+ See http://www.openspf.org for more information about SPF.
+ This class collection aims to fully conform to the SPF specification (RFC 4408)
+ so as to serve both as a production quality SPF implementation and as a reference
+ for other developers of SPF implementations.

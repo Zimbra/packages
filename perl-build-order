@@ -4,7 +4,7 @@ thirdparty/perl-crypt-openssl-rsa
 Makefile.ncidr
 Makefile.slinux
 Makefile.nlibidn
-Makefile.mbigint
+thirdparty/perl-math-bigint
 thirdparty/perl-convert-asn1
  RHEL6 only:
  Makefile.storable
@@ -17,7 +17,7 @@ Makefile.nldap
 Makefile.nserver
 Makefile.zconstants
 Makefile.zlibzmq3
-Makefile.mca
+thirdparty/perl-mozilla-ca
 thirdparty/perl-io-socket-ssl
 thirdparty/perl-dbi
 thirdparty/perl-html-parser
@@ -41,12 +41,12 @@ thirdparty/perl-libwww
 thirdparty/perl-lwp-protocol-https
 thirdparty/perl-io-stringy
 Makefile.timedate
-Makefile.mailtools
-Makefile.mtypes
+thirdparty/perl-mailtools
+thirdparty/perl-mime-types
 thirdparty/perl-email-date-format
-Makefile.mlite
+thirdparty/perl-mime-lite
 thirdparty/perl-convert-binhex
-Makefile.mtools
+thirdparty/perl-mime-tools
 thirdparty/perl-io-sessiondata
 thirdparty/perl-json-pp
 thirdparty/perl-exporter-tiny
@@ -96,8 +96,8 @@ Makefile.nldapapi
 thirdparty/perl-berkeleydb
 thirdparty/perl-db-file
 thirdparty/perl-dbd-mysql
-Makefile.mspf
-Makefile.mspamassassin
+thirdparty/perl-mail-spf
+thirdparty/perl-mail-spamassassin
 Makefile.swatchdog
 thirdparty/perl-innotop
 zimbra/perl

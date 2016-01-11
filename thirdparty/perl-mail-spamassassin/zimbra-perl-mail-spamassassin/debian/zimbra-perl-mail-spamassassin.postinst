@@ -1,0 +1,6 @@
+#!/bin/bash
+## Download SpamAssassin rules on install
+if [ "$1" = configure ]; then
+    chown -R zimbra:zimbra /opt/zimbra/data/spamassassin
+fi
+exit 0
