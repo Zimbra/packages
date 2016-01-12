@@ -1,8 +1,16 @@
 Index: postfix-3.0.3/src/xsasl/xsasl_cyrus_server.c
 ===================================================================
---- postfix-3.0.3.orig/src/xsasl/xsasl_cyrus_server.c	2016-01-05 19:29:08.981936443 +0000
-+++ postfix-3.0.3/src/xsasl/xsasl_cyrus_server.c	2016-01-05 23:05:06.273454944 +0000
-@@ -291,23 +291,12 @@
+--- postfix-3.0.3.orig/src/xsasl/xsasl_cyrus_server.c	2016-01-06 19:09:06.546770462 +0000
++++ postfix-3.0.3/src/xsasl/xsasl_cyrus_server.c	2016-01-08 18:08:39.308483925 +0000
+@@ -77,6 +77,7 @@
+ #include <sasl.h>
+ #include <saslutil.h>
+ 
++
+ /*
+  * Silly little macros.
+  */
+@@ -291,23 +292,12 @@
  #define NO_SESSION_CALLBACKS	((sasl_callback_t *) 0)
  #define NO_AUTH_REALM		((char *) 0)
  
@@ -27,7 +35,60 @@ Index: postfix-3.0.3/src/xsasl/xsasl_cyrus_server.c
 +    client_address = strlen(args->client_addr) ? args->client_addr : "127.0.0.1";
 +    if (msg_verbose)
 +    	msg_info("%s: args->server_addr=%s, args->client_addr=%s, server_address=%s, client_address=%s",
-+         myname, args->server_addr, args->client_addr, server_address, client_address);
++	    myname, args->server_addr, args->client_addr, server_address, client_address);
      if ((sasl_status =
  	 SASL_SERVER_NEW(args->service, var_myhostname,
  			 args->user_realm ? args->user_realm : NO_AUTH_REALM,
+Index: postfix-3.0.3/src/smtpd/smtpd_sasl_glue.c
+===================================================================
+--- postfix-3.0.3.orig/src/smtpd/smtpd_sasl_glue.c	2016-01-05 19:26:34.000000000 +0000
++++ postfix-3.0.3/src/smtpd/smtpd_sasl_glue.c	2016-01-08 19:33:56.164293780 +0000
+@@ -121,6 +121,7 @@
+ 
+ #include <sys_defs.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ #include <string.h>
+ 
+ /* Utility library. */
+@@ -149,6 +150,8 @@
+  * Silly little macros.
+  */
+ #define STR(s)	vstring_str(s)
++/* Max buffer len for client ip and port */
++#define CLIENT_IP_PORT_LEN 1024
+ 
+  /*
+   * SASL server implementation handle.
+@@ -183,6 +186,8 @@
+     const char *mechanism_list;
+     XSASL_SERVER_CREATE_ARGS create_args;
+     int     tls_flag;
++    char client_ip_port[CLIENT_IP_PORT_LEN+1];
++    char *caddr, *cport;
+ 
+     /*
+      * Sanity check.
+@@ -209,14 +214,19 @@
+ #endif
+ #define ADDR_OR_EMPTY(addr, unknown) (strcmp(addr, unknown) ? addr : "")
+ #define REALM_OR_NULL(realm) (*(realm) ? (realm) : (char *) 0)
++    caddr = ADDR_OR_EMPTY(state->addr, CLIENT_ADDR_UNKNOWN);
++    cport = ADDR_OR_EMPTY(state->port, CLIENT_PORT_UNKNOWN);
++    if (strlen(caddr) + strlen(cport) < CLIENT_IP_PORT_LEN)
++        sprintf(client_ip_port, "%s;%s", state->addr, state->port);
++    else
++	strcpy(client_ip_port, "127.0.0.1");
+ 
+     if ((state->sasl_server =
+ 	 XSASL_SERVER_CREATE(smtpd_sasl_impl, &create_args,
+ 			     stream = state->client,
+ 			     server_addr = (state->dest_addr ?
+-					    state->dest_addr : ""),
+-			     client_addr = ADDR_OR_EMPTY(state->addr,
+-						       CLIENT_ADDR_UNKNOWN),
++					    state->dest_addr : "127.0.0.1"),
++			     client_addr = client_ip_port,
+ 			     service = var_smtpd_sasl_service,
+ 			   user_realm = REALM_OR_NULL(var_smtpd_sasl_realm),
+ 			     security_options = sasl_opts_val,

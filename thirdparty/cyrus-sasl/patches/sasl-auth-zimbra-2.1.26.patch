@@ -1,7 +1,7 @@
 Index: cyrus-sasl-2.1.26/saslauthd/auth_zimbra.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/auth_zimbra.c	2015-12-21 22:27:06.291222837 +0000
++++ cyrus-sasl-2.1.26/saslauthd/auth_zimbra.c	2016-01-10 13:31:46.002679956 +0000
 @@ -0,0 +1,157 @@
 +/* MODULE: auth_zimbra */
 +
@@ -163,7 +163,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/auth_zimbra.c
 Index: cyrus-sasl-2.1.26/saslauthd/auth_zimbra.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/auth_zimbra.h	2015-12-21 22:27:06.291222837 +0000
++++ cyrus-sasl-2.1.26/saslauthd/auth_zimbra.h	2016-01-10 13:31:46.002679956 +0000
 @@ -0,0 +1,10 @@
 +#ifndef _AUTH_ZIMBRA_H_
 +#define _AUTH_ZIMBRA_H_
@@ -177,8 +177,8 @@ Index: cyrus-sasl-2.1.26/saslauthd/auth_zimbra.h
 +#endif /* _AUTH_ZIMBRA_H_ */
 Index: cyrus-sasl-2.1.26/saslauthd/Makefile.am
 ===================================================================
---- cyrus-sasl-2.1.26.orig/saslauthd/Makefile.am	2015-12-21 22:27:06.275222838 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/Makefile.am	2015-12-21 22:27:06.271222838 +0000
+--- cyrus-sasl-2.1.26.orig/saslauthd/Makefile.am	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/Makefile.am	2016-01-10 13:31:46.002679956 +0000
 @@ -11,7 +11,9 @@
  		    auth_ldap.c auth_ldap.h cache.c cache.h cfile.c cfile.h \
  		    krbtf.c krbtf.h utils.c utils.h \
@@ -192,8 +192,8 @@ Index: cyrus-sasl-2.1.26/saslauthd/Makefile.am
  saslauthd_LDADD	= @SASL_KRB_LIB@ \
 Index: cyrus-sasl-2.1.26/saslauthd/mechanisms.c
 ===================================================================
---- cyrus-sasl-2.1.26.orig/saslauthd/mechanisms.c	2015-12-21 22:27:06.275222838 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/mechanisms.c	2015-12-21 22:27:06.271222838 +0000
+--- cyrus-sasl-2.1.26.orig/saslauthd/mechanisms.c	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/mechanisms.c	2016-01-10 13:31:46.002679956 +0000
 @@ -60,6 +60,10 @@
  #ifdef AUTH_HTTPFORM
  #include "auth_httpform.h"
@@ -218,7 +218,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/mechanisms.c
 Index: cyrus-sasl-2.1.26/saslauthd/zmauth.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/zmauth.c	2015-12-21 22:27:06.291222837 +0000
++++ cyrus-sasl-2.1.26/saslauthd/zmauth.c	2016-01-10 13:31:46.002679956 +0000
 @@ -0,0 +1,348 @@
 +/*
 + * Do an auth (SOAP) request against a zimbra server.
@@ -433,7 +433,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmauth.c
 +static int checked_libxml_version = 0;
 +
 +int
-+zmauth(zmurl_roundrobin_t *zmrr, zmpostinfo *hti, const char *user, const char *password, const char *clientip)
++zmauth(zmurl_roundrobin_t *zmrr, zmpostinfo *hti, const char *user, const char *password, const char *clientipport)
 +{
 +  int auth = 0; /* not authenticated */
 +
@@ -485,7 +485,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmauth.c
 +        hti->url);
 +
 +      /* perform the http auth request to the elected url */
-+      buffer = zmpost(hti, body, bodysize, clientip);
++      buffer = zmpost(hti, body, bodysize, clientipport);
 +
 +      if (buffer == NULL) {
 +        /* there was an error in zmpost, so we need to re-elect */
@@ -571,8 +571,8 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmauth.c
 Index: cyrus-sasl-2.1.26/saslauthd/zmclient.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/zmclient.h	2015-12-21 22:27:06.291222837 +0000
-@@ -0,0 +1,63 @@
++++ cyrus-sasl-2.1.26/saslauthd/zmclient.h	2016-01-10 13:31:46.002679956 +0000
+@@ -0,0 +1,66 @@
 +#ifndef _ZMCLIENT_H_
 +#define _ZMCLIENT_H_
 +
@@ -608,6 +608,9 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmclient.h
 +#define ZMPOST_DEFAULT_CONNECT_TIMEOUT 15
 +#define ZMPOST_DEFAULT_TIMEOUT 45
 +
++#define ZMPOST_CLIENTIP_MAX 128
++#define ZMPOST_CLIENTPORT_MAX 128
++
 +typedef struct {
 +  /* curl configuration */
 +  const char *url;
@@ -626,21 +629,21 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmclient.h
 +} zmpostinfo;
 +
 +extern zmbuffer *
-+zmpost(zmpostinfo *hti, const char *body, int bodylen, const char *clientip);
++zmpost(zmpostinfo *hti, const char *body, int bodylen, const char *clientipport);
 +
 +
 +/*
 + * Auth, returns non-zero on successful auth.
 + */
 +extern int
-+zmauth(zmurl_roundrobin_t *zmrr, zmpostinfo *hti, const char *user, const char *password, const char *clientip);
++zmauth(zmurl_roundrobin_t *zmrr, zmpostinfo *hti, const char *user, const char *password, const char *clientipport);
 +
 +#endif /* _ZMCLIENT_H_ */
 Index: cyrus-sasl-2.1.26/saslauthd/zmpost.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/zmpost.c	2015-12-21 22:27:06.291222837 +0000
-@@ -0,0 +1,238 @@
++++ cyrus-sasl-2.1.26/saslauthd/zmpost.c	2016-01-10 13:31:46.022679955 +0000
+@@ -0,0 +1,264 @@
 +#include <curl/curl.h>
 +#include <curl/easy.h>
 +#include <stdio.h>
@@ -656,7 +659,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmpost.c
 +}
 +
 +zmbuffer *
-+zmpost(zmpostinfo *hti, const char *body, int bodylen, const char *clientip)
++zmpost(zmpostinfo *hti, const char *body, int bodylen, const char *clientipport)
 +{
 +  CURL *curl = NULL;
 +  CURLcode code;
@@ -664,6 +667,31 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmpost.c
 +  zmbuffer *buffer = NULL;
 +  char ebuf[CURL_ERROR_SIZE+1];
 +  char headerbuf[CURL_MAX_HTTP_HEADER+1];
++  char clientip[ZMPOST_CLIENTIP_MAX+1];
++  char clientport[ZMPOST_CLIENTPORT_MAX+1];
++  char *semicolon;
++
++  if(clientipport) {
++    semicolon = strchr(clientipport, ';');
++    if (semicolon) {
++	strncpy(clientip, clientipport, semicolon - clientipport);
++	clientip[semicolon - clientipport] = '\0';
++	strcpy(clientport, semicolon + 1);
++    }
++    else {
++	strcpy(clientip, clientipport);
++	strcpy(clientport, "unknown");
++    }
++  }
++  else {
++    strcpy(clientip, "unknown");
++    strcpy(clientport, "unknown");
++  }
++  if (strlen(clientip) == 0)
++	strcpy(clientip, "unknown");
++  if (strlen(clientport) == 0)
++	strcpy(clientport, "unknown");
++
 +
 +  if (bodylen == 0) {
 +    bodylen = strlen(body);
@@ -715,10 +743,11 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmpost.c
 +  curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, bodylen);
 +
 +  headers = curl_slist_append(headers, "Content-Type: text/xml");
-+  if (strlen(clientip) > 0) {
-+    snprintf(headerbuf, CURL_MAX_HTTP_HEADER, "X-Forwarded-For: %s", clientip);
-+    headers = curl_slist_append(headers, headerbuf);
-+  }
++  headers = curl_slist_append(headers, "X-Forwarded-Proto: smtp");
++  snprintf(headerbuf, CURL_MAX_HTTP_HEADER, "X-Forwarded-For: %s", clientip);
++  headers = curl_slist_append(headers, headerbuf);
++  snprintf(headerbuf, CURL_MAX_HTTP_HEADER, "X-Forwarded-Port: %s", clientport);
++  headers = curl_slist_append(headers, headerbuf);
 +  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 +
 +  ebuf[0] = '\0';
@@ -882,7 +911,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmpost.c
 Index: cyrus-sasl-2.1.26/saslauthd/zmurl.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/zmurl.c	2015-12-21 22:27:06.271222838 +0000
++++ cyrus-sasl-2.1.26/saslauthd/zmurl.c	2016-01-10 13:31:46.002679956 +0000
 @@ -0,0 +1,305 @@
 +#include "zmurl.h"
 +#include <stdlib.h>
@@ -1192,7 +1221,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmurl.c
 Index: cyrus-sasl-2.1.26/saslauthd/zmurl.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/zmurl.h	2015-12-21 22:27:06.271222838 +0000
++++ cyrus-sasl-2.1.26/saslauthd/zmurl.h	2016-01-10 13:31:46.006679956 +0000
 @@ -0,0 +1,30 @@
 +#if !defined(_ZMURL_H)
 +#define _ZMURL_H
@@ -1227,7 +1256,7 @@ Index: cyrus-sasl-2.1.26/saslauthd/zmurl.h
 Index: cyrus-sasl-2.1.26/cmulocal/curl.m4
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ cyrus-sasl-2.1.26/cmulocal/curl.m4	2015-12-21 22:27:06.271222838 +0000
++++ cyrus-sasl-2.1.26/cmulocal/curl.m4	2016-01-10 13:31:46.006679956 +0000
 @@ -0,0 +1,46 @@
 +dnl
 +dnl macros for configure.in to detect curl
@@ -1277,8 +1306,8 @@ Index: cyrus-sasl-2.1.26/cmulocal/curl.m4
 +])
 Index: cyrus-sasl-2.1.26/saslauthd/configure.in
 ===================================================================
---- cyrus-sasl-2.1.26.orig/saslauthd/configure.in	2015-12-21 22:27:06.275222838 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/configure.in	2015-12-21 22:27:06.271222838 +0000
+--- cyrus-sasl-2.1.26.orig/saslauthd/configure.in	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/configure.in	2016-01-10 13:31:46.006679956 +0000
 @@ -50,6 +50,10 @@
  	AC_DEFINE(HAVE_GSSAPI,[],[Include GSSAPI/Kerberos 5 Support])
  fi
@@ -1317,23 +1346,23 @@ Index: cyrus-sasl-2.1.26/saslauthd/configure.in
  	with_pam=yes)
 Index: cyrus-sasl-2.1.26/lib/checkpw.c
 ===================================================================
---- cyrus-sasl-2.1.26.orig/lib/checkpw.c	2015-12-21 22:27:06.295222837 +0000
-+++ cyrus-sasl-2.1.26/lib/checkpw.c	2015-12-21 22:27:06.291222837 +0000
+--- cyrus-sasl-2.1.26.orig/lib/checkpw.c	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/lib/checkpw.c	2016-01-10 13:31:46.006679956 +0000
 @@ -654,9 +654,17 @@
      char pwpath[sizeof(srvaddr.sun_path)];
      const char *p = NULL;
      char *freeme = NULL;
-+    const char *clientip = NULL;
++    const char *clientipport = NULL;
  #ifdef USE_DOORS
      door_arg_t arg;
  #endif
-+    if(sasl_getprop(conn, SASL_IPREMOTEPORT, (const void **)&clientip) != SASL_OK) {
++    if(sasl_getprop(conn, SASL_IPREMOTEPORT, (const void **)&clientipport) != SASL_OK) {
 +	_sasl_log(conn, SASL_LOG_WARN, "unabled to retrieve SASL_IPREMOTEPORT from conn");
-+	clientip="";   /* TODO - should I supply a different default if value cannot be retrieved? */
++	clientipport="unknown;unknown";
 +    }
 +
-+    _sasl_log(conn, SASL_LOG_DEBUG, "saslauthd_verify_password: userid=%s, passwd=%s, service=%s, user_realm=%s, clientip=%s",
-+        userid, passwd, service, user_realm, clientip);
++    _sasl_log(conn, SASL_LOG_DEBUG, "saslauthd_verify_password: userid=%s, passwd=%s, service=%s, user_realm=%s, clientipport=%s",
++        userid, passwd, service, user_realm, clientipport);
  
      /* check to see if the user configured a rundir */
      if (_sasl_getcallback(conn, SASL_CB_GETOPT, &getopt, &context) == SASL_OK) {
@@ -1353,7 +1382,7 @@ Index: cyrus-sasl-2.1.26/lib/checkpw.c
  	    (strlen(service) > USHRT_MAX) ||
 -	    (user_realm && (strlen(user_realm) > USHRT_MAX))) {
 +	    (user_realm && (strlen(user_realm) > USHRT_MAX)) ||
-+	    (strlen(clientip) > USHRT_MAX)) {
++	    (strlen(clientipport) > USHRT_MAX)) {
  	    goto toobig;
  	}
  
@@ -1361,7 +1390,7 @@ Index: cyrus-sasl-2.1.26/lib/checkpw.c
   	p_len = (strlen(passwd));
  	s_len = (strlen(service));
  	r_len = ((user_realm ? strlen(user_realm) : 0));
-+	i_len = (strlen(clientip));
++	i_len = (strlen(clientipport));
  
  	/* prevent buffer overflow */
  	req_len = 30;
@@ -1387,59 +1416,72 @@ Index: cyrus-sasl-2.1.26/lib/checkpw.c
 +
 +	memcpy(query_end, &i_len, sizeof(unsigned short));
 +	query_end += sizeof(unsigned short);
-+	while (*clientip) *query_end++ = *clientip++;
++	while (*clientipport) *query_end++ = *clientipport++;
      }
  
  #ifdef USE_DOORS
 Index: cyrus-sasl-2.1.26/saslauthd/ipc_unix.c
 ===================================================================
---- cyrus-sasl-2.1.26.orig/saslauthd/ipc_unix.c	2015-12-21 22:27:06.295222837 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/ipc_unix.c	2015-12-21 22:27:06.291222837 +0000
-@@ -329,6 +329,7 @@
+--- cyrus-sasl-2.1.26.orig/saslauthd/ipc_unix.c	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/ipc_unix.c	2016-01-10 13:31:46.006679956 +0000
+@@ -329,11 +329,14 @@
  	char			password[MAX_REQ_LEN + 1]; /* password for authentication            */
  	char			service[MAX_REQ_LEN + 1];  /* service name for authentication        */
  	char			realm[MAX_REQ_LEN + 1];    /* user realm for authentication          */
-+	char			clientip[MAX_REQ_LEN + 1]; /* originating client IP for auth         */
++							   /* originating client IP;PORT for auth    */
++	char			clientipport[MAX_REQ_LEN + 1];
  
  
  	/**************************************************************
-@@ -405,6 +406,23 @@
+ 	 * The input data stream consists of the login id, password,
+-	 * service name and user realm as counted length strings.
++	 * service name, user realm and (optionally) a clientipport of
++         * the form ip;port as counted length strings.
+ 	 * We read in each string, then dispatch the data.
+ 	 **************************************************************/
+ 
+@@ -405,6 +408,28 @@
  
  	realm[count] = '\0';
  
-+	/* clientip */
-+	if (rx_rec(conn_fd, (void *)&count, (size_t)sizeof(count)) != (ssize_t)sizeof(count))
++	/* optional clientipport */
++	if (rx_avail(conn_fd, 2 /* ms */) == 1) {
++	    if (rx_rec(conn_fd, (void *)&count, (size_t)sizeof(count)) != (ssize_t)sizeof(count))
 +		return;
 +
-+	count = ntohs(count);
++	    count = ntohs(count);
 +
-+	if (count > MAX_REQ_LEN) {
-+		logger(L_ERR, L_FUNC, "clientip exceeded MAX_REQ_LEN: %d", MAX_REQ_LEN);
++	    if (count > MAX_REQ_LEN) {
++		logger(L_ERR, L_FUNC, "clientipport exceeded MAX_REQ_LEN: %d", MAX_REQ_LEN);
 +		send_no(conn_fd, "");
 +		return;
-+	}
++	    }
 +
-+	if (rx_rec(conn_fd, (void *)clientip, (size_t)count) != (ssize_t)count)
++	    if (rx_rec(conn_fd, (void *)clientipport, (size_t)count) != (ssize_t)count)
 +		return;
 +
-+	clientip[count] = '\0';
++	    clientipport[count] = '\0';
++	}
++	else {
++	    strcpy(clientipport, "unknown;unknown");
++	}
 +
  	/**************************************************************
   	 * We don't allow NULL passwords or login names
  	 **************************************************************/
-@@ -423,7 +441,7 @@
+@@ -423,7 +448,7 @@
  	/**************************************************************
  	 * Get the mechanism response from do_auth() and send it back.
  	 **************************************************************/
 -	response = do_auth(login, password, service, realm);
-+	response = do_auth(login, password, service, realm, clientip);
++	response = do_auth(login, password, service, realm, clientipport);
  
  	memset(password, 0, strlen(password));
  
 Index: cyrus-sasl-2.1.26/saslauthd/saslauthd-main.c
 ===================================================================
---- cyrus-sasl-2.1.26.orig/saslauthd/saslauthd-main.c	2015-12-21 22:27:06.295222837 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/saslauthd-main.c	2015-12-21 22:27:06.291222837 +0000
+--- cyrus-sasl-2.1.26.orig/saslauthd/saslauthd-main.c	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/saslauthd-main.c	2016-01-10 13:31:46.006679956 +0000
 @@ -378,7 +378,7 @@
   * return a pointer to a string to send back to the client.
   * The caller is responsible for freeing the pointer. 
@@ -1460,8 +1502,8 @@ Index: cyrus-sasl-2.1.26/saslauthd/saslauthd-main.c
  			logger(L_ERR, L_FUNC, "internal mechanism failure: %s", auth_mech->name);
 Index: cyrus-sasl-2.1.26/saslauthd/saslauthd-main.h
 ===================================================================
---- cyrus-sasl-2.1.26.orig/saslauthd/saslauthd-main.h	2015-12-21 22:27:06.295222837 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/saslauthd-main.h	2015-12-21 22:27:06.291222837 +0000
+--- cyrus-sasl-2.1.26.orig/saslauthd/saslauthd-main.h	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/saslauthd-main.h	2016-01-10 13:31:46.006679956 +0000
 @@ -88,7 +88,8 @@
  
  /* saslauthd-main.c */
@@ -1474,8 +1516,8 @@ Index: cyrus-sasl-2.1.26/saslauthd/saslauthd-main.h
  extern void	set_mech_option(const char *);
 Index: cyrus-sasl-2.1.26/saslauthd/mechanisms.h
 ===================================================================
---- cyrus-sasl-2.1.26.orig/saslauthd/mechanisms.h	2015-12-21 22:27:06.295222837 +0000
-+++ cyrus-sasl-2.1.26/saslauthd/mechanisms.h	2015-12-21 22:27:06.291222837 +0000
+--- cyrus-sasl-2.1.26.orig/saslauthd/mechanisms.h	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/mechanisms.h	2016-01-10 13:31:46.006679956 +0000
 @@ -40,8 +40,8 @@
      char *name;				/* name of the mechanism */
      int (*initialize)(void);		/* initialization function */
@@ -1487,3 +1529,176 @@ Index: cyrus-sasl-2.1.26/saslauthd/mechanisms.h
  } authmech_t;
  
  extern authmech_t mechanisms[];		/* array of supported auth mechs */
+Index: cyrus-sasl-2.1.26/saslauthd/utils.c
+===================================================================
+--- cyrus-sasl-2.1.26.orig/saslauthd/utils.c	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/utils.c	2016-01-10 13:31:46.006679956 +0000
+@@ -45,6 +45,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <errno.h>
++#include <sys/select.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+ 
+@@ -227,6 +228,26 @@
+ 	}
+ }
+ 
++/**************************************************************
++ * I/O wrapper to attempt to check for available data in the
++ * socket.
++ * Returns:
++ * -1 if error
++ *  0 if timeout
++ *  1 if data available
++ **************************************************************/
++int rx_avail(int filefd, int timeoutms) {
++    fd_set input;
++    FD_ZERO(&input);
++    FD_SET(filefd, &input);
++    struct timeval timeout;
++    timeout.tv_sec  = 0;
++    timeout.tv_usec = timeoutms * 1000;
++    /* we do not need to FD_ISSET(filefd, &input) since there
++       is only one file descriptor involved. */
++    return select(filefd + 1, &input, NULL, NULL, &timeout);
++}
++
+ #ifndef HAVE_ASPRINTF
+ 
+ # include <stdarg.h>
+Index: cyrus-sasl-2.1.26/saslauthd/utils.h
+===================================================================
+--- cyrus-sasl-2.1.26.orig/saslauthd/utils.h	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/utils.h	2016-01-10 13:31:46.006679956 +0000
+@@ -85,6 +85,7 @@
+ extern ssize_t	tx_rec(int filefd, void *, size_t);
+ extern ssize_t	rx_rec(int , void *, size_t);
+ extern int	retry_writev(int, struct iovec *, int);
++extern int      rx_avail(int filefd, int timeoutms);
+ 
+ 
+ #endif  /* _UTILS_H */
+Index: cyrus-sasl-2.1.26/saslauthd/testsaslauthd.c
+===================================================================
+--- cyrus-sasl-2.1.26.orig/saslauthd/testsaslauthd.c	2016-01-10 13:31:46.010679955 +0000
++++ cyrus-sasl-2.1.26/saslauthd/testsaslauthd.c	2016-01-10 13:31:46.006679956 +0000
+@@ -96,7 +96,8 @@
+ 				   const char *userid, 
+ 				   const char *passwd,
+ 				   const char *service,
+-				   const char *user_realm)
++				   const char *user_realm,
++			           const char *cipport)
+ {
+     char response[1024];
+     char query[8192];
+@@ -108,6 +109,9 @@
+     void *context;
+     char pwpath[sizeof(srvaddr.sun_path)];
+     const char *p = NULL;
++    #define CLIENTIPPORT_LEN 128
++    char clientipport[CLIENTIPPORT_LEN+1];
++    char *colon;
+ #ifdef USE_DOORS
+     door_arg_t arg;
+ #endif
+@@ -115,6 +119,21 @@
+     if(!service) service = "imap";
+     if(!user_realm) user_realm = "";
+     if(!userid || !passwd) return -1;
++    if(cipport) {
++	if (strlen(cipport) > CLIENTIPPORT_LEN) {
++            fprintf(stderr, "'clientip:clientport' must not exceed %d characters\n", CLIENTIPPORT_LEN);
++	    return -1;
++ 	}
++	strcpy(clientipport, cipport);
++	colon = strchr(clientipport, ':');
++	if (colon)
++	    *colon = ';';
++	else {
++            fprintf(stderr, "missing colon in 'clientip:clientport'\n");
++	    return -1;
++	}
++    }
++
+     
+     if (saslauthd_path) {
+ 	strncpy(pwpath, saslauthd_path, sizeof(pwpath));
+@@ -132,13 +151,14 @@
+      * count authid count password count service count realm
+      */
+     {
+- 	unsigned short u_len, p_len, s_len, r_len;
++ 	unsigned short u_len, p_len, s_len, r_len, c_len;
+  	struct iovec iov[8];
+  
+  	u_len = htons(strlen(userid));
+  	p_len = htons(strlen(passwd));
+ 	s_len = htons(strlen(service));
+ 	r_len = htons((user_realm ? strlen(user_realm) : 0));
++	c_len = cipport ? htons(strlen(clientipport)) : 0;
+ 
+ 	memcpy(query_end, &u_len, sizeof(unsigned short));
+ 	query_end += sizeof(unsigned short);
+@@ -155,6 +175,13 @@
+ 	memcpy(query_end, &r_len, sizeof(unsigned short));
+ 	query_end += sizeof(unsigned short);
+ 	if (user_realm) while (*user_realm) *query_end++ = *user_realm++;
++
++	if (c_len) {
++	    memcpy(query_end, &c_len, sizeof(unsigned short));
++	    query_end += sizeof(unsigned short);
++	    p = clientipport;
++	    while (*p) *query_end++ = *p++;
++        }
+     }
+ 
+ #ifdef USE_DOORS
+@@ -251,6 +278,7 @@
+ {
+   const char *user = NULL, *password = NULL;
+   const char *realm = NULL, *service = NULL, *path = NULL;
++  const char *clientipport = NULL;
+   int c;
+   int flag_error = 0;
+   unsigned passlen, verifylen;
+@@ -259,7 +287,7 @@
+   char *user_domain = NULL;
+   int repeat = 0;
+ 
+-  while ((c = getopt(argc, argv, "p:u:r:s:f:R:")) != EOF)
++  while ((c = getopt(argc, argv, "p:u:r:s:f:c:R:")) != EOF)
+       switch (c) {
+       case 'R':
+ 	  repeat = atoi(optarg);
+@@ -279,6 +307,9 @@
+       case 'p':
+ 	  password = optarg;
+ 	  break;
++      case 'c':
++	  clientipport = optarg;
++	  break;
+       default:
+ 	  flag_error = 1;
+ 	  break;
+@@ -291,7 +322,8 @@
+     (void)fprintf(stderr,
+ 		  "%s: usage: %s -u username -p password\n"
+ 		  "              [-r realm] [-s servicename]\n"
+-		  "              [-f socket path] [-R repeatnum]\n",
++		  "              [-f socket path] [-R repeatnum]\n"
++		  "              [-c clientip:clientport]\n",
+ 		  argv[0], argv[0]);
+     exit(1);
+   }
+@@ -300,7 +332,7 @@
+   for (c = 0; c < repeat; c++) {
+       /* saslauthd-authenticated login */
+       printf("%d: ", c);
+-      result = saslauthd_verify_password(path, user, password, service, realm);
++      result = saslauthd_verify_password(path, user, password, service, realm, clientipport);
+   }
+   return result;
+ }
