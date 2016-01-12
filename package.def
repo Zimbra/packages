@@ -1,0 +1,92 @@
+### ~from ThirdParty/Makefile:
+# - include via ThirdParty/${package}/Makefile
+SHELL := /bin/bash
+
+SRC_ROOT ?= $(shell cd ../..; pwd)
+THIRDPARTY_ROOT := $(shell cd ..; pwd)
+
+BUILD_PLATFORM ?= $(shell sh $(SRC_ROOT)/ZimbraBuild/rpmconf/Build/get_plat_tag.sh)
+ifeq ($(BUILD_PLATFORM), )
+	BUILD_PLATFORM := "UNKNOWN"
+endif
+
+include $(THIRDPARTY_ROOT)/versions.def
+include $(THIRDPARTY_ROOT)/Perl/perl-versions.def
+
+CFLAGS := -g -O2
+MAKE ?= make
+MAKEARGS := -j3
+
+CD := cd
+CHMOD := chmod
+CP := cp
+MKDIR := mkdir -p
+MV := mv
+PERL := perl
+RM := rm
+SED := sed
+TAR := tar
+WGET := wget -q
+
+SRC_DIR = src
+TMP_DIR = tmp
+
+ZIMBRA_HOME ?= /opt/zimbra
+OZC ?= $(ZIMBRA_HOME)/common
+OZCB ?= $(OZC)/bin
+OZCE ?= $(OZC)/etc
+OZCI ?= $(OZC)/include
+OZCL ?= $(OZC)/lib
+OZCLE ?= $(OZC)/libexec
+OZCS ?= $(OZC)/share
+
+###
+
+### ~from ZimbraBuild/defs/globals.def
+MAJOR	:= $(shell cat $(SRC_ROOT)/ZimbraBuild/RE/MAJOR)
+MINOR	:= $(shell cat $(SRC_ROOT)/ZimbraBuild/RE/MINOR)
+MICRO	:= $(shell cat $(SRC_ROOT)/ZimbraBuild/RE/MICRO)
+###
+
+PKG_REVNUM = 1
+PKG_REVISION = zimbra$(MAJOR).$(MINOR)b$(PKG_REVNUM)
+PKG_ITERATION = 1$(PKG_REVISION)
+
+# Platform specific:
+# - PKG_EXT deb|rpm
+ifeq (RHEL,$(findstring RHEL,$(BUILD_PLATFORM)))
+	include $(THIRDPARTY_ROOT)/package-RHEL.def
+else ifeq (UBUNTU,$(findstring UBUNTU,$(BUILD_PLATFORM)))
+	include $(THIRDPARTY_ROOT)/package-UBUNTU.def
+endif
+
+PKG_MAINTAINER = Zimbra Packaging Services <packaging-devel@zimbra.com>
+
+define generic-setup
+  $(MKDIR) $(TMP_DIR)/$(BUILD_PLATFORM)
+  $(CP) -prf zimbra-* $(TMP_DIR)/$(BUILD_PLATFORM)
+endef
+
+define generic-clean
+  $(RM) -rf $(TMP_DIR)/$(BUILD_PLATFORM)
+endef
+
+# $pkg.spec OR $pkg/debian/{changelog,*.shlibs}
+define replace-pkginfo
+  $(PERL) -pi -e 's|VERSION|$(pvers)|; s|ITERATION|$(PKG_ITERATION)|; s|ZAPPEND|$(PKG_APPEND)|'
+endef
+
+# $pkg.spec OR $pkg/debian/rules
+define replace-pathinfo
+  $(PERL) -pi -e 's|OZCLE|$(OZCLE)|g; s|OZCB|$(OZCB)|g; s|OZCE|$(OZCE)|g; s|OZCI|$(OZCI)|g; s|OZCL|$(OZCL)|g; s|OZCS|$(OZCS)|g; s|OZC|$(OZC)|g;'
+endef
+
+# $pkg.spec only
+define replace-dictinfo
+  $(PERL) -pi -e 's/ADICT/$(dictver)/g;'
+endef
+
+# $pkg.spec OR $pkg/debian/{changelog, control, copyright, watch}
+define replace-perl-modinfo
+  $(PERL) -pi -e 's/MODNAME/$(pname)/g; s/MODNORMNAME/$(pname_lc)/g;'
+endef

@@ -1,0 +1,12 @@
+PKG_BUILD := dpkg-buildpackage -irpm
+PKG_EXT := deb
+PKG_EXTRACT := sudo apt-get install -y
+PKG_PURGE := sudo apt-get -y --purge purge
+PKG_DEV := dev
+PKG_LIB	:= lib
+
+ifeq ($(BUILD_PLATFORM), UBUNTU12_64)
+	PKG_APPEND := .12.04
+else ifeq ($(BUILD_PLATFORM), UBUNTU14_64)
+	PKG_APPEND := .14.04
+endif
