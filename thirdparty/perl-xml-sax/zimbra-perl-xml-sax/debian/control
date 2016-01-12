@@ -1,0 +1,20 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-xml-namespacesupport,
+ zimbra-perl-xml-sax-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ zimbra-perl-xml-namespacesupport, zimbra-perl-xml-sax-base
+Description: XML::SAX - Simple API for XML
+ XML::SAX consists of several framework classes for using and building
+ Perl SAX2 XML parsers, filters, and drivers. It is designed around the
+ need to be able to "plug in" different SAX parsers to an application
+ without requiring programmer intervention. Those of you familiar with
+ the DBI will be right at home. Some of the designs come from the Java
+ JAXP specification (SAX part), only without the javaness.

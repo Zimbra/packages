@@ -15,8 +15,8 @@ thirdparty/perl-io-socket-ip
 thirdparty/perl-net-ssleay
 thirdparty/perl-net-ldap
 thirdparty/perl-net-server
-Makefile.zconstants
-Makefile.zlibzmq3
+thirdparty/perl-zmq-constants
+thirdparty/perl-zmq-libzmq3
 thirdparty/perl-mozilla-ca
 thirdparty/perl-io-socket-ssl
 thirdparty/perl-dbi
@@ -36,7 +36,7 @@ thirdparty/perl-http-negotiate
 thirdparty/perl-file-listing
 thirdparty/perl-http-daemon
 thirdparty/perl-http-cookies
-Makefile.wrobotrules
+thirdparty/perl-www-robotrules
 thirdparty/perl-libwww
 thirdparty/perl-lwp-protocol-https
 thirdparty/perl-io-stringy
@@ -68,12 +68,12 @@ thirdparty/perl-data-uuid
 thirdparty/perl-crypt-saltedhash
 thirdparty/perl-archive-zip
 thirdparty/perl-error
-Makefile.xparser
-Makefile.xsbase
-Makefile.xnamespacesupport
-Makefile.xsax
-Makefile.xsexpat
-Makefile.xsimple
+thirdparty/perl-xml-parser
+thirdparty/perl-xml-sax-base
+thirdparty/perl-xml-namespacesupport
+thirdparty/perl-xml-sax
+thirdparty/perl-xml-sax-expat
+thirdparty/perl-xml-simple
 thirdparty/perl-netaddr-ip
 thirdparty/perl-net-dns
 thirdparty/perl-mail-dkim
@@ -86,7 +86,7 @@ thirdparty/perl-encode-detect
 thirdparty/perl-unix-getrusage
 thirdparty/perl-class-inspector
 thirdparty/perl-task-weaken
-Makefile.xplite
+thirdparty/perl-xml-parser-lite
 thirdparty/perl-soap-lite
 thirdparty/perl-term-readkey
 thirdparty/perl-net-cidr-lite

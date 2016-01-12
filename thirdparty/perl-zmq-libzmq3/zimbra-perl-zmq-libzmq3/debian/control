@@ -1,0 +1,16 @@
+Source: zimbra-perl-zmq-libzmq3
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-zeromq-dev, zimbra-perl-zmq-constants
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/ZMQ-LibZMQ3
+
+Package: zimbra-perl-zmq-libzmq3
+Architecture: any
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-zmq-constants
+Description: a libzmq 3.x wrapper for Perl
+ The ZMQ::LibZMQ3 module is a wrapper of the 0MQ message passing
+ library for Perl.  This module is merely a thin wrapper around the C
+ API: You need to understand how the C API works in order to properly
+ use this module.

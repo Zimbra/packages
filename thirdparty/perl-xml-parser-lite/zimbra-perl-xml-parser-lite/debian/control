@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: XML::Parser::Lite - Lightweight pure-perl XML Parser (based on regexps)
+ This module implements an XML parser with a interface similar to XML::Parser.
+ Though not all callbacks are supported, you should be able to use it in the same
+ way you use XML::Parser. Due to using experimental regexp features it'll work only
+ on Perl 5.6 and above and may behave differently on different platforms.

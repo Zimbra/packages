@@ -1,0 +1,16 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: XML::SAX::Base - Base class SAX Drivers and Filters
+ This module has a very simple task - to be a base class for PerlSAX drivers
+ and filters. It's default behaviour is to pass the input directly to the
+ output unchanged. It can be useful to use this module as a base class so
+ you don't have to, for example, implement the characters() callback.

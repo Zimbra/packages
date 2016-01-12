@@ -1,0 +1,15 @@
+Source: zimbra-perl-zmq-constants
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/ZMQ-Constants
+
+Package: zimbra-perl-zmq-constants
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base
+Description: constants for libzmq
+ This module lists the libzmq constants statically. You can also
+ specify which set of constants to pull in depending on the zmq
+ version.

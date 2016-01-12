@@ -1,0 +1,16 @@
+Source: zimbra-perl-www-robotrules
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-uri
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/WWW-RobotRules
+
+Package: zimbra-perl-www-robotrules
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-uri
+Description: WWW::RobotRules - database of robots.txt-derived permissions
+ This module parses /robots.txt files as specified in "A Standard for
+ Robot Exclusion", at <http://www.robotstxt.org/wc/norobots.html>
+ Webmasters can use the /robots.txt file to forbid conforming robots from
+ accessing parts of their web site.

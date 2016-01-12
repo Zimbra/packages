@@ -1,0 +1,8 @@
+#!/bin/sh
+## register XML::SAX::Expat on installation
+set -e
+if [ "$1" = configure ]
+then
+    /usr/bin/perl -I/opt/zimbra/common/lib/perl5 -MXML::SAX -e "XML::SAX->add_parser(q(XML::SAX::Expat))->save_parsers()"
+fi
+exit 0
