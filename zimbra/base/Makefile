@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pname_lc := base
 ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
@@ -27,7 +27,6 @@ build_rpm:
 build_deb:
 	$(CD) $(ptmp)/$(zname) && \
 	$(replace-pkginfo) debian/changelog && \
-	$(CHMOD) u+w debian/control && \
 	$(PKG_BUILD)
 
 clean:

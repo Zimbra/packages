@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
 psrc := $(ptmp)/src

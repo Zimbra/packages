@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pname_lc := openjdk-cacerts
 ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
@@ -40,7 +40,6 @@ build_deb:
 	$(CD) $(ptmp)/$(zname) && \
 	$(replace-pkginfo) debian/changelog && \
 	$(replace-pathinfo) debian/rules && \
-	$(CHMOD) u+w debian/control && \
 	$(PKG_BUILD)
 
 clean: pkgrm

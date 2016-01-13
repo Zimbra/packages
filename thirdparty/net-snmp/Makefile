@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pvers := $(SNMP_VERSION)
 
@@ -46,7 +46,6 @@ else
 	cp ../../src/net-snmp-$(pvers).tar.gz zimbra-net-snmp_$(pvers).orig.tar.gz && \
 	tar xfz zimbra-net-snmp_$(pvers).orig.tar.gz --strip-components=1 -C zimbra-net-snmp && \
 	cd zimbra-net-snmp && \
-	$(CHMOD) u+w debian/control && \
 	$(PKG_BUILD) \
 	)
 endif
