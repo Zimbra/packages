@@ -42,7 +42,6 @@ ifeq ($(PKG_EXT), rpm)
 	cp ../../../../patches/postfix-ldap.patch SOURCES/ && \
 	cp ../../../../patches/postfix-main-cf-zimbra.patch SOURCES/ && \
 	cp ../../../../patches/stop-warning.patch SOURCES/ && \
-	cp ../../../../patches/fallback.patch SOURCES/ && \
 	cp ../../../../patches/pass-ip-address.patch SOURCES/ && \
  	$(PKG_BUILD) SPECS/postfix.spec \
 	)
@@ -56,7 +55,6 @@ else
 	cp ../../patches/postfix-ldap.patch zimbra-postfix/debian/patches && \
 	cp ../../patches/postfix-main-cf-zimbra.patch zimbra-postfix/debian/patches && \
 	cp ../../patches/stop-warning.patch zimbra-postfix/debian/patches && \
-	cp ../../patches/fallback.patch zimbra-postfix/debian/patches && \
 	cp ../../patches/pass-ip-address.patch zimbra-postfix/debian/patches && \
 	cd zimbra-postfix && \
 	$(PKG_BUILD) \

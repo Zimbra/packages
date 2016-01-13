@@ -14,12 +14,11 @@ Requires:           pcre
 Requires:           zimbra-openldap-libs, zimbra-mta-base
 Requires:           zimbra-cyrus-sasl, zimbra-mariadb
 Requires:           zimbra-lmdb-libs, zimbra-openssl-libs
-Patch0:             fallback.patch
-Patch1:             postfix-main-cf-zimbra.patch
-Patch2:             stop-warning.patch
-Patch3:             postfix-ldap.patch
-Patch4:             lmdb-default.patch
-Patch5:             pass-ip-address.patch
+Patch0:             postfix-main-cf-zimbra.patch
+Patch1:             stop-warning.patch
+Patch2:             postfix-ldap.patch
+Patch3:             lmdb-default.patch
+Patch4:             pass-ip-address.patch
 AutoReqProv:        no
 URL:                https://www.postfix.org/
 
@@ -33,7 +32,6 @@ The Zimbra Postfix build
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
