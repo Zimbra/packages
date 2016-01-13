@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pvers := $(ASPELL-IT_NORM)
 dictver := $(ASPELL-IT_VERSION)

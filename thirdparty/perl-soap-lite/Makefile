@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pvers := $(SOAP_LITE)
 pname := SOAP-Lite
@@ -57,7 +57,6 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
-	$(CHMOD) u+w debian/control && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)

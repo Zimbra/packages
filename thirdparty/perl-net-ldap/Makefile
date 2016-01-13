@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pvers := $(NET_LDAP)
 pname := Net-LDAP
@@ -54,7 +54,6 @@ build_deb:
 	$(CD) $(ptmp)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
-	$(CHMOD) u+w debian/control && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
 	$(CP) $(PKG_ROOT)/patches/net-ldap-keepalive.patch debian/patches && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \

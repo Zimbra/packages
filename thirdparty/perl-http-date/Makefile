@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pvers := $(HTTP_DATE)
 pname := HTTP-Date
@@ -50,7 +50,6 @@ build_deb:
 	$(CD) $(ptmp)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
-	$(CHMOD) u+w debian/control && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)

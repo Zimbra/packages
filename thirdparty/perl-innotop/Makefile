@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pvers := $(INNOTOP)
 pname := innotop
@@ -53,7 +53,6 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
-	$(CHMOD) u+w debian/control && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
 	$(CP) $(PKG_ROOT)/patches/inno.patch debian/patches && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
