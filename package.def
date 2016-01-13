@@ -2,16 +2,16 @@
 # - include via ThirdParty/${package}/Makefile
 SHELL := /bin/bash
 
-SRC_ROOT ?= $(shell cd ../..; pwd)
-THIRDPARTY_ROOT := $(shell cd ..; pwd)
+SRC_ROOT ?= $(shell cd ../../..; pwd)
+THIRDPARTY_ROOT := $(shell cd ../..; pwd)
 
-BUILD_PLATFORM ?= $(shell sh $(SRC_ROOT)/ZimbraBuild/rpmconf/Build/get_plat_tag.sh)
+BUILD_PLATFORM ?= $(shell sh $(SRC_ROOT)/zimbra-build/rpmconf/Build/get_plat_tag.sh)
 ifeq ($(BUILD_PLATFORM), )
 	BUILD_PLATFORM := "UNKNOWN"
 endif
 
 include $(THIRDPARTY_ROOT)/versions.def
-include $(THIRDPARTY_ROOT)/Perl/perl-versions.def
+include $(THIRDPARTY_ROOT)/perl-versions.def
 
 CFLAGS := -g -O2
 MAKE ?= make
@@ -42,11 +42,9 @@ OZCS ?= $(OZC)/share
 
 ###
 
-### ~from ZimbraBuild/defs/globals.def
-MAJOR	:= $(shell cat $(SRC_ROOT)/ZimbraBuild/RE/MAJOR)
-MINOR	:= $(shell cat $(SRC_ROOT)/ZimbraBuild/RE/MINOR)
-MICRO	:= $(shell cat $(SRC_ROOT)/ZimbraBuild/RE/MICRO)
-###
+MAJOR	:= $(shell cat $(SRC_ROOT)/zimbra-build/RE/MAJOR)
+MINOR	:= $(shell cat $(SRC_ROOT)/zimbra-build/RE/MINOR)
+MICRO	:= $(shell cat $(SRC_ROOT)/zimbra-build/RE/MICRO)
 
 PKG_REVNUM = 1
 PKG_REVISION = zimbra$(MAJOR).$(MINOR)b$(PKG_REVNUM)
