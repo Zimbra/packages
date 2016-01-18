@@ -1,3 +1,22 @@
+zimbra-osl (1.0.3-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Update MariaDB to 10.1.10
+  * Update Selenium to 2.49.0
+  * Update jquery to 1.11.0
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 11 Jan 2016 00:00:00 +0000
+
+zimbra-osl (1.0.2-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Add oauth, guice
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 07 Jan 2016 00:00:00 +0000
+zimbra-osl (1.0.1-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Update for ZCS 8.7.0 release. 
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Dec 2015 00:00:00 +0000
+
 zimbra-osl (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.
