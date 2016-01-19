@@ -3,5 +3,6 @@ writers.patch
 ITS7683.patch
 ITS8054.patch
 ITS8336.patch
+ITS8351.patch
 threadpool.patch
 liblmdb-soname.patch

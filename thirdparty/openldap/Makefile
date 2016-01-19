@@ -43,6 +43,7 @@ ifeq ($(PKG_EXT), rpm)
 	cp ../../../../patches/ITS7683.patch SOURCES/ && \
 	cp ../../../../patches/ITS8054.patch SOURCES/ && \
 	cp ../../../../patches/ITS8336.patch SOURCES/ && \
+	cp ../../../../patches/ITS8351.patch SOURCES/ && \
 	cp ../../../../patches/threadpool.patch SOURCES/ && \
 	cp ../../../../patches/liblmdb-soname.patch SOURCES/ && \
 	$(PKG_BUILD) SPECS/openldap.spec \
@@ -58,6 +59,7 @@ else
 	cp ../../patches/ITS7683.patch zimbra-openldap/debian/patches && \
 	cp ../../patches/ITS8054.patch zimbra-openldap/debian/patches && \
 	cp ../../patches/ITS8336.patch zimbra-openldap/debian/patches && \
+	cp ../../patches/ITS8351.patch zimbra-openldap/debian/patches && \
 	cp ../../patches/threadpool.patch zimbra-openldap/debian/patches && \
 	cp ../../patches/liblmdb-soname.patch zimbra-openldap/debian/patches && \
 	cd zimbra-openldap && \
