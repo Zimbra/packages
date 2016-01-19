@@ -28,8 +28,9 @@ SED := sed
 TAR := tar
 WGET := wget -q
 
-SRC_DIR = src
 TMP_DIR = tmp
+PLATFORM_DIR = $(TMP_DIR)/$(BUILD_PLATFORM)
+SRC_DIR = $(PLATFORM_DIR)/src
 
 ZIMBRA_HOME ?= /opt/zimbra
 OZC ?= $(ZIMBRA_HOME)/common
@@ -61,12 +62,12 @@ endif
 PKG_MAINTAINER = Zimbra Packaging Services <packaging-devel@zimbra.com>
 
 define generic-setup
-  $(MKDIR) $(TMP_DIR)/$(BUILD_PLATFORM)
-  $(CP) -prf zimbra-* $(TMP_DIR)/$(BUILD_PLATFORM)
+  $(MKDIR) $(PLATFORM_DIR)
+  $(CP) -prf zimbra-* $(PLATFORM_DIR)
 endef
 
 define generic-clean
-  $(RM) -rf $(TMP_DIR)/$(BUILD_PLATFORM)
+  $(RM) -rf $(PLATFORM_DIR)
 endef
 
 # $pkg.spec OR $pkg/debian/{changelog,*.shlibs}
