@@ -72,6 +72,7 @@ thirdparty/perl-net-cidr
 thirdparty/perl-socket-linux
 thirdparty/perl-net-libidn
 thirdparty/perl-math-bigint
+thirdparty/perl-file-libmagic
 thirdparty/perl-convert-asn1
  RHEL6 only:
  thirdparty/perl-storable

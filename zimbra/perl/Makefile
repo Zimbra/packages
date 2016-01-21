@@ -14,8 +14,7 @@ all: clean build
 build: setup build_$(PKG_EXT)
 
 setup:
-	$(MKDIR) $(ptmp)
-	$(CP) -prf $(zname) $(ptmp)
+	$(generic-setup)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
@@ -32,5 +31,4 @@ build_deb:
 	$(PKG_BUILD)
 
 clean:
-	$(RM) -rf $(ptmp)/$(zname)
-	$(RM) -f $(ptmp)/$(zname)_*
+	$(generic-cleanup)
