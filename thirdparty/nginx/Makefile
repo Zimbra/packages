@@ -2,9 +2,8 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
-psrc := $(ptmp)/src
-psrctmp := $(ptmp)/srctmp
+psrc := $(PLATFORM_DIR)/src
+psrctmp := $(PLATFORM_DIR)/srctmp
 pvers := $(NGINX_VERSION)
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
