@@ -9,7 +9,6 @@ pname_lc := net-dns
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/N/NL/NLNETLABS/$(pfile)
-ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
@@ -25,8 +24,8 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 setup:
-	$(MKDIR) $(ptmp)
-	$(CP) -prf $(zname) $(ptmp)
+	$(MKDIR) $(PLATFORM_DIR)
+	$(CP) -prf $(zname) $(PLATFORM_DIR)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-digest-hmac zimbra-perl-digest-sha1 \
@@ -38,7 +37,7 @@ pkgrm%:
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
-	$(CD) $(ptmp)/$(zname)/rpm && \
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
@@ -49,7 +48,7 @@ build_rpm:
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
 build_deb:
-	$(CD) $(ptmp)/$(zname) && \
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
@@ -58,5 +57,5 @@ build_deb:
 	$(PKG_BUILD)
 
 clean: pkgrm
-	$(RM) -rf $(ptmp)/$(zname)
-	$(RM) -f $(ptmp)/$(zname)_*
+	$(RM) -rf $(PLATFORM_DIR)/$(zname)
+	$(RM) -f $(PLATFORM_DIR)/$(zname)_*
