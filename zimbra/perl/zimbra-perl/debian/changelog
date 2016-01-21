@@ -1,3 +1,9 @@
+zimbra-perl (1.0.1-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Add zimbra-perl-file-libmagic
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 21 Sep 2016 00:00:00 +0000
+
 zimbra-perl (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.

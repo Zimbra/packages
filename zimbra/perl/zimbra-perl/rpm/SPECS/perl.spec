@@ -1,6 +1,6 @@
 Summary:        Zimbra Perl
 Name:           zimbra-perl
-Version:        1.0.0
+Version:        1.0.1
 Release:        ITERATIONZAPPEND
 License:        GPL-2
 Packager:       Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -15,9 +15,9 @@ Requires:       zimbra-perl-data-uuid, zimbra-perl-date-calc, zimbra-perl-date-m
 Requires:       zimbra-perl-dbd-sqlite, zimbra-perl-db-file, zimbra-perl-dbi, zimbra-perl-digest-hmac
 Requires:       zimbra-perl-digest-sha1, zimbra-perl-email-date-format, zimbra-perl-encode-detect
 Requires:       zimbra-perl-encode-locale, zimbra-perl-error, zimbra-perl-exporter-tiny, zimbra-perl-zmq-libzmq3
-Requires:       zimbra-perl-file-grep, zimbra-perl-file-listing, zimbra-perl-filesys-df, zimbra-perl-file-tail
-Requires:       zimbra-perl-geography-countries, zimbra-perl-html-parser, zimbra-perl-http-cookies, zimbra-perl-http-daemon
-Requires:       zimbra-perl-http-date, zimbra-perl-http-message, zimbra-perl-http-negotiate, zimbra-perl-innotop
+Requires:       zimbra-perl-file-grep, zimbra-perl-file-libmagic, zimbra-perl-file-listing, zimbra-perl-filesys-df
+Requires:       zimbra-perl-file-tail, zimbra-perl-geography-countries, zimbra-perl-html-parser, zimbra-perl-http-cookies
+Requires:       zimbra-perl-http-daemon, zimbra-perl-http-date, zimbra-perl-http-message, zimbra-perl-http-negotiate, zimbra-perl-innotop
 Requires:       zimbra-perl-io-compress, zimbra-perl-io-html, zimbra-perl-io-sessiondata, zimbra-perl-io-socket-inet6
 Requires:       zimbra-perl-io-socket-ip, zimbra-perl-io-socket-ssl, zimbra-perl-io-stringy, zimbra-perl-ip-country, zimbra-perl-json-pp
 Requires:       zimbra-perl-libwww, zimbra-perl-list-moreutils, zimbra-perl-lwp-mediatypes, zimbra-perl-lwp-protocol-https
@@ -38,5 +38,9 @@ AutoReqProv:        no
 Zimbra Perl is a meta package that can be used to install most all
 of the Zimbra required perl modules.  The current sole exception is
 the Mail::SpamAssassin module, as that is for MTA nodes only
+
+%changelog
+* Thu Jan 21 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1
+- Add zimbra-perl-file-libmagic
 
 %files

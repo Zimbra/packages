@@ -1,0 +1,15 @@
+Source: zimbra-perl-MODNORMNAME
+Section: perl
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9), zimbra-perl-base, libmagic-dev
+Standards-Version: 3.9.5
+Homepage: https://metacpan.org/release/MODNAME
+
+Package: zimbra-perl-MODNORMNAME
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
+ libmagic
+Description: File::LibMagic - Determine MIME types of data or files using libmagic
+ The File::LibMagic is a simple perl interface to libmagic from the file
+ package (version 4.x or 5.x).
