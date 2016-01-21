@@ -20,6 +20,7 @@ software used by Zimbra
 - Update Selenium to 2.49.0
 - Update jquery to 1.11.0
 - Add converse.js 0.9.4
+- Add perl-file-libmagic 1.15
 * Thu Jan 07 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.2
 - Add oauth, guice
 * Thu Dec 17 2015  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1

@@ -4,6 +4,7 @@ zimbra-osl (1.0.3-ITERATIONZAPPEND) unstable; urgency=low
   * Update Selenium to 2.49.0
   * Update jquery to 1.11.0
   * Add converse.js 0.9.4
+  * Add perl-file-libmagic 1.15
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 11 Jan 2016 00:00:00 +0000
 

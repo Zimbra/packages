@@ -191,6 +191,7 @@ SECTION 6: GNU General Public License, V1.0
    >>> perl-email-date-format-1.005
    >>> perl-error-0.17024
    >>> perl-exporter-tiny-0.042
+   >>> perl-file-libmagic-1.15
    >>> perl-file-listing-6.04
    >>> perl-io-html-1.001
    >>> perl-io-sessiondata-1.03
@@ -14517,6 +14518,15 @@ a) the GNU General Public License as published by the Free
    Software Foundation; either version 1, or (at your option) any
    later version, or
 b) the "Artistic License"
+
+
+>>> perl-file-libmagic-1.15
+
+[PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 1.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 1.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
+
+This software is copyright (c) 2015 by Andreas Fitzner, Michael Hendricks, and Dave Rolsky.
+
+This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
 
 
 >>> perl-file-listing-6.04
