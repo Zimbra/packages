@@ -21,8 +21,7 @@ else
 endif
 
 setup:
-	mkdir -p tmp/$(BUILD_PLATFORM)
-	cp -prf zimbra-postfix-logwatch tmp/$(BUILD_PLATFORM)
+	$(generic-setup)
 
 build: setup
 ifeq ($(PKG_EXT), rpm)

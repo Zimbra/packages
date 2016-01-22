@@ -20,8 +20,7 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	$(MKDIR) $(PLATFORM_DIR)
-	$(CP) -prf $(zname) $(PLATFORM_DIR)
+	$(generic-setup)
 	$(CP) cacerts.empty $(PLATFORM_DIR)/$(zname)/cacerts
 	chmod 644 $(PLATFORM_DIR)/$(zname)/cacerts
 

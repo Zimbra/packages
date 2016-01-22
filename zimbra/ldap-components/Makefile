@@ -13,8 +13,7 @@ all: clean build
 build: setup build_$(PKG_EXT)
 
 setup:
-	$(MKDIR) $(PLATFORM_DIR)
-	$(CP) -prf $(zname) $(PLATFORM_DIR)
+	$(generic-setup)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:

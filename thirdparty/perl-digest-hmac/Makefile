@@ -24,8 +24,7 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 setup:
-	$(MKDIR) $(PLATFORM_DIR)
-	$(CP) -prf $(zname) $(PLATFORM_DIR)
+	$(generic-setup)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-digest-sha1
@@ -56,5 +55,4 @@ build_deb:
 	$(PKG_BUILD)
 
 clean: pkgrm
-	$(RM) -rf $(PLATFORM_DIR)/$(zname)
-	$(RM) -f $(PLATFORM_DIR)/$(zname)_*
+	$(generic-clean)

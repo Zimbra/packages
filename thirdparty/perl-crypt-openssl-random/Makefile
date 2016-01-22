@@ -29,8 +29,7 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	mkdir -p tmp/$(BUILD_PLATFORM)
-	cp -prf zimbra-perl-crypt-openssl-random tmp/$(BUILD_PLATFORM)
+	$(generic-setup)
 
 
 build: setup pkgadd
@@ -54,5 +53,4 @@ else
 endif
 
 clean: pkgrm
-	rm -rf tmp/$(BUILD_PLATFORM)/zimbra-perl-crypt-openssl-random
-	rm -f tmp/$(BUILD_PLATFORM)/zimbra-perl-crypt-openssl-random_*
+	$(generic-clean)
