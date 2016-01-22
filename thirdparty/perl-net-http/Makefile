@@ -31,8 +31,7 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	$(MKDIR) $(PLATFORM_DIR)
-	$(CP) -prf $(zname) $(PLATFORM_DIR)
+	$(generic-setup)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
@@ -54,5 +53,4 @@ build_deb:
 	$(PKG_BUILD)
 
 clean: pkgrm
-	$(RM) -rf $(PLATFORM_DIR)/$(zname)
-	$(RM) -f $(PLATFORM_DIR)/$(zname)_*
+	$(generic-clean)

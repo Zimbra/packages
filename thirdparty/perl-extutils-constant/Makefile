@@ -33,8 +33,7 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	mkdir -p tmp/$(BUILD_PLATFORM)
-	cp -prf zimbra-perl-extutils-constant tmp/$(BUILD_PLATFORM)
+	$(generic-setup)
 
 build: setup pkgadd
 	(cd tmp/$(BUILD_PLATFORM)/zimbra-perl-extutils-constant/rpm && \
@@ -46,5 +45,4 @@ build: setup pkgadd
 	)
 
 clean: pkgrm
-	rm -rf tmp/$(BUILD_PLATFORM)/zimbra-perl-extutils-constant
-	rm -f tmp/$(BUILD_PLATFORM)/zimbra-perl-extutils-constant_*
+	$(generic-clean)

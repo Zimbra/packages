@@ -29,8 +29,7 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	mkdir -p tmp/$(BUILD_PLATFORM)
-	cp -prf zimbra-perl-convert-asn1 tmp/$(BUILD_PLATFORM)
+	$(generic-setup)
 
 build: setup pkgadd
 ifeq ($(PKG_EXT), rpm)
@@ -54,5 +53,4 @@ else
 endif
 
 clean: pkgrm
-	rm -rf tmp/$(BUILD_PLATFORM)/zimbra-perl-convert-asn1
-	rm -f tmp/$(BUILD_PLATFORM)/zimbra-perl-convert-asn1_*
+	$(generic-clean)

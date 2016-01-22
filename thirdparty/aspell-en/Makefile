@@ -29,8 +29,7 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	mkdir -p tmp/$(BUILD_PLATFORM)
-	cp -prf zimbra-aspell-en tmp/$(BUILD_PLATFORM)
+	$(generic-setup)
 
 build: pkgadd setup
 ifeq ($(PKG_EXT), rpm)

@@ -28,8 +28,7 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	mkdir -p tmp/$(BUILD_PLATFORM)
-	cp -prf zimbra-perl-math-bigint tmp/$(BUILD_PLATFORM)
+	$(generic-setup)
 
 build: setup pkgadd
 ifeq ($(PKG_EXT), rpm)
@@ -53,5 +52,4 @@ else
 endif
 
 clean: pkgrm
-	rm -rf tmp/$(BUILD_PLATFORM)/zimbra-perl-math-bigint
-	rm -f tmp/$(BUILD_PLATFORM)/zimbra-perl-math-bigint_*
+	$(generic-clean)

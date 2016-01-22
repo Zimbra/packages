@@ -13,8 +13,7 @@ all: clean build pkgrm1
 build: setup pkgadd build_$(PKG_EXT)
 
 setup:
-	$(MKDIR) $(PLATFORM_DIR)
-	$(CP) -prf $(zname) $(PLATFORM_DIR)
+	$(generic-setup)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-aspell-en
