@@ -30,4 +30,4 @@ build_deb:
 	$(PKG_BUILD)
 
 clean:
-	$(generic-cleanup)
+	$(generic-clean)
