@@ -3,52 +3,52 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(SNMP_VERSION)
+pname := net-snmp
+pfile := $(pname)-$(pvers).tar.gz
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := http://iweb.dl.sourceforge.net/project/net-snmp/net-snmp/$(pvers)/$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
 all: clean getsrc build pkgrm1
 
-files = $(wildcard src/net-snmp-$(pvers).tar.gz)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q http://iweb.dl.sourceforge.net/project/net-snmp/net-snmp/$(pvers)/net-snmp-$(pvers).tar.gz \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV)
 
 pkgrm: pkgrm%
+
 pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
 	$(generic-setup)
 
-build: pkgadd setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-net-snmp/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
- 	$(replace-pkginfo) SPECS/net-snmp.spec && \
- 	$(replace-pathinfo) SPECS/net-snmp.spec && \
-	cp ../../../../src/net-snmp-$(pvers).tar.gz SOURCES/zimbra-net-snmp-$(pvers).tar.gz && \
- 	$(PKG_BUILD) SPECS/net-snmp.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
- 	$(replace-pkginfo) zimbra-net-snmp/debian/changelog zimbra-net-snmp/debian/zimbra-net-snmp-lib.shlibs && \
- 	$(replace-pathinfo) zimbra-net-snmp/debian/rules && \
-	cp ../../src/net-snmp-$(pvers).tar.gz zimbra-net-snmp_$(pvers).orig.tar.gz && \
-	tar xfz zimbra-net-snmp_$(pvers).orig.tar.gz --strip-components=1 -C zimbra-net-snmp && \
-	cd zimbra-net-snmp && \
-	$(PKG_BUILD) \
-	)
-endif
+build: pkgadd setup build_$(PKG_EXT)
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean: pkgrm
 	$(generic-clean)

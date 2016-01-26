@@ -16,8 +16,6 @@ zspec := $(pname_lc).spec
 
 all: clean getsrc build pkgrm1
 
-build: setup pkgadd build_$(PKG_EXT)
-
 # $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
@@ -37,6 +35,8 @@ pkgrm%:
 
 setup:
 	$(generic-setup)
+
+build: setup pkgadd build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:

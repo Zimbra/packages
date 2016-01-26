@@ -4,22 +4,21 @@ include $(PKG_ROOT)/../../package.def
 
 pvers := $(ASPELL-FR_NORM)
 dictver := $(ASPELL-FR_VERSION)
+pname := aspell-fr
+pfile := $(pname)-$(dictver).tar.bz2
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := ftp://ftp.gnu.org/gnu/aspell/dict/fr/$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
 all: clean getsrc build pkgrm1
 
-files = $(wildcard src/aspell-fr-$(dictver).tar.bz2)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q ftp://ftp.gnu.org/gnu/aspell/dict/fr/aspell-fr-$(dictver).tar.bz2 \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-aspell
@@ -31,29 +30,29 @@ pkgrm%:
 setup:
 	$(generic-setup)
 
-build: pkgadd setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-aspell-fr/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(replace-pkginfo) SPECS/aspell-fr.spec && \
-	$(replace-pathinfo) SPECS/aspell-fr.spec && \
-	$(replace-dictinfo) SPECS/aspell-fr.spec && \
-	cp ../../../../src/aspell-fr-$(dictver).tar.bz2 SOURCES/zimbra-aspell-fr-$(pvers).tar.bz2 && \
-	cp ../../../../patches/aspell-fr.patch SOURCES/aspell-fr.patch && \
-	$(PKG_BUILD) SPECS/aspell-fr.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
-	$(replace-pkginfo) zimbra-aspell-fr/debian/changelog && \
-	$(replace-pathinfo) zimbra-aspell-fr/debian/rules && \
-	cp ../../src/aspell-fr-$(dictver).tar.bz2 zimbra-aspell-fr_$(pvers).orig.tar.bz2 && \
-	cp ../../patches/aspell-fr.patch zimbra-aspell-fr/debian/patches && \
-	tar xfj zimbra-aspell-fr_$(pvers).orig.tar.bz2 --strip-components=1 -C zimbra-aspell-fr && \
-	cd zimbra-aspell-fr && \
-	chmod u+w debian/control && \
-	$(PKG_BUILD) \
-	)
-endif
+build: pkgadd setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(replace-dictinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.bz2 && \
+	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.bz2
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
+	$(TAR) xfj ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean: pkgrm
 	$(generic-clean)

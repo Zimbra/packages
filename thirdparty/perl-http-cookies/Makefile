@@ -5,7 +5,6 @@ include $(PKG_ROOT)/../../package.def
 pvers := $(HTTP_COOKIES)
 pname := HTTP-Cookies
 pname_lc := http-cookies
-
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(pfile)
@@ -15,8 +14,6 @@ zspec := $(pname_lc).spec
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
-
-build: setup pkgadd build_$(PKG_EXT)
 
 # $(@D) == directory part of the target
 getsrc: $(psrc_file)
@@ -32,6 +29,8 @@ pkgrm%:
 
 setup:
 	$(generic-setup)
+
+build: setup pkgadd build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:

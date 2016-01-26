@@ -3,45 +3,45 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(BSD_VERSION)
+pname := libbsd
+pfile := $(pname)-$(pvers).tar.xz
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := /$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean
 
 all: clean getsrc build
 
-files = $(wildcard src/libbsd-$(pvers).tar.xz)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q http://libbsd.freedesktop.org/releases/libbsd-$(pvers).tar.xz \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 setup:
 	$(generic-setup)
 
-build: setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-libbsd/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
- 	$(replace-pkginfo) SPECS/libbsd.spec && \
- 	$(replace-pathinfo) SPECS/libbsd.spec && \
-	cp ../../../../src/libbsd-$(pvers).tar.xz SOURCES/zimbra-libbsd-$(pvers).tar.xz && \
- 	$(PKG_BUILD) SPECS/libbsd.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
- 	$(replace-pkginfo) zimbra-libbsd/debian/changelog zimbra-libbsd/debian/zimbra-libbsd-lib.shlibs && \
- 	$(replace-pathinfo) zimbra-libbsd/debian/rules && \
-	cp ../../src/libbsd-$(pvers).tar.xz zimbra-libbsd_$(pvers).orig.tar.xz && \
-	tar xf zimbra-libbsd_$(pvers).orig.tar.xz --strip-components=1 -C zimbra-libbsd && \
-	cd zimbra-libbsd && \
-	$(PKG_BUILD) \
-	)
-endif
+build: setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.xz && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.xz
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(TAR) xf ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean:
 	$(generic-clean)

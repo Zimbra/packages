@@ -3,22 +3,21 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(RRDTOOL_VERSION)
+name := rrdtool
+pfile := $(pname)-$(pvers).tar.gz
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := https://oss.oetiker.ch/rrdtool/pub/$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
 all: clean getsrc build pkgrm1
 
-files = $(wildcard src/rrdtool-$(pvers).tar.gz)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q https://oss.oetiker.ch/rrdtool/pub/rrdtool-$(pvers).tar.gz \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-libart-$(PKG_DEV) zimbra-libpng-$(PKG_DEV) \
@@ -31,25 +30,26 @@ pkgrm%:
 setup:
 	$(generic-setup)
 
-build: pkgadd setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-rrdtool/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
- 	$(replace-pkginfo) SPECS/rrdtool.spec && \
- 	$(replace-pathinfo) SPECS/rrdtool.spec && \
-	cp ../../../../src/rrdtool-$(pvers).tar.gz SOURCES/zimbra-rrdtool-$(RRDTOOL_VERSION).tar.gz && \
- 	$(PKG_BUILD) SPECS/rrdtool.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
- 	$(replace-pkginfo) zimbra-rrdtool/debian/changelog zimbra-rrdtool/debian/zimbra-rrdtool-lib.shlibs && \
- 	$(replace-pathinfo) zimbra-rrdtool/debian/rules && \
-	cp ../../src/rrdtool-$(pvers).tar.gz zimbra-rrdtool_$(RRDTOOL_VERSION).orig.tar.gz && \
-	tar xfz zimbra-rrdtool_$(pvers).orig.tar.gz --strip-components=1 -C zimbra-rrdtool && \
-	cd zimbra-rrdtool && \
-	$(PKG_BUILD) \
-	)
-endif
+build: pkgadd setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean: pkgrm
 	$(generic-clean)

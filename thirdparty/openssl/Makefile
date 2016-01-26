@@ -5,9 +5,9 @@ include $(PKG_ROOT)/../../package.def
 pvers := $(OPENSSL_VERSION)
 pname := openssl
 pfile := $(pname)-$(pvers).tar.gz
-psrc_file:= $(SRC_DIR)/$(pfile)
+psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://www.openssl.org/source/$(pfile)
-zname := zimbra-openssl
+zname := zimbra-$(pname)
 zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean
@@ -31,7 +31,7 @@ build_rpm:
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
-	$(CP) $(PKG_ROOT)/patches/ipv6.patch SOURCES/ && \
+	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
@@ -41,8 +41,8 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
-	$(TAR) xfz ../$(z_tgz) --strip-components=1  && \
-	$(CP) $(PKG_ROOT)/patches/ipv6.patch debian/patches/ && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
 clean:
