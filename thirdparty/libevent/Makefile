@@ -3,45 +3,45 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(LIBEVENT_VERSION)
+pname := libevent
+pfile := $(pname)-$(pvers).tar.gz
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := https://sourceforge.net/projects/levent/files/libevent/libevent-2.0/$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean
 
 all: clean getsrc build
 
-files = $(wildcard src/libevent-$(pvers)-stable.tar.gz)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q https://sourceforge.net/projects/levent/files/libevent/libevent-2.0/libevent-$(pvers)-stable.tar.gz \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 setup:
 	$(generic-setup)
 
-build: setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-libevent/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
- 	$(replace-pkginfo) SPECS/libevent.spec && \
- 	$(replace-pathinfo) SPECS/libevent.spec && \
-	cp ../../../../src/libevent-$(pvers)-stable.tar.gz SOURCES/zimbra-libevent-$(pvers)-stable.tar.gz && \
- 	$(PKG_BUILD) SPECS/libevent.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
- 	$(replace-pkginfo) zimbra-libevent/debian/changelog zimbra-libevent/debian/zimbra-libevent-lib.shlibs && \
- 	$(replace-pathinfo) zimbra-libevent/debian/rules && \
-	cp ../../src/libevent-$(pvers)-stable.tar.gz zimbra-libevent_$(pvers).orig.tar.gz && \
-	tar xfz zimbra-libevent_$(pvers).orig.tar.gz --strip-components=1 -C zimbra-libevent && \
-	cd zimbra-libevent && \
-	$(PKG_BUILD) \
-	)
-endif
+build: setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean:
 	$(generic-clean)

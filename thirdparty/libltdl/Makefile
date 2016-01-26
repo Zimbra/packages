@@ -3,46 +3,48 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(LIBTOOL_VERSION)
+pname := libltdl
+uname := libtool
+pfile := $(uname)-$(pvers).tar.gz
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := http://reflection.oss.ou.edu/gnu/gnu/libtool/$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean
 
 all: clean getsrc build
 
-files = $(wildcard src/libtool-$(pvers).tar.gz)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q http://reflection.oss.ou.edu/gnu/gnu/libtool/libtool-$(pvers).tar.gz \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 setup:
 	$(generic-setup)
 
-build: setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-libltdl/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(replace-pkginfo) SPECS/libltdl.spec && \
-	$(replace-pathinfo) SPECS/libltdl.spec && \
-	cp ../../../../src/libtool-$(pvers).tar.gz SOURCES/zimbra-libltdl-$(pvers).tar.gz && \
-	$(PKG_BUILD) SPECS/libltdl.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
-	$(replace-pkginfo) zimbra-libltdl/debian/changelog zimbra-libltdl/debian/zimbra-libltdl-lib.shlibs && \
-	$(replace-pathinfo) zimbra-libltdl/debian/rules && \
-	cp ../../src/libtool-$(pvers).tar.gz zimbra-libltdl_$(pvers).orig.tar.gz && \
-	tar xfz zimbra-libltdl_$(pvers).orig.tar.gz --strip-components=1 -C zimbra-libltdl && \
-	cd zimbra-libltdl && \
-	chmod u+w debian/control && \
-	$(PKG_BUILD) \
-	)
-endif
+build: setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean:
 	$(generic-clean)

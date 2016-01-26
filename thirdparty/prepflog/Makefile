@@ -3,47 +3,45 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(PREPFLOG_VERSION)
+pname := prepflog
+pfile := $(pname)-$(pvers).tar.gz
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := http://github.com/johnfawcett/prepflog/archive/$(pvers).tar.gz
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean
 
 all: clean getsrc build
 
-files = $(wildcard src/prepflog-$(pvers).tar.gz)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget http://github.com/johnfawcett/prepflog/archive/$(pvers).tar.gz && \
-	mv $(pvers).tar.gz prepflog-$(pvers).tar.gz \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl) && $(MV) $(pvers).tar.gz $(pfile)
 
 setup:
 	$(generic-setup)
 
-build: setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-prepflog/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(replace-pkginfo) SPECS/prepflog.spec && \
-	$(replace-pathinfo) SPECS/prepflog.spec && \
-	cp ../../../../src/prepflog-$(pvers).tar.gz SOURCES/zimbra-prepflog-$(pvers).tar.gz && \
-	$(PKG_BUILD) SPECS/prepflog.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
-	$(replace-pkginfo) zimbra-prepflog/debian/changelog && \
-	$(replace-pathinfo) zimbra-prepflog/debian/rules && \
-	cp ../../src/prepflog-$(pvers).tar.gz zimbra-prepflog_$(pvers).orig.tar.gz && \
-	tar xfz zimbra-prepflog_$(pvers).orig.tar.gz --strip-components=1  -C zimbra-prepflog && \
-	cd zimbra-prepflog && \
-	chmod u+w debian/control && \
-	$(PKG_BUILD) \
-	)
-endif
+build: setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean:
 	$(generic-clean)

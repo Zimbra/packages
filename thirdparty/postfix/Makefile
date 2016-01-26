@@ -3,22 +3,21 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(POSTFIX_VERSION)
+pname := postfix
+pfile := $(pname)-$(pvers).tar.gz
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := ftp://postfix.cloud9.net/official/$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
 all: clean getsrc build pkgrm1
 
-files = $(wildcard src/postfix-$(pvers).tar.gz)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q ftp://postfix.cloud9.net/official/postfix-$(pvers).tar.gz \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-mariadb-$(PKG_DEV) \
@@ -31,35 +30,28 @@ pkgrm%:
 setup:
 	$(generic-setup)
 
-build: pkgadd setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-postfix/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
- 	$(replace-pkginfo) SPECS/postfix.spec && \
- 	$(replace-pathinfo) SPECS/postfix.spec && \
-	cp ../../../../src/postfix-$(pvers).tar.gz SOURCES/zimbra-postfix-$(pvers).tar.gz && \
-	cp ../../../../patches/lmdb-default.patch SOURCES/ && \
-	cp ../../../../patches/postfix-ldap.patch SOURCES/ && \
-	cp ../../../../patches/postfix-main-cf-zimbra.patch SOURCES/ && \
-	cp ../../../../patches/stop-warning.patch SOURCES/ && \
-	cp ../../../../patches/pass-ip-address.patch SOURCES/ && \
- 	$(PKG_BUILD) SPECS/postfix.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
- 	$(replace-pkginfo) zimbra-postfix/debian/changelog && \
- 	$(replace-pathinfo) zimbra-postfix/debian/rules && \
-	cp ../../src/postfix-$(pvers).tar.gz zimbra-postfix_$(pvers).orig.tar.gz && \
-	tar xfz zimbra-postfix_$(pvers).orig.tar.gz --strip-components=1 -C zimbra-postfix && \
-	cp ../../patches/lmdb-default.patch zimbra-postfix/debian/patches && \
-	cp ../../patches/postfix-ldap.patch zimbra-postfix/debian/patches && \
-	cp ../../patches/postfix-main-cf-zimbra.patch zimbra-postfix/debian/patches && \
-	cp ../../patches/stop-warning.patch zimbra-postfix/debian/patches && \
-	cp ../../patches/pass-ip-address.patch zimbra-postfix/debian/patches && \
-	cd zimbra-postfix && \
-	$(PKG_BUILD) \
-	)
-endif
+build: pkgadd setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean: pkgrm
 	$(generic-clean)

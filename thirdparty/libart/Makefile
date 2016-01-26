@@ -3,45 +3,46 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(LIBART_VERSION)
+pname := libart
+uname := libart_lgpl
+pfile := $(uname)-$(pvers).tar.bz2
+psrc_file := $(SRC_DIR)/$(pfile)
+purl := http://ftp.gnome.org/pub/gnome/sources/libart_lgpl/2.3/$(pfile)
+zname := zimbra-$(pname)
+zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean
 
 all: clean getsrc build
 
-files = $(wildcard src/libart_lgpl-$(pvers).tar.bz2)
-
-getsrc:
-	mkdir -p src
-ifeq ($(files),)
-	(cd src && \
-	wget -q http://ftp.gnome.org/pub/gnome/sources/libart_lgpl/2.3/libart_lgpl-$(pvers).tar.bz2 \
-	)
-else
-	@echo "Already have the source, skipping download"
-endif
+# $(@D) == directory part of the target
+getsrc: $(psrc_file)
+$(psrc_file):
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 setup:
 	$(generic-setup)
 
-build: setup
-ifeq ($(PKG_EXT), rpm)
-	(cd tmp/$(BUILD_PLATFORM)/zimbra-libart/rpm && \
-	mkdir -p BUILD BUILDROOT RPMS SOURCES SRPMS && \
- 	$(replace-pkginfo) SPECS/libart.spec && \
- 	$(replace-pathinfo) SPECS/libart.spec && \
-	cp ../../../../src/libart_lgpl-$(pvers).tar.bz2 SOURCES/zimbra-libart-$(pvers).tar.bz2 && \
- 	$(PKG_BUILD) SPECS/libart.spec \
-	)
-else
-	(cd tmp/$(BUILD_PLATFORM) && \
-	$(replace-pkginfo) zimbra-libart/debian/changelog zimbra-libart/debian/zimbra-libart-lib.shlibs && \
- 	$(replace-pathinfo) zimbra-libart/debian/rules && \
-	cp ../../src/libart_lgpl-$(pvers).tar.bz2 zimbra-libart_$(pvers).orig.tar.bz2 && \
-	tar xfj zimbra-libart_$(pvers).orig.tar.bz2 --strip-components=1 -C zimbra-libart && \
-	cd zimbra-libart && \
-	$(PKG_BUILD) \
-	)
-endif
+build: setup build_$(PKG_EXT)
+
+build_rpm: specfile = SPECS/$(zspec)
+build_rpm:
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
+	$(replace-pkginfo) $(specfile) && \
+	$(replace-pathinfo) $(specfile) && \
+	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.bz2 && \
+	$(PKG_BUILD) $(specfile)
+
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.bz2
+build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
+build_deb:
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
+	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(replace-pathinfo) debian/rules && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(TAR) xfj ../$(z_tgz) --strip-components=1 && \
+	$(PKG_BUILD)
 
 clean:
 	$(generic-clean)

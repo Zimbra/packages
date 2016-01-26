@@ -5,9 +5,9 @@ include $(PKG_ROOT)/../../package.def
 pvers := $(ASPELL_VERSION)
 pname := aspell
 pfile := $(pname)-$(pvers).tar.gz
-psrc_file:= $(SRC_DIR)/$(pfile)
+psrc_file := $(SRC_DIR)/$(pfile)
 purl := ftp://ftp.gnu.org/gnu/aspell/$(pfile)
-zname := zimbra-aspell
+zname := zimbra-$(pname)
 zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean
@@ -40,7 +40,7 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
-	$(TAR) xfz ../$(z_tgz) --strip-components=1  && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
 clean:

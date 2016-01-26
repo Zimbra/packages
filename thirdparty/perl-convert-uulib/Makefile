@@ -5,7 +5,6 @@ include $(PKG_ROOT)/../../package.def
 pvers := $(CONVERT_UULIB)
 pname := Convert-UUlib
 pname_lc := convert-uulib
-
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/M/ML/MLEHMANN/$(pfile)
@@ -16,15 +15,10 @@ zspec := $(pname_lc).spec
 
 all: clean getsrc build pkgrm1
 
-build: setup pkgadd build_$(PKG_EXT)
-
 # $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
-
-setup:
-	$(generic-setup)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-canary-stability
@@ -32,6 +26,11 @@ pkgadd:
 pkgrm: pkgrm%
 pkgrm%:
 	$(PKG_PURGE) zimbra-base
+
+setup:
+	$(generic-setup)
+
+build: setup pkgadd build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
