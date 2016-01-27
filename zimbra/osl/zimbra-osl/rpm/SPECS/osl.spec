@@ -1,6 +1,6 @@
 Summary:            Opensource Licenses
 Name:               zimbra-osl
-Version:            1.0.3
+Version:            1.0.4
 Release:            ITERATIONZAPPEND
 License:            GPL-2
 Requires:           zimbra-base
@@ -15,6 +15,8 @@ This file contains the licenses for the open source 3rd party
 software used by Zimbra
 
 %changelog
+* Wed Jan 27 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4
+- Update rsync to 3.1.2
 * Mon Jan 11 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.3
 - Update MariaDB to 10.1.10
 - Update Selenium to 2.49.0
