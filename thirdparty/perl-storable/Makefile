@@ -3,10 +3,9 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(STORABLE)
-pvers := $(NET_LDAP)
-pname := Net-LDAP
-pname_lc := net-ldap
-pfile := perl-ldap-$(pvers).tar.gz
+pname := Storable
+pname_lc := storable
+pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/A/AM/AMS/$(pfile)
 zname := zimbra-perl-$(pname_lc)
