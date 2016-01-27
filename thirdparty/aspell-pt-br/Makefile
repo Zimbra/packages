@@ -5,7 +5,7 @@ include $(PKG_ROOT)/../../package.def
 pvers := $(ASPELL-PT-BR_NORM)
 dictver := $(ASPELL-PT-BR_VERSION)
 pname := aspell-pt-br
-uname := aspell6-at_BR
+uname := aspell6-pt_BR
 pfile := $(uname)-$(dictver).tar.bz2
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := ftp://ftp.gnu.org/gnu/aspell/dict/pt_BR/$(pfile)

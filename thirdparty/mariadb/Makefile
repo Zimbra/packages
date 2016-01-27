@@ -47,7 +47,7 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
-	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(TAR) xfz ../$(z_tgz) --strip-components=1 --exclude=debian && \
 	$(PKG_BUILD)
 
 clean: pkgrm

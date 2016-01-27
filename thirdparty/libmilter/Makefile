@@ -3,7 +3,7 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(SENDMAIL_VERSION)
-pname := libltdl
+pname := libmilter
 uname := sendmail
 pfile := $(uname).$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)

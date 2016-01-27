@@ -1,4 +1,4 @@
-P        KG_ROOT := $(shell pwd)
+PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 

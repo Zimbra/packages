@@ -6,7 +6,7 @@ pvers := $(ALTMIME_VERSION)
 pname := altermime
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://www.pldaniels.com/altermime/$(pfile)
+purl := http://www.pldaniels.com/altermime/altermime-0.3-dev.tar.gz
 zname := zimbra-altermime
 zspec := $(pname).spec
 
@@ -17,7 +17,7 @@ all: clean getsrc build
 # $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
-	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl) -O $(pfile)
 
 setup:
 	$(generic-setup)
