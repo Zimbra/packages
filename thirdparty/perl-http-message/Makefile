@@ -1,11 +1,10 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pvers := $(HTTP_MESSAGE)
 pname := HTTP-Message
 pname_lc := http-message
-
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/E/ET/ETHER/$(pfile)
