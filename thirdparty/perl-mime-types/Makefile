@@ -1,14 +1,14 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
-pvers := $(HTTP_NEGOTIATE)
-pname := HTTP-Negotiate
-pname_lc := http-negotiate
+pvers := $(MIME_TYPES)
+pname := MIME-Types
+pname_lc := mime-types
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(pfile)
+purl := https://cpan.metacpan.org/authors/id/M/MA/MARKOV/$(pfile)
 ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
@@ -25,7 +25,7 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-http-message
+	$(PKG_EXTRACT) zimbra-perl-base
 
 pkgrm: pkgrm%
 pkgrm%:
