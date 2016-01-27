@@ -3,7 +3,7 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pvers := $(RRDTOOL_VERSION)
-name := rrdtool
+pname := rrdtool
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://oss.oetiker.ch/rrdtool/pub/$(pfile)

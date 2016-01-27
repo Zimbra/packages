@@ -29,7 +29,7 @@ getsrc:
 	hg clone -r $(JDK_TAG) http://hg.openjdk.java.net/jdk8u/jdk$(JDK_SUB_TREE) && \
 	cd jdk$(JDK_SUB_TREE) && chmod a+rx get_source.sh && \
 	chmod a+rx configure && \
-	patch -p1 < ../../../patches/fix-source.patch && \
+	patch -p1 < ../../../../../patches/fix-source.patch && \
 	echo "Obtaining source for sub modules.  This make take a very long time." && \
 	./get_source.sh -r $(JDK_TAG) || true && \
 	cd .. && \

@@ -4,9 +4,9 @@ include $(PKG_ROOT)/../../package.def
 
 pvers := $(LIBEVENT_VERSION)
 pname := libevent
-pfile := $(pname)-$(pvers).tar.gz
+pfile := $(pname)-$(pvers)-stable.tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://sourceforge.net/projects/levent/files/libevent/libevent-2.0/$(pfile)
+purl := https://github.com/libevent/libevent/releases/download/release-$(pvers)-stable/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
@@ -30,7 +30,7 @@ build_rpm:
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers)-stable.tar.gz && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz

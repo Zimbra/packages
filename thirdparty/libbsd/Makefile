@@ -6,7 +6,7 @@ pvers := $(BSD_VERSION)
 pname := libbsd
 pfile := $(pname)-$(pvers).tar.xz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := /$(pfile)
+purl := http://libbsd.freedesktop.org/releases/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

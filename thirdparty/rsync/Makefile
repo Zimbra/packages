@@ -6,7 +6,7 @@ pvers := $(RSYNC_VERSION)
 pname := rsync
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://download.samba.org/pub/rsync/$(pfile)
+purl := https://download.samba.org/pub/rsync/src/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

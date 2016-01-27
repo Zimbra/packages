@@ -5,7 +5,7 @@ include $(PKG_ROOT)/../../package.def
 pvers := $(AMAVISD_VERSION)
 pname := amavisd
 uname := $(pname)-new
-pfile := $(uname)-$(pvers).tar.gz
+pfile := $(uname)-$(pvers).tar.bz2
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := http://www.ijs.si/software/amavisd/$(pfile)
 zname := zimbra-$(pname)
@@ -31,18 +31,18 @@ build_rpm:
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.bz2 && \
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(PKG_BUILD) $(specfile)
 
-build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.bz2
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
 build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
-	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(TAR) xfj ../$(z_tgz) --strip-components=1 && \
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(PKG_BUILD)
 
