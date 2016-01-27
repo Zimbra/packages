@@ -18,7 +18,7 @@ all: checkos clean getsrc build pkgrm1
 checkos:
 ifneq ($(BUILD_PLATFORM), RHEL6_64)
 	@echo "Skipping OS, not required"
-	@exit 0
+	@exit 1
 endif
 
 # $(@D) == directory part of the target
