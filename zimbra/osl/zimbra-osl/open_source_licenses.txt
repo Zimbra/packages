@@ -298,7 +298,7 @@ SECTION 7: GNU General Public License, V2.0
 SECTION 8: GNU General Public License, V3.0
 
    >>> libidn-1.24
-   >>> rsync-3.1.1
+   >>> rsync-3.1.2
 
 
 
@@ -22301,7 +22301,7 @@ GNU Libidn is distributed in the hope that it will be useful, but WITHOUT ANY WA
 You should have received copies of the GNU General Public License and the GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
->>> rsync-3.1.1
+>>> rsync-3.1.2
 
 Copyright (C) 1992-1995 Andrew Tridgell
 Copyright (C) 2007-2008 Wayne Davison
