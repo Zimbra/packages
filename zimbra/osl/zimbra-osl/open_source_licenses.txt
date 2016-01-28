@@ -75,7 +75,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> nviennot-nginx-tcp-keepalive-4d7186d
    >>> opendkim-2.10.3
    >>> openldap-2.4.43
-   >>> openssl-1.0.1q
+   >>> openssl-1.0.1r
    >>> owasp-java-html-sanitizer.jar-r239
    >>> perl-data-uuid-1.221
    >>> perl-geography-countries-2009041301
@@ -4676,7 +4676,7 @@ California, USA.  All Rights Reserved.  Permission to copy and
 distribute verbatim copies of this document is granted.
 
 
->>> openssl-1.0.1q
+>>> openssl-1.0.1r
 
 LICENSE ISSUES
   ==============
@@ -22327,7 +22327,7 @@ ADDITIONAL LICENSE INFORMATION:
 >  MIT
 
 
-\rsync-3.0.9.tar.gz\rsync-3.0.9.tar\rsync-3.0.9\zlib\zlib.h
+rsync-3.1.2/zlib/zlib.h
 
 
 Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler
