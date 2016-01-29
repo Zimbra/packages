@@ -10,8 +10,11 @@ Patch2:             ITS7683.patch
 Patch3:             ITS8054.patch
 Patch4:             ITS8336.patch
 Patch5:             ITS8351.patch
-Patch6:             threadpool.patch
-Patch7:             liblmdb-soname.patch
+Patch6:             ITS8354.patch
+Patch7:             ITS8360.patch
+Patch8:             ITS8363.patch
+Patch9:             threadpool.patch
+Patch10:            liblmdb-soname.patch
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-libltdl-devel
@@ -31,6 +34,9 @@ The Zimbra openldap build
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
