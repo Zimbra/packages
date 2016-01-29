@@ -223,7 +223,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> juniversalchardet-1.0.3
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
-   >>> mariadb-10.1.10
+   >>> mariadb-10.1.11
    >>> openjdk-1.8.0u66b17
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
