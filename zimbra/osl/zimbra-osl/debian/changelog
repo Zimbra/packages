@@ -3,8 +3,9 @@ zimbra-osl (1.0.4-ITERATIONZAPPEND) unstable; urgency=low
   * Update rsync to 3.1.2
   * Update openssl to 1.0.1r
   * Update MariaDB to 10.1.11
+  * Add apache-commons-collection 3.2.2
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 27 Jan 2016 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 01 Feb 2016 00:00:00 +0000
 
 zimbra-osl (1.0.3-ITERATIONZAPPEND) unstable; urgency=low
 
