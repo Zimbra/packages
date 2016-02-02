@@ -103,7 +103,7 @@ typedef struct {
     void                     *dummy;
     ngx_log_t                *log;
 
-    /* ident must be after 3 pointers */
+    /* event ident must be after 3 pointers as in ngx_connection_t */
     ngx_int_t                 ident;
 
     /* simple round robin DNS peers balancer */
@@ -143,7 +143,7 @@ struct ngx_resolver_ctx_s {
     ngx_resolver_t           *resolver;
     ngx_udp_connection_t     *udp_connection;
 
-    /* ident must be after 3 pointers */
+    /* event ident must be after 3 pointers as in ngx_connection_t */
     ngx_int_t                 ident;
 
     ngx_int_t                 state;
@@ -161,6 +161,8 @@ struct ngx_resolver_ctx_s {
     ngx_uint_t                quick;  /* unsigned  quick:1; */
     ngx_uint_t                recursion;
     ngx_event_t              *event;
+
+    ngx_resolver_node_t      *node;
 };
 
 
