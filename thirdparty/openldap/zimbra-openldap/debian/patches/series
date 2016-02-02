@@ -7,5 +7,6 @@ ITS8351.patch
 ITS8354.patch
 ITS8360.patch
 ITS8363.patch
+ITS8365.patch
 threadpool.patch
 liblmdb-soname.patch
