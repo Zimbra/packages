@@ -25,6 +25,10 @@ URL:                http://www.openldap.org
 %description
 The Zimbra openldap build
 
+%changelog
+* Wed Feb 03 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Add patch for ITS#8365 
+
 %prep
 %setup -n openldap-%{version}
 %patch0 -p1
