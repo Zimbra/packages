@@ -1,3 +1,11 @@
+zimbra-nginx (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+
+  * Patch nginx for CVE-2016-0742
+  * Patch nginx for CVE-2016-0746
+  * Patch nginx for CVE-2016-0747
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 3 Feb 2016 22:26:24 +0000
+
 zimbra-nginx (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
   * Initial Release.
