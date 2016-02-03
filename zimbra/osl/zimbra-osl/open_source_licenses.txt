@@ -106,6 +106,7 @@ SECTION 2: Apache License, V2.0
    >>> apache-commons-cli-1.2
    >>> apache-commons-codec-1.7
    >>> apache-commons-collection-3.2.2
+   >>> apache-commons-compress-1.10
    >>> apache-commons-csv-1.2
    >>> apache-commons-dbcp-1.4
    >>> apache-commons-fileupload-1.2.2
@@ -6437,6 +6438,21 @@ Copyright 2001-2015 The Apache Software Foundation
 
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
+
+
+>>> apache-commons-compress-1.10
+
+Apache Commons Compress
+Copyright 2002-2015 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+The files in the package org.apache.commons.compress.archivers.sevenz
+were derived from the LZMA SDK, version 9.20 (C/ and CPP/7zip/),
+which has been placed in the public domain:
+
+"LZMA SDK is placed in the public domain." (http://www.7-zip.org/sdk.html)
 
 
 >>> apache-commons-csv-1.2
