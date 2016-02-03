@@ -17,7 +17,7 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
-* Wed Feb 03 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+* Wed Feb 03 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b2ZAPPEND
 - Patch nginx for CVE-2016-0742
 - Patch nginx for CVE-2016-0746
 - Patch nginx for CVE-2016-0747
