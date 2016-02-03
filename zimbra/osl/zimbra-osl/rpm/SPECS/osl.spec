@@ -20,6 +20,7 @@ software used by Zimbra
 - Update openssl to 1.0.1r
 - Update MariaDB to 10.1.11
 - Add apache-commons-collection 3.2.2
+- Add apache-commons-compress 1.10
 * Mon Jan 11 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.3
 - Update MariaDB to 10.1.10
 - Update Selenium to 2.49.0
