@@ -1,0 +1,25 @@
+Source: zimbra-postsrsd
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 2.9.0
+Homepage: https://github.com/roehling/postsrsd
+
+Package: zimbra-postsrsd
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Description: PostSRSd provides Sender Rewriting Scheme Support for Postfix
+ PostSRSd provides the Sender Rewriting Scheme (SRS) via TCP-based
+ lookup tables for Postfix. SRS is needed if your mail server acts
+ as forwarder.
+
+Package: zimbra-postsrsd-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Multi-Arch: same
+Depends: zimbra-postsrsd (= ${binary:Version}), ${misc:Depends}
+Description: PostSRSd binary debug information
