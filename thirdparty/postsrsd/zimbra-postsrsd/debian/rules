@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	mkdir -p $(CURDIR)/build
+	cd $(CURDIR)/build && \
+	/usr/bin/cmake .. \
+	-DCMAKE_INSTALL_PREFIX="OZC" \
+	-DCMAKE_INSTALL_RPATH="OZCL" \
+	-DCMAKE_PREFIX_PATH="OZC" \
+	-DINIT_FLAVOR=none \
+	-DGENERATE_SRS_SECRET=OFF \
+	-DSYSCONF_DIR=OZCE
+
+override_dh_strip:
+	dh_strip -pzimbra-postsrsd --dbg-package=zimbra-postsrsd-dbg
+
+override_dh_auto_install:
+	$(MAKE) install DESTDIR=$$(pwd)/debian/tmp
