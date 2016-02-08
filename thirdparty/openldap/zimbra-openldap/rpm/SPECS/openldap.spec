@@ -1,21 +1,15 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra9.0b2ZAPPEND
+Release:            ITERATIONZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
 Patch1:             writers.patch
 Patch2:             ITS7683.patch
 Patch3:             ITS8054.patch
-Patch4:             ITS8336.patch
-Patch5:             ITS8351.patch
-Patch6:             ITS8354.patch
-Patch7:             ITS8360.patch
-Patch8:             ITS8363.patch
-Patch9:             ITS8365.patch
-Patch10:            threadpool.patch
-Patch11:            liblmdb-soname.patch
+Patch4:             threadpool.patch
+Patch5:             liblmdb-soname.patch
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-libltdl-devel
@@ -25,10 +19,6 @@ URL:                http://www.openldap.org
 %description
 The Zimbra openldap build
 
-%changelog
-* Wed Feb 03 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b2ZAPPEND
-- Add patch for ITS#8365 
-
 %prep
 %setup -n openldap-%{version}
 %patch0 -p1
@@ -37,12 +27,6 @@ The Zimbra openldap build
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
