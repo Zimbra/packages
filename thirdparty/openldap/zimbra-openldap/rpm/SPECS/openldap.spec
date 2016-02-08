@@ -60,14 +60,10 @@ make -C contrib/slapd-modules/passwd/sha2 prefix=OZC
 
 %install
 make install DESTDIR=${RPM_BUILD_ROOT} STRIP=""
-mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/common/man/man1
 make -C libraries/liblmdb install prefix=OZC DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C contrib/slapd-modules/noopsrch install prefix=OZC DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C contrib/slapd-modules/passwd/sha2 install prefix=OZC DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/data
-mv -f ${RPM_BUILD_ROOT}/opt/zimbra/common/man/man1/* ${RPM_BUILD_ROOT}OZCS/man/man1/
-rmdir ${RPM_BUILD_ROOT}/opt/zimbra/common/man/man1
-rmdir ${RPM_BUILD_ROOT}/opt/zimbra/common/man
 rm -f ${RPM_BUILD_ROOT}OZCLE/openldap/noopsrch.a
 rm -f ${RPM_BUILD_ROOT}OZCLE/openldap/pw-sha2.a
 rm -f ${RPM_BUILD_ROOT}OZCE/openldap/DB_CONFIG.example
