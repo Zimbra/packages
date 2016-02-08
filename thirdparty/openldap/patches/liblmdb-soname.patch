@@ -1,6 +1,6 @@
---- openldap-2.4.43/libraries/liblmdb/Makefile.orig	2015-11-30 15:44:55.837341051 -0600
-+++ openldap-2.4.43/libraries/liblmdb/Makefile	2015-11-30 15:47:27.109336011 -0600
-@@ -33,6 +33,7 @@
+--- openldap-2.4.44/libraries/liblmdb/Makefile.orig	2016-02-05 17:57:45.000000000 -0600
++++ openldap-2.4.44/libraries/liblmdb/Makefile	2016-02-08 13:32:12.158337783 -0600
+@@ -38,6 +38,7 @@
  
  IHDRS	= lmdb.h
  ILIBS	= liblmdb.a liblmdb.so
@@ -8,14 +8,12 @@
  IPROGS	= mdb_stat mdb_copy mdb_dump mdb_load
  IDOCS	= mdb_stat.1 mdb_copy.1 mdb_dump.1 mdb_load.1
  PROGS	= $(IPROGS) mtest mtest2 mtest3 mtest4 mtest5
-@@ -44,12 +45,13 @@
- 	mkdir -p $(DESTDIR)$(prefix)/include
- 	mkdir -p $(DESTDIR)$(prefix)/man/man1
- 	for f in $(IPROGS); do cp $$f $(DESTDIR)$(prefix)/bin; done
--	for f in $(ILIBS); do cp $$f $(DESTDIR)$(prefix)/lib; done
-+	for f in $(ILIBS); do cp -P $$f $(DESTDIR)$(prefix)/lib; done
-+	for f in $(ELIBS); do cp -P $$f $(DESTDIR)$(prefix)/lib; done
- 	for f in $(IHDRS); do cp $$f $(DESTDIR)$(prefix)/include; done
+@@ -50,11 +51,12 @@
+ 	mkdir -p $(DESTDIR)$(mandir)/man1
+ 	for f in $(IPROGS); do cp $$f $(DESTDIR)$(bindir); done
+ 	for f in $(ILIBS); do cp $$f $(DESTDIR)$(libdir); done
++	for f in $(ELIBS); do cp $$f $(DESTDIR)$(libdir); done
+ 	for f in $(IHDRS); do cp $$f $(DESTDIR)$(includedir); done
  	for f in $(IDOCS); do cp $$f $(DESTDIR)$(mandir)/man1; done
  
  clean:
@@ -24,7 +22,7 @@
  
  test:	all
  	rm -rf testdb && mkdir testdb
-@@ -60,7 +62,9 @@
+@@ -65,7 +67,9 @@
  
  liblmdb.so:	mdb.lo midl.lo
  #	$(CC) $(LDFLAGS) -pthread -shared -Wl,-Bsymbolic -o $@ mdb.o midl.o $(SOLIBS)
