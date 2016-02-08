@@ -15,21 +15,23 @@ This file contains the licenses for the open source 3rd party
 software used by Zimbra
 
 %changelog
-* Mon Feb 01 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4
+* Mon Feb 08 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4-ITERATIONZAPPEND
 - Update rsync to 3.1.2
 - Update openssl to 1.0.1r
 - Update MariaDB to 10.1.11
 - Add apache-commons-collection 3.2.2
 - Add apache-commons-compress 1.10
-* Mon Jan 11 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.3
+- Update PHP to 5.6.18
+- Update OpenLDAP to 2.4.44
+* Mon Jan 11 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.3-ITERATIONZAPPEND
 - Update MariaDB to 10.1.10
 - Update Selenium to 2.49.0
 - Update jquery to 1.11.0
 - Add converse.js 0.9.4
 - Add perl-file-libmagic 1.15
-* Thu Jan 07 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.2
+* Thu Jan 07 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.2-ITERATIONZAPPEND
 - Add oauth, guice
-* Thu Dec 17 2015  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1
+* Thu Dec 17 2015  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1-ITERATIONZAPPEND
 - Update for ZCS 8.7.0 release.
 
 %install
