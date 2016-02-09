@@ -1,6 +1,15 @@
---- postfix-2.4.2-RC1/conf/main.cf.orig	2007-06-08 16:29:01.000000000 -0700
-+++ postfix-2.4.2-RC1/conf/main.cf	2007-06-08 16:29:47.000000000 -0700
-@@ -511,7 +511,7 @@
+--- postfix-3.0.3/conf/main.cf.orig	2014-10-09 18:46:44.000000000 -0500
++++ postfix-3.0.3/conf/main.cf	2016-02-09 09:41:06.819692378 -0600
+@@ -263,7 +263,7 @@
+ # 
+ #mynetworks_style = class
+ #mynetworks_style = subnet
+-#mynetworks_style = host
++mynetworks_style = host
+ 
+ # Alternatively, you can specify the mynetworks list by hand, in
+ # which case Postfix ignores the mynetworks_style setting.
+@@ -541,7 +541,7 @@
  #
  # For details, see "man header_checks".
  #
@@ -9,10 +18,12 @@
  
  # FAST ETRN SERVICE
  #
-@@ -643,3 +643,53 @@
+@@ -673,4 +673,54 @@
+ # readme_directory: The location of the Postfix README files.
  #
  readme_directory =
- inet_protocols = ipv4
+-inet_protocols = ipv4
++inet_protocols = all
 +
 +#
 +# Zimbra changes.
@@ -28,7 +39,7 @@
 +
 +virtual_transport = error
 +
-+sender_canonical_maps = proxy:ldap:/opt/zimbra/conf/ldap-scm.cf
++canonical_maps = proxy:ldap:/opt/zimbra/conf/ldap-canonical.cf
 +
 +transport_maps = proxy:ldap:/opt/zimbra/conf/ldap-transport.cf
 +
