@@ -1,7 +1,7 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra9.0b2ZAPPEND
+Release:            1zimbra9.0b3ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
@@ -17,6 +17,8 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Tue Feb 09 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b3ZAPPEND
+- Turn off compiler optimization.  Was breaking lookup extension.
 * Wed Feb 03 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b2ZAPPEND
 - Patch nginx for CVE-2016-0742
 - Patch nginx for CVE-2016-0746
