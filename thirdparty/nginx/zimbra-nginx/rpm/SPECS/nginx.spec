@@ -27,7 +27,7 @@ The Zimbra nginx build
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
-CFLAGS="-g -O2"; export CFLAGS; \
+CFLAGS="-g -O0"; export CFLAGS; \
 ./configure --prefix=OZC \
   --with-cc-opt="-g -IOZCI" \
   --with-ld-opt="-Wl,-rpath,OZCL -LOZCL" \

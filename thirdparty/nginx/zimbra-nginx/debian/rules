@@ -3,6 +3,8 @@ export DEB_BUILD_OPTIONS=nocheck
 
 # Ensure rpath is set correctly
 export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+export DEB_CFLAGS_MAINT_STRIP=-O2
+export DEB_CFLAGS_MAINT_APPEND=-O0
 
 %:
 	dh $@
