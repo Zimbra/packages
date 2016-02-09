@@ -1,14 +1,14 @@
---- postfix-3.0.3/conf/main.cf.orig	2014-10-09 18:46:44.000000000 -0500
-+++ postfix-3.0.3/conf/main.cf	2016-02-09 09:41:06.819692378 -0600
-@@ -263,7 +263,7 @@
+--- postfix-3.0.3/conf/main.cf.orig	2016-02-09 13:01:33.516094855 -0600
++++ postfix-3.0.3/conf/main.cf	2016-02-09 13:01:54.368094160 -0600
+@@ -262,7 +262,7 @@
+ # only the local machine.
  # 
  #mynetworks_style = class
- #mynetworks_style = subnet
--#mynetworks_style = host
-+mynetworks_style = host
+-#mynetworks_style = subnet
++mynetworks_style = subnet
+ #mynetworks_style = host
  
  # Alternatively, you can specify the mynetworks list by hand, in
- # which case Postfix ignores the mynetworks_style setting.
 @@ -541,7 +541,7 @@
  #
  # For details, see "man header_checks".
