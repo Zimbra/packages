@@ -226,7 +226,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
    >>> mariadb-10.1.11
-   >>> openjdk-1.8.0u66b17
+   >>> openjdk-1.8.0u74b02
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
    >>> perl-bit-vector-7.4
@@ -17197,7 +17197,7 @@ POSSIBILITY OF SUCH DAMAGE.
 ***************************************************************************
 
 
->>> openjdk-1.8.0u66b17
+>>> openjdk-1.8.0u74b02
 
 The GNU General Public License (GPL)
 
@@ -17576,7 +17576,7 @@ GPL2 code may still be combined with Designated Exception Modules if the
 new code is made subject to this exception by its copyright holder.
 
 
-openjdk-1.8.0u66b17\THIRD_PARTY_README
+openjdk-1.8.0u74b02\THIRD_PARTY_README
 DO NOT TRANSLATE OR LOCALIZE.
 -----------------------------
 
