@@ -4,3 +4,4 @@ ITS7683.patch
 ITS8054.patch
 threadpool.patch
 liblmdb-soname.patch
+ITS7506.patch
