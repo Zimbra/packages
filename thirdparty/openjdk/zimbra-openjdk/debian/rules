@@ -27,6 +27,8 @@ override_dh_auto_install:
 	rm -rf $(CURDIR)/debian/tmp/OZCL/jvm/java/demo
 	rm -rf $(CURDIR)/debian/tmp/OZCL/jvm/java/sample
 	rm -f $(CURDIR)/debian/tmp/OZCL/jvm/java/jre/lib/security/cacerts
+	cd $(CURDIR)/debian/tmp/OZCL/jvm/java/jre/lib/security && \
+	ln -s OZCE/java/cacerts cacerts
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/jar
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/java
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/javac
