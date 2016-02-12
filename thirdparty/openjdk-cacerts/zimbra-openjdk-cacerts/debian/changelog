@@ -1,6 +1,6 @@
 zimbra-openjdk-cacerts (1.0.5-ITERATIONZAPPEND) unstable; urgency=low
 
-  * Relocate cacerts to OZCE/java to avoid conflicts with the OpenJDK package
+  * Relocate cacerts to /opt/zimbra/common/etc/java to avoid conflicts with the OpenJDK package
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 11 Feb 2016 00:00:00 +0000
 
