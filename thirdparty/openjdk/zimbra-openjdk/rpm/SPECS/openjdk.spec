@@ -1,7 +1,7 @@
 Summary:            Zimbra's OpenJDK build
 Name:               zimbra-openjdk
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tgz
 BuildRequires:      zip, libX11-devel, libXau-devel, libXext-devel, libXfixes-devel
@@ -17,6 +17,10 @@ URL:                http://openjdk.java.net/
 
 %description
 The Zimbra OpenJDK build
+
+%changelog
+* Thu Feb 11 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Fix cacerts handling to avoid conflicts
 
 %prep
 %setup -n openjdk-%{version}
@@ -41,6 +45,8 @@ ln -s openjdk* java
 rm -rf java/demo
 rm -rf java/sample
 rm -f java/jre/lib/security/cacerts
+cd java/jre/lib/security
+ln -s OZCE/java/cacerts cacerts
 cd ${RPM_BUILD_ROOT}OZCB
 ln -s ../lib/jvm/java/bin/jar
 ln -s ../lib/jvm/java/bin/java

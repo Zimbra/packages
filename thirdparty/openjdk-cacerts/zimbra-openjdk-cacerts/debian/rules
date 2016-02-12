@@ -8,5 +8,5 @@ override_dh_auto_clean:
 override_dh_auto_configure:
 
 override_dh_auto_install:
-	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/jvm/java/jre/lib/security/
-	cp cacerts $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/jvm/java/jre/lib/security/
+	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCE/java
+	cp cacerts $(CURDIR)/debian/$(shell dh_listpackages)/OZCE/java
