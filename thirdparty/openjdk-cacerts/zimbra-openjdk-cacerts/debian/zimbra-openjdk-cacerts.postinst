@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "$1" = configure ]; then
-  /bin/chown zimbra:zimbra /opt/zimbra/common/lib/jvm/java/jre/lib/security/cacerts
-  /bin/chmod 644 /opt/zimbra/common/lib/jvm/java/jre/lib/security/cacerts
+  /bin/chown zimbra:zimbra /opt/zimbra/common/etc/java/cacerts
+  /bin/chmod 644 /opt/zimbra/common/etc/java/cacerts
   if [ "$2" != "" ]; then
     if [ -x /opt/zimbra/bin/zmcertmgr ]; then
       # Run as zimbra, extract CA to /opt/zimbra/conf/ca
