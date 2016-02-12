@@ -3,7 +3,7 @@ if [ "$1" = upgrade ]; then
   if [ x"$2" != "x" ]; then
     mkdir -p /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-$2
     cacerts=`mktemp --tmpdir=/opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-$2 cacerts.XXXXXX 2>/dev/null`
-    cp /opt/zimbra/common/lib/jvm/java/jre/lib/security/cacerts $cacerts
+    cp /opt/zimbra/common/etc/java/cacerts $cacerts
   fi
 fi
 exit 0
