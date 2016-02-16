@@ -17,6 +17,7 @@ software used by Zimbra
 %changelog
 * Tue Feb 09 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.5-ITERATIONZAPPEND
 - Update OpenJDK to 1.0.8u74b02
+- Update Selenium to 2.51.0
 * Mon Feb 08 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4-ITERATIONZAPPEND
 - Update rsync to 3.1.2
 - Update openssl to 1.0.1r
