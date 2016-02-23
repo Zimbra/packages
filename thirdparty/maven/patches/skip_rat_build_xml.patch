@@ -1,0 +1,10 @@
+--- apache-maven-3.3.3/build.xml.orig
++++ apache-maven-3.3.3/build.xml
+@@ -262,6 +262,7 @@
+       <arg value="${maven.goal}" />
+       <arg value="-Dmaven.test.skip=${maven.test.skip}" />
+       <arg value="-DskipTests=${skipTests}" />
++      <arg value="-Drat.skip=true" />
+       <arg value="-Dmaven.repo.local=${maven.repo.local}" />
+       <arg value="-Dsurefire.useFile=${surefire.useFile}" />
+       <arg value="-Dmaven.test.redirectTestOutputToFile=${maven.test.redirectTestOutputToFile}" />
