@@ -23,7 +23,7 @@ $(psrc_file):
 pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
-	$(PKG_EXTRACT) java-1.7.0-openjdk ant
+	$(PKG_EXTRACT) zimbra-openjdk ant
 
 pkgadd_deb:
 	$(PKG_EXTRACT) ant ant-optional zimbra-openjdk zimbra-openjdk-cacerts java-common libsctp1 \
@@ -34,7 +34,7 @@ pkgrm: pkgrm%
 
 pkgrm%:
 ifeq ($(PKG_EXT), rpm)
-	$(PKG_PURGE) java-1.7.0-openjdk ant
+	$(PKG_PURGE) zimbra-openjdk ant
 else
 	$(PKG_PURGE) ant-optional zimbra-openjdk zimbra-openjdk-cacerts java-common libsctp1 \
 	libxerces2-java libxml-commons-external-java libxml-commons-resolver1.1-java \
