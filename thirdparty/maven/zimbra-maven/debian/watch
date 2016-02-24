@@ -1,2 +1,2 @@
 version=3
-http://archive.apache.org/dist/maven/maven-3/3.3.9/source/apache-maven-(\d+\.\d+\.\d+).tar.xz
+https://archive.apache.org/dist/maven/maven-3/$(pvers)/source/apache-maven-(\d+\.\d+\.\d+).tar.xz
