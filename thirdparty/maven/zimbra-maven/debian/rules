@@ -8,10 +8,6 @@ override_dh_auto_clean:
 
 override_dh_auto_configure:
 
-override_dh_strip:
-	dh_strip -pzimbra-maven
-	dh_strip -Nzimbra-maven
-
 override_dh_auto_install:
 	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/common/bin
 	cp -rf $(CURDIR)/build/bin/* $(CURDIR)/debian/tmp/opt/zimbra/common/bin/

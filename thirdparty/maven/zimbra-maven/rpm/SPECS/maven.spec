@@ -5,6 +5,8 @@ Release:            ITERATIONZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
 Patch0:             skip_rat_build_xml.patch
+BuildRequires:		zimbra-openjdk
+Requires:			zimbra-openjdk
 AutoReqProv:        no
 URL:                https://maven.apache.org/
 
@@ -16,8 +18,6 @@ The Zimbra maven build
 %patch0 -p1
 
 %build
-LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
-CFLAGS="-O2 -g"; export CFLAGS; \
 ant
 
 %install
