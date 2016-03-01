@@ -1,7 +1,7 @@
 PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
-MAVEN_VERSION := 3.3.9
+
 pvers := $(MAVEN_VERSION)
 pname := maven
 pfile := apache-$(pname)-$(pvers)-src.tar.gz
