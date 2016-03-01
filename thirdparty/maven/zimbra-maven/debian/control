@@ -10,5 +10,5 @@ Homepage:  https://maven.apache.org/
 Package: zimbra-maven
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends} zimbra-openjdk (= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends} zimbra-openjdk
 Description: maven Binaries
