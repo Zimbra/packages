@@ -217,7 +217,7 @@ SECTION 6: GNU General Public License, V1.0
 SECTION 7: GNU General Public License, V2.0
 
    >>> amavisd-2.10.1
-   >>> clamav-0.99.1.1
+   >>> clamav-0.99.1
    >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
    >>> freetype-2.6.1
    >>> innotop-1.9.1
@@ -14874,7 +14874,7 @@ A copy of the license is included in the section entitled "GNU
 Free Documentation License".
 
 
->>> clamav-0.99.1.1
+>>> clamav-0.99.1
 
 Copyright (C) 2015 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
 Copyright (C) 2007-2009 Sourcefire, Inc.
