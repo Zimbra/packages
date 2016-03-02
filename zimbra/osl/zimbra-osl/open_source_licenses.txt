@@ -75,7 +75,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> nviennot-nginx-tcp-keepalive-4d7186d
    >>> opendkim-2.10.3
    >>> openldap-2.4.44
-   >>> openssl-1.0.1r
+   >>> openssl-1.0.2g
    >>> owasp-java-html-sanitizer.jar-r239
    >>> perl-data-uuid-1.221
    >>> perl-geography-countries-2009041301
@@ -89,7 +89,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> spymemcached-2.6
    >>> sqlitejdbc-3.7.5-1
    >>> tnef-1.8.0
-   >>> unbound-1.5.6
+   >>> unbound-1.5.8
    >>> yui-compressor-2.4.2
    >>> zeroclipboard-1.0.7
 
@@ -217,7 +217,7 @@ SECTION 6: GNU General Public License, V1.0
 SECTION 7: GNU General Public License, V2.0
 
    >>> amavisd-2.10.1
-   >>> clamav-0.99
+   >>> clamav-0.99.1
    >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
    >>> freetype-2.6.1
    >>> innotop-1.9.1
@@ -225,7 +225,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> juniversalchardet-1.0.3
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
-   >>> mariadb-10.1.11
+   >>> mariadb-10.1.12
    >>> openjdk-1.8.0u74b02
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
@@ -331,7 +331,7 @@ SECTION 11: GNU Library General Public License, V2.0
 
 SECTION 12: IBM Public License, V1.0
 
-   >>> postfix-3.0.3
+   >>> postfix-3.1.0
 
 
 
@@ -4678,7 +4678,7 @@ California, USA.  All Rights Reserved.  Permission to copy and
 distribute verbatim copies of this document is granted.
 
 
->>> openssl-1.0.1r
+>>> openssl-1.0.2g
 
 LICENSE ISSUES
   ==============
@@ -5464,7 +5464,7 @@ in courts and fora located in the State of New York, and you consent to such
 jurisdiction and venue.
 
 
->>> unbound-1.5.6
+>>> unbound-1.5.8
 
 Copyright (c) 2007, NLnet Labs. All rights reserved.
 
@@ -14874,7 +14874,7 @@ A copy of the license is included in the section entitled "GNU
 Free Documentation License".
 
 
->>> clamav-0.99
+>>> clamav-0.99.1
 
 Copyright (C) 2015 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
 Copyright (C) 2007-2009 Sourcefire, Inc.
@@ -14897,7 +14897,7 @@ ADDITIONAL LICENSE INFORMATION :
 
 > BSD
 
-clamav-0.99\COPYING.bzip2
+clamav-0.99.1\COPYING.bzip2
 
 This program, "bzip2", the associated library "libbzip2", and all
 documentation, are copyright (C) 1996-2006 Julian R Seward.  All
@@ -14940,7 +14940,7 @@ bzip2/libbzip2 version 1.0.4 of 20 December 2006
 
 > MIT
 
-clamav-0.99\COPYING.getopt
+clamav-0.99.1\COPYING.getopt
 
 getopt.c - my re-implementation of getopt.
 Copyright 1997, 2000, 2001, 2002, 2006, Benjamin Sittler
@@ -14967,7 +14967,7 @@ DEALINGS IN THE SOFTWARE.
 
 > LLVM License
 
-clamav-0.99\COPYING.llvm
+clamav-0.99.1\COPYING.llvm
 
 LLVM Release License
 ==============================================================================
@@ -15014,7 +15014,7 @@ SOFTWARE.
 
 > Public Domain
 
-clamav-0.99\COPYING.lzma
+clamav-0.99.1\COPYING.lzma
 
 The original lzma.txt license file, a small portion of which is reproduced below,
 is available under libclamav/7z/lzma.txt.
@@ -15026,7 +15026,7 @@ LZMA SDK is written and placed in the public domain by Igor Pavlov
 
 > Unrar License
 
-clamav-0.99\COPYING.unrar
+clamav-0.99.1\COPYING.unrar
 
 The libclamunrar code is based on the work of Alexander L. Roshal (C)
 
@@ -15080,7 +15080,7 @@ Thank you for your interest in RAR and UnRAR.
 
 > LGPL 2.1
 
-clamav-0.99\libclamunrar_iface\unrar_iface.h
+clamav-0.99.1\libclamunrar_iface\unrar_iface.h
 
 Interface to libclamunrar
 Copyright (C) 2007 Sourcefire, Inc.
@@ -15097,7 +15097,7 @@ Lesser General Public License for more details.
 
 > LGPL 2.0
 
-clamav-0.99\libltdl\argz.c
+clamav-0.99.1\libltdl\argz.c
 
 Copyright (C) 2004, 2006, 2007, 2008 Free Software Foundation, Inc.
 Written by Gary V. Vaughan, 2004
@@ -15384,7 +15384,7 @@ COPYRIGHT
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 
->>> mariadb-10.1.10
+>>> mariadb-10.1.12
 
 
 This is a release of MariaDB.
@@ -22666,7 +22666,7 @@ Boston, MA 02111-1307, USA.
 IBM Public License, V1.0 is applicable to the following component(s).
 
 
->>> postfix-3.0.3
+>>> postfix-3.1.0
 
 License: IBM Public License 1.0
 
@@ -22674,7 +22674,7 @@ Additional license information:
 
 >BSD
 
-postfix-3.0.3\COPYRIGHT
+postfix-3.1.0\COPYRIGHT
 
 Included for the use of the fix_strcasecmp.c module which works
 around a Solaris problem.

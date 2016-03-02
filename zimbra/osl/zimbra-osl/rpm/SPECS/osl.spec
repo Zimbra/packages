@@ -18,6 +18,11 @@ software used by Zimbra
 * Tue Feb 09 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.5-ITERATIONZAPPEND
 - Update OpenJDK to 1.0.8u74b02
 - Update Selenium to 2.51.0
+- Update OpenSSL to 1.0.2g
+- Update MariaDB to 10.1.12
+- Update Unbound to 1.5.8
+- Update Postfix to 3.1.0
+- Update ClamAV to 0.99.1
 * Mon Feb 08 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4-ITERATIONZAPPEND
 - Update rsync to 3.1.2
 - Update openssl to 1.0.1r
