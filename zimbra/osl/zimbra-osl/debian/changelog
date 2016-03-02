@@ -2,6 +2,11 @@ zimbra-osl (1.0.5-ITERATIONZAPPEND) unstable; urgency=low
 
   * Update OpenJDK to 1.8.0u74b02
   * Update Selenium to 2.51.0
+  * Update OpenSSL to 1.0.2g
+  * Update MariaDB to 10.1.12
+  * Update Unbound to 1.5.8
+  * Update Postfix to 3.1.0
+  * Update ClamAV to 0.99.1
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 09 Feb 2016 00:00:00 +0000
 
