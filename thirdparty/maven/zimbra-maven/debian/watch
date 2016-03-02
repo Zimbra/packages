@@ -1,0 +1,2 @@
+version=3
+https://archive.apache.org/dist/maven/maven-3/(\d+\.\d+\.\d+)/source/apache-maven-(\d+\.\d+\.\d+).tar.xz

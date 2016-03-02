@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/common/bin
+	cp -rf $(CURDIR)/build/bin/* $(CURDIR)/debian/tmp/opt/zimbra/common/bin/
