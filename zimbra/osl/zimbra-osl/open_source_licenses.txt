@@ -97,9 +97,8 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> spymemcached-2.6
    >>> sqlitejdbc-3.7.5-1
    >>> tnef-1.8.0
-   >>> unbound-1.5.3
-   >>> xpp3-1.1.4c
-   >>> yui-2.4.2
+   >>> unbound-1.5.8
+   >>> yui-compressor-2.4.2
    >>> zeroclipboard-1.0.7
 
 
@@ -248,22 +247,21 @@ SECTION 6: GNU General Public License, V1.0
 
 SECTION 8: GNU General Public License, V2.0
 
-   >>> amavisd-2.9.0
-   >>> clamav-0.98.6
-   >>> cluebringer-2.1.0-beta
+   >>> amavisd-2.10.1
+   >>> clamav-0.99.1.1
+   >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
+   >>> freetype-2.6.1
    >>> innotop-1.9.1
    >>> javax.ws.rs-api-2.0-m10
    >>> juniversalchardet-1.0.3
    >>> libtool-2.2.6b
-   >>> libwww-perl-6.05
-   >>> mariadb-10.0.17
-   >>> perl-archive-tar-1.96
-   >>> perl-archive-zip-1.37
-   >>> perl-array-compare-2.02
-   >>> perl-berkeleydb-0.54
-   >>> perl-bit-vector-7.3
-   >>> perl-cache-fastmmap-1.40
-   >>> perl-carp-1.32
+   >>> libwww-perl-6.13
+   >>> mariadb-10.1.12
+   >>> openjdk-1.8.0u74b02
+   >>> perl-archive-zip-1.53
+   >>> perl-berkeleydb-0.55
+   >>> perl-bit-vector-7.4
+   >>> perl-cache-fastmmap-1.43
    >>> perl-carp-clan-6.04
    >>> perl-class-inspector-1.28
    >>> perl-compress-raw-bzip2-2.064
@@ -418,7 +416,7 @@ SECTION 12: GNU Library General Public License, V2.0
 
 SECTION 13: IBM Public License, V1.0
 
-   >>> postfix-2.11.4
+   >>> postfix-3.1.0
 
 
 
@@ -5278,8 +5276,7 @@ distribute, and/or sell copies of the Font Software, and to permit persons to
 whom the Font Software is furnished to do so, subject to the following
 conditions:
 
-The above copyright and trademark notices and this permission notice shall be
-included in all copies of one or more of the Font Software typefaces.
+>>> openssl-1.0.2g
 
 The Font Software may be modified, altered, or added to, and in particular the
 designs of glyphs or characters in the Fonts may be modified and additional
@@ -5887,6 +5884,8 @@ authorization. The limitations set forth in this paragraph apply to any
 and all error corrections, patches, updates, and upgrades to the
 Software You may receive, access, download or otherwise obtain from
 Oracle.
+=======
+>>> unbound-1.5.8
 
 5. Records and Documentation.  During the term of the SLA and
 Entitlement, and for a period of three (3) years thereafter, You agree
@@ -29079,6 +29078,7 @@ Permission for Use and Modification Without Distribution
 Modified Versions for any purpose without restriction, provided that
 you do not Distribute the Modified Version.
 
+>>> clamav-0.99.1.1
 
 Permissions for Redistribution of the Standard Version
 
@@ -29104,10 +29104,7 @@ from the Standard Version, including, but not limited to, documenting
 any non-standard features, executables, or modules, and provided that
 you do at least ONE of the following:
 
-    (a)  make the Modified Version available to the Copyright Holder
-    of the Standard Version, under the Original License, so that the
-    Copyright Holder may include your modifications in the Standard
-    Version.
+clamav-0.99.1\COPYING.bzip2
 
     (b)  ensure that installation of your Modified Version does not
     prevent the user installing or running the Standard Version. In
@@ -29147,7 +29144,7 @@ the Source, provided that you comply with Section 4 with respect to
 the Source of the Modified Version.
 
 
-Aggregating or Linking the Package
+clamav-0.99.1\COPYING.getopt
 
 (7)  You may aggregate the Package (either the Standard Version or
 Modified Version) with other packages and Distribute the resulting
@@ -29172,6 +29169,7 @@ the Package to be a Modified Version.  In addition, such works are not
 considered parts of the Package itself, and are not subject to the
 terms of this license.
 
+clamav-0.99.1\COPYING.llvm
 
 General Provisions
 
@@ -29219,6 +29217,7 @@ Common Development and Distribution License, V1.0 is applicable to the following
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE CDDL 1.0. PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE CDDL 1.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
+clamav-0.99.1\COPYING.lzma
 
 DUAL LICENSE: GPL 2.0/CDDL 1.0
 
@@ -29227,7 +29226,7 @@ ADDITIONAL LICENSE INFORMATION:
 
 > BSD
 
-DO NOT TRANSLATE OR LOCALIZE.
+clamav-0.99.1\COPYING.unrar
 
 %% The following software may be included in this product: ASM
 Use of any of this software is governed by the terms of the license below:
@@ -29275,7 +29274,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+clamav-0.99.1\libclamunrar_iface\unrar_iface.h
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -29287,10 +29286,7 @@ limitations under the License.
 
 > Apache 2.0
 
-jackson-core-asl-1.9.2.jar
-jackson-mapper-asl-1.9.2.jar
-jackson-jaxrs-1.9.2.jar
-jettison-1.1.jar
+clamav-0.99.1\libltdl\argz.c
 
 This copy of Jackson JSON processor is licensed under the
 Apache (Software) License, version 2.0 ("the License").
@@ -29571,10 +29567,7 @@ Webservices Metadata for Java Platform V2.0
       granted to You under this License for that Work shall terminate
       as of the date such litigation is filed.
 
-   4. Redistribution. You may reproduce and distribute copies of the
-      Work or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You
-      meet the following conditions:
+>>> mariadb-10.1.12
 
       (a) You must give any other recipients of the Work or
           Derivative Works a copy of this License; and
@@ -36080,10 +36073,7 @@ the "copyright" line and a pointer to where the full notice is found.
     <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) <year>  <name of author>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+>>> postfix-3.1.0
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36096,8 +36086,7 @@ the "copyright" line and a pointer to where the full notice is found.
 
 Also add information on how to contact you by electronic and paper mail.
 
-If the program is interactive, make it output a short notice like this
-when it starts in an interactive mode:
+postfix-3.1.0\COPYRIGHT
 
     Gnomovision version 69, Copyright (C) year name of author
     Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.

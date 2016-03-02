@@ -17,7 +17,7 @@ all: clean getsrc build pkgrm1
 # $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
-	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) --no-check-certificate $(purl)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV)
