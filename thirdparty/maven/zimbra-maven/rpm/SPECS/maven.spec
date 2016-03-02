@@ -5,8 +5,8 @@ Release:            ITERATIONZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
 Patch0:             skip_rat_build_xml.patch
-BuildRequires:		zimbra-openjdk
-Requires:			zimbra-openjdk
+BuildRequires:      zimbra-openjdk
+Requires:           zimbra-openjdk
 AutoReqProv:        no
 URL:                https://maven.apache.org/
 
