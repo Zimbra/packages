@@ -248,7 +248,7 @@ SECTION 6: GNU General Public License, V1.0
 SECTION 8: GNU General Public License, V2.0
 
    >>> amavisd-2.10.1
-   >>> clamav-0.99.1.1
+   >>> clamav-0.99.1
    >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
    >>> freetype-2.6.1
    >>> innotop-1.9.1
@@ -28007,7 +28007,7 @@ License: Apache 2.0
 License: Apache 2.0
 
 
->>> stax2-api-3.1.1
+>>> clamav-0.99.1
 
 This copy of Aalto XML processor is licensed under the
 Apache (Software) License, version 2.0 ("the License").
