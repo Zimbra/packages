@@ -1,4 +1,3 @@
-fallback.patch
 postfix-main-cf-zimbra.patch
 stop-warning.patch
 postfix-ldap.patch
