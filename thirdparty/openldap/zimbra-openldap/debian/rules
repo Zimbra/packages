@@ -46,10 +46,10 @@ override_dh_auto_build:
 	make -C contrib/slapd-modules/passwd/sha2 prefix=OZC $(MAKEVARS)
 
 override_dh_auto_install:
-	make install DESTDIR=$$(pwd)/debian/tmp
-	make -C libraries/liblmdb install prefix=OZC $(MAKEVARS) DESTDIR=$$(pwd)/debian/tmp
-	make -C contrib/slapd-modules/noopsrch install prefix=OZC $(MAKEVARS) DESTDIR=$$(pwd)/debian/tmp
-	make -C contrib/slapd-modules/passwd/sha2 install prefix=OZC $(MAKEVARS) DESTDIR=$$(pwd)/debian/tmp
+	make install DESTDIR=$$(pwd)/debian/tmp STRIP=""
+	make -C libraries/liblmdb install prefix=OZC $(MAKEVARS) DESTDIR=$$(pwd)/debian/tmp STRIP=""
+	make -C contrib/slapd-modules/noopsrch install prefix=OZC $(MAKEVARS) DESTDIR=$$(pwd)/debian/tmp STRIP=""
+	make -C contrib/slapd-modules/passwd/sha2 install prefix=OZC $(MAKEVARS) DESTDIR=$$(pwd)/debian/tmp STRIP=""
 	rm -rf $$(pwd)/debian/tmp/opt/zimbra/data
 	rm -f $$(pwd)/debian/tmpOZCLE/openldap/noopsrch.a
 	rm -f $$(pwd)/debian/tmpOZCLE/openldap/pw-sha2.a
