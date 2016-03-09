@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$1" = configure ]; then
+  /bin/chown -R zimbra:zimbra /opt/zimbra/data/clamav
+  /bin/chmod 644 /opt/zimbra/data/clamav/init/*.init
+fi
+exit 0
