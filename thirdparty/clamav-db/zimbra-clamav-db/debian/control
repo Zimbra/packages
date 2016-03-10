@@ -1,0 +1,12 @@
+Source: zimbra-clamav-db
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-clamav-db
+Architecture: all
+Depends: zimbra-base
+Description: Inital ClamAV Databases for ClamAV
+ Inital ClamAV Databases for ClamAV
