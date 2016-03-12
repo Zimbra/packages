@@ -9,4 +9,8 @@ ifeq ($(BUILD_PLATFORM), UBUNTU12_64)
 	PKG_APPEND := .12.04
 else ifeq ($(BUILD_PLATFORM), UBUNTU14_64)
 	PKG_APPEND := .14.04
+else ifeq ($(BUILD_PLATFORM), UBUNTU16_64)
+	PKG_APPEND := .16.04
+else
+	PKG_APPEND := $(error unsupported BUILD_PLATFORM $(BUILD_PLATFORM))
 endif
