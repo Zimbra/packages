@@ -13,10 +13,13 @@ zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
 libmagic = $(libmagic.$(BUILD_PLATFORM))
-libmagic.RHEL6_64 := file-devel
-libmagic.RHEL7_64 := $(libmagic.RHEL6_64)
-libmagic.UBUNTU12_64 := libmagic-dev
-libmagic.UBUNTU14_64 := $(libmagic.UBUNTU12_64)
+libmagic.RHEL := file-devel
+libmagic.RHEL6_64 := $(libmagic.RHEL)
+libmagic.RHEL7_64 := $(libmagic.RHEL)
+libmagic.UBUNTU := libmagic-dev
+libmagic.UBUNTU12_64 := $(libmagic.UBUNTU)
+libmagic.UBUNTU14_64 := $(libmagic.UBUNTU)
+libmagic.UBUNTU16_64 := $(libmagic.UBUNTU)
 
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 

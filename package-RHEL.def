@@ -9,4 +9,6 @@ ifeq ($(BUILD_PLATFORM), RHEL6_64)
 	PKG_APPEND := .el6
 else ifeq ($(BUILD_PLATFORM), RHEL7_64)
 	PKG_APPEND := .el7
+else
+	PKG_APPEND := $(error unsupported BUILD_PLATFORM $(BUILD_PLATFORM))
 endif
