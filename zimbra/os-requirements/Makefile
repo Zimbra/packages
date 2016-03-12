@@ -7,6 +7,7 @@ zname := zimbra-$(pname_lc)
 zspec := $(pname_lc).spec
 
 osdeps = $(osdeps.$(BUILD_PLATFORM))
+osdeps.UBUNTU16_64 := libgmp10, libperl5.22
 osdeps.UBUNTU14_64 := libgmp10, libperl5.18
 osdeps.UBUNTU12_64 := libgmp3c2, libperl5.14
 osdeps.RHEL7_64 := nmap-ncat
