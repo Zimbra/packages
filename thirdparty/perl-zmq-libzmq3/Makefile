@@ -24,11 +24,6 @@ $(psrc_file):
 
 zpzc = zimbra-perl-zmq-constants
 zptest = $(zptest.$(BUILD_PLATFORM))
-zptest.UBUNTU := libtest-fatal-perl libtest-requires-perl libtest-sharedfork-perl libtry-tiny-perl
-zptest.UBUNTU16_64 := $(zptest.UBUNTU)
-zptest.UBUNTU14_64 := $(zptest.UBUNTU)
-zptest.UBUNTU12_64 := $(zptest.UBUNTU)
-zptest.RHEL7_64 := perl-Test-Fatal perl-Test-Requires
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-zeromq-$(PKG_DEV) \
