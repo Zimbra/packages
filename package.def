@@ -66,6 +66,14 @@ else
 	include $(error unsupported BUILD_PLATFORM $(BUILD_PLATFORM))
 endif
 
+# Platform specific package overrides
+ifneq ($(wildcard $(PKG_ROOT)/$(BUILD_DISTRIBUTION).def), )
+	include $(PKG_ROOT)/$(BUILD_DISTRIBUTION).def
+endif
+ifneq ($(wildcard $(PKG_ROOT)/$(BUILD_PLATFORM).def), )
+	include $(PKG_ROOT)/$(BUILD_PLATFORM).def
+endif
+
 PKG_MAINTAINER = Zimbra Packaging Services <packaging-devel@zimbra.com>
 
 define generic-setup
