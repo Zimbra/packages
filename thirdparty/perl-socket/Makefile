@@ -13,12 +13,6 @@ zspec := $(pname_lc).spec
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
-PERL_REQ :=
-
-ifeq ($(BUILD_PLATFORM), RHEL6_64)
-	PERL_REQ := zimbra-perl-extutils-constant
-endif
-
 all: clean getsrc build pkgrm1
 
 # $(@D) == directory part of the target
@@ -26,8 +20,10 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+extutils = $(extutils.$(BUILD_PLATFORM))
+
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base $(PERL_REQ)
+	$(PKG_EXTRACT) zimbra-perl-base $(extutils)
 
 pkgrm: pkgrm%
 pkgrm%:
