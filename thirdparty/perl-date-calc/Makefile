@@ -22,7 +22,6 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 storable = $(storable.$(BUILD_PLATFORM))
-storable.RHEL6_64 := zimbra-perl-storable
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-carp-clan zimbra-perl-bit-vector
