@@ -17,6 +17,8 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Mon Mar 14 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b4ZAPPEND
+- Build with OpenSSL 1.0.2
 * Tue Feb 09 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b3ZAPPEND
 - Turn off compiler optimization.  Was breaking lookup extension.
 * Wed Feb 03 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b2ZAPPEND
