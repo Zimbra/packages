@@ -10,5 +10,5 @@ override_dh_auto_configure:
 
 override_dh_auto_install:
 	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
-	cp -f source/prepflog-*/prepflog.pl $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
+	cp -f prepflog.pl $(CURDIR)/debian/$(shell dh_listpackages)/OZCB
 	sed -i -e '/=pod/ i use lib qw(/opt/zimbra/common/lib/perl5);' $(CURDIR)/debian/$(shell dh_listpackages)/OZCB/prepflog.pl
