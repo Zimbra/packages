@@ -65,6 +65,7 @@ ifneq ($(wildcard $(THIRDPARTY_ROOT)/package-$(BUILD_DISTRIBUTION).def), )
 else
 	include $(error unsupported BUILD_PLATFORM $(BUILD_PLATFORM))
 endif
+PKG_APPEND ?= $(PKG_APPEND.$(BUILD_PLATFORM))
 
 # Platform specific package overrides
 ifneq ($(wildcard $(PKG_ROOT)/$(BUILD_DISTRIBUTION).def), )
