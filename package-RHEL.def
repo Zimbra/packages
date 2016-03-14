@@ -1,14 +1,4 @@
-PKG_BUILD := rpmbuild -v --define "_topdir $$PWD" -ba
-PKG_EXT := rpm
-PKG_EXTRACT := sudo yum -y install
-PKG_PURGE := sudo yum erase -y
-PKG_DEV := devel
-PKG_LIB := libs
+include $(THIRDPARTY_ROOT)/package-rpm.def
 
-ifeq ($(BUILD_PLATFORM), RHEL6_64)
-	PKG_APPEND := .el6
-else ifeq ($(BUILD_PLATFORM), RHEL7_64)
-	PKG_APPEND := .el7
-else
-	PKG_APPEND := $(error unsupported BUILD_PLATFORM $(BUILD_PLATFORM))
-endif
+PKG_APPEND.RHEL7_64 = .el7
+PKG_APPEND.RHEL6_64 = .el6

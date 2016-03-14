@@ -1,0 +1,1 @@
+zptest.RHEL7_64 := perl-Test-Fatal perl-Test-Requires

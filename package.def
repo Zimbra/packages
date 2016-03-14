@@ -52,11 +52,27 @@ PKG_REVISION = zimbra$(MAJOR).$(MINOR)b$(PKG_REVNUM)
 PKG_ITERATION = 1$(PKG_REVISION)
 
 # Platform specific:
-# - PKG_EXT deb|rpm
-ifeq (RHEL,$(findstring RHEL,$(BUILD_PLATFORM)))
-	include $(THIRDPARTY_ROOT)/package-RHEL.def
-else ifeq (UBUNTU,$(findstring UBUNTU,$(BUILD_PLATFORM)))
-	include $(THIRDPARTY_ROOT)/package-UBUNTU.def
+# - PKG_BUILD
+# - PKG_EXT
+# - PKG_EXTRACT
+# - PKG_PURGE
+# - PKG_DEV
+# - PKG_LIB
+# - PKG_APPEND
+BUILD_DISTRIBUTION := $(shell $(SED) -e 's/[0-9]*_[0-9]*$$//' <<< $(BUILD_PLATFORM))
+ifneq ($(wildcard $(THIRDPARTY_ROOT)/package-$(BUILD_DISTRIBUTION).def), )
+	include $(THIRDPARTY_ROOT)/package-$(BUILD_DISTRIBUTION).def
+else
+	include $(error unsupported BUILD_PLATFORM $(BUILD_PLATFORM))
+endif
+PKG_APPEND ?= $(PKG_APPEND.$(BUILD_PLATFORM))
+
+# Platform specific package overrides
+ifneq ($(wildcard $(PKG_ROOT)/$(BUILD_DISTRIBUTION).def), )
+	include $(PKG_ROOT)/$(BUILD_DISTRIBUTION).def
+endif
+ifneq ($(wildcard $(PKG_ROOT)/$(BUILD_PLATFORM).def), )
+	include $(PKG_ROOT)/$(BUILD_PLATFORM).def
 endif
 
 PKG_MAINTAINER = Zimbra Packaging Services <packaging-devel@zimbra.com>

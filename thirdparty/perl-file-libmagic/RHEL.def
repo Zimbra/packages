@@ -1,0 +1,3 @@
+libmagic.RHEL := file-devel
+libmagic.RHEL7_64 := $(libmagic.RHEL)
+libmagic.RHEL6_64 := $(libmagic.RHEL)
