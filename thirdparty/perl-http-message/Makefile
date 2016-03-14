@@ -8,7 +8,7 @@ pname_lc := http-message
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/E/ET/ETHER/$(pfile)
-ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
+ptmp := $(BUILD_DIR)/$(BUILD_PLATFORM)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 

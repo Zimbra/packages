@@ -28,8 +28,8 @@ SED := sed
 TAR := tar
 WGET := wget -q
 
-TMP_DIR = tmp
-PLATFORM_DIR = $(TMP_DIR)/$(BUILD_PLATFORM)
+BUILD_DIR = build
+PLATFORM_DIR = $(BUILD_DIR)/$(BUILD_PLATFORM)
 SRC_DIR = $(PLATFORM_DIR)/src
 
 ZIMBRA_HOME ?= /opt/zimbra

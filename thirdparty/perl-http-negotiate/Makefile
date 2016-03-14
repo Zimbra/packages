@@ -9,7 +9,7 @@ pname_lc := http-negotiate
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(pfile)
-ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
+ptmp := $(BUILD_DIR)/$(BUILD_PLATFORM)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
