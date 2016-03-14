@@ -118,7 +118,7 @@ thirdparty/perl-mime-tools
 thirdparty/perl-io-sessiondata
 thirdparty/perl-json-pp
 thirdparty/perl-exporter-tiny
-thirdparty/perl-list-moreutil
+thirdparty/perl-list-moreutils
 thirdparty/perl-config-inifiles
 thirdparty/perl-carp-clan
 thirdparty/perl-bit-vector
