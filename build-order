@@ -96,8 +96,8 @@ thirdparty/perl-lwp-mediatypes
 thirdparty/perl-encode-locale
 thirdparty/perl-http-date
 thirdparty/perl-io-html
-thirdparty/perl-convert-raw-bzip2
-thirdparty/perl-convert-raw-zlib
+thirdparty/perl-compress-raw-bzip2
+thirdparty/perl-compress-raw-zlib
 thirdparty/perl-io-compress
 thirdparty/perl-http-message
 thirdparty/perl-http-negotiate
