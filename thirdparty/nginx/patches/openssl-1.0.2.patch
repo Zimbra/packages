@@ -1,0 +1,56 @@
+From 79c55b2cca151e62b34fbb1f96d80844d8f0a886 Mon Sep 17 00:00:00 2001
+From: Piotr Sikora <piotr@cloudflare.com>
+Date: Wed, 9 Jul 2014 12:27:15 -0700
+Subject: [PATCH] SSL: fix build with recent OpenSSL.
+
+X509_check_host() prototype changed recently:
+- http://git.openssl.org/gitweb/?p=openssl.git;a=commitdiff;h=ced3d91
+- http://git.openssl.org/gitweb/?p=openssl.git;a=commitdiff;h=297c67f
+
+Bump version requirement, so that OpenSSL-1.0.2-beta1 uses fallback code.
+
+Signed-off-by: Piotr Sikora <piotr@cloudflare.com>
+---
+ src/event/ngx_event_openssl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/event/ngx_event_openssl.c b/src/event/ngx_event_openssl.c
+index 800f183..a7b48af 100644
+--- a/src/event/ngx_event_openssl.c
++++ b/src/event/ngx_event_openssl.c
+@@ -50,7 +50,7 @@ static int ngx_ssl_session_ticket_key_callback(ngx_ssl_conn_t *ssl_conn,
+     HMAC_CTX *hctx, int enc);
+ #endif
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10002001L
++#if OPENSSL_VERSION_NUMBER < 0x10002002L
+ static ngx_int_t ngx_ssl_check_name(ngx_str_t *name, ASN1_STRING *str);
+ #endif
+ 
+@@ -2733,7 +2733,7 @@ ngx_ssl_check_host(ngx_connection_t *c, ngx_str_t *name)
+         return NGX_ERROR;
+     }
+ 
+-#if OPENSSL_VERSION_NUMBER >= 0x10002001L
++#if OPENSSL_VERSION_NUMBER >= 0x10002002L
+ 
+     /* X509_check_host() is only available in OpenSSL 1.0.2+ */
+ 
+@@ -2741,7 +2741,7 @@ ngx_ssl_check_host(ngx_connection_t *c, ngx_str_t *name)
+         goto failed;
+     }
+ 
+-    if (X509_check_host(cert, name->data, name->len, 0) != 1) {
++    if (X509_check_host(cert, (char *) name->data, name->len, 0, NULL) != 1) {
+         ngx_log_debug0(NGX_LOG_DEBUG_EVENT, c->log, 0,
+                        "X509_check_host(): no match");
+         goto failed;
+@@ -2850,7 +2850,7 @@ ngx_ssl_check_host(ngx_connection_t *c, ngx_str_t *name)
+ }
+ 
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10002001L
++#if OPENSSL_VERSION_NUMBER < 0x10002002L
+ 
+ static ngx_int_t
+ ngx_ssl_check_name(ngx_str_t *name, ASN1_STRING *pattern)
