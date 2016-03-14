@@ -27,7 +27,7 @@ will not work for you.
 
 %install
 mkdir -p ${RPM_BUILD_ROOT}OZCB
-cp -f source/prepflog-%{version}/prepflog.pl ${RPM_BUILD_ROOT}OZCB
+cp -f prepflog.pl ${RPM_BUILD_ROOT}OZCB
 sed -i -e '/=pod/ i use lib qw(/opt/zimbra/common/lib/perl5);' ${RPM_BUILD_ROOT}OZCB/prepflog.pl
 
 %files
