@@ -8,5 +8,5 @@ Standards-Version: 3.9.5
 Package: zimbra-clamav-db
 Architecture: all
 Depends: zimbra-base
-Description: Inital ClamAV Databases for ClamAV
- Inital ClamAV Databases for ClamAV
+Description: Initial ClamAV Databases for ClamAV
+ Initial ClamAV Databases for ClamAV

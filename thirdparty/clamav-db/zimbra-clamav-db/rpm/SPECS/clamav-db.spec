@@ -1,4 +1,4 @@
-Summary:            Inital ClamAV Databases for ClamAV
+Summary:            Initial ClamAV Databases for ClamAV
 Name:               zimbra-clamav-db
 Version:            1.0.0
 Release:            ITERATIONZAPPEND
@@ -11,7 +11,7 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %description
-Inital ClamAV Databases for ClamAV
+Initial ClamAV Databases for ClamAV
 
 %changelog
 * Wed Mar 09 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.0-ITERATIONZAPPEND
