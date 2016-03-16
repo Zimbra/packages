@@ -343,7 +343,6 @@ SECTION 13: Microsoft Limited Public License
 
 SECTION 14: Mozilla Public License, V2.0
 
-   >>> converse.js-0.9.4
    >>> firefox-nss-22-zimbra
    >>> firefox-nspr-22-zimbra
    >>> openjdk-cacerts-1.0.4
@@ -22724,12 +22723,6 @@ License : Microsoft Limited Public License
 
 
 --------------- SECTION 14: Mozilla Public License, V2.0 ----------
-
->>> converse.js-0.9.4
-
-Copyright (c) 2012-2015, Jan-Carel Brand <jc@opkode.com>
-Licensed under the Mozilla Public License (MPLv2)
-
 
 >>> firefox-nss-22-zimbra
 
