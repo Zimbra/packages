@@ -44,7 +44,7 @@ build_rpm:
 	perl -pi -e 's|BuildRequires:      perl, zimbra-perl-carp-clan|BuildRequires:      perl, zimbra-perl-carp-clan, $(storable)|' $(specfile) && \
 	perl -pi -e 's|Requires:           perl, zimbra-perl-carp-clan|Requires:           perl, zimbra-perl-carp-clan, $(storable)|' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
@@ -54,7 +54,7 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
