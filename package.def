@@ -28,6 +28,10 @@ SED := sed
 TAR := tar
 WGET := wget -q
 
+# You might want to build out-of-tree by setting BUILD_ROOT to an absolute
+# path eg for building in combination with VitualBox Shared Folders, cf.
+# * https://www.virtualbox.org/ticket/819
+# * https://bugzilla.zimbra.com/show_bug.cgi?id=97266
 BUILD_ROOT ?= $(THIRDPARTY_ROOT)
 BUILD_DIR := $(BUILD_ROOT)/$(patsubst $(THIRDPARTY_ROOT)/%,%,$(PKG_ROOT))/build
 
