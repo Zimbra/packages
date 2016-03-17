@@ -9,7 +9,6 @@ pname_lc := http-negotiate
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(pfile)
-ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
@@ -32,29 +31,27 @@ pkgrm%:
 	$(PKG_PURGE) zimbra-base
 
 setup:
-	$(MKDIR) $(ptmp)
-	$(CP) -prf $(zname) $(ptmp)
+	$(generic-setup)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
-	$(CD) $(ptmp)/$(zname)/rpm && \
+	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
 build_deb:
-	$(CD) $(ptmp)/$(zname) && \
+	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CHMOD) u+w debian/control && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
 clean: pkgrm
-	$(RM) -rf $(ptmp)/$(zname)
-	$(RM) -f $(ptmp)/$(zname)_*
+	$(generic-clean)

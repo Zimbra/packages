@@ -29,7 +29,7 @@ getsrc:
 	hg clone -r $(JDK_TAG) http://hg.openjdk.java.net/jdk8u/jdk$(JDK_SUB_TREE) && \
 	cd jdk$(JDK_SUB_TREE) && chmod a+rx get_source.sh && \
 	chmod a+rx configure && \
-	patch -p1 < ../../../../../patches/fix-source.patch && \
+	patch -p1 < $(PKG_ROOT)/patches/fix-source.patch && \
 	echo "Obtaining source for sub modules.  This make take a very long time." && \
 	./get_source.sh -r $(JDK_TAG) || true && \
 	cd .. && \
@@ -89,7 +89,7 @@ build_rpm:
 	perl -pi -e 's/JDK_BUILD/$(JDK_BUILD)/; s/JDK_UPDATE/$(JDK_UPDATE)/' $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) SOURCES/$(zname)-$(pvers).tgz && \
+	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tgz && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
@@ -100,7 +100,7 @@ build_deb:
 	perl -pi -e 's/JDK_BUILD/$(JDK_BUILD)/; s/JDK_UPDATE/$(JDK_UPDATE)/' debian/rules && \
 	perl -pi -e 's/DEB_BUILD_OPTIONS=nocheck/DEB_BUILD_OPTIONS=nocheck $(UB_REPLACE)/' debian/rules && \
 	$(replace-pathinfo) debian/rules && \
-	$(CP) $(PKG_ROOT)/$(psrc_file) ../$(z_tgz) && \
+	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
