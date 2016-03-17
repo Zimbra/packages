@@ -28,7 +28,9 @@ SED := sed
 TAR := tar
 WGET := wget -q
 
-BUILD_DIR = $(PKG_ROOT)/build
+BUILD_ROOT ?= $(THIRDPARTY_ROOT)
+BUILD_DIR := $(BUILD_ROOT)/$(patsubst $(THIRDPARTY_ROOT)/%,%,$(PKG_ROOT))/build
+
 PLATFORM_DIR = $(BUILD_DIR)/$(BUILD_PLATFORM)
 SRC_DIR = $(PLATFORM_DIR)/src
 
