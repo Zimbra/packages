@@ -57,6 +57,7 @@ thirdparty/curl
 thirdparty/cyrus-sasl
 thirdparty/openldap
 thirdparty/clamav
+thirdparty/clamav-db
 thirdparty/postfix
 thirdparty/rrdtool
 thirdparty/net-snmp
