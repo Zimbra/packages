@@ -12,3 +12,5 @@ override_dh_auto_install:
 	cp ../src/bytecode.cvd $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/data/clamav/init/bytecode.cvd.init
 	cp ../src/daily.cvd $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/data/clamav/init/daily.cvd.init
 	cp ../src/main.cvd $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/data/clamav/init/main.cvd.init
+
+override_dh_strip:
