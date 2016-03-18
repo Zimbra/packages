@@ -10,3 +10,5 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/OZCE/java
 	cp cacerts $(CURDIR)/debian/$(shell dh_listpackages)/OZCE/java
+
+override_dh_strip:
