@@ -1,3 +1,9 @@
+zimbra-nginx (VERSION-1zimbra9.0b5ZAPPEND) unstable; urgency=medium
+
+  * Backport upstream patch for nginx ticket 901
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 14 Mar 2016 22:26:24 +0000
+
 zimbra-nginx (VERSION-1zimbra9.0b4ZAPPEND) unstable; urgency=medium
 
   * Build with OpenSSL 1.0.2
