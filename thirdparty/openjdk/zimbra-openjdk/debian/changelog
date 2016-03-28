@@ -1,8 +1,14 @@
+zimbra-openjdk (VERSION-1zimbra9.0b3ZAPPEND) unstable; urgency=medium
+
+  * Update version to 1.8 update 77 build 03
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 28 Mar 2015 22:26:24 +0000
+
 zimbra-openjdk (VERSION-1zimbra9.0b2ZAPPEND) unstable; urgency=medium
 
   * Fix cacerts handling to avoid conflicts
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 1 May 2015 22:26:24 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 11 Feb 2016 22:26:24 +0000
 
 zimbra-openjdk (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
