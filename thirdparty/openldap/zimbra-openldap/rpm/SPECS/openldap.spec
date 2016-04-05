@@ -81,7 +81,7 @@ Requires: zimbra-openssl-libs, zimbra-cyrus-sasl-libs, zimbra-base
 AutoReqProv:        no
 
 %description libs
-The zimbra-openldap-libs package contains the curl libraries
+The zimbra-openldap-libs package contains the openldap libraries
 
 %package devel
 Summary:        openldap Development
