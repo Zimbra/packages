@@ -74,6 +74,7 @@ rm -f ${RPM_BUILD_ROOT}OZCLE/openldap/noopsrch.a
 rm -f ${RPM_BUILD_ROOT}OZCLE/openldap/pw-sha2.a
 rm -f ${RPM_BUILD_ROOT}OZCE/openldap/DB_CONFIG.example
 chmod 755 ${RPM_BUILD_ROOT}OZCLE/openldap/pw-sha2.la ${RPM_BUILD_ROOT}OZCLE/openldap/noopsrch.la
+chmod 755 ${RPM_BUILD_ROOT}OZCL/libldap* ${RPM_BUILD_ROOT}OZCL/liblber*
 
 %package libs
 Summary:        openldap Libaries
