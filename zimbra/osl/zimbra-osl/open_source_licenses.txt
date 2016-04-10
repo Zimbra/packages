@@ -226,7 +226,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
    >>> mariadb-10.1.12
-   >>> openjdk-1.8.0u74b02
+   >>> openjdk-1.8.0u77b03
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
    >>> perl-bit-vector-7.4
@@ -17196,7 +17196,7 @@ POSSIBILITY OF SUCH DAMAGE.
 ***************************************************************************
 
 
->>> openjdk-1.8.0u74b02
+>>> openjdk-1.8.0u77b03
 
 The GNU General Public License (GPL)
 
