@@ -5,31 +5,11 @@ SHELL := /bin/bash
 SRC_ROOT ?= $(shell cd ../../..; pwd)
 THIRDPARTY_ROOT := $(shell cd ../..; pwd)
 
-BUILD_PLATFORM ?= $(shell sh $(SRC_ROOT)/zimbra-build/rpmconf/Build/get_plat_tag.sh)
-ifeq ($(BUILD_PLATFORM), )
-	BUILD_PLATFORM := "UNKNOWN"
-endif
+include $(SRC_ROOT)/zimbra-package-stub/def/package.def
 
 include $(THIRDPARTY_ROOT)/versions.def
 include $(THIRDPARTY_ROOT)/perl-versions.def
 
-CFLAGS := -g -O2
-MAKE ?= make
-MAKEARGS := -j3
-
-CD := cd
-CHMOD := chmod
-CP := cp
-MKDIR := mkdir -p
-MV := mv
-PERL := perl
-RM := rm
-SED := sed
-TAR := tar
-WGET := wget -q
-
-# You might want to build out-of-tree by setting BUILD_ROOT to an absolute
-# path eg for building in combination with VitualBox Shared Folders, cf.
 # * https://www.virtualbox.org/ticket/819
 # * https://bugzilla.zimbra.com/show_bug.cgi?id=97266
 BUILD_ROOT ?= $(THIRDPARTY_ROOT)
@@ -38,76 +18,4 @@ BUILD_DIR := $(BUILD_ROOT)/$(patsubst $(THIRDPARTY_ROOT)/%,%,$(PKG_ROOT))/build
 PLATFORM_DIR = $(BUILD_DIR)/$(BUILD_PLATFORM)
 SRC_DIR = $(PLATFORM_DIR)/src
 
-ZIMBRA_HOME ?= /opt/zimbra
-OZC ?= $(ZIMBRA_HOME)/common
-OZCB ?= $(OZC)/bin
-OZCE ?= $(OZC)/etc
-OZCI ?= $(OZC)/include
-OZCL ?= $(OZC)/lib
-OZCLE ?= $(OZC)/libexec
-OZCS ?= $(OZC)/share
-
-###
-
-MAJOR	:= $(shell cat $(SRC_ROOT)/zimbra-build/RE/MAJOR)
-MINOR	:= $(shell cat $(SRC_ROOT)/zimbra-build/RE/MINOR)
-MICRO	:= $(shell cat $(SRC_ROOT)/zimbra-build/RE/MICRO)
-
-PKG_REVNUM = 1
-PKG_REVISION = zimbra$(MAJOR).$(MINOR)b$(PKG_REVNUM)
-PKG_ITERATION = 1$(PKG_REVISION)
-
-# Platform specific:
-# - PKG_BUILD
-# - PKG_EXT
-# - PKG_EXTRACT
-# - PKG_PURGE
-# - PKG_DEV
-# - PKG_LIB
-# - PKG_APPEND
-BUILD_DISTRIBUTION := $(shell $(SED) -e 's/[0-9]*_[0-9]*$$//' <<< $(BUILD_PLATFORM))
-ifneq ($(wildcard $(THIRDPARTY_ROOT)/package-$(BUILD_DISTRIBUTION).def), )
-	include $(THIRDPARTY_ROOT)/package-$(BUILD_DISTRIBUTION).def
-else
-	include $(error unsupported BUILD_PLATFORM $(BUILD_PLATFORM))
-endif
-PKG_APPEND ?= $(PKG_APPEND.$(BUILD_PLATFORM))
-
-# Platform specific package overrides
-ifneq ($(wildcard $(PKG_ROOT)/$(BUILD_DISTRIBUTION).def), )
-	include $(PKG_ROOT)/$(BUILD_DISTRIBUTION).def
-endif
-ifneq ($(wildcard $(PKG_ROOT)/$(BUILD_PLATFORM).def), )
-	include $(PKG_ROOT)/$(BUILD_PLATFORM).def
-endif
-
 PKG_MAINTAINER = Zimbra Packaging Services <packaging-devel@zimbra.com>
-
-define generic-setup
-  $(MKDIR) $(PLATFORM_DIR)
-  $(CP) -prf zimbra-* $(PLATFORM_DIR)
-endef
-
-define generic-clean
-  $(RM) -rf $(PLATFORM_DIR)
-endef
-
-# $pkg.spec OR $pkg/debian/{changelog,*.shlibs}
-define replace-pkginfo
-  $(PERL) -pi -e 's|VERSION|$(pvers)|; s|ITERATION|$(PKG_ITERATION)|; s|ZAPPEND|$(PKG_APPEND)|'
-endef
-
-# $pkg.spec OR $pkg/debian/rules
-define replace-pathinfo
-  $(PERL) -pi -e 's|OZCLE|$(OZCLE)|g; s|OZCB|$(OZCB)|g; s|OZCE|$(OZCE)|g; s|OZCI|$(OZCI)|g; s|OZCL|$(OZCL)|g; s|OZCS|$(OZCS)|g; s|OZC|$(OZC)|g;'
-endef
-
-# $pkg.spec only
-define replace-dictinfo
-  $(PERL) -pi -e 's/ADICT/$(dictver)/g;'
-endef
-
-# $pkg.spec OR $pkg/debian/{changelog, control, copyright, watch}
-define replace-perl-modinfo
-  $(PERL) -pi -e 's/MODNAME/$(pname)/g; s/MODNORMNAME/$(pname_lc)/g;'
-endef
