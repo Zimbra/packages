@@ -1,7 +1,0 @@
-PKG_EXT := rpm
-
-PKG_BUILD := rpmbuild -v --define "_topdir $$PWD" -ba
-PKG_EXTRACT := sudo yum -y install
-PKG_PURGE := sudo yum erase -y
-PKG_DEV := devel
-PKG_LIB := libs

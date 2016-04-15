@@ -1,4 +1,0 @@
-include $(THIRDPARTY_ROOT)/package-rpm.def
-
-PKG_APPEND.RHEL7_64 = .el7
-PKG_APPEND.RHEL6_64 = .el6
