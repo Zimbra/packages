@@ -1,5 +1,4 @@
 #!/usr/bin/make -f
-export DEB_BUILD_OPTIONS=nocheck
 
 # Ensure rpath is set correctly
 export DEB_LDFLAGS_MAINT_APPEND=-LOZCL -Wl,-rpath,OZCL
