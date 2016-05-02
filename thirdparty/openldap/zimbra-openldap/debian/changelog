@@ -1,16 +1,16 @@
-zimbra-openldap (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
+zimbra-openldap (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
 
   * Add patch for ITS#8413
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 27 Apr 2016 22:26:24 +0000
 
-zimbra-openldap (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+zimbra-openldap (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
 
   * Fix strip handling so debug packages are correctly generated.  Unique to OpenLDAP.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 8 Mar 2016 22:26:24 +0000
 
-zimbra-openldap (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+zimbra-openldap (VERSION-1zimbra8.8b2ZAPPEND) unstable; urgency=medium
 
   * Add patch for ITS#7506
 

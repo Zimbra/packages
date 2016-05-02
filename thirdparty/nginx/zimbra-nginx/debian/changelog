@@ -1,22 +1,22 @@
-zimbra-nginx (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=medium
+zimbra-nginx (VERSION-1zimbra8.8b5ZAPPEND) unstable; urgency=medium
 
   * Backport upstream patch for nginx ticket 901
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 14 Mar 2016 22:26:24 +0000
 
-zimbra-nginx (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
+zimbra-nginx (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
 
   * Build with OpenSSL 1.0.2
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 14 Mar 2016 22:26:24 +0000
 
-zimbra-nginx (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+zimbra-nginx (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
 
   * Turn off compiler optimization.  Was breaking lookup extension.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 9 Feb 2016 22:26:24 +0000
 
-zimbra-nginx (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+zimbra-nginx (VERSION-1zimbra8.8b2ZAPPEND) unstable; urgency=medium
 
   * Patch nginx for CVE-2016-0742
   * Patch nginx for CVE-2016-0746
