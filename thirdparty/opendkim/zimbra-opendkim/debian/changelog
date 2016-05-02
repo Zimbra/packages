@@ -1,4 +1,4 @@
-zimbra-opendkim (VERSION-1zimbra8.8b2ZAPPEND) unstable; urgency=medium
+zimbra-opendkim (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
   * Add patch for ticket 226
 
