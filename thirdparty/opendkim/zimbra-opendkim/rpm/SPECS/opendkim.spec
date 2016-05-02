@@ -1,9 +1,10 @@
 Summary:            Zimbra's OpenDKIM build
 Name:               zimbra-opendkim
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.8b2ZAPPEND
 License:            OpenDKIM
 Source:             %{name}-%{version}.tar.gz
+Patch0:             ticket226.patch
 BuildRequires:      zlib-devel
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-libbsd-devel
@@ -20,8 +21,13 @@ URL:                http://www.opendkim.org/
 %description
 The Zimbra OpenDKIM build
 
+%changelog
+* Mon May 02 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+- Add patch for ticket 226
+
 %prep
 %setup -n opendkim-%{version}
+%patch0 -p1
 
 %build
 LDFLAGS="-LOZCL -Wl,-rpath,OZCL"; export LDFLAGS;

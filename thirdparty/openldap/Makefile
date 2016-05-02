@@ -9,6 +9,7 @@ psrc_file := $(SRC_DIR)/$(pfile)
 purl := ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
+DEB_TEST ?= nocheck
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
@@ -42,6 +43,7 @@ build_rpm:
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(PKG_BUILD) $(specfile)
 
+build_deb: export DEB_BUILD_OPTIONS=$(DEB_TEST)
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
 build_deb:
