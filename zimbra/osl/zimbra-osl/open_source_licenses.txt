@@ -75,7 +75,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> nviennot-nginx-tcp-keepalive-4d7186d
    >>> opendkim-2.10.3
    >>> openldap-2.4.44
-   >>> openssl-1.0.2g
+   >>> openssl-1.0.2h
    >>> owasp-java-html-sanitizer.jar-r239
    >>> perl-data-uuid-1.221
    >>> perl-geography-countries-2009041301
@@ -226,7 +226,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
    >>> mariadb-10.1.12
-   >>> openjdk-1.8.0u77b03
+   >>> openjdk-1.8.0u92b14
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
    >>> perl-bit-vector-7.4
@@ -4677,7 +4677,7 @@ California, USA.  All Rights Reserved.  Permission to copy and
 distribute verbatim copies of this document is granted.
 
 
->>> openssl-1.0.2g
+>>> openssl-1.0.2h
 
 LICENSE ISSUES
   ==============
@@ -17196,7 +17196,7 @@ POSSIBILITY OF SUCH DAMAGE.
 ***************************************************************************
 
 
->>> openjdk-1.8.0u77b03
+>>> openjdk-1.8.0u92b14
 
 The GNU General Public License (GPL)
 

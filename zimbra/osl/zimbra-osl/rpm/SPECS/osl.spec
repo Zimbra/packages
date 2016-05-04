@@ -15,8 +15,9 @@ This file contains the licenses for the open source 3rd party
 software used by Zimbra
 
 %changelog
-* Sat Apr 09 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
-- Update OpenJDK to 1.0.8u77b03
+* Wed May 04 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
+- Update OpenJDK to 1.0.8u92b14
+- Update OpenSSL to 1.0.2h
 * Wed Mar 16 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.6-ITERATIONZAPPEND
 - Remove converse.js
 * Tue Feb 09 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.5-ITERATIONZAPPEND
