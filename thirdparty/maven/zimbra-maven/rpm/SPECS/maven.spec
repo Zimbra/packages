@@ -10,6 +10,8 @@ Requires:           zimbra-openjdk
 AutoReqProv:        no
 URL:                https://maven.apache.org/
 
+%define debug_package %{nil}
+
 %description
 The Zimbra maven build
 
