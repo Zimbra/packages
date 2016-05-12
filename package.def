@@ -9,6 +9,7 @@ include $(SRC_ROOT)/zimbra-package-stub/def/package.def
 
 include $(THIRDPARTY_ROOT)/versions.def
 include $(THIRDPARTY_ROOT)/perl-versions.def
+include $(THIRDPARTY_ROOT)/buildtools-versions.def
 
 # * https://www.virtualbox.org/ticket/819
 # * https://bugzilla.zimbra.com/show_bug.cgi?id=97266
