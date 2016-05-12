@@ -20,11 +20,11 @@ The Zimbra maven build
 %patch0 -p1
 
 %build
-ant
+ant -Dmaven.repo.local=${RPM_BUILD_DIR}/.m2
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/zimbra/common/bin
-cp -f build/bin/* $RPM_BUILD_ROOT/opt/zimbra/common/bin
+mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/common/bin
+cp -f build/bin/* ${RPM_BUILD_ROOT}/opt/zimbra/common/bin
 
 %files
 %defattr(-,root,root)
