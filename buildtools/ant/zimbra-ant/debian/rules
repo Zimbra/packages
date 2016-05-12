@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/tmp/OZCB
+	mkdir -p $(CURDIR)/debian/tmp/OZCL
+	mkdir -p $(CURDIR)/debian/tmp/OZCE
+	cp -f $(CURDIR)/bin/* $(CURDIR)/debian/tmp/OZCB
+	cp -f $(CURDIR)/lib/* $(CURDIR)/debian/tmp/OZCL
+	cp -rf $(CURDIR)/etc/* $(CURDIR)/debian/tmp/OZCE

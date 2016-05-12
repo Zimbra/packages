@@ -1,0 +1,14 @@
+Source: zimbra-ant
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7)
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 3.9.5
+Homepage:  https://ant.apache.org/
+
+Package: zimbra-ant
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-openjdk
+Description: ant Binaries
