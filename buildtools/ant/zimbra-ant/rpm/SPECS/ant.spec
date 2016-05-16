@@ -3,7 +3,7 @@ Name:               zimbra-ant
 Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            Apache-2.0
-Source:             %{name}-%{version}.tar.gz
+Source:             %{name}-%{version}.tar.bz2
 AutoReqProv:        no
 URL:                https://ant.apache.org/
 
