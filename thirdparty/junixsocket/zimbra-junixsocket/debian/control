@@ -7,7 +7,7 @@ Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
 Standards-Version: 3.9.5
 Homepage:  https://github.com/kohlschutter/junixsocket
 
-Package: zimbra-junixsocket-jars
+Package: zimbra-junixsocket
 Section: jars
 Priority: important
 Architecture: any
@@ -15,15 +15,7 @@ Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: junixsocket JARs
 
-Package: zimbra-junixsocket-lib
-Section: libs
-Priority: important
-Architecture: any
-Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: junixsocket Libraries
-
-Package: zimbra-junixsocket-lib-dbg
+Package: zimbra-junixsocket-dbg
 Section: debug
 Priority: extra
 Architecture: any

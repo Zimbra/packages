@@ -15,12 +15,10 @@ override_dh_auto_build:
 	mvn -P with-native package
 
 override_dh_strip:
-	dh_strip -pzimbra-junixsocket-lib --dbg-package=zimbra-junixsocket-lib-dbg
-	dh_strip -Nzimbra-junixsocket-lib
+	dh_strip -pzimbra-junixsocket --dbg-package=zimbra-junixsocket-dbg
+	dh_strip -Nzimbra-junixsocket
 
 override_dh_auto_install:
-	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/common/lib
-	cp junixsocket-native/target/nar/junixsocket-native-2.0.4-amd64-Linux-gpp-jni/lib/amd64-Linux-gpp/jni/libjunixsocket-native-2.0.4.so $(CURDIR)/debian/tmp/opt/zimbra/common/lib
 	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
 	cp junixsocket-native-common/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
 	cp junixsocket-mysql/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
