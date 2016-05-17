@@ -2,6 +2,7 @@
 export DEB_BUILD_OPTIONS=nocheck
 export JAVA_HOME=/opt/zimbra/common/lib/jvm/java
 export ANT_OPTS=-Dmaven.repo.local=$(CURDIR)/../.m2
+export M2_HOME=build
 
 %:
 	dh $@

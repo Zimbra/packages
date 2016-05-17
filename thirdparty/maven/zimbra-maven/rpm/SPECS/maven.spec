@@ -20,6 +20,7 @@ The Zimbra maven build
 %patch0 -p1
 
 %build
+M2_HOME=build; export M2_HOME
 ant -Dmaven.repo.local=${RPM_BUILD_DIR}/.m2
 
 %install
