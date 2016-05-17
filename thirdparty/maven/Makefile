@@ -9,7 +9,6 @@ psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://archive.apache.org/dist/maven/maven-3/$(pvers)/source/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
-export M2_HOME := build
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
