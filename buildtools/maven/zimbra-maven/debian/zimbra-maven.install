@@ -1,1 +1,4 @@
 opt/zimbra/common/bin
+opt/zimbra/common/boot
+opt/zimbra/common/conf
+opt/zimbra/common/lib

@@ -1,8 +1,5 @@
 #!/usr/bin/make -f
 export DEB_BUILD_OPTIONS=nocheck
-export JAVA_HOME=/opt/zimbra/common/lib/jvm/java
-export ANT_OPTS=-Dmaven.repo.local=$(CURDIR)/../.m2
-export M2_HOME=build
 
 %:
 	dh $@
@@ -12,5 +9,11 @@ override_dh_auto_clean:
 override_dh_auto_configure:
 
 override_dh_auto_install:
-	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/common/bin
-	cp -rf $(CURDIR)/build/bin/* $(CURDIR)/debian/tmp/opt/zimbra/common/bin/
+	mkdir -p $(CURDIR)/debian/tmp/OZCB
+	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/common/boot
+	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/common/conf
+	mkdir -p $(CURDIR)/debian/tmp/OZCL
+	cp -f $(CURDIR)/bin/* $(CURDIR)/debian/tmp/OZCB
+	cp -f $(CURDIR)/boot/* $(CURDIR)/debian/tmp/opt/zimbra/common/boot
+	cp -rf $(CURDIR)/conf/* $(CURDIR)/debian/tmp/opt/zimbra/common/conf
+	cp -rf $(CURDIR)/lib/* $(CURDIR)/debian/tmp/OZCL

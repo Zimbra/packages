@@ -4,9 +4,6 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
-Patch0:             skip_rat_build_xml.patch
-BuildRequires:      zimbra-openjdk
-Requires:           zimbra-openjdk
 AutoReqProv:        no
 URL:                https://maven.apache.org/
 
@@ -17,17 +14,23 @@ The Zimbra maven build
 
 %prep
 %setup -n apache-maven-%{version}
-%patch0 -p1
 
 %build
-M2_HOME=build; export M2_HOME
-ant -Dmaven.repo.local=${RPM_BUILD_DIR}/.m2
 
 %install
-mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/common/bin
-cp -f build/bin/* ${RPM_BUILD_ROOT}/opt/zimbra/common/bin
+mkdir -p ${RPM_BUILD_ROOT}/OZCB
+mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/common/boot
+mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/common/conf
+mkdir -p ${RPM_BUILD_ROOT}/OZCL
+cp -f bin/* ${RPM_BUILD_ROOT}/OZCB
+cp -f boot/* ${RPM_BUILD_ROOT}/opt/zimbra/common/boot
+cp -rf conf/* ${RPM_BUILD_ROOT}/opt/zimbra/common/conf
+cp -rf lib/* ${RPM_BUILD_ROOT}/OZCL
 
 %files
 %defattr(-,root,root)
-/opt/zimbra/common/bin
+OZCB
+/opt/zimbra/common/boot
+/opt/zimbra/common/conf
+OZCL
 
