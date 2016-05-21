@@ -13,8 +13,7 @@ export DEB_CFLAGS_MAINT_APPEND=-fPIC
 override_dh_auto_configure:
 
 override_dh_auto_build:
-	#mvn -Dmaven.repo.local=${CURDIR}/.m2/repository -P with-native package
-	mvn -P with-native package
+	mvn -Dmaven.repo.local=${CURDIR}/.m2/repository -P with-native package
 
 override_dh_strip:
 	dh_strip -pzimbra-junixsocket --dbg-package=zimbra-junixsocket-dbg
