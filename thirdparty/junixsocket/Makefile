@@ -9,9 +9,9 @@ psrc_file := $(SRC_DIR)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean
+.PHONY: all getsrc setup build clean pkgadd pkgrm
 
-all: clean getsrc build
+all: getsrc build pkgrm1
 
 
 getsrc:
@@ -27,10 +27,17 @@ getsrc:
 	rm -rf $(pname)-$(pvers) \
 	)
 
+pkgadd:
+	$(PKG_EXTRACT) zimbra-base zimbra-maven
+
+pkgrm:  pkgrm%
+pkgrm%:
+	$(PKG_PURGE) zimbra-base zimbra-maven
+
 setup:
 	$(generic-setup)
 
-build: setup build_$(PKG_EXT)
+build: pkgadd setup build_$(PKG_EXT)
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
@@ -50,5 +57,5 @@ build_deb:
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
-clean:
+clean: pkgrm
 	$(generic-clean)

@@ -2,7 +2,7 @@ Summary:            Zimbra's junixsocket build
 Name:               zimbra-junixsocket
 Version:            2.0.4
 Release:            1zimbra9.0b1
-BuildRequires:      maven
+BuildRequires:      zimbra-maven
 License:            Apache-2.0
 Source:             %{name}-%{version}.tgz
 URL:                https://github.com/kohlschutter/junixsocket
@@ -16,7 +16,9 @@ The Zimbra junixsocket build
 %build
 LDFLAGS="-Wl,-rpath,/opt/zimbra/common/lib"; export LDFLAGS; \
 CFLAGS="-fPIC -O2 -g"; export CFLAGS; \
-mvn -P with-native package
+PATH="/opt/zimbra/common/bin:$PATH";export PATH; \
+echo %{buildroot} >>/tmp/out; \
+mvn -Dmaven.repo.local=%{buildroot}/.m2/repository -P with-native package
 
 %install
 mkdir -p $RPM_BUILD_ROOT/opt/zimbra/lib/jars
