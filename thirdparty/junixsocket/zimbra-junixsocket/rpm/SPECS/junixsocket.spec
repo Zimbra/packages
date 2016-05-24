@@ -16,8 +16,6 @@ The Zimbra junixsocket build
 %build
 LDFLAGS="-Wl,-rpath,/opt/zimbra/common/lib"; export LDFLAGS; \
 CFLAGS="-fPIC -O2 -g"; export CFLAGS; \
-PATH="/opt/zimbra/common/bin:$PATH";export PATH; \
-echo %{buildroot} >>/tmp/out; \
 mvn -Dmaven.repo.local=%{buildroot}/.m2/repository -P with-native package
 
 %install

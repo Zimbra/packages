@@ -2,6 +2,8 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
+export JAVA_HOME:=/opt/zimbra/common
+export PATH:=/opt/zimbra/common/bin:${PATH}
 pvers := $(JUNIXSOCKET_VERSION)
 pname := junixsocket
 pfile := $(pname)-$(pvers).tgz
@@ -28,11 +30,12 @@ getsrc:
 	)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-base zimbra-maven
+	$(PKG_EXTRACT) zimbra-base zimbra-maven zimbra-openjdk-cacerts; \
+	sudo chmod 644 /opt/zimbra/common/lib/jvm/openjdk-1.8.0_92-zimbra/lib/ct.sym
 
 pkgrm:  pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base zimbra-maven
+	$(PKG_PURGE) zimbra-base zimbra-maven zimbra-openjdk-cacerts
 
 setup:
 	$(generic-setup)
