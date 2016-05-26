@@ -47,6 +47,7 @@ ln -s openjdk* java
 rm -rf java/demo
 rm -rf java/sample
 rm -f java/jre/lib/security/cacerts
+chmod 644 java/lib/ct.sym
 cd java/jre/lib/security
 ln -s OZCE/java/cacerts cacerts
 cd ${RPM_BUILD_ROOT}OZCB
