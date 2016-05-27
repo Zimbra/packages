@@ -1,7 +1,7 @@
 Summary:            Zimbra's junixsocket build
 Name:               zimbra-junixsocket
-Version:            2.0.4
-Release:            1zimbra9.0b1
+Version:            VERSION
+Release:            ITERATIONZAPPEND
 Requires:           zimbra-base
 BuildRequires:      zimbra-maven
 License:            Apache-2.0
@@ -18,6 +18,13 @@ The Zimbra junixsocket build
 LDFLAGS="-Wl,-rpath,/opt/zimbra/common/lib"; export LDFLAGS; \
 CFLAGS="-fPIC -O2 -g"; export CFLAGS; \
 mvn -Dmaven.repo.local=%{buildroot}/.m2/repository -P with-native package
+
+# This does generate a lib but it isn't clear how to get maven to generate
+# libraries for debug. junixsocket also doesn't deliever any .so files only
+# .nar files which hold the .so so it isn't exactly clear what expectations
+# are for this context. Because of this just going to block generation for now
+# since the current default generated package contains nothing.
+%global debug_package %{nil}
 
 %install
 mkdir -p $RPM_BUILD_ROOT/opt/zimbra/lib/jars
