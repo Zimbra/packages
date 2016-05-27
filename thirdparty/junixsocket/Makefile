@@ -30,8 +30,7 @@ getsrc:
 	)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-base zimbra-maven zimbra-openjdk-cacerts; \
-	sudo chmod 644 /opt/zimbra/common/lib/jvm/openjdk-1.8.0_92-zimbra/lib/ct.sym
+	$(PKG_EXTRACT) zimbra-base zimbra-maven zimbra-openjdk-cacerts
 
 pkgrm:  pkgrm%
 pkgrm%:
