@@ -2,6 +2,7 @@ Summary:            Zimbra's junixsocket build
 Name:               zimbra-junixsocket
 Version:            2.0.4
 Release:            1zimbra9.0b1
+Requires:           zimbra-base
 BuildRequires:      zimbra-maven
 License:            Apache-2.0
 Source:             %{name}-%{version}.tgz

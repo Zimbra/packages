@@ -12,7 +12,7 @@ Section: jars
 Priority: important
 Architecture: any
 Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
 Description: junixsocket JARs
 
 Package: zimbra-junixsocket-dbg
@@ -20,5 +20,5 @@ Section: debug
 Priority: extra
 Architecture: any
 Multi-Arch: same
-Depends: zimbra-junixsocket-lib (= ${binary:Version}), ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
 Description: Debug information for junixsocket libraries
