@@ -1,0 +1,4 @@
+opt/zimbra/lib/jars/*.jar
+opt/zimbra/lib/jars/*.nar
+opt/zimbra/jetty/common/lib/*.jar
+opt/zimbra/jetty/common/lib/*.nar
