@@ -6,7 +6,7 @@ pvers := $(POSTFIX_VERSION)
 pname := postfix
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := ftp://postfix.cloud9.net/official/$(pfile)
+purl := ftp://mirrors.loonybin.net/pub/postfix/official/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
