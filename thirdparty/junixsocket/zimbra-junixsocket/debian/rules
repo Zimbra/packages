@@ -1,0 +1,33 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,/opt/zimbra/common/lib
+
+export DEB_CFLAGS_MAINT_APPEND=-fPIC
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+	mvn -Dmaven.repo.local=${CURDIR}/.m2/repository -P with-native package
+
+override_dh_auto_install:
+	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	cp junixsocket-native-common/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	cp junixsocket-mysql/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	cp junixsocket-common/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	cp junixsocket-rmi/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	cp junixsocket-demo/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	cp junixsocket-native/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	cp junixsocket-native/target/*.nar $(CURDIR)/debian/tmp/opt/zimbra/lib/jars
+	mkdir -p $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
+	cp junixsocket-native-common/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
+	cp junixsocket-mysql/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
+	cp junixsocket-common/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
+	cp junixsocket-rmi/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
+	cp junixsocket-demo/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
+	cp junixsocket-native/target/*.jar $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
+	cp junixsocket-native/target/*.nar $(CURDIR)/debian/tmp/opt/zimbra/jetty/common/lib
