@@ -1,0 +1,3 @@
+text-soundex.RHEL :=
+text-soundex.RHEL7_64 := perl-Text-Soundex
+text-soundex.RHEL6_64 := $(libmagic.RHEL)
