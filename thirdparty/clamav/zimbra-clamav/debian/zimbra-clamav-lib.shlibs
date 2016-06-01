@@ -1,3 +1,3 @@
-libclamav 6 zimbra-clamav-lib (>= VERSION-ITERATION)
-libclamunrar_iface 6 zimbra-clamav-lib (>= VERSION-ITERATION)
-libclamunrar 6 zimbra-clamav-lib (>= VERSION-ITERATION)
+libclamav 7 zimbra-clamav-lib (>= VERSION-ITERATION)
+libclamunrar_iface 7 zimbra-clamav-lib (>= VERSION-ITERATION)
+libclamunrar 7 zimbra-clamav-lib (>= VERSION-ITERATION)
