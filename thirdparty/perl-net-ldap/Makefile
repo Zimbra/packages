@@ -11,6 +11,8 @@ purl := https://cpan.metacpan.org/authors/id/M/MA/MARSCHAP/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
+text-soundex = $(text-soundex.$(BUILD_PLATFORM))
+
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
