@@ -1,0 +1,4 @@
+text-soundex.UBUNTU := libtext-soundex-perl
+text-soundex.UBUNTU16_64 := $(text-soundex.UBUNTU)
+text-soundex.UBUNTU14_64 := $(text-soundex.UBUNTU)
+text-soundex.UBUNTU12_64 := $(text-soundex.UBUNTU)
