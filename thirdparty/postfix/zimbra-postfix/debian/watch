@@ -1,2 +1,2 @@
 version=3
-ftp://postfix.cloud9.net/official/postfix-(\d+\.\d+\.\d+).tar.gz
+ftp://mirrors.loonybin.net/pub/postfix/official/postfix-(\d+\.\d+\.\d+).tar.gz
