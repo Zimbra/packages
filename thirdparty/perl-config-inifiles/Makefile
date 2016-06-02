@@ -13,6 +13,7 @@ zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
 module-build = $(module-build.$(BUILD_PLATFORM))
+module-build-purge = $(module-build-purge.$(BUILD_PLATFORM))
 
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
@@ -28,7 +29,7 @@ pkgadd:
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base $(module-build)
+	$(PKG_PURGE) zimbra-base $(module-build-purge)
 
 setup:
 	$(generic-setup)
