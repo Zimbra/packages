@@ -1,0 +1,4 @@
+module-build.UBUNTU :=
+module-build.UBUNTU16_64 := libmodule-build-perl
+module-build.UBUNTU14_64 := $(libmagic.UBUNTU)
+module-build.UBUNTU12_64 := $(libmagic.UBUNTU)
