@@ -1,0 +1,3 @@
+module-build.RHEL :=
+module-build.RHEL7_64 := $(module-build.RHEL)
+module-build.RHEL6_64 := $(module-build.RHEL)

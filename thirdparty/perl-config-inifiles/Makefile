@@ -12,6 +12,8 @@ purl := https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
+module-build = $(module-build.$(BUILD_PLATFORM))
+
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
@@ -22,11 +24,11 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-list-moreutils
+	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-list-moreutils $(module-build)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(module-build)
 
 setup:
 	$(generic-setup)
