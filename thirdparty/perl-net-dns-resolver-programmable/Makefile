@@ -12,6 +12,9 @@ purl := https://cpan.metacpan.org/authors/id/J/JM/JMEHNLE/net-dns-resolver-progr
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
+module-build = $(module-build.$(BUILD_PLATFORM))
+module-build-purge = $(module-build-purge.$(BUILD_PLATFORM))
+
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
@@ -22,11 +25,11 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-net-dns
+	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-net-dns $(module-build)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(module-build-purge)
 
 setup:
 	$(generic-setup)
