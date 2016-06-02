@@ -1,0 +1,15 @@
+module-build.UBUNTU :=
+module-build.UBUNTU16_64 := libmodule-build-perl
+module-build.UBUNTU14_64 := $(module-build.UBUNTU)
+module-build.UBUNTU12_64 := $(module-build.UBUNTU)
+module-build-purge.UBUNTU :=
+module-build-purge.UBUNTU16_64 := libalgorithm-c3-perl libb-hooks-endofscope-perl libb-hooks-op-check-perl libbareword-filehandles-perl libclass-c3-perl libclass-c3-xs-perl libclass-method-modifiers-perl \
+  libclass-xsaccessor-perl libcpan-changes-perl libdata-optlist-perl libdata-perl-perl libdata-section-perl libdevel-caller-perl libdevel-globaldestruction-perl libdevel-lexalias-perl \
+  libexporter-tiny-perl libfile-slurp-perl libgetopt-long-descriptive-perl libimport-into-perl libindirect-perl libio-stringy-perl liblexical-sealrequirehints-perl liblist-moreutils-perl \
+  libmodule-build-perl libmodule-implementation-perl libmodule-runtime-perl libmodule-signature-perl libmoo-perl libmoox-handlesvia-perl libmro-compat-perl libmultidimensional-perl \
+  libnamespace-autoclean-perl libnamespace-clean-perl libpackage-stash-perl libpackage-stash-xs-perl libpadwalker-perl libparams-classify-perl libparams-util-perl libparams-validate-perl \
+  libpath-tiny-perl libpod-markdown-perl libpod-readme-perl librole-tiny-perl libsoftware-license-perl libstrictures-perl libsub-exporter-perl libsub-exporter-progressive-perl \
+  libsub-identify-perl libsub-install-perl libsub-name-perl libtext-template-perl libtry-tiny-perl libtype-tiny-perl libtype-tiny-xs-perl libunicode-utf8-perl libvariable-magic-perl \
+  libmodule-build-perl
+module-build-purge.UBUNTU14_64 := $(module-build-purge.UBUNTU)
+module-build-purge.UBUNTU12_64 := $(module-build-purge.UBUNTU)
