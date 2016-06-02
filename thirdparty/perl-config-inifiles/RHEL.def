@@ -1,3 +1,6 @@
 module-build.RHEL :=
 module-build.RHEL7_64 := $(module-build.RHEL)
 module-build.RHEL6_64 := $(module-build.RHEL)
+module-build-purge.RHEL :=
+module-build-purge.RHEL7_64 := $(module-build-purge.RHEL)
+module-build-purge.RHEL6_64 := $(module-build-purge.RHEL)
