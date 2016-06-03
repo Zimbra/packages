@@ -180,5 +180,3 @@ zimbra/proxy-components
 zimbra/snmp-components
 zimbra/spell-components
 zimbra/store-components
-maven
-junixsocket
