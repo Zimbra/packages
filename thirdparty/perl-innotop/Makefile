@@ -8,7 +8,7 @@ pname_lc := innotop
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://innotop.googlecode.com/files/$(pfile)
+purl := https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/innotop/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
