@@ -1,0 +1,15 @@
+openjdk.UBUNTU := libx11-dev x11proto-xext-dev libxext-dev \
+	x11proto-render-dev libxrender-dev libxfixes-dev libxi-dev \
+	x11proto-fixes-dev x11proto-record-dev libxtst-dev libxt-dev \
+ 	openjdk-7-jdk libcups2-dev libfreetype6-dev libasound2-dev \
+ 	ccache
+openjdk.UBUNTU16_64 := $(openjdk.UBUNTU)
+openjdk.UBUNTU14_64 := $(openjdk.UBUNTU)
+openjdk.UBUNTU12_64 := $(openjdk.UBUNTU)
+openjdk-purge.UBUNTU := libxt-dev libxtst-dev libxrender-dev libxext-dev libx11-dev \
+	libcups2-dev libfreetype6-dev libasound2-dev openjdk-7-jdk ccache
+openjdk-purge.UBUNTU16_64 := $(openjdk-purge.UBUNTU) libsctp1 openjdk-7-jre-headless \
+	x11proto-fixes-dev x11proto-record-dev x11proto-render-dev x11proto-xext-dev \
+	x11proto-core-dev x11proto-input-dev xorg-sgml-doctools
+openjdk-purge.UBUNTU14_64 := $(openjdk-purge.UBUNTU)
+openjdk-purge.UBUNTU12_64 := $(openjdk-purge.UBUNTU)
