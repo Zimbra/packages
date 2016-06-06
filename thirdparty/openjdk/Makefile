@@ -9,6 +9,9 @@ psrc_file := $(SRC_DIR)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
+openjdk = $(openjdk.$(BUILD_PLATFORM))
+openjdk-purge = $(openjdk-purge.$(BUILD_PLATFORM))
+
 # Work around Debian bug 742864 (See comment 99)
 # There is a bug in binutils with this release
 ifeq ($(BUILD_PLATFORM), UBUNTU12_64)
@@ -41,41 +44,12 @@ getsrc:
 	rm -rf tmp \
 	)
 
-pkgadd: pkgadd_$(PKG_EXT)
-
-pkgadd_rpm:
-	$(PKG_EXTRACT) libX11-devel libXau-devel libXext-devel \
-	libXfixes-devel libXtst-devel libXi-devel libxcb-devel \
-	xorg-x11-proto-devel libICE-devel libSM-devel libXt \
-	libXt-devel libXrender-devel keyutils-libs-devel \
-	krb5-devel libcom_err-devel libselinux-devel \
-	libsepol-devel openssl-devel cups-devel freetype-devel \
-	alsa-lib-devel java-1.7.0-openjdk-devel
-
-pkgadd_deb:
-	$(PKG_EXTRACT) libx11-dev x11proto-xext-dev libxext-dev \
-	x11proto-render-dev libxrender-dev libxfixes-dev libxi-dev \
-	x11proto-fixes-dev x11proto-record-dev libxtst-dev libxt-dev \
-	openjdk-7-jdk libcups2-dev libfreetype6-dev libasound2-dev \
-	ccache
+pkgadd:
+	$(PKG_EXTRACT) $(openjdk)
 
 pkgrm: pkgrm%
-
 pkgrm%:
-ifeq ($(PKG_EXT), rpm)
-	$(PKG_PURGE) alsa-lib-devel freetype-devel cups-devel openssl-devel \
-	libsepol-devel libselinux-devel libcom_err-devel krb5-devel keyutils-libs-devel \
-	libXrender-devel libXt-devel libXt libSM-devel libICE-devel xorg-x11-proto-devel \
-	libxcb-devel libXi-devel libXtst-devel libXfixes-devel libXext-devel libXau-devel \
-	libX11-devel java-1.7.0-openjdk
-else
-	$(PKG_PURGE) libxt-dev libxtst-dev libxrender-dev libxext-dev libx11-dev \
-	libcups2-dev libfreetype6-dev libasound2-dev openjdk-7-jdk ccache
-	sudo apt-get -y autoremove
-endif
-ifeq ($(BUILD_PLATFORM), RHEL7_64)
-	$(PKG_PURGE) libverto-devel
-endif
+	$(PKG_PURGE) $(openjdk-purge)
 
 setup:
 	$(generic-setup)
