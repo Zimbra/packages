@@ -15,6 +15,9 @@ This file contains the licenses for the open source 3rd party
 software used by Zimbra
 
 %changelog
+* Tue Jun 07 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
+- Update 0MQ to 4.1.4
+- Update ClamAV to 0.99.2
 * Wed May 04 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
 - Update OpenJDK to 1.0.8u92b14
 - Update OpenSSL to 1.0.2h
