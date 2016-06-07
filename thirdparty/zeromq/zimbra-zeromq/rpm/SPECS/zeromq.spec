@@ -15,7 +15,7 @@ URL:                http://zeromq.org/
 The Zimbra 0MQ build
 
 %prep
-%setup -n zeromq4-1-%{version}
+%setup -n zeromq-%{version}
 %patch0 -p1
 
 %build
