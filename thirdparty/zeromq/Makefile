@@ -6,7 +6,7 @@ pvers := $(ZMQ_VERSION)
 pname := zeromq
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://download.zeromq.org/$(pfile)
+purl := https://github.com/zeromq/zeromq4-1/archive/v$(pvers).tar.gz
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
@@ -17,7 +17,7 @@ all: clean getsrc build pkgrm1
 # $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
-	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
+	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl) && $(MV) v$(pvers).tar.gz $(pfile)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-libsodium-$(PKG_DEV)
