@@ -4,7 +4,6 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            LGPL-3
 Source:             %{name}-%{version}.tar.gz
-Patch0:             sodium-init.patch
 BuildRequires:      zimbra-libsodium-devel
 BuildRequires:      pkgconfig
 Requires:           zimbra-zeromq-libs = %{version}-%{release}
@@ -16,7 +15,6 @@ The Zimbra 0MQ build
 
 %prep
 %setup -n zeromq-%{version}
-%patch0 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
