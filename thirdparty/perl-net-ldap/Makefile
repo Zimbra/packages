@@ -25,11 +25,11 @@ $(psrc_file):
 # explicitly list zimbra-perl-math-bigint to be sure it is removed
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-convert-asn1 \
-	zimbra-perl-math-bigint zimbra-perl-socket-linux
+	zimbra-perl-math-bigint zimbra-perl-socket-linux $(text-soundex)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(text-soundex)
 
 setup:
 	$(generic-setup)
