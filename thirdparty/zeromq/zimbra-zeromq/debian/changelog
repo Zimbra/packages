@@ -2,4 +2,4 @@ zimbra-zeromq (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
   * Initial Release.
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 7 June 2016 22:26:24 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 7 Jun 2016 22:26:24 +0000
