@@ -1,0 +1,5 @@
+#!/bin/bash
+if [ "$1" = configure ]; then
+  /bin/chown -R zimbra:zimbra /opt/zimbra/data/spamassassin/rules
+fi
+exit 0
