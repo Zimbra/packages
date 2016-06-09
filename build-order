@@ -171,6 +171,7 @@ thirdparty/perl-swatchdog
 thirdparty/perl-innotop
 zimbra/perl
 thirdparty/cluebringer
+thirdparty/spamassassin-rules
 zimbra/core-components
 zimbra/apache-components
 zimbra/dnscache-components
