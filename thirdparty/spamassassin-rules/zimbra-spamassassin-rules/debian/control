@@ -1,0 +1,13 @@
+Source: zimbra-spamassassin-rules
+Section: mail
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+
+Package: zimbra-spamassassin-rules
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
+ zimbra-mta-base, zimbra-perl-mail-spamassassin
+Description: Default ruleset for SpamAssassin
+ Default ruleset for SpamAssassin
