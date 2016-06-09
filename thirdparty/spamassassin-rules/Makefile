@@ -1,6 +1,6 @@
 PKG_ROOT := $(shell pwd)
 
-include $(PKG_ROOT)/../package.def
+include $(PKG_ROOT)/../../package.def
 
 pname_lc := spamassassin-rules
 ptmp := $(TMP_DIR)/$(BUILD_PLATFORM)
