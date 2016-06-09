@@ -1,3 +1,21 @@
+zimbra-openldap (VERSION-1zimbra8.7b7APPEND) unstable; urgency=medium
+
+  * Finalized patch for ITS#8432
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 9 Jun 2016 22:26:24 +0000
+
+zimbra-openldap (VERSION-1zimbra8.7b6ZAPPEND) unstable; urgency=medium
+
+  * syncprov patch for ITS#8432
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 9 Jun 2016 22:26:24 +0000
+
+zimbra-openldap (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=medium
+
+  * Debug logging for ITS#8432
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 9 Jun 2016 22:26:24 +0000
+
 zimbra-openldap (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
 
   * Add patch for ITS#8413
