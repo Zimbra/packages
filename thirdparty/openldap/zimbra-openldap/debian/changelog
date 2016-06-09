@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-=======
-zimbra-openldap (VERSION-1zimbra9.0b7APPEND) unstable; urgency=medium
+zimbra-openldap (VERSION-1zimbra9.0b7ZAPPEND) unstable; urgency=medium
 
   * Finalized patch for ITS#8432
 
