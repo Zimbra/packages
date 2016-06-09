@@ -23,13 +23,13 @@ URL:                http://www.openldap.org
 The Zimbra openldap build
 
 %changelog
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
+* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b7ZAPPEND
 - Finalized patch for ITS#8432
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b6ZAPPEND
+* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b6ZAPPEND
 - syncrepl patch for ITS#8432
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
+* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b5ZAPPEND
 - syncprov patch for ITS#8432
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
 - Add debug logging for ITS#8432
 * Wed Apr 27 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Add patch for ITS#8413
