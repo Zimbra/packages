@@ -65,7 +65,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> libevent-2.0.22
    >>> libpng-1.6.19
    >>> libsodium-1.0.6
-   >>> libxml2-2.9.3
+   >>> libxml2-2.9.4
    >>> md5.js-2.1
    >>> memcached-1.4.24
    >>> modernizr-2.6.2
@@ -3827,7 +3827,7 @@ express or implied warranty.
  */
 
 
->>> libxml2-2.9.3
+>>> libxml2-2.9.4
 
 Except where otherwise noted in the source code (e.g. the files hash.c,
 list.c and the trio files, which are covered by a similar licence but
