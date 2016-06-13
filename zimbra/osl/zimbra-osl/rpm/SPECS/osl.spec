@@ -1,6 +1,6 @@
 Summary:            Opensource Licenses
 Name:               zimbra-osl
-Version:            1.0.7
+Version:            1.0.8
 Release:            ITERATIONZAPPEND
 License:            GPL-2
 Requires:           zimbra-base
@@ -15,9 +15,10 @@ This file contains the licenses for the open source 3rd party
 software used by Zimbra
 
 %changelog
-* Tue Jun 07 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
+* Tue Jun 07 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.8-ITERATIONZAPPEND
 - Update 0MQ to 4.1.4
 - Update ClamAV to 0.99.2
+- Update libxml2 to 2.9.4
 * Wed May 04 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
 - Update OpenJDK to 1.0.8u92b14
 - Update OpenSSL to 1.0.2h
