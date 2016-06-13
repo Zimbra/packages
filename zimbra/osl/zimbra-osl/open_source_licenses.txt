@@ -225,7 +225,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> juniversalchardet-1.0.3
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
-   >>> mariadb-10.1.12
+   >>> mariadb-10.1.14
    >>> openjdk-1.8.0u92b14
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
@@ -15383,7 +15383,7 @@ COPYRIGHT
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 
->>> mariadb-10.1.12
+>>> mariadb-10.1.14
 
 
 This is a release of MariaDB.
