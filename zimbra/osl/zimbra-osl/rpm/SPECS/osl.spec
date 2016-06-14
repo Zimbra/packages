@@ -23,6 +23,7 @@ software used by Zimbra
 - Update cURL to 7.49.0
 - Update to Apache HTTPD 2.4.20
 - Update PHP to 5.6.22
+- Update memcached to 1.4.25
 * Wed May 04 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
 - Update OpenJDK to 1.0.8u92b14
 - Update OpenSSL to 1.0.2h
