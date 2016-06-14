@@ -22,6 +22,7 @@ software used by Zimbra
 - Update MariaDB to 10.1.14
 - Update cURL to 7.49.0
 - Update to Apache HTTPD 2.4.20
+- Update PHP to 5.6.22
 * Wed May 04 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
 - Update OpenJDK to 1.0.8u92b14
 - Update OpenSSL to 1.0.2h

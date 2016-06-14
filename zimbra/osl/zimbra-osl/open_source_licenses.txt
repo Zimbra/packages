@@ -82,7 +82,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> perl-mail-spf-2.9.0
    >>> perl-net-dns-1.04
    >>> perl-term-readkey-2.33
-   >>> php-5.6.18
+   >>> php-5.6.22
    >>> postfix-logwatch-1.40.01
    >>> sendmail-8.15.2
    >>> slf4j-1.6.4
@@ -4966,7 +4966,7 @@ Unlimited distribution and/or modification is allowed as long as this
 copyright notice remains intact.
 
 
->>> php-5.6.18
+>>> php-5.6.22
 
 The PHP License, version 3.01
 
@@ -5041,7 +5041,7 @@ PHP includes the Zend Engine, freely available at
 
 > BSD style
 
-php-5.6.18\Zend\LICENSE
+php-5.6.22\Zend\LICENSE
 
 --------------------------------------------------------------------
                 The Zend Engine License, Version 2.00
@@ -5102,7 +5102,7 @@ SUCH DAMAGE.
 
 > GPL 2.0
 
-php-5.6.18\build\shtool
+php-5.6.22\build\shtool
 
 GNU shtool -- The GNU Portable Shell Tool
 Copyright (c) 1994-2008 Ralf S. Engelschall <rse@engelschall.com>
@@ -5123,14 +5123,14 @@ NOTICE: Given that you include this file verbatim into your own source tree, you
 
 > LGPL 2.1
 
-php-5.6.18\ext\bcmath\libbcmath\COPYING.LIB
+php-5.6.22\ext\bcmath\libbcmath\COPYING.LIB
 
 License: LGPL 2.1
 
 
 > LGPL 2.0
 
-php-5.6.18\ext\bcmath\libbcmath\src\add.c
+php-5.6.22\ext\bcmath\libbcmath\src\add.c
 
 Copyright (C) 1991, 1992, 1993, 1994, 1997 Free Software Foundation, Inc.
 Copyright (C) 2000 Philip A. Nelson
@@ -5151,7 +5151,7 @@ Bellingham, WA 98226-9062
 
 > MIT
 
-php-5.6.18\ext\gd\libgd\COPYING
+php-5.6.22\ext\gd\libgd\COPYING
 
 Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002 by Cold Spring Harbor Laboratory. Funded under Grant P41-RR02188 by the National Institutes of Health.
 
@@ -5177,7 +5177,7 @@ Although their code does not appear in gd, the authors wish to thank David Kobla
 
 > Public Domain
 
-php-5.6.18\ext\sqlite3\libsqlite\sqlite3.h
+php-5.6.22\ext\sqlite3\libsqlite\sqlite3.h
 
 2001 September 15
 
