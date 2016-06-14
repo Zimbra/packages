@@ -41,7 +41,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> bouncycastle-1.46
    >>> bouncycastle-zimbra-20110708
    >>> clipboard.js-0.2.0
-   >>> curl-7.45.0
+   >>> curl-7.49.0
    >>> cyrus-sasl-zimbra-2.1.26
    >>> dom4j-1.5.2
    >>> ext.ux.touchcalendar-0.1
@@ -785,7 +785,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
->>> curl-7.45.0
+>>> curl-7.49.0
 
 COPYRIGHT AND PERMISSION NOTICE
 
@@ -814,7 +814,7 @@ ADDITIONAL LICENSE INFORMATION:
 
 > BSD
 
-curl-7.45.0\lib\security.c
+curl-7.49.0\lib\security.c
 
 
 Copyright (c) 1998, 1999 Kungliga Tekniska Hgskolan
@@ -854,7 +854,7 @@ SUCH DAMAGE.
 
 > PUBLIC DOMAIN
 
-curl-7.45.0\lib\md4.c
+curl-7.49.0\lib\md4.c
 
 
 This is an OpenSSL-compatible implementation of the RSA Data Security, Inc.
