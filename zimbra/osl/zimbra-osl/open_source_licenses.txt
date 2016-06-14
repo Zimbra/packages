@@ -331,7 +331,7 @@ SECTION 11: GNU Library General Public License, V2.0
 
 SECTION 12: IBM Public License, V1.0
 
-   >>> postfix-3.1.0
+   >>> postfix-3.1.1
 
 
 
@@ -22665,7 +22665,7 @@ Boston, MA 02111-1307, USA.
 IBM Public License, V1.0 is applicable to the following component(s).
 
 
->>> postfix-3.1.0
+>>> postfix-3.1.1
 
 License: IBM Public License 1.0
 
@@ -22673,7 +22673,7 @@ Additional license information:
 
 >BSD
 
-postfix-3.1.0\COPYRIGHT
+postfix-3.1.1\COPYRIGHT
 
 Included for the use of the fix_strcasecmp.c module which works
 around a Solaris problem.
