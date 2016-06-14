@@ -1,3 +1,9 @@
+zimbra-nginx (VERSION-1zimbra9.0b6ZAPPEND) unstable; urgency=medium
+
+  * - Backport upstream patch for CVE-2016-4450
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 14 Jun 2016 22:26:24 +0000
+
 zimbra-nginx (VERSION-1zimbra9.0b5ZAPPEND) unstable; urgency=medium
 
   * Backport upstream patch for nginx ticket 901
