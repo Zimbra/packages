@@ -38,6 +38,7 @@ make
 %install
 make install DESTDIR=${RPM_BUILD_ROOT}
 rm -f ${RPM_BUILD_ROOT}OZCE/*.sample
+rm -rf ${RPM_BUILD_ROOT}/usr/lib/systemd
 
 %package libs
 Summary:        ClamAV Libaries
