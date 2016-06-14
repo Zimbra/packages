@@ -89,7 +89,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> spymemcached-2.6
    >>> sqlitejdbc-3.7.5-1
    >>> tnef-1.8.0
-   >>> unbound-1.5.8
+   >>> unbound-1.5.9
    >>> yui-compressor-2.4.2
    >>> zeroclipboard-1.0.7
 
@@ -5463,7 +5463,7 @@ in courts and fora located in the State of New York, and you consent to such
 jurisdiction and venue.
 
 
->>> unbound-1.5.8
+>>> unbound-1.5.9
 
 Copyright (c) 2007, NLnet Labs. All rights reserved.
 
