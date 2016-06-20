@@ -20,11 +20,12 @@ software used by Zimbra
 - Update ClamAV to 0.99.2
 - Update libxml2 to 2.9.4
 - Update MariaDB to 10.1.14
-- Update cURL to 7.49.0
+- Update cURL to 7.49.1
 - Update to Apache HTTPD 2.4.20
 - Update PHP to 5.6.22
 - Update memcached to 1.4.25
 - Update Unbound to 1.5.9
+- Update libpng to 1.6.23
 * Wed May 04 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7-ITERATIONZAPPEND
 - Update OpenJDK to 1.0.8u92b14
 - Update OpenSSL to 1.0.2h
