@@ -27,22 +27,22 @@ mvn -Dmaven.repo.local=%{buildroot}/.m2/repository -P with-native package
 %global debug_package %{nil}
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-cp junixsocket-native-common/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-cp junixsocket-mysql/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-cp junixsocket-common/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-cp junixsocket-rmi/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-cp junixsocket-demo/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-cp junixsocket-native/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-cp junixsocket-native/target/*.nar $RPM_BUILD_ROOT/opt/zimbra/lib/jars
-mkdir -p $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
-cp junixsocket-native-common/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
-cp junixsocket-mysql/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
-cp junixsocket-common/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
-cp junixsocket-rmi/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
-cp junixsocket-demo/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
-cp junixsocket-native/target/*.jar $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
-cp junixsocket-native/target/*.nar $RPM_BUILD_ROOT/opt/zimbra/jetty/common/lib
+mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+cp junixsocket-native-common/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+cp junixsocket-mysql/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+cp junixsocket-common/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+cp junixsocket-rmi/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+cp junixsocket-demo/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+cp junixsocket-native/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+cp junixsocket-native/target/*.nar ${RPM_BUILD_ROOT}/opt/zimbra/lib/jars
+mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
+cp junixsocket-native-common/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
+cp junixsocket-mysql/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
+cp junixsocket-common/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
+cp junixsocket-rmi/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
+cp junixsocket-demo/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
+cp junixsocket-native/target/*.jar ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
+cp junixsocket-native/target/*.nar ${RPM_BUILD_ROOT}/opt/zimbra/jetty/common/lib
 
 %files
 /opt/zimbra/lib/jars/*.jar
