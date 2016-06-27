@@ -22,7 +22,7 @@ software used by Zimbra
 - Update MariaDB to 10.1.14
 - Update cURL to 7.49.1
 - Update to Apache HTTPD 2.4.20
-- Update PHP to 5.6.22
+- Update PHP to 5.6.23
 - Update memcached to 1.4.25
 - Update Unbound to 1.5.9
 - Update libpng to 1.6.23
