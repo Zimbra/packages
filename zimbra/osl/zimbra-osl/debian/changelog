@@ -1,3 +1,8 @@
+zimbra-osl (1.0.9-ITERATIONZAPPEND) unstable; urgency=low
+  * Update Freetype to 2.6.3
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 30 Jun 2016 00:00:00 +0000
+
 zimbra-osl (1.0.8-ITERATIONZAPPEND) unstable; urgency=low
   * Update 0MQ to 4.1.4
   * Update ClamAV to 0.99.2

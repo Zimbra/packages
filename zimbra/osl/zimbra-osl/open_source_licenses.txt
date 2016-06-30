@@ -219,7 +219,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> amavisd-2.10.1
    >>> clamav-0.99.2
    >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
-   >>> freetype-2.6.1
+   >>> freetype-2.6.3
    >>> innotop-1.9.1
    >>> javax.ws.rs-api-2.0-m10
    >>> juniversalchardet-1.0.3
@@ -15153,7 +15153,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
->>> freetype-2.6.1
+>>> freetype-2.6.3
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPLv2.  PLEASE SEE THE BSD ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
