@@ -1,7 +1,7 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.7b7ZAPPEND
+Release:            1zimbra8.7b8ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
@@ -23,6 +23,8 @@ URL:                http://www.openldap.org
 The Zimbra openldap build
 
 %changelog
+* Thu Jul 29 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b8ZAPPEND
+- Import fix from upstream for ITS#8448, ITS#8460, ITS#8462.
 * Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
 - Finalized patch for ITS#8432
 * Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b6ZAPPEND
