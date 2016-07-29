@@ -23,7 +23,6 @@ URL:                http://www.openldap.org
 The Zimbra openldap build
 
 %changelog
-=======
 * Thu Jul 29 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b8ZAPPEND
 - Import fix from upstream for ITS#8448, ITS#8460, ITS#8462.
 * Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra9.0b7ZAPPEND
