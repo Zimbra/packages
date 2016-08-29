@@ -57,9 +57,11 @@ static void ngx_mail_throttle_user_failure_handler
     (mc_work_t *w);
 
 static ngx_str_t ngx_mail_throttle_get_ip_throttle_key
-   (ngx_pool_t *pool, ngx_log_t *log, ngx_str_t ip);
+   (ngx_pool_t *pool, ngx_log_t *log, ngx_str_t ip, ngx_uint_t protocol);
 static ngx_str_t ngx_mail_throttle_get_user_throttle_key
    (ngx_pool_t *pool, ngx_log_t *log, ngx_str_t user);
+static char * ngx_encode_protocol
+   (ngx_uint_t protocol);
 
 static ngx_command_t  ngx_mail_throttle_commands[] = {
     { ngx_string("mail_login_ip_max"),
@@ -253,7 +255,7 @@ ngx_mail_throttle_set_ttl_text (ngx_msec_t ttl, ngx_str_t * input, ngx_str_t * t
 /* check whether the client ip should be allowed to proceed, or whether
    the connection should be throttled
  */
-void ngx_mail_throttle_ip (ngx_str_t ip, throttle_callback_t *callback)
+void ngx_mail_throttle_ip (ngx_str_t ip, ngx_uint_t protocol, throttle_callback_t *callback)
 {
     ngx_log_t       *log;
     ngx_pool_t      *pool;
@@ -264,7 +266,7 @@ void ngx_mail_throttle_ip (ngx_str_t ip, throttle_callback_t *callback)
     pool = callback->pool;
     log = callback->log;
 
-    ngx_log_error (NGX_LOG_INFO, log, 0, "check ip throttle:[%V]", &ip);
+    ngx_log_error (NGX_LOG_INFO, log, 0, "check ip throttle:[%ui, %V]", protocol, &ip);
 
     w.ctx = callback;
     w.request_code = mcreq_incr;
@@ -272,7 +274,7 @@ void ngx_mail_throttle_ip (ngx_str_t ip, throttle_callback_t *callback)
     w.on_success = ngx_mail_throttle_ip_success_handler;
     w.on_failure = ngx_mail_throttle_ip_failure_handler;
 
-    k = ngx_mail_throttle_get_ip_throttle_key(pool, log, ip);
+    k = ngx_mail_throttle_get_ip_throttle_key(pool, log, ip, protocol);
 
     if (k.len == 0) {
         ngx_log_error (NGX_LOG_ERR, log, 0,
@@ -419,7 +421,7 @@ static void ngx_mail_throttle_ip_add
     /* use ttl for discrete time sampling of ip login hits */
     tscf = ngx_mail_get_module_srv_conf(s, ngx_mail_throttle_module);
 
-    k = ngx_mail_throttle_get_ip_throttle_key(pool, log, *ip);
+    k = ngx_mail_throttle_get_ip_throttle_key(pool, log, *ip, s->protocol);
 
     if (k.len == 0) {
         ngx_log_error (NGX_LOG_ERR, log, 0,
@@ -982,11 +984,28 @@ ngx_mail_throttle_get_user_throttle_key (
     return k;
 }
 
+static char *
+ngx_encode_protocol (ngx_uint_t protocol
+)
+{
+    switch (protocol) {
+        case NGX_MAIL_POP3_PROTOCOL:
+             return "p";
+        case NGX_MAIL_IMAP_PROTOCOL:
+             return "i";
+        case NGX_MAIL_SMTP_PROTOCOL:
+             return "s";
+        default:
+            return "u";
+    }
+}
+
 static ngx_str_t
 ngx_mail_throttle_get_ip_throttle_key (
     ngx_pool_t      *pool,
     ngx_log_t       *log,
-    ngx_str_t        ip
+    ngx_str_t        ip,
+    ngx_uint_t	     protocol
 )
 {
     ngx_str_t   k;
@@ -994,7 +1013,9 @@ ngx_mail_throttle_get_ip_throttle_key (
     u_char     *p;
 
     l = sizeof("throttle:") - 1 +
-        sizeof("ip=") - 1 +
+        sizeof("proto=") - 1 +
+        1 +
+        sizeof(",ip=") - 1 +
         ip.len;
 
     k.data = ngx_palloc(pool, l);
@@ -1006,7 +1027,9 @@ ngx_mail_throttle_get_ip_throttle_key (
 
     p = k.data;
     p = ngx_cpymem(p, "throttle:", sizeof("throttle:") - 1);
-    p = ngx_cpymem(p, "ip=", sizeof("ip=") - 1);
+    p = ngx_cpymem(p, "proto=", sizeof("proto=") - 1);
+    p = ngx_cpymem(p, ngx_encode_protocol(protocol), 1);
+    p = ngx_cpymem(p, ",ip=", sizeof(",ip=") - 1);
     p = ngx_cpymem(p, ip.data, ip.len);
 
     k.len = p - k.data;
