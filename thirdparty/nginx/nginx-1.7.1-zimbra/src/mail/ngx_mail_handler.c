@@ -351,7 +351,7 @@ ngx_mail_init_session(ngx_connection_t *c)
     if (tscf->mail_login_ip_max == 0) {
         cb->on_allow(cb); //unlimited, direct allow session
     } else {
-        ngx_mail_throttle_ip(c->addr_text, cb);
+        ngx_mail_throttle_ip(c->addr_text, s->protocol, cb);
     }
 }
 
