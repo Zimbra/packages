@@ -25,11 +25,17 @@ struct ngx_mail_throttle_srv_conf_s {
     ngx_uint_t  mail_login_ip_max;
     ngx_msec_t  mail_login_ip_ttl;
     ngx_str_t   mail_login_ip_ttl_text;
+    ngx_str_t   mail_login_ip_imap_ttl_text;
+    ngx_str_t   mail_login_ip_pop3_ttl_text;
     ngx_str_t   mail_login_ip_rejectmsg;
     ngx_uint_t  mail_login_user_max;
     ngx_msec_t  mail_login_user_ttl;
     ngx_str_t   mail_login_user_ttl_text;
     ngx_str_t   mail_login_user_rejectmsg;
+    ngx_uint_t  mail_login_ip_imap_max;
+    ngx_msec_t  mail_login_ip_imap_ttl;
+    ngx_uint_t  mail_login_ip_pop3_max;
+    ngx_msec_t  mail_login_ip_pop3_ttl;
 };
 typedef struct ngx_mail_throttle_srv_conf_s ngx_mail_throttle_srv_conf_t;
 
@@ -60,6 +66,7 @@ typedef struct throttle_callback_s throttle_callback_t;
 ngx_flag_t ngx_mail_throttle_init (ngx_mail_core_srv_conf_t *cscf);
 void ngx_mail_throttle_ip (ngx_str_t ip, ngx_uint_t protocol, throttle_callback_t *callback);
 void ngx_mail_throttle_user (ngx_str_t user, throttle_callback_t *callback);
+ngx_uint_t ngx_mail_throttle_ip_max_for_protocol (ngx_mail_throttle_srv_conf_t *tscf, ngx_uint_t protocol);
 
 extern ngx_module_t ngx_mail_throttle_module;
 
