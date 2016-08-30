@@ -317,6 +317,7 @@ ngx_mail_init_session(ngx_connection_t *c)
     ngx_mail_core_srv_conf_t  *cscf;
     ngx_mail_throttle_srv_conf_t *tscf;
     throttle_callback_t       *cb;
+    ngx_uint_t		     login_ip_max;
 
     s = c->data;
 
@@ -348,7 +349,8 @@ ngx_mail_init_session(ngx_connection_t *c)
     cb->on_allow = ngx_mail_allow_session;
     cb->on_deny = ngx_mail_choke_session;
 
-    if (tscf->mail_login_ip_max == 0) {
+    login_ip_max = ngx_mail_throttle_ip_max_for_protocol(tscf, s->protocol);
+    if (login_ip_max == 0) {
         cb->on_allow(cb); //unlimited, direct allow session
     } else {
         ngx_mail_throttle_ip(c->addr_text, s->protocol, cb);
