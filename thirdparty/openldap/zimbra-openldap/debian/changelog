@@ -1,3 +1,9 @@
+zimbra-openldap (VERSION-1zimbra8.8b9ZAPPEND) unstable; urgency=medium
+
+  * Another upstream fix for ITS#8448, ITS#8460, ITS#8462.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 9 Sep 2016 22:26:24 +0000
+
 zimbra-openldap (VERSION-1zimbra8.8b8ZAPPEND) unstable; urgency=medium
 
   * Import fix from upstream for ITS#8448, ITS#8460, ITS#8462.
