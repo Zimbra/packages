@@ -13,6 +13,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
+#include <arpa/inet.h>
 #include <ngx_mail_throttle_module.h>
 #include <ngx_zm_lookup.h>
 #include <ngx_memcache.h>
@@ -33,13 +34,15 @@ static char *ngx_mail_throttle_user_ttl
     (ngx_conf_t *cf, ngx_command_t* command, void * conf);
 static char *ngx_mail_throttle_set_ttl_text
     (ngx_msec_t ttl, ngx_str_t * input, ngx_str_t * ttl_text);
+static char *ngx_mail_throttle_whitelist_ips
+    (ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 static void ngx_mail_throttle_ip_success_handler
     (mc_work_t *w);
 static void ngx_mail_throttle_ip_failure_handler
     (mc_work_t *w);
-static ngx_str_t ngx_mail_throttle_ip_ttl_txt 
+static ngx_str_t ngx_mail_throttle_ip_ttl_txt
     (ngx_mail_throttle_srv_conf_t * tscf, ngx_uint_t protocol);
-static void ngx_mail_throttle_ip_add 
+static void ngx_mail_throttle_ip_add
     (ngx_str_t *ip, throttle_callback_t *callback);
 static void ngx_mail_throttle_ip_add_success_handler
     (mc_work_t *w);
@@ -140,6 +143,13 @@ static ngx_command_t  ngx_mail_throttle_commands[] = {
       offsetof(ngx_mail_throttle_srv_conf_t, mail_login_ip_pop3_ttl),
       NULL },
 
+    { ngx_string("mail_whitelist_ip"),
+      NGX_MAIL_MAIN_CONF|NGX_CONF_1MORE,
+      ngx_mail_throttle_whitelist_ips,
+      NGX_MAIL_SRV_CONF_OFFSET,
+      offsetof(ngx_mail_throttle_srv_conf_t, mail_throttle_whitelist_ips),
+      NULL },
+
      ngx_null_command
 };
 
@@ -189,6 +199,7 @@ ngx_mail_throttle_create_srv_conf(ngx_conf_t *cf)
     tscf->mail_login_user_max = NGX_CONF_UNSET;
     tscf->mail_login_user_ttl = NGX_CONF_UNSET_MSEC;
     ngx_str_null (&tscf->mail_login_user_ttl_text);
+    tscf->mail_throttle_whitelist_ips = NGX_CONF_UNSET_PTR;
 
     return tscf;
 }
@@ -227,6 +238,10 @@ ngx_mail_throttle_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
                               prev->mail_login_ip_pop3_ttl_text, "60");
     ngx_conf_merge_str_value (conf->mail_login_user_ttl_text,
                               prev->mail_login_user_ttl_text, "60");
+
+    ngx_conf_merge_ptr_value(conf->mail_throttle_whitelist_ips,
+                             prev->mail_throttle_whitelist_ips,
+                             NGX_CONF_UNSET_PTR);
 
     return NGX_CONF_OK;
 }
@@ -350,6 +365,42 @@ ngx_mail_throttle_set_ttl_text (ngx_msec_t ttl, ngx_str_t * input, ngx_str_t * t
    return NGX_CONF_OK;
 }
 
+static char *
+ngx_mail_throttle_whitelist_ips (ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
+    ngx_cidr_t                   *cidr;
+    ngx_mail_throttle_srv_conf_t *tscf = conf;
+    ngx_uint_t                    i;
+    ngx_int_t                     rc;
+    ngx_str_t                     *value;
+
+    if (tscf->mail_throttle_whitelist_ips == NGX_CONF_UNSET_PTR) {
+	// This function gets called once for each mail_whitelist_ip parameter/value found.
+        // TODO - see if there is a way to determine here how many of these there are so that
+        //        we can allocate the exact number of elements that we need at once.
+        // NOTE:  cf->args->nelts always has a a value of 1: [0] for the directive name and
+        //        [2] for the value.
+        tscf->mail_throttle_whitelist_ips = ngx_array_create(cf->pool, 10, sizeof(ngx_cidr_t));
+        if (tscf->mail_throttle_whitelist_ips == NGX_CONF_UNSET_PTR) {
+            return NGX_CONF_ERROR;
+        }
+    }
+
+    for (i = 1; i < cf->args->nelts; ++i)
+    {
+        value = &((ngx_str_t *)cf->args->elts)[i];
+        cidr = ngx_array_push(tscf->mail_throttle_whitelist_ips);
+        if (cidr == NULL) {
+            return NGX_CONF_ERROR;
+        }
+        rc = ngx_ptocidr(value, cidr);
+        if (rc == NGX_ERROR) {
+            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "invalid mail_whitelist_ip parameter \"%V\"", &value[1]);
+            return NGX_CONF_ERROR;
+        }
+    }
+
+    return NGX_CONF_OK;
+}
 /* check whether the client ip should be allowed to proceed, or whether
    the connection should be throttled
  */
