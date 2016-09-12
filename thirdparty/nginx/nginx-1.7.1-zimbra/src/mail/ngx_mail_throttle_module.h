@@ -66,7 +66,7 @@ struct throttle_callback_s {
 typedef struct throttle_callback_s throttle_callback_t;
 
 ngx_flag_t ngx_mail_throttle_init (ngx_mail_core_srv_conf_t *cscf);
-void ngx_mail_throttle_ip (ngx_str_t ip, ngx_uint_t protocol, throttle_callback_t *callback);
+void ngx_mail_throttle_ip (ngx_str_t ip, throttle_callback_t *callback);
 void ngx_mail_throttle_user (ngx_str_t user, throttle_callback_t *callback);
 ngx_uint_t ngx_mail_throttle_ip_max_for_protocol (ngx_mail_throttle_srv_conf_t *tscf, ngx_uint_t protocol);
 
