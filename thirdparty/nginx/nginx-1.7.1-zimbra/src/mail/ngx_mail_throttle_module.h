@@ -36,6 +36,8 @@ struct ngx_mail_throttle_srv_conf_s {
     ngx_msec_t  mail_login_ip_imap_ttl;
     ngx_uint_t  mail_login_ip_pop3_max;
     ngx_msec_t  mail_login_ip_pop3_ttl;
+    ngx_array_t *mail_throttle_whitelist_ips;     /* array of ngx_cidr_t */
+
 };
 typedef struct ngx_mail_throttle_srv_conf_s ngx_mail_throttle_srv_conf_t;
 
