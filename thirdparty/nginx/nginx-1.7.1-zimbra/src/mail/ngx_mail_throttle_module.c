@@ -36,9 +36,19 @@ static char *ngx_mail_throttle_set_ttl_text
     (ngx_msec_t ttl, ngx_str_t * input, ngx_str_t * ttl_text);
 static char *ngx_mail_throttle_whitelist_ips
     (ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+void ngx_mail_throttle_whitelist_lookup_ip
+    (throttle_callback_t *callback);
+static void ngx_mail_throttle_whitelist_lookup_ip_success_handler
+    (mc_work_t *w);
+static void ngx_mail_throttle_whitelist_lookup_ip_failure_handler
+    (mc_work_t *w);
 static void ngx_mail_throttle_ip_success_handler
     (mc_work_t *w);
 static void ngx_mail_throttle_ip_failure_handler
+    (mc_work_t *w);
+static void ngx_mail_throttle_whitelist_ip_success_handler
+    (mc_work_t *w);
+static void ngx_mail_throttle_whitelist_ip_failure_handler
     (mc_work_t *w);
 static ngx_str_t ngx_mail_throttle_ip_ttl_txt
     (ngx_mail_throttle_srv_conf_t * tscf, ngx_uint_t protocol);
@@ -64,9 +74,10 @@ static void ngx_mail_throttle_user_success_handler
     (mc_work_t *w);
 static void ngx_mail_throttle_user_failure_handler
     (mc_work_t *w);
-
 static ngx_str_t ngx_mail_throttle_get_ip_throttle_key
    (ngx_pool_t *pool, ngx_log_t *log, ngx_str_t ip, ngx_uint_t protocol);
+static ngx_str_t ngx_mail_throttle_get_ip_whitelist_key
+   (ngx_pool_t *pool, ngx_log_t *log, ngx_str_t ip);
 static ngx_str_t ngx_mail_throttle_get_user_throttle_key
    (ngx_pool_t *pool, ngx_log_t *log, ngx_str_t user);
 static char * ngx_encode_protocol
@@ -400,30 +411,35 @@ ngx_mail_throttle_whitelist_ips (ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     return NGX_CONF_OK;
 }
 
-/**
- * Return TRUE if ip should be whitelisted else FALSE
- */
-ngx_int_t 
-ngx_mail_throttle_ip_whitelisted (throttle_callback_t *callback, ngx_str_t *ip) {
+void
+ngx_mail_throttle_whitelist_lookup_ip (throttle_callback_t *callback) {
+    mc_work_t                        w;
     ngx_int_t                        i;
     ngx_cidr_t                       ip_cidr, *cidr;
     ngx_log_t                       *log;
-    ngx_int_t                        rc;
+    ngx_uint_t                       rc;
     ngx_mail_session_t              *session;
     ngx_mail_throttle_srv_conf_t    *tscf;
+    ngx_pool_t                      *pool;
+    ngx_str_t                        *ip, *cache_val, tmpval;
 
+    ip = callback->ip;
+    callback->is_whitelisted = 0;
     log = callback->log;
+    pool = callback->pool;
     session = callback->session;
 
     tscf = ngx_mail_get_module_srv_conf(session, ngx_mail_throttle_module);
     if (tscf->mail_throttle_whitelist_ips == NGX_CONF_UNSET_PTR) {
         ngx_log_error (NGX_LOG_DEBUG, log, 0, "no whitelisted ips, %V not whitelisted", ip);
-        return 0;
+        ngx_mail_throttle_ip(*ip, callback);
+        return;
     }
     rc = ngx_ptocidr(ip, &ip_cidr);
     if (rc == NGX_ERROR) {
         ngx_log_error (NGX_LOG_ERR, log, 0, "whitelisting ip %V do to error converting to cidr", ip);
-        return 0;
+        ngx_mail_throttle_ip(*ip, callback);
+        return;
     }
 #if (NGX_HAVE_INET6)
     if (ip_cidr.family == AF_INET6) {
@@ -442,7 +458,7 @@ ngx_mail_throttle_ip_whitelisted (throttle_callback_t *callback, ngx_str_t *ip) 
                      (cidr->u.in6.addr.__in6_u.__u6_addr32[3] & cidr->u.in6.mask.__in6_u.__u6_addr32[3]))
                    ) {
                     ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "ngx_mail_throttle_ip_whitelisted: IPV6: %V is whitelisted", ip);
-                    return 1;
+                    callback->is_whitelisted = 1;
                 }
             }
         }
@@ -456,12 +472,70 @@ ngx_mail_throttle_ip_whitelisted (throttle_callback_t *callback, ngx_str_t *ip) 
                 ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "ngx_mail_throttle_ip_whitelisted: verify IPV4: %V", ip);
                 if ((ip_cidr.u.in.addr & cidr->u.in.mask) == (cidr->u.in.addr & cidr->u.in.mask)) {
                     ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "ngx_mail_throttle_ip_whitelisted: IPV4: %V is whitelisted", ip);
-                    return 1;
+                    callback->is_whitelisted = 1;
                 }
             }
         }
     }
-    return 0;
+
+    tmpval.len = 1;
+    tmpval.data = callback->is_whitelisted ? "1" : "0";
+    cache_val = ngx_pstrcpy(pool, &tmpval);
+    if (cache_val == NULL) {
+        ngx_log_error (NGX_LOG_ERR, log, 0,
+            "Unable to cache fact that %V is_whitelisted=%d (alloc mem for cache_val)",
+            ip, callback->is_whitelisted);
+        if (callback->is_whitelisted) {
+            callback->on_allow(callback);
+        }
+        else {
+            ngx_mail_throttle_ip(*ip, callback);
+        }
+        return;
+    }
+
+    w.ctx = callback;
+    w.request_code = mcreq_add;
+    w.response_code = mcres_unknown;
+    w.on_success = ngx_mail_throttle_whitelist_lookup_ip_success_handler;
+    w.on_failure = ngx_mail_throttle_whitelist_lookup_ip_failure_handler;
+
+    ngx_memcache_post(&w, *callback->wl_key, *cache_val, NULL, log);
+}
+
+static void
+ngx_mail_throttle_whitelist_lookup_ip_success_handler (mc_work_t *w) {
+    ngx_log_t               *log;
+    throttle_callback_t     *callback;
+
+    callback = (throttle_callback_t *)w->ctx;
+    log = callback->log;
+
+    ngx_log_debug2(NGX_LOG_DEBUG_MAIL, log, 0, "cached is_whitelisted=%d for IP %V", callback->is_whitelisted, callback->ip);
+
+    if (callback->is_whitelisted) {
+        callback->on_allow(callback);
+    }
+    else {
+        ngx_mail_throttle_ip(*callback->ip, callback);
+    }
+}
+
+static void
+ngx_mail_throttle_whitelist_lookup_ip_failure_handler (mc_work_t *w) {
+    ngx_log_t               *log;
+    throttle_callback_t     *callback;
+
+    callback = (throttle_callback_t *)w->ctx;
+    log = callback->log;
+
+    ngx_log_error (NGX_LOG_NOTICE, log, 0, "error trying to cache whitelist status for IP %V", callback->ip);
+    if (callback->is_whitelisted) {
+        callback->on_allow(callback);
+    }
+    else {
+        ngx_mail_throttle_ip(*callback->ip, callback);
+    }
 }
 
 /* check whether the client ip should be allowed to proceed, or whether
@@ -487,12 +561,6 @@ void ngx_mail_throttle_ip (ngx_str_t ip, throttle_callback_t *callback)
     w.response_code = mcres_unknown;
     w.on_success = ngx_mail_throttle_ip_success_handler;
     w.on_failure = ngx_mail_throttle_ip_failure_handler;
-
-    if (ngx_mail_throttle_ip_whitelisted(callback, &ip)) {
-        ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "allowing whitelisted ip %V login", &ip);
-        callback->on_allow(callback);
-        return;
-    }
 
     k = ngx_mail_throttle_get_ip_throttle_key(pool, log, ip, protocol);
 
@@ -642,6 +710,116 @@ static void ngx_mail_throttle_ip_failure_handler (mc_work_t *w)
              "memcache service is unavailable when try to "
              "increment ip counter", callback->ip);
         callback->on_allow(callback);
+    }
+}
+
+/* check cache to see whether the client ip is whitelisted.  if so,
+   invokes callback->on_allow.  if not, calls ngx_mail_throttle_ip.
+   If no IPs are configured for whitelisting, doesn't bother checking
+   cache and just calls ngx_mail_throttle_ip.
+ */
+void
+ngx_mail_throttle_whitelist_ip (ngx_str_t ip, throttle_callback_t *callback) {
+    ngx_log_t                       *log;
+    ngx_mail_session_t              *session;
+    ngx_mail_throttle_srv_conf_t    *tscf;
+    ngx_pool_t                      *pool;
+    mc_work_t                        w;
+    ngx_str_t                        k;
+    ngx_str_t                       *value, *eip, *key;
+
+    pool = callback->pool;
+    log = callback->log;
+    session = callback->session;
+    tscf = ngx_mail_get_module_srv_conf(session, ngx_mail_throttle_module);
+    if (tscf->mail_throttle_whitelist_ips == NGX_CONF_UNSET_PTR) {
+        ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "no configured whitelisted IPs, %V not whitelisted", &ip);
+        ngx_mail_throttle_ip(ip, callback);
+        return;
+    }
+
+    k = ngx_mail_throttle_get_ip_whitelist_key (pool, log, ip);
+    if (k.len == 0) {
+        ngx_log_error (NGX_LOG_ERR, log, 0,
+                "allowing ip %V login because of internal error"
+                "in ip throttle whitelist control (generate key for get)", &ip);
+        callback->on_allow(callback);
+        return;
+    }
+    key = ngx_pstrcpy (pool, &k);
+    if (key == NULL) {
+        ngx_log_error (NGX_LOG_ERR, log, 0,
+                "allowing ip %V login because of internal error"
+                "in ip throttle whitelist control (deep copy key for get)", &ip);
+        callback->on_allow(callback);
+    }
+    /* make a copy of the input IP address for callback reference */
+    eip = ngx_pstrcpy (pool, &ip);
+    if (eip == NULL) {
+        ngx_log_error (NGX_LOG_ERR, log, 0,
+                "allowing ip %V login because of internal error"
+                "in ip throttle whitelist control (deep copy ip for get)", &ip);
+        callback->on_allow(callback);
+        return;
+    }
+
+    callback->ip = eip;
+    callback->wl_key = key;
+
+    w.ctx = callback;
+    w.request_code = mcreq_get;
+    w.response_code = mcres_unknown;
+    w.on_success = ngx_mail_throttle_whitelist_ip_success_handler;
+    w.on_failure = ngx_mail_throttle_whitelist_ip_failure_handler;
+
+    ngx_memcache_post(&w, *key, NGX_EMPTY_STR,/* pool */ NULL, log);
+}
+
+static void
+ngx_mail_throttle_whitelist_ip_success_handler (mc_work_t *w) {
+    ngx_log_t           *log;
+    ngx_pool_t          *pool;
+    throttle_callback_t *callback;
+
+    callback = (throttle_callback_t *)w->ctx;
+    log = callback->log;
+    pool = callback->pool;
+
+    if (w->payload.len > 0) {
+        if (w->payload.data[0] == '1') {
+            ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "ip %V whitelisted (from cache)", callback->ip);
+            callback->on_allow(callback);
+            return;
+        }
+        else {
+            ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "ip %V is not whitelisted (from cache)", callback->ip);
+            ngx_mail_throttle_ip(*callback->ip, callback);
+            return;
+        }
+    }
+    else {
+        ngx_mail_throttle_whitelist_lookup_ip(callback);
+    }
+}
+
+static void
+ngx_mail_throttle_whitelist_ip_failure_handler (mc_work_t *w) {
+
+    ngx_log_t           *log;
+    throttle_callback_t *callback;
+
+    callback = (throttle_callback_t *)w->ctx;
+    log = callback->log;
+
+    if (w->response_code == mcres_failure_normal) {
+        // NOT FOUND
+        ngx_log_debug1(NGX_LOG_DEBUG_MAIL, log, 0, "whitelist status for IP %V not found in cache", callback->ip);
+        ngx_mail_throttle_whitelist_lookup_ip(callback);
+    }
+    else {
+        ngx_log_error (NGX_LOG_ERR, log, 0,
+            "cache failure trying to see if %V should be whitelisted", callback->ip);
+        ngx_mail_throttle_ip(*callback->ip, callback);
     }
 }
 
@@ -1306,6 +1484,38 @@ ngx_mail_throttle_get_ip_throttle_key (
     p = ngx_cpymem(p, "proto=", sizeof("proto=") - 1);
     p = ngx_cpymem(p, ngx_encode_protocol(protocol, 's'), 1);
     p = ngx_cpymem(p, ",ip=", sizeof(",ip=") - 1);
+    p = ngx_cpymem(p, ip.data, ip.len);
+
+    k.len = p - k.data;
+
+    return k;
+}
+
+static ngx_str_t
+ngx_mail_throttle_get_ip_whitelist_key (
+    ngx_pool_t      *pool,
+    ngx_log_t       *log,
+    ngx_str_t        ip
+)
+{
+    ngx_str_t   k;
+    size_t      l;
+    u_char     *p;
+
+    l = sizeof("whitelist:") - 1 +
+        sizeof("ip=") - 1 +
+        ip.len;
+
+    k.data = ngx_palloc(pool, l);
+    if (k.data == NULL)
+    {
+        k.len = 0;
+        return k;
+    }
+
+    p = k.data;
+    p = ngx_cpymem(p, "whitelist:", sizeof("whitelist:") - 1);
+    p = ngx_cpymem(p, "ip=", sizeof("ip=") - 1);
     p = ngx_cpymem(p, ip.data, ip.len);
 
     k.len = p - k.data;
