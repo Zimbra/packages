@@ -24,7 +24,7 @@ The Zimbra openldap build
 
 %changelog
 * Fri Sep 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b9ZAPPEND
-- Another upstream fix for ITS#8448, ITS#8460, ITS#8462.
+- Another upstream fix for ITS#8448, ITS#8460, ITS#8462, ITS#8490, ITS#8493
 * Thu Jul 29 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b8ZAPPEND
 - Import fix from upstream for ITS#8448, ITS#8460, ITS#8462.
 * Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
