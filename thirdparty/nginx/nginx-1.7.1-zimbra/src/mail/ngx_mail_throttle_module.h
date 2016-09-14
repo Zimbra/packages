@@ -57,16 +57,19 @@ struct throttle_callback_s {
     throttle_handler_pt     on_deny;  /* handler for deny access */
 
     /* the following fields are used internally by throttle control */
-    ngx_str_t              *user; /* user name used by user throttle control */
-    ngx_str_t              *ip;   /* ip address used by ip throttle control */
-    ngx_str_t              *value;/* the value for re-post memcache request */
-    ngx_str_t              *key;  /* the key for re-post memcache request */
-    ngx_str_t              *ttl;  /* the ttl value for re-post memcache request */
+    ngx_str_t              *user;           /* user name used by user throttle control */
+    ngx_str_t              *ip;             /* ip address used by ip throttle control */
+    ngx_str_t              *value;          /* the value for re-post memcache request */
+    ngx_str_t              *key;            /* the key for re-post memcache request */
+    ngx_str_t              *ttl;            /* the ttl value for re-post memcache request */
+    ngx_str_t              *wl_key;         /* key for whitelist IP memcache add */
+    ngx_uint_t              is_whitelisted; /* used by whitelist IP memcache callback */
 };
 typedef struct throttle_callback_s throttle_callback_t;
 
 ngx_flag_t ngx_mail_throttle_init (ngx_mail_core_srv_conf_t *cscf);
 void ngx_mail_throttle_ip (ngx_str_t ip, throttle_callback_t *callback);
+void ngx_mail_throttle_whitelist_ip (ngx_str_t ip, throttle_callback_t *callback);
 void ngx_mail_throttle_user (ngx_str_t user, throttle_callback_t *callback);
 ngx_uint_t ngx_mail_throttle_ip_max_for_protocol (ngx_mail_throttle_srv_conf_t *tscf, ngx_uint_t protocol);
 
