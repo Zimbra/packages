@@ -22,22 +22,23 @@
 #include <ngx_memcache.h>
 
 struct ngx_mail_throttle_srv_conf_s {
-    ngx_uint_t  mail_login_ip_max;
-    ngx_msec_t  mail_login_ip_ttl;
-    ngx_str_t   mail_login_ip_ttl_text;
-    ngx_str_t   mail_login_ip_imap_ttl_text;
-    ngx_str_t   mail_login_ip_pop3_ttl_text;
-    ngx_str_t   mail_login_ip_rejectmsg;
-    ngx_uint_t  mail_login_user_max;
-    ngx_msec_t  mail_login_user_ttl;
-    ngx_str_t   mail_login_user_ttl_text;
-    ngx_str_t   mail_login_user_rejectmsg;
-    ngx_uint_t  mail_login_ip_imap_max;
-    ngx_msec_t  mail_login_ip_imap_ttl;
-    ngx_uint_t  mail_login_ip_pop3_max;
-    ngx_msec_t  mail_login_ip_pop3_ttl;
+    ngx_uint_t   mail_login_ip_max;
+    ngx_msec_t   mail_login_ip_ttl;
+    ngx_str_t    mail_login_ip_ttl_text;
+    ngx_str_t    mail_login_ip_imap_ttl_text;
+    ngx_str_t    mail_login_ip_pop3_ttl_text;
+    ngx_str_t    mail_login_ip_rejectmsg;
+    ngx_uint_t   mail_login_user_max;
+    ngx_msec_t   mail_login_user_ttl;
+    ngx_str_t    mail_login_user_ttl_text;
+    ngx_str_t    mail_login_user_rejectmsg;
+    ngx_uint_t   mail_login_ip_imap_max;
+    ngx_msec_t   mail_login_ip_imap_ttl;
+    ngx_uint_t   mail_login_ip_pop3_max;
+    ngx_msec_t   mail_login_ip_pop3_ttl;
     ngx_array_t *mail_throttle_whitelist_ips;     /* array of ngx_cidr_t */
-
+    time_t       mail_whitelist_ip_ttl;
+    ngx_str_t    mail_whitelist_ip_ttl_text;
 };
 typedef struct ngx_mail_throttle_srv_conf_s ngx_mail_throttle_srv_conf_t;
 

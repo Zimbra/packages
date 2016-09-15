@@ -32,6 +32,8 @@ static char *ngx_mail_throttle_ip_pop3_ttl
     (ngx_conf_t *cf, ngx_command_t* command, void * conf);
 static char *ngx_mail_throttle_user_ttl
     (ngx_conf_t *cf, ngx_command_t* command, void * conf);
+static char *ngx_mail_throttle_whitelist_ips_ttl
+    (ngx_conf_t *cf, ngx_command_t* command, void * conf);
 static char *ngx_mail_throttle_set_ttl_text
     (ngx_msec_t ttl, ngx_str_t * input, ngx_str_t * ttl_text);
 static char *ngx_mail_throttle_whitelist_ips
@@ -161,6 +163,13 @@ static ngx_command_t  ngx_mail_throttle_commands[] = {
       offsetof(ngx_mail_throttle_srv_conf_t, mail_throttle_whitelist_ips),
       NULL },
 
+    { ngx_string("mail_whitelist_ip_ttl"),
+      NGX_MAIL_MAIN_CONF|NGX_CONF_TAKE1,
+      ngx_mail_throttle_whitelist_ips_ttl,
+      NGX_MAIL_SRV_CONF_OFFSET,
+      offsetof(ngx_mail_throttle_srv_conf_t, mail_whitelist_ip_ttl),
+      NULL },
+
      ngx_null_command
 };
 
@@ -211,6 +220,9 @@ ngx_mail_throttle_create_srv_conf(ngx_conf_t *cf)
     tscf->mail_login_user_ttl = NGX_CONF_UNSET_MSEC;
     ngx_str_null (&tscf->mail_login_user_ttl_text);
     tscf->mail_throttle_whitelist_ips = NGX_CONF_UNSET_PTR;
+    tscf->mail_whitelist_ip_ttl = NGX_CONF_UNSET;
+    ngx_str_null (&tscf->mail_whitelist_ip_ttl_text);
+
 
     return tscf;
 }
@@ -253,6 +265,10 @@ ngx_mail_throttle_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
     ngx_conf_merge_ptr_value(conf->mail_throttle_whitelist_ips,
                              prev->mail_throttle_whitelist_ips,
                              NGX_CONF_UNSET_PTR);
+    ngx_conf_merge_value (conf->mail_whitelist_ip_ttl,
+                          prev->mail_whitelist_ip_ttl, 300);
+    ngx_conf_merge_str_value (conf->mail_whitelist_ip_ttl_text,
+                              prev->mail_whitelist_ip_ttl_text, "300");
 
     return NGX_CONF_OK;
 }
@@ -327,6 +343,29 @@ ngx_mail_throttle_ip_pop3_ttl (ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
 }
 
 static char *
+ngx_mail_throttle_whitelist_ips_ttl (ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
+    char      *res;
+    ngx_str_t *value;
+    ngx_mail_throttle_srv_conf_t *tscf = conf;
+
+    res = ngx_conf_set_msec_slot(cf, cmd, conf);
+
+    if (res != NGX_CONF_OK) {
+        return res;
+    }
+
+    value = cf->args->elts;
+    res = ngx_mail_throttle_set_ttl_text (tscf->mail_whitelist_ip_ttl,
+                    &value[1], &tscf->mail_whitelist_ip_ttl_text);
+
+    if (res != NGX_CONF_OK) {
+        return res;
+    }
+
+    return NGX_CONF_OK;
+}
+
+static char *
 ngx_mail_throttle_user_ttl (ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
     char      *res;
     ngx_str_t *value;
@@ -360,6 +399,12 @@ ngx_mail_throttle_set_ttl_text (ngx_msec_t ttl, ngx_str_t * input, ngx_str_t * t
             * for example, 3600000ms --> 3600 */
            ttl_text->data = input->data;
            ttl_text->len = input->len - 5;
+       }
+       else if (input->len > 2 && input->data[input->len - 1] == 's') {
+           /* for s value, trim the last character, NNs and become the number of seconds
+            * for example, 10s --> 10 */
+           ttl_text->data = input->data;
+           ttl_text->len = input->len - 1;
        } else {
            /* no trailing "ms", directly used as second value */
            *ttl_text = *input;
@@ -500,7 +545,7 @@ ngx_mail_throttle_whitelist_lookup_ip (throttle_callback_t *callback) {
     w.on_success = ngx_mail_throttle_whitelist_lookup_ip_success_handler;
     w.on_failure = ngx_mail_throttle_whitelist_lookup_ip_failure_handler;
 
-    ngx_memcache_post(&w, *callback->wl_key, *cache_val, NULL, log);
+    ngx_memcache_post_with_ttl(&w, *callback->wl_key, *cache_val, tscf->mail_whitelist_ip_ttl_text, NULL, log);
 }
 
 static void
