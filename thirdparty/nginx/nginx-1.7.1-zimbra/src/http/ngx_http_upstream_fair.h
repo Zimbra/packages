@@ -97,6 +97,8 @@ typedef struct {
     ngx_flag_t                          exact_version_check;
 } ngx_http_upstream_fair_peer_data_t;
 
+extern ngx_uint_t *shm_size;
+
 ngx_int_t ngx_http_upstream_init_fair(ngx_conf_t *cf,
     ngx_http_upstream_srv_conf_t *us);
 ngx_int_t ngx_http_upstream_init_fair_peer(ngx_http_request_t *r,
