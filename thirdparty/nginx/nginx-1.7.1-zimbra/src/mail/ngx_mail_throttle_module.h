@@ -22,20 +22,23 @@
 #include <ngx_memcache.h>
 
 struct ngx_mail_throttle_srv_conf_s {
-    ngx_uint_t  mail_login_ip_max;
-    ngx_msec_t  mail_login_ip_ttl;
-    ngx_str_t   mail_login_ip_ttl_text;
-    ngx_str_t   mail_login_ip_imap_ttl_text;
-    ngx_str_t   mail_login_ip_pop3_ttl_text;
-    ngx_str_t   mail_login_ip_rejectmsg;
-    ngx_uint_t  mail_login_user_max;
-    ngx_msec_t  mail_login_user_ttl;
-    ngx_str_t   mail_login_user_ttl_text;
-    ngx_str_t   mail_login_user_rejectmsg;
-    ngx_uint_t  mail_login_ip_imap_max;
-    ngx_msec_t  mail_login_ip_imap_ttl;
-    ngx_uint_t  mail_login_ip_pop3_max;
-    ngx_msec_t  mail_login_ip_pop3_ttl;
+    ngx_uint_t   mail_login_ip_max;
+    ngx_msec_t   mail_login_ip_ttl;
+    ngx_str_t    mail_login_ip_ttl_text;
+    ngx_str_t    mail_login_ip_imap_ttl_text;
+    ngx_str_t    mail_login_ip_pop3_ttl_text;
+    ngx_str_t    mail_login_ip_rejectmsg;
+    ngx_uint_t   mail_login_user_max;
+    ngx_msec_t   mail_login_user_ttl;
+    ngx_str_t    mail_login_user_ttl_text;
+    ngx_str_t    mail_login_user_rejectmsg;
+    ngx_uint_t   mail_login_ip_imap_max;
+    ngx_msec_t   mail_login_ip_imap_ttl;
+    ngx_uint_t   mail_login_ip_pop3_max;
+    ngx_msec_t   mail_login_ip_pop3_ttl;
+    ngx_array_t *mail_throttle_whitelist_ips;     /* array of ngx_cidr_t */
+    time_t       mail_whitelist_ip_ttl;
+    ngx_str_t    mail_whitelist_ip_ttl_text;
 };
 typedef struct ngx_mail_throttle_srv_conf_s ngx_mail_throttle_srv_conf_t;
 
@@ -55,16 +58,19 @@ struct throttle_callback_s {
     throttle_handler_pt     on_deny;  /* handler for deny access */
 
     /* the following fields are used internally by throttle control */
-    ngx_str_t              *user; /* user name used by user throttle control */
-    ngx_str_t              *ip;   /* ip address used by ip throttle control */
-    ngx_str_t              *value;/* the value for re-post memcache request */
-    ngx_str_t              *key;  /* the key for re-post memcache request */
-    ngx_str_t              *ttl;  /* the ttl value for re-post memcache request */
+    ngx_str_t              *user;           /* user name used by user throttle control */
+    ngx_str_t              *ip;             /* ip address used by ip throttle control */
+    ngx_str_t              *value;          /* the value for re-post memcache request */
+    ngx_str_t              *key;            /* the key for re-post memcache request */
+    ngx_str_t              *ttl;            /* the ttl value for re-post memcache request */
+    ngx_str_t              *wl_key;         /* key for whitelist IP memcache add */
+    ngx_uint_t              is_whitelisted; /* used by whitelist IP memcache callback */
 };
 typedef struct throttle_callback_s throttle_callback_t;
 
 ngx_flag_t ngx_mail_throttle_init (ngx_mail_core_srv_conf_t *cscf);
-void ngx_mail_throttle_ip (ngx_str_t ip, ngx_uint_t protocol, throttle_callback_t *callback);
+void ngx_mail_throttle_ip (ngx_str_t ip, throttle_callback_t *callback);
+void ngx_mail_throttle_whitelist_ip (ngx_str_t ip, throttle_callback_t *callback);
 void ngx_mail_throttle_user (ngx_str_t user, throttle_callback_t *callback);
 ngx_uint_t ngx_mail_throttle_ip_max_for_protocol (ngx_mail_throttle_srv_conf_t *tscf, ngx_uint_t protocol);
 
