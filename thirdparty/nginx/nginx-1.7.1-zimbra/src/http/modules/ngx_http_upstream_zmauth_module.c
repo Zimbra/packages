@@ -563,11 +563,13 @@ zmauth_lookup_result_handler(ngx_zm_lookup_work_t * work) {
         }
     }
 
+    void (*connect_func)(ngx_http_request_t*, ngx_http_upstream_t*) = ctx->connect;
+
     ngx_destroy_pool(ctx->pool);
     ngx_http_set_ctx(r, NULL, ngx_http_upstream_zmauth_module);
 
     /* bug 64775, 62374, we have to invoke "connect" at last statement */
-    ctx->connect(r, r->upstream); /* async invoke ngx_http_upstream_connect */
+    connect_func(r, r->upstream); /* async invoke ngx_http_upstream_connect */
 }
 
 static void
