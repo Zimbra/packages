@@ -1,6 +1,12 @@
+zimbra-nginx (VERSION-1zimbra8.7b7ZAPPEND) unstable; urgency=medium
+
+  * Patch for nginx Bug 107438 (and 106918, 106876)
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 10 May 2017 13:48:22 +0530
+
 zimbra-nginx (VERSION-1zimbra8.7b6ZAPPEND) unstable; urgency=medium
 
-  * - Backport upstream patch for CVE-2016-4450
+  * Backport upstream patch for CVE-2016-4450
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 14 Jun 2016 22:26:24 +0000
 

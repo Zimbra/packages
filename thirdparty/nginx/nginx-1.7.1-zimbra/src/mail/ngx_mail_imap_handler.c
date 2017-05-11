@@ -332,8 +332,8 @@ ngx_mail_imap_auth_state(ngx_event_t *rev)
     		ngx_str_set(&s->tag, imap_star);
         }
 
-    	if (s->tagged_line.len < s->tag.len + s->text.len + s->out.len) {
-    		s->tagged_line.len = s->tag.len + s->text.len + s->out.len;
+    	if (s->tagged_line.len < s->tag.len + s->text.len + s->out.len + 1) {
+    		s->tagged_line.len = s->tag.len + s->text.len + s->out.len + 1;
     		s->tagged_line.data = ngx_pnalloc(c->pool, s->tagged_line.len);
     		if (s->tagged_line.data == NULL) {
     			ngx_mail_close_connection(c);
