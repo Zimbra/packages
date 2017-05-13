@@ -1,6 +1,8 @@
 zimbra-nginx (VERSION-1zimbra8.7b7ZAPPEND) unstable; urgency=medium
 
   * Patch for nginx Bug 107438 (and 106918, 106876)
+  * Patch for nginx Bug 106948.
+  * IMAP/POP3 throttling, whitelisting (ZMS-55, ZMS-59).
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 10 May 2017 13:48:22 +0530
 
