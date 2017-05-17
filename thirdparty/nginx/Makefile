@@ -18,6 +18,7 @@ getsrc:
 	mkdir -p $(SRC_DIR)
 	mkdir -p $(psrctmp)
 	cp -pr $(pname)-$(pvers)-zimbra $(psrctmp)
+	patch -d $(psrctmp)/$(pname)-$(pvers)-zimbra -p 1 < patches/openssl-1.0.2.patch
 	mkdir -p $(psrctmp)/$(pname)-$(pvers)-zimbra/modules
 	cd $(psrctmp)/$(pname)-$(pvers)-zimbra/modules && \
 	git clone https://github.com/nviennot/nginx-tcp-keepalive.git nviennot-nginx-tcp-keepalive >/dev/null 2>&1 && \
