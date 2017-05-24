@@ -482,7 +482,7 @@ ngx_http_upstream_init_fair(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
     shm_name->data = (unsigned char *) "upstream_fair";
 
     if (ngx_http_upstream_fair_shm_size == 0) {
-        ngx_log_error(NGX_LOG_WARN, cf->log, 0, "The upstream_fair_shm_size is 0. The upstream_fair_shm_size value must be at least %udKiB", (8 * ngx_pagesize) >> 10);
+        ngx_log_error(NGX_LOG_DEBUG_ZIMBRA, cf->log, 0, "The upstream_fair_shm_size is 0. The upstream_fair_shm_size value must be at least %udKiB", (8 * ngx_pagesize) >> 10);
         ngx_http_upstream_fair_shm_size = 8 * ngx_pagesize;
     }
 
