@@ -1,4 +1,4 @@
-zimbra-memcached (1:VERSION-2b3ZAPPEND) unstable; urgency=medium
+zimbra-memcached (1:VERSION-2.PKG_OS_TAG) unstable; urgency=medium
 
   * Upgrade to memcached 1.4.37 for Bug 107246.
 
