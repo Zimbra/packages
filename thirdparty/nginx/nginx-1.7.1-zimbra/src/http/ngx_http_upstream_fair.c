@@ -70,6 +70,8 @@ static ngx_shm_zone_t * ngx_http_upstream_fair_shm_zone;
 static ngx_rbtree_t * ngx_http_upstream_fair_rbtree;
 static ngx_uint_t ngx_http_upstream_fair_generation;
 
+ngx_uint_t *shm_size = &ngx_http_upstream_fair_shm_size;
+
 static int
 ngx_http_upstream_fair_compare_rbtree_node(const ngx_rbtree_node_t *v_left,
     const ngx_rbtree_node_t *v_right)
@@ -480,8 +482,11 @@ ngx_http_upstream_init_fair(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
     shm_name->data = (unsigned char *) "upstream_fair";
 
     if (ngx_http_upstream_fair_shm_size == 0) {
+        ngx_log_error(NGX_LOG_DEBUG_ZIMBRA, cf->log, 0, "The upstream_fair_shm_size is 0. The upstream_fair_shm_size value must be at least %udKiB", (8 * ngx_pagesize) >> 10);
         ngx_http_upstream_fair_shm_size = 8 * ngx_pagesize;
     }
+
+    ngx_log_error(NGX_LOG_DEBUG_ZIMBRA, cf->log, 0, "The upstream_fair_shm_size value is %udKiB", ngx_http_upstream_fair_shm_size >> 10);
 
     ngx_http_upstream_fair_shm_zone = ngx_shared_memory_add(
         cf, shm_name, ngx_http_upstream_fair_shm_size, &ngx_http_upstream_fair_module);

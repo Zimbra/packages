@@ -26,6 +26,8 @@ enum ngx_http_zmauth_type {
     zmauth_admin_console
 };
 
+static char *ngx_http_upstream_fair_set_shm_size(ngx_conf_t *cf,
+                                                 ngx_command_t *cmd, void *conf);
 static char * ngx_http_upstream_zmauth(ngx_conf_t *cf, ngx_command_t *cmd,
         void *conf);
 static char * ngx_http_upstream_zmauth_admin(ngx_conf_t *cf, ngx_command_t *cmd,
@@ -89,6 +91,13 @@ static ngx_str_t NGX_ACCESS_DENIED_ERRMSG = ngx_string("is not allowed on this d
 
 static ngx_command_t ngx_http_upstream_zmauth_commands[] =
 {
+    { ngx_string("upstream_fair_shm_size"),
+        NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+        ngx_http_upstream_fair_set_shm_size,
+        0,
+        0,
+        NULL },
+
     { ngx_string("zmauth"),
       NGX_HTTP_UPS_CONF|NGX_CONF_NOARGS,
       ngx_http_upstream_zmauth,
@@ -131,6 +140,38 @@ ngx_module_t ngx_http_upstream_zmauth_module = {
         NULL,
         NGX_MODULE_V1_PADDING
 };
+
+static char *
+ngx_http_upstream_fair_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+{
+    ssize_t                         new_shm_size;
+    ngx_str_t                      *value;
+
+    value = cf->args->elts;
+
+    new_shm_size = ngx_parse_size(&value[1]);
+
+    if (new_shm_size == NGX_ERROR) {
+        ngx_log_error(NGX_LOG_EMERG, cf->log, 0, "Invalid memory area size `%V'", &value[1]);
+        return NGX_CONF_ERROR;
+    }
+
+    new_shm_size = ngx_align(new_shm_size, ngx_pagesize);
+
+    if (new_shm_size < 8 * (ssize_t) ngx_pagesize) {
+        ngx_log_error(NGX_LOG_WARN, cf->log, 0, "The upstream_fair_shm_size value must be at least %udKiB", (8 * ngx_pagesize) >> 10);
+        new_shm_size = 8 * ngx_pagesize;
+    }
+
+    if (*shm_size && *shm_size != (ngx_uint_t) new_shm_size) {
+        ngx_log_error(NGX_LOG_WARN, cf->log, 0, "Cannot change memory area size without restart, ignoring change");
+    } else {
+        *shm_size = new_shm_size;
+    }
+    ngx_log_error(NGX_LOG_NOTICE, cf->log, 0, "Using %udKiB of shared memory for upstream_fair", *shm_size >> 10);
+
+    return NGX_CONF_OK;
+}
 
 /* handle the `zmauth' configuration directive in an upstream block
  */
@@ -563,11 +604,13 @@ zmauth_lookup_result_handler(ngx_zm_lookup_work_t * work) {
         }
     }
 
+    void (*connect_func)(ngx_http_request_t*, ngx_http_upstream_t*) = ctx->connect;
+
     ngx_destroy_pool(ctx->pool);
     ngx_http_set_ctx(r, NULL, ngx_http_upstream_zmauth_module);
 
     /* bug 64775, 62374, we have to invoke "connect" at last statement */
-    ctx->connect(r, r->upstream); /* async invoke ngx_http_upstream_connect */
+    connect_func(r, r->upstream); /* async invoke ngx_http_upstream_connect */
 }
 
 static void

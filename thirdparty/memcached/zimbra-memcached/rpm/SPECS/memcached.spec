@@ -1,7 +1,8 @@
 Summary:            Zimbra's memcached build
 Name:               zimbra-memcached
+Epoch:              1
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            2.PKG_OS_TAG
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-libevent-devel
@@ -12,6 +13,10 @@ URL:                http://memcached.org/
 
 %description
 The Zimbra memcached build
+
+%changelog
+* Sat Jun 24 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
+- Upgrade to memcached 1.4.37 for Bug 107246.
 
 %prep
 %setup -n memcached-%{version}

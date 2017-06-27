@@ -1,7 +1,7 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra8.7b6ZAPPEND
+Release:            1zimbra8.7b7ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
@@ -17,6 +17,10 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Wed May 10 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
+- Patch for nginx Bug 107438 (and 106918, 106876)
+- Patch for nginx Bug 106948.
+- IMAP/POP3 throttling, whitelisting (ZMS-55, ZMS-59).
 * Tue Jun 14 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b6ZAPPEND
 - Backport upstream patch for CVE-2016-4450
 * Wed Mar 23 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
