@@ -5,6 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
 Patch0:             spamassassin-net-dns.patch
+Patch1:             spamassassin-mail.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
@@ -23,11 +24,16 @@ Mail::SpamAssassin is a module to identify spam using several methods
 including text analysis, internet-based realtime blacklists, statistical
 analysis, and internet-based hashing algorithms.
 
+%changelog
+* Fri Jul 7 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+-added patch according to zcs-1598
+
 %define debug_package %{nil}
 
 %prep
 %setup -n MODNAME-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
