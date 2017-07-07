@@ -1,5 +1,10 @@
 zimbra-perl-MODNORMNAME (VERSION-ITERATIONZAPPEND) unstable; urgency=low
 
+  * Added patch according to zcs-1598
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 7 Jul 2017 05:47:37 +0000
+zimbra-perl-MODNORMNAME (VERSION-ITERATIONZAPPEND) unstable; urgency=low
+
   * Initial Release.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 9 Sep 2015 00:00:00 +0000
