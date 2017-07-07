@@ -1,7 +1,7 @@
-Index: lib/Mail/SpamAssassin/Plugin/HeaderEval.pm
+Index: Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/HeaderEval.pm
 ===================================================================
---- lib/Mail/SpamAssassin/Plugin/HeaderEval.pm  (revision 1797757)
-+++ lib/Mail/SpamAssassin/Plugin/HeaderEval.pm  (working copy)
+--- Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/HeaderEval.pm  (revision 1797757)
++++ Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/HeaderEval.pm  (working copy)
 @@ -528,6 +528,7 @@
              { return 0; }
  
