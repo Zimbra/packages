@@ -1,7 +1,7 @@
 Summary:            Mail::SpamAssassin - Spam detector and markup engine
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
 Patch0:             spamassassin-net-dns.patch
@@ -25,8 +25,9 @@ including text analysis, internet-based realtime blacklists, statistical
 analysis, and internet-based hashing algorithms.
 
 %changelog
-* Fri Jul 7 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
--added patch according to zcs-1598
+* Fri Jul 7 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+-Added patch for spamAssasin bug-5561.
+-Miscellaneous patch including bugs 7223,7265.
 
 %define debug_package %{nil}
 

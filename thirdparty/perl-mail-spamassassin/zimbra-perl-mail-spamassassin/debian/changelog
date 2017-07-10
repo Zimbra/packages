@@ -1,9 +1,10 @@
-zimbra-perl-MODNORMNAME (VERSION-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=low
 
-  * Added patch according to zcs-1598
+  * Added patch for spamAssasin bug-5561.
+  * Miscellaneous patch including bugs 7223,7265.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 7 Jul 2017 05:47:37 +0000
-zimbra-perl-MODNORMNAME (VERSION-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Initial Release.
 
