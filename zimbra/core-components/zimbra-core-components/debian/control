@@ -10,7 +10,7 @@ Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
  zimbra-base, zimbra-os-requirements, zimbra-perl, zimbra-pflogsumm,
  zimbra-openssl, zimbra-curl, zimbra-cyrus-sasl, zimbra-rsync,
- zimbra-mariadb-lib, zimbra-openldap-client, zimbra-prepflog,
+ zimbra-mariadb-lib (>= 10.1.25-1zimbra8.7b1ZAPPEND), zimbra-openldap-client, zimbra-prepflog,
  zimbra-tcmalloc-lib, zimbra-perl-innotop, zimbra-openjdk,
  zimbra-openjdk-cacerts, zimbra-osl, zimbra-amavis-logwatch,
  zimbra-postfix-logwatch, zimbra-rrdtool
