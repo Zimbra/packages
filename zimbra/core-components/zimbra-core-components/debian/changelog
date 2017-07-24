@@ -1,4 +1,9 @@
-zimbra-core-components (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-core-components (1.0.1-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-mariadb package.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 24 Jul 2017 00:00:00 +0000
+zimbra-core-components (1.0.0-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Initial Release.
 
