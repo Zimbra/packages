@@ -1,4 +1,10 @@
-zimbra-apache-components (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-apache-components (1.0.1-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * Updated PHP package.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 28 Jul 2017 05:12:55 +0000
+
+zimbra-apache-components (1.0.0-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Initial Release.
 
