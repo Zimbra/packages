@@ -24,6 +24,8 @@ ngx_module_t ngx_http_zm_sso_module;
 static ngx_conf_enum_t  ngx_http_zm_sso_types[] = {
     { ngx_string("certauth"), NGX_ZM_SSO_CERTAUTH },
     { ngx_string("certauth_admin"), NGX_ZM_SSO_CERTAUTH_ADMIN},
+    { ngx_string("certauth_rfc822name"), NGX_ZM_SSO_CERTAUTH_RFC822NAME },
+    { ngx_string("certauth_admin_rfc822name"), NGX_ZM_SSO_CERTAUTH_ADMIN_RFC822NAME},
     { ngx_null_string, 0 }
 };
 
@@ -235,7 +237,7 @@ ngx_http_zm_sso_handler(ngx_http_request_t *r)
     w->pool = r->pool;
     w->log = r->connection->log;
 
-    if (zlcf->type == NGX_ZM_SSO_CERTAUTH || zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN) {
+    if (zlcf->type == NGX_ZM_SSO_CERTAUTH || zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN || zlcf->type == NGX_ZM_SSO_CERTAUTH_RFC822NAME || zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN_RFC822NAME) {
         return ngx_http_zm_sso_cert_auth(r, w);
 
     } else {
@@ -334,9 +336,10 @@ ngx_http_zm_sso_cert_auth(ngx_http_request_t *r, ngx_zm_lookup_work_t *w)
 
     zlcf = ngx_http_get_module_loc_conf(r, ngx_http_zm_sso_module);
     w->protocol = ZM_PROTO_HTTP; /* it doesn't matter which protocol is used, for cert auth we don't want route */
-    if (zlcf->type == NGX_ZM_SSO_CERTAUTH) {
+
+    if (zlcf->type == NGX_ZM_SSO_CERTAUTH || zlcf->type == NGX_ZM_SSO_CERTAUTH_RFC822NAME) {
         w->isAdmin = 0;
-    } else if (zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN) {
+    } else if (zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN || zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN_RFC822NAME) {
         w->isAdmin = 1;
     } else {
         return NGX_HTTP_FORBIDDEN;
@@ -358,17 +361,52 @@ ngx_http_zm_sso_cert_auth(ngx_http_request_t *r, ngx_zm_lookup_work_t *w)
     if (ngx_strncasecmp(ssl_client_verify_value.data, (u_char*)"SUCCESS",
                 sizeof ("SUCCESS") - 1) == 0) {
         /* get client cert subject dn */
-        ssl_client_s_dn_var = ngx_http_get_indexed_variable(r,
-                zlcf->ssl_client_s_dn_index);
-        if (!ssl_client_s_dn_var->valid) {
-            ngx_log_error (NGX_LOG_ERR, r->connection->log, 0,
-                    "nginx ssl module return invalid subject DN for "
-                    "client cert auth");
-            return NGX_HTTP_INTERNAL_SERVER_ERROR;
+        if (zlcf->type == NGX_ZM_SSO_CERTAUTH_RFC822NAME || zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN_RFC822NAME) {
+            X509 *cert = SSL_get_peer_certificate(r->connection->ssl->connection);
+
+            STACK_OF(GENERAL_NAME) *subjectAltNames = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
+
+            for (int i = 0; i < sk_GENERAL_NAME_num(subjectAltNames); i++)
+            {
+                GENERAL_NAME* gen = sk_GENERAL_NAME_value(subjectAltNames, i);
+                if (gen->type == GEN_EMAIL)
+                {
+                    ASN1_IA5STRING *asn1_str = gen->d.uniformResourceIdentifier;
+
+                    ssl_client_s_dn_value.len = ASN1_STRING_length(asn1_str) + 13;
+            
+                    ssl_client_s_dn_value.data = ngx_pnalloc(r->pool, ssl_client_s_dn_value.len);
+            
+                    if (ssl_client_s_dn_value.data == NULL) {
+                        GENERAL_NAMES_free(subjectAltNames);
+                        X509_free(cert);
+                        ngx_log_error (NGX_LOG_ERR, r->connection->log, 0,
+                            "unable to allocate ssl client rfc822name ");
+                        return NGX_ERROR;
+                     }
+
+                     ngx_memcpy(ssl_client_s_dn_value.data, (u_char*) "emailAddress=", 13);
+                     ngx_memcpy(&ssl_client_s_dn_value.data[13], ASN1_STRING_data(asn1_str), ssl_client_s_dn_value.len - 13);
+
+                     break;
+                }
+            }
+
+            GENERAL_NAMES_free(subjectAltNames);
+            X509_free(cert);
+        } else {
+            ssl_client_s_dn_var = ngx_http_get_indexed_variable(r,
+                    zlcf->ssl_client_s_dn_index);
+            if (!ssl_client_s_dn_var->valid) {
+                ngx_log_error (NGX_LOG_ERR, r->connection->log, 0,
+                        "nginx ssl module return invalid subject DN for "
+                        "client cert auth");
+                return NGX_HTTP_INTERNAL_SERVER_ERROR;
+            }
+            ssl_client_s_dn_value.data = ssl_client_s_dn_var->data;
+            ssl_client_s_dn_value.len = ssl_client_s_dn_var->len;
         }
 
-        ssl_client_s_dn_value.data = ssl_client_s_dn_var->data;
-        ssl_client_s_dn_value.len = ssl_client_s_dn_var->len;
         w->auth_method = ZM_AUTHMETH_CERTAUTH;
         w->username = ssl_client_s_dn_value;
         if (r->headers_in.host != NULL) {
