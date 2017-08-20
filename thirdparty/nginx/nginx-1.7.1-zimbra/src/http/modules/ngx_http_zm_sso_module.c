@@ -381,8 +381,8 @@ ngx_http_zm_sso_cert_auth(ngx_http_request_t *r, ngx_zm_lookup_work_t *w)
                         GENERAL_NAMES_free(subjectAltNames);
                         X509_free(cert);
                         ngx_log_error (NGX_LOG_ERR, r->connection->log, 0,
-                            "unable to allocate ssl client rfc822name ");
-                        return NGX_ERROR;
+                            "unable to allocate ssl client rfc822name");
+                        return NGX_HTTP_INTERNAL_SERVER_ERROR;
                      }
 
                      ngx_memcpy(ssl_client_s_dn_value.data, (u_char*) "emailAddress=", 13);
@@ -399,12 +399,18 @@ ngx_http_zm_sso_cert_auth(ngx_http_request_t *r, ngx_zm_lookup_work_t *w)
                     zlcf->ssl_client_s_dn_index);
             if (!ssl_client_s_dn_var->valid) {
                 ngx_log_error (NGX_LOG_ERR, r->connection->log, 0,
-                        "nginx ssl module return invalid subject DN for "
-                        "client cert auth");
+                    "nginx ssl module return invalid subject DN for "
+                    "client cert auth");
                 return NGX_HTTP_INTERNAL_SERVER_ERROR;
             }
             ssl_client_s_dn_value.data = ssl_client_s_dn_var->data;
             ssl_client_s_dn_value.len = ssl_client_s_dn_var->len;
+        }
+
+        if (ssl_client_s_dn_value.len == 0) {
+            ngx_log_error (NGX_LOG_ERR, r->connection->log, 0,
+                "did not find data in the certificate to perform login");
+            return ngx_http_zm_sso_redirect (r);
         }
 
         w->auth_method = ZM_AUTHMETH_CERTAUTH;
