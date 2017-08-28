@@ -1,0 +1,5 @@
+zimbra-jetty-distribution (VERSION-1.PKG_OS_TAG) unstable; urgency=medium
+
+  * Initial Release.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 16 Aug 2017 03:14:15 +0530

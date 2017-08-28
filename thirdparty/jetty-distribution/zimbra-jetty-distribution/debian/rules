@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	mkdir -p $$(pwd)/debian/tmp/opt/zimbra/common/jetty_home
+	find -maxdepth 1 -mindepth 1 | grep -v -w -e debian -e rpm | xargs -r '-I{}' cp -a '{}' ./debian/tmp/opt/zimbra/common/jetty_home
