@@ -10,5 +10,5 @@ Homepage: https://www.eclipse.org/jetty
 Package: zimbra-jetty-distribution
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-store-base
 Description: Zimbra's jetty-distribution

@@ -1,9 +1,10 @@
 Summary:            Zimbra's jetty-distribution build
 Name:               zimbra-jetty-distribution
 Version:            VERSION
-Release:            1.PKG_OS_TAG
+Release:            2.PKG_OS_TAG
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
+Requires:           zimbra-store-base
 AutoReqProv:        no
 URL:                https://www.eclipse.org/jetty/
 
@@ -13,6 +14,8 @@ URL:                https://www.eclipse.org/jetty/
 The Zimbra jetty-distribution build
 
 %changelog
+* Thu Aug 31 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
+- Minor dependency fix.
 * Fri Jul 7 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1.PKG_OS_TAG
 - Initial Release.
 
