@@ -1,16 +1,22 @@
-zimbra-perl (1.0.2-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-perl (1.0.3-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * Updated perl-dbd-mysql.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 7 Sep 2017 00:00:00 +0000
+
+zimbra-perl (1.0.2-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Really add zimbra-perl-file-libmagic
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 22 Sep 2016 00:00:00 +0000
 
-zimbra-perl (1.0.1-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-perl (1.0.1-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Add zimbra-perl-file-libmagic
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 21 Sep 2016 00:00:00 +0000
 
-zimbra-perl (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-perl (1.0.0-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Initial Release.
 

@@ -1,4 +1,10 @@
-zimbra-perl-MODNORMNAME (VERSION-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=low
+
+  * Bug-107311: Updated perl-dbd-mysql version.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 7 Sep 2017 00:00:00 +0000
+
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Initial Release.
 

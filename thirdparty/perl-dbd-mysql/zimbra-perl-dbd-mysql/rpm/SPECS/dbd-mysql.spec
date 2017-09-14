@@ -1,7 +1,7 @@
 Summary:            DBD::mysql - MySQL driver for the Perl5 Database Interface (DBI)
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -18,6 +18,12 @@ In other words: DBD::mysql is an interface between the Perl programming
 language and the MySQL programming API that comes with the MySQL relational
 database management system. Most functions provided by this programming API
 are supported.
+
+%changelog
+* Thu Sep 7 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Bug-107311: Updated perl-dbd-mysql version.
+* Wed Sep 9 2015 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Initial Release.
 
 %define debug_package %{nil}
 
