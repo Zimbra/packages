@@ -1,0 +1,39 @@
+commit 3d5601e0ba256a40a57db41c9ae75f5bef5f5bc2
+Author: Howard Chu <hyc@openldap.org>
+Date:   Thu Jul 21 00:34:25 2016 +0100
+
+    Fix a4c7943d39df0140edacb5774e977be3f72b694c
+    
+    Modify/replace was broken if attr didn't already exist
+
+diff --git a/servers/slapd/back-mdb/modify.c b/servers/slapd/back-mdb/modify.c
+index 0f8706a..fcabb2a 100644
+--- a/servers/slapd/back-mdb/modify.c
++++ b/servers/slapd/back-mdb/modify.c
+@@ -277,14 +277,19 @@ do_del:
+ 					err = mdb_mval_del( op, mvc, e->e_id, anew );
+ 					if (err)
+ 						break;
+-					anew = attr_find( e->e_attrs, mod->sm_desc );
+-					if (mod->sm_numvals >= mdb->mi_multi_lo) {
+-						anew->a_flags |= SLAP_ATTR_BIG_MULTI;
+-						err = mdb_mval_put(op, mvc, e->e_id, anew);
+-					} else if (anew) {
+-						/* revert back to normal attr */
+-						anew->a_flags &= ~SLAP_ATTR_BIG_MULTI;
++				}
++				anew = attr_find( e->e_attrs, mod->sm_desc );
++				if (mod->sm_numvals >= mdb->mi_multi_lo) {
++					anew->a_flags |= SLAP_ATTR_BIG_MULTI;
++					if (!mvc) {
++						err = mdb_cursor_open( tid, mdb->mi_dbis[MDB_ID2VAL], &mvc );
++						if (err)
++							break;
+ 					}
++					err = mdb_mval_put(op, mvc, e->e_id, anew);
++				} else if (anew) {
++					/* revert back to normal attr */
++					anew->a_flags &= ~SLAP_ATTR_BIG_MULTI;
+ 				}
+ 			}
+ 			break;

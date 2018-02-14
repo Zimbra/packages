@@ -14,6 +14,8 @@ Patch6:             ITS7506.patch
 Patch7:             ITS8413.patch
 Patch8:             ITS8432.patch
 Patch9:             multival.patch
+Patch10:            3d
+Patch11:            5b
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-libltdl-devel
@@ -53,6 +55,8 @@ The Zimbra openldap build
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
+%patch11 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"

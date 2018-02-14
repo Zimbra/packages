@@ -1,0 +1,38 @@
+commit 5bd89a1f1f1a53089cbc8ed576a3b6cc1164f671
+Author: Howard Chu <hyc@openldap.org>
+Date:   Tue Aug 1 21:47:15 2017 +0100
+
+    Cleanup uninit'd vars
+
+diff --git a/servers/slapd/back-mdb/modify.c b/servers/slapd/back-mdb/modify.c
+index 6de49c2..7bfdb5c 100644
+--- a/servers/slapd/back-mdb/modify.c
++++ b/servers/slapd/back-mdb/modify.c
+@@ -329,6 +329,7 @@ do_del:
+  			 */
+  			mod->sm_op = LDAP_MOD_ADD;
+ 			softop = 1;
++			chkpresent = 0;
+ 			goto do_add;
+ 
+ 		case SLAP_MOD_SOFTDEL:
+@@ -356,6 +357,7 @@ do_del:
+  			 * We need to add index if necessary.
+  			 */
+  			mod->sm_op = LDAP_MOD_ADD;
++			softop = 0;
+ 			chkpresent = 1;
+ 			goto do_add;
+ 
+diff --git a/servers/slapd/back-mdb/search.c b/servers/slapd/back-mdb/search.c
+index 43442aa..8e06326 100644
+--- a/servers/slapd/back-mdb/search.c
++++ b/servers/slapd/back-mdb/search.c
+@@ -710,6 +710,7 @@ dn2entry_retry:
+ 	}
+ 
+ 	wwctx.flag = 0;
++	wwctx.nentries = 0;
+ 	/* If we're running in our own read txn */
+ 	if (  moi == &opinfo ) {
+ 		cb.sc_writewait = mdb_writewait;

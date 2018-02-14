@@ -813,37 +813,6 @@ diff -ur openldap-2.4.44/servers/slapd/back-mdb/init.c openldap-2.4.44-multival/
  			MDB_cursor *mc;
  			MDB_val key, data;
  			ID id;
-diff --git a/servers/slapd/back-mdb/modify.c b/servers/slapd/back-mdb/modify.c
-index 0f8706a..fcabb2a 100644
---- a/servers/slapd/back-mdb/modify.c
-+++ b/servers/slapd/back-mdb/modify.c
-@@ -277,14 +277,19 @@ do_del:
- 					err = mdb_mval_del( op, mvc, e->e_id, anew );
- 					if (err)
- 						break;
--					anew = attr_find( e->e_attrs, mod->sm_desc );
--					if (mod->sm_numvals >= mdb->mi_multi_lo) {
--						anew->a_flags |= SLAP_ATTR_BIG_MULTI;
--						err = mdb_mval_put(op, mvc, e->e_id, anew);
--					} else if (anew) {
--						/* revert back to normal attr */
--						anew->a_flags &= ~SLAP_ATTR_BIG_MULTI;
-+				}
-+				anew = attr_find( e->e_attrs, mod->sm_desc );
-+				if (mod->sm_numvals >= mdb->mi_multi_lo) {
-+					anew->a_flags |= SLAP_ATTR_BIG_MULTI;
-+					if (!mvc) {
-+						err = mdb_cursor_open( tid, mdb->mi_dbis[MDB_ID2VAL], &mvc );
-+						if (err)
-+							break;
- 					}
-+					err = mdb_mval_put(op, mvc, e->e_id, anew);
-+				} else if (anew) {
-+					/* revert back to normal attr */
-+					anew->a_flags &= ~SLAP_ATTR_BIG_MULTI;
- 				}
- 			}
- 			break;
 diff -ur openldap-2.4.44/servers/slapd/back-mdb/modify.c openldap-2.4.44-multival/servers/slapd/back-mdb/modify.c
 --- openldap-2.4.44/servers/slapd/back-mdb/modify.c	2016-02-06 00:57:45.000000000 +0100
 +++ openldap-2.4.44-multival/servers/slapd/back-mdb/modify.c	2018-02-08 15:26:24.285077132 +0100
@@ -1095,37 +1064,6 @@ diff -ur openldap-2.4.44/servers/slapd/back-mdb/modify.c openldap-2.4.44-multiva
  
  		default:
  			Debug(LDAP_DEBUG_ANY, "mdb_modify_internal: invalid op %d\n",
-diff --git a/servers/slapd/back-mdb/modify.c b/servers/slapd/back-mdb/modify.c
-index 6de49c2..7bfdb5c 100644
---- a/servers/slapd/back-mdb/modify.c
-+++ b/servers/slapd/back-mdb/modify.c
-@@ -329,6 +329,7 @@ do_del:
-  			 */
-  			mod->sm_op = LDAP_MOD_ADD;
- 			softop = 1;
-+			chkpresent = 0;
- 			goto do_add;
- 
- 		case SLAP_MOD_SOFTDEL:
-@@ -356,6 +357,7 @@ do_del:
-  			 * We need to add index if necessary.
-  			 */
-  			mod->sm_op = LDAP_MOD_ADD;
-+			softop = 0;
- 			chkpresent = 1;
- 			goto do_add;
-diff --git a/servers/slapd/back-mdb/search.c b/servers/slapd/back-mdb/search.c
-index 43442aa..8e06326 100644
---- a/servers/slapd/back-mdb/search.c
-+++ b/servers/slapd/back-mdb/search.c
-@@ -710,6 +710,7 @@ dn2entry_retry:
- 	}
- 
- 	wwctx.flag = 0;
-+	wwctx.nentries = 0;
- 	/* If we're running in our own read txn */
- 	if (  moi == &opinfo ) {
- 		cb.sc_writewait = mdb_writewait;
 diff -ur openldap-2.4.44/servers/slapd/back-mdb/proto-mdb.h openldap-2.4.44-multival/servers/slapd/back-mdb/proto-mdb.h
 --- openldap-2.4.44/servers/slapd/back-mdb/proto-mdb.h	2016-02-06 00:57:45.000000000 +0100
 +++ openldap-2.4.44-multival/servers/slapd/back-mdb/proto-mdb.h	2018-02-07 14:16:33.040527987 +0100
