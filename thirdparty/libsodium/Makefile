@@ -6,7 +6,7 @@ pvers := $(SODIUM_VERSION)
 pname := libsodium
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://download.libsodium.org/libsodium/releases/$(pfile)
+purl := https://download.libsodium.org/libsodium/releases/old/unsupported/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

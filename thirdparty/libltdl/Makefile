@@ -7,7 +7,7 @@ pname := libltdl
 uname := libtool
 pfile := $(uname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://reflection.oss.ou.edu/gnu/gnu/libtool/$(pfile)
+purl := https://ftpmirror.gnu.org/libtool/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
