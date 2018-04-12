@@ -1080,6 +1080,75 @@ ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
     return 0;
 }
 
+/* extract claim data from jwt token */
+static ngx_flag_t
+ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value) {
+
+    ngx_flag_t f;
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_jwttoken entered");
+
+    ngx_str_t pattern = ngx_string("(?<=\\.)(.*?)(?=\\.)");
+    ngx_regex_compile_t rgc;
+    u_char errstr[NGX_MAX_CONF_ERRSTR];
+    ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
+
+    rgc.pattern  = pattern;
+    rgc.pool     = pool;
+    rgc.err.len  = NGX_MAX_CONF_ERRSTR;
+    rgc.err.data = errstr;
+
+
+    if (ngx_regex_compile(&rgc) != NGX_OK)
+    {
+        ngx_log_error(NGX_LOG_INFO, log, 0,"zmauth: ngx_claimdata_from_jwttoken regex compilation failed.Error=====%s",errstr);
+        return 0;
+    }
+
+    int captures[30];
+    ngx_int_t  n;
+
+    n = ngx_regex_exec(rgc.regex, authtoken, captures, 30);
+    if (n >= 0)
+    {
+        /* string matches expression */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken match found");
+        ngx_str_t encodedPayload;
+        encodedPayload.data = authtoken->data + captures[0];
+        encodedPayload.len = captures[1] - captures[0];
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken payload is %V",&encodedPayload);
+
+        ngx_str_t urlDecodedPayload;
+        if (ngx_decode_base64url(&urlDecodedPayload, &encodedPayload) != NGX_OK)
+        {
+            ngx_log_error(NGX_LOG_INFO, log, 0,"zmauth: ngx_claimdata_from_jwttoken base64url decoding failed");
+            return 0;
+        }
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken base64url decoded payload is %V",&urlDecodedPayload);
+
+        int ret = ngx_claimdata_from_payload(log,pool,&urlDecodedPayload,value);
+        return ret;
+    }
+    else if (n == NGX_REGEX_NO_MATCHED)
+    {
+        /* no match was found */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken no match found");
+        return 0;
+    }
+    else
+    {
+        /* some error */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken no match found due to some error.");
+        return 0;
+    }
+
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_jwttoken exit");
+
+    return 0;
+}
+
 
 /* extract sub data field from payload */
 static ngx_flag_t
