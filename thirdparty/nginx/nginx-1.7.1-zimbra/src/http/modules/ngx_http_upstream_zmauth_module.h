@@ -22,7 +22,8 @@ typedef enum {
     zmroutetype_rest,
     zmroutetype_activesync,
     zmroutetype_caldav,
-    zmroutetype_ews
+    zmroutetype_ews,
+    zmroutetype_jwttoken,
 } zmroutetype_t;
 
 typedef struct {
