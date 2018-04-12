@@ -1043,6 +1043,44 @@ ngx_field_from_zmauthtoken(ngx_log_t *log, ngx_pool_t *pool,
     return f;
 }
 
+/* extract the jwt token from Header*/
+static ngx_flag_t
+ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_http_headers_in_t *headers_in, ngx_str_t *value)
+{
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_get_authheader_bearer entered");
+
+    ngx_str_t authValue;
+    ngx_str_t token;
+
+    authValue = headers_in->authorization->value;
+
+    ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: ngx_get_authheader_bearer token:%V",&authValue);
+
+    if (authValue.len >= sizeof("Bearer ") - 1
+            && ngx_memcmp(authValue.data,"Bearer ",sizeof("Bearer ")-1)
+            == 0)
+    {
+        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: ngx_get_authheader_bearer Bearer token found");
+
+        token = authValue;
+        token.data += (sizeof("Bearer ") - 1);
+        token.len -= (sizeof("Bearer ") - 1);
+
+        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: ngx_get_authheader_bearer Bearer token found:%V",&token);
+        *value = token;
+
+        return 1;
+    }
+
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_get_authheader_bearer exit");
+
+    return 0;
+}
+
+
 static void *
 ngx_http_upstream_zmauth_create_srv_conf(ngx_conf_t *cf) {
     ngx_http_upstream_zmauth_srv_conf_t *zscf;
