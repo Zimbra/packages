@@ -1071,7 +1071,7 @@ ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: ngx_get_authheader_bearer Bearer token found:%V",&token);
         *value = token;
 
-        return 1;
+        return 1; 
     }
 
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
@@ -1079,6 +1079,68 @@ ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
 
     return 0;
 }
+
+
+/* extract sub data field from payload */
+static ngx_flag_t
+ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_str_t *payload, ngx_str_t *value) {
+
+    ngx_flag_t f;
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_payload entered");
+
+    ngx_str_t pattern = ngx_string("\"sub\":[\s]*\"(.*)\"[\s]*");
+    ngx_regex_compile_t rgc;
+    u_char errstr[NGX_MAX_CONF_ERRSTR];
+    ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
+
+    rgc.pattern  = pattern;
+    rgc.pool     = pool;
+    rgc.err.len  = NGX_MAX_CONF_ERRSTR;
+    rgc.err.data = errstr;
+
+
+    if (ngx_regex_compile(&rgc) != NGX_OK)
+    {
+        ngx_log_error(NGX_LOG_INFO, log, 0,"zmauth: ngx_claimdata_from_payload regex compilation failed.Error=====%s",errstr);
+        return 0;
+    }
+
+    int captures[30];
+    ngx_int_t  n;
+
+    n = ngx_regex_exec(rgc.regex, payload, captures, 30);
+    if (n >= 0)
+    {
+        /* string matches expression */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload match found");
+        ngx_str_t subData;
+        subData.data = payload->data + captures[2];
+        subData.len = captures[3] - captures[2];
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload subData is %V",&subData);
+        *value = subData;
+        return 1;
+    }
+    else if (n == NGX_REGEX_NO_MATCHED)
+    {
+        /* no match was found */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload no match found");
+        return 0;      
+    }
+    else
+    {
+        /* some error */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload no match found due to some error.");
+        return 0;
+    }
+
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_payload exit");
+ 
+    return 0;
+}
+
 
 
 static void *
@@ -1459,6 +1521,7 @@ zmauth_check_caldav(ngx_http_request_t *r, void **extra) {
     return f;
 }
 
+
 /* examine request cookies for ZM_AUTH_TOKEN and extract route if so */
 static ngx_flag_t
 zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
@@ -1523,7 +1586,6 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
 
     return f;
 }
-
 /* examine request cookies for ZM_ADMIN_AUTH_TOKEN and extract route if so */
 static ngx_flag_t
 zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
