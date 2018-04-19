@@ -1,3 +1,9 @@
+zimbra-nginx (VERSION-1zimbra8.7b8ZAPPEND) unstable; urgency=medium
+
+  * ZCS-4021 for JWT support.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 18 Apr 2018 22:48:22 +0030 
+
 zimbra-nginx (VERSION-1zimbra8.7b7ZAPPEND) unstable; urgency=medium
 
   * Patch for nginx Bug 107438 (and 106918, 106876)
