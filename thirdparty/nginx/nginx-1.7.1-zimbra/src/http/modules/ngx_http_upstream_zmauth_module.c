@@ -1051,8 +1051,7 @@ ngx_field_from_zmauthtoken(ngx_log_t *log, ngx_pool_t *pool,
 /* extract the jwt token from Header*/
 static ngx_flag_t
 ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
-        ngx_http_headers_in_t *headers_in, ngx_str_t *value)
-{
+        ngx_http_headers_in_t *headers_in, ngx_str_t *value) {
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
             "zmauth: ngx_get_authheader_bearer entered");
 
@@ -1061,19 +1060,21 @@ ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
 
     authValue = headers_in->authorization->value;
 
-    ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: ngx_get_authheader_bearer token:%V",&authValue);
+    ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_get_authheader_bearer token:%V", &authValue);
 
     if (authValue.len >= sizeof("Bearer ") - 1
             && ngx_memcmp(authValue.data,"Bearer ",sizeof("Bearer ")-1)
-            == 0)
-    {
-        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: ngx_get_authheader_bearer Bearer token found");
+            == 0) {
+        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth: ngx_get_authheader_bearer Bearer token found");
 
         token = authValue;
         token.data += (sizeof("Bearer ") - 1);
         token.len -= (sizeof("Bearer ") - 1);
 
-        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: ngx_get_authheader_bearer Bearer token found:%V",&token);
+        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth: ngx_get_authheader_bearer Bearer token found:%V", &token);
         *value = token;
 
         return 1; 
@@ -1089,7 +1090,6 @@ ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
 static ngx_flag_t
 ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
         ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value) {
-
     ngx_flag_t f;
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
             "zmauth: ngx_claimdata_from_jwttoken entered");
@@ -1103,11 +1103,9 @@ ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
     rgc.pool     = pool;
     rgc.err.len  = NGX_MAX_CONF_ERRSTR;
     rgc.err.data = errstr;
-
-
-    if (ngx_regex_compile(&rgc) != NGX_OK)
-    {
-        ngx_log_error(NGX_LOG_INFO, log, 0,"zmauth: ngx_claimdata_from_jwttoken regex compilation failed.Error=====%s",errstr);
+    if (ngx_regex_compile(&rgc) != NGX_OK) {
+        ngx_log_error(NGX_LOG_INFO, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken regex compilation failed. Error:%s", errstr);
         return 0;
     }
 
@@ -1115,42 +1113,44 @@ ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
     ngx_int_t  n;
 
     n = ngx_regex_exec(rgc.regex, authtoken, captures, (1 + rgc.captures) * 3);
-    if (n >= 0)
-    {
+    if (n >= 0) {
         /* string matches expression */
-        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken match found");
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken match found");
         ngx_str_t encodedPayload;
         encodedPayload.data = authtoken->data + captures[0];
         encodedPayload.len = captures[1] - captures[0];
-        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken payload is %V",&encodedPayload);
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken payload is %V", &encodedPayload);
 
         ngx_str_t urlDecodedPayload;
         urlDecodedPayload.data = ngx_pnalloc(pool, ngx_base64_decoded_length(encodedPayload.len));
-        if (urlDecodedPayload.data == NULL)
-        {
-            ngx_log_error(NGX_LOG_INFO, log, 0,"zmauth: ngx_claimdata_from_jwttoken memory allocation from pool failed");
+        if (urlDecodedPayload.data == NULL) {
+            ngx_log_error(NGX_LOG_INFO, log, 0,
+                    "zmauth: ngx_claimdata_from_jwttoken memory allocation from pool failed");
             return NGX_ERROR;
         }
 
-        if (ngx_decode_base64url(&urlDecodedPayload, &encodedPayload) != NGX_OK)
-        {
-            ngx_log_error(NGX_LOG_INFO, log, 0,"zmauth: ngx_claimdata_from_jwttoken base64url decoding failed");
+        if (ngx_decode_base64url(&urlDecodedPayload, &encodedPayload) != NGX_OK) {
+            ngx_log_error(NGX_LOG_INFO, log, 0,
+                    "zmauth: ngx_claimdata_from_jwttoken base64url decoding failed");
             return 0;
         }
-        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken base64url decoded payload is %V",&urlDecodedPayload);
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken base64url decoded payload is %V", &urlDecodedPayload);
         int ret = ngx_claimdata_from_payload(log,pool,&urlDecodedPayload,value);
         return ret;
     }
-    else if (n == NGX_REGEX_NO_MATCHED)
-    {
+    else if (n == NGX_REGEX_NO_MATCHED) {
         /* no match was found */
-        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken no match found");
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken no match found");
         return 0;      
     }
-    else
-    {
+    else {
         /* some error */
-        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_jwttoken no match found due to some error.");
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken failed: %i", n);
         return 0;
     }
 
@@ -1164,12 +1164,11 @@ ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
 static ngx_flag_t
 ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
         ngx_str_t *payload, ngx_str_t *value) {
-
     ngx_flag_t f;
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
             "zmauth: ngx_claimdata_from_payload entered");
 
-    ngx_str_t pattern = ngx_string("\"sub\":[\s]*\"(.*)\"[\s]*");
+    ngx_str_t pattern = ngx_string("\"sub\":[\\s]*\"(.*?)\"[\\s]*");
     ngx_regex_compile_t rgc;
     u_char errstr[NGX_MAX_CONF_ERRSTR];
     ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
@@ -1178,11 +1177,9 @@ ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
     rgc.pool     = pool;
     rgc.err.len  = NGX_MAX_CONF_ERRSTR;
     rgc.err.data = errstr;
-
-
-    if (ngx_regex_compile(&rgc) != NGX_OK)
-    {
-        ngx_log_error(NGX_LOG_INFO, log, 0,"zmauth: ngx_claimdata_from_payload regex compilation failed.Error:%s",errstr);
+    if (ngx_regex_compile(&rgc) != NGX_OK) {
+        ngx_log_error(NGX_LOG_INFO, log, 0,
+                "zmauth: ngx_claimdata_from_payload regex compilation failed. Error:%s", errstr);
         return 0;
     }
 
@@ -1190,27 +1187,28 @@ ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
     ngx_int_t  n;
 
     n = ngx_regex_exec(rgc.regex, payload, captures, (1 + rgc.captures) * 3);
-    if (n >= 0)
-    {
+    if (n >= 0) {
         /* string matches expression */
-        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload match found");
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_payload match found");
         ngx_str_t subData;
         subData.data = payload->data + captures[2];
         subData.len = captures[3] - captures[2];
-        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload subData is %V",&subData);
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_payload subData is %V", &subData);
         *value = subData;
         return 1;
     }
-    else if (n == NGX_REGEX_NO_MATCHED)
-    {
+    else if (n == NGX_REGEX_NO_MATCHED) {
         /* no match was found */
-        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload no match found");
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_payload no match found");
         return 0;      
     }
-    else
-    {
+    else {
         /* some error */
-        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0, "zmauth: ngx_claimdata_from_payload no match found due to some error.");
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken failed: %i", n);
         return 0;
     }
 
@@ -1219,8 +1217,6 @@ ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
  
     return 0;
 }
-
-
 
 static void *
 ngx_http_upstream_zmauth_create_srv_conf(ngx_conf_t *cf) {
@@ -1677,19 +1673,15 @@ zmauth_check_jwttoken(ngx_http_request_t *r, ngx_str_t* field,
 
     pool = r->pool;
     log = r->connection->log;
-
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth:zmauth_check_jwttoken starts");
-
-
-    //Bearer header extration starts
+    //Bearer header extraction starts
     if (r->headers_in.authorization != NULL
-            && r->headers_in.authorization->value.data != NULL)
-    {
-        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth:zmauth_check_jwttoken authorization header exists");
+            && r->headers_in.authorization->value.data != NULL) {
+        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth:zmauth_check_jwttoken authorization header exists");
         f = ngx_get_authheader_bearer(log, pool, &r->headers_in, &token);
     }
     //Bearer header extraction ends
-
 
     if (!f) {
         /* if not found, then look in the query string arg zjwt*/
@@ -1698,13 +1690,13 @@ zmauth_check_jwttoken(ngx_http_request_t *r, ngx_str_t* field,
 
     if (f) {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth:zmauth_check_jwttoken found ZM_JWT_TOKEN:%V",
-                &token);
+                "zmauth:zmauth_check_jwttoken found ZM_JWT_TOKEN:%V", &token);
 
         f = ngx_claimdata_from_jwttoken(log, pool, &token, field, &value);
 
         if (f) {
-            ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth: got %V:%V from ZM_AUTH_TOKEN", field, &value);
+            ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
+                    "zmauth: got %V:%V from ZM_AUTH_TOKEN", field, &value);
             if (value.len > 0) {
                 pvalue = ngx_palloc(pool, sizeof(ngx_str_t));
                 if (pvalue == NULL) {

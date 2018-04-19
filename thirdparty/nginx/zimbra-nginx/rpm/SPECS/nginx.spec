@@ -19,6 +19,8 @@ The Zimbra nginx build
 %changelog
 * Fri Aug 24 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b8ZAPPEND
 - Patch for nginx Bug 107566
+* Wed Apr 18 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b8ZAPPEND
+- ZCS-4021 for JWT support.
 * Wed May 10 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
 - Patch for nginx Bug 107438 (and 106918, 106876)
 - Patch for nginx Bug 106948.
