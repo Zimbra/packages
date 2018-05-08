@@ -1,18 +1,16 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.7b9ZAPPEND
+Release:            1zimbra8.7b1ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
 Patch1:             writers.patch
 Patch2:             ITS7683.patch
 Patch3:             ITS8054.patch
-Patch4:             threadpool.patch
+Patch4:             ITS8843.patch
 Patch5:             liblmdb-soname.patch
-Patch6:             ITS7506.patch
-Patch7:             ITS8413.patch
-Patch8:             ITS8432.patch
+Patch6:             multival.patch
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-libltdl-devel
@@ -23,22 +21,10 @@ URL:                http://www.openldap.org
 The Zimbra openldap build
 
 %changelog
-* Fri Sep 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b9ZAPPEND
-- Another upstream fix for ITS#8448, ITS#8460, ITS#8462, ITS#8490, ITS#8493
-* Thu Jul 29 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b8ZAPPEND
-- Import fix from upstream for ITS#8448, ITS#8460, ITS#8462.
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
-- Finalized patch for ITS#8432
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b6ZAPPEND
-- syncrepl patch for ITS#8432
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
-- syncprov patch for ITS#8432
-* Thu Jun 9 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
-- Add debug logging for ITS#8432
-* Wed Apr 27 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
-- Add patch for ITS#8413
-* Thu Feb 11 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
-- Add patch for ITS#7506
+* Tue Apr 24 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Initial package for OpenLDAP 2.4.46
+- Includes multival support
+- Includes upstream fix for ITS#8843
 
 %prep
 %setup -n openldap-%{version}
@@ -49,8 +35,6 @@ The Zimbra openldap build
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
