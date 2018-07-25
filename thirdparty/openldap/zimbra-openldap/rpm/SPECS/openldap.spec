@@ -1,7 +1,7 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.7b1ZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
@@ -21,6 +21,8 @@ URL:                http://www.openldap.org
 The Zimbra openldap build
 
 %changelog
+* Wed Jul 18 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Update multival patch to make sure a->a_numvals matches id2v counts
 * Tue Apr 24 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
 - Initial package for OpenLDAP 2.4.46
 - Includes multival support
@@ -38,11 +40,11 @@ The Zimbra openldap build
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
-LDFLAGS="-LOZCL -Wl,-rpath,OZCL"; export LDFLAGS;
+LDFLAGS="-L/opt/zimbra/common/lib -Wl,-rpath,/opt/zimbra/common/lib"; export LDFLAGS;
 CFLAGS="-O0 -g -D_REENTRANT"; export CFLAGS;
-CPPFLAGS="-IOZCI"; export CPPFLAGS;
-PATH=OZCB:$PATH; export PATH;
-./configure --prefix=OZC \
+CPPFLAGS="-I/opt/zimbra/common/include"; export CPPFLAGS;
+PATH=/opt/zimbra/common/bin:$PATH; export PATH;
+./configure --prefix=/opt/zimbra/common \
   --with-cyrus-sasl \
   --with-tls=openssl \
   --enable-dynamic \
@@ -60,23 +62,23 @@ PATH=OZCB:$PATH; export PATH;
   --enable-spasswd \
   --localstatedir=/opt/zimbra/data/ldap/state \
   --enable-crypt
-LD_RUN_PATH=OZCL make depend
-LD_RUN_PATH=OZCL make DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE"
-make -C libraries/liblmdb prefix=OZC
-make -C contrib/slapd-modules/noopsrch prefix=OZC
-make -C contrib/slapd-modules/passwd/sha2 prefix=OZC
+LD_RUN_PATH=/opt/zimbra/common/lib make depend
+LD_RUN_PATH=/opt/zimbra/common/lib make DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE"
+make -C libraries/liblmdb prefix=/opt/zimbra/common
+make -C contrib/slapd-modules/noopsrch prefix=/opt/zimbra/common
+make -C contrib/slapd-modules/passwd/sha2 prefix=/opt/zimbra/common
 
 %install
 make install DESTDIR=${RPM_BUILD_ROOT} STRIP=""
-make -C libraries/liblmdb install prefix=OZC DESTDIR=${RPM_BUILD_ROOT} STRIP=""
-make -C contrib/slapd-modules/noopsrch install prefix=OZC DESTDIR=${RPM_BUILD_ROOT} STRIP=""
-make -C contrib/slapd-modules/passwd/sha2 install prefix=OZC DESTDIR=${RPM_BUILD_ROOT} STRIP=""
+make -C libraries/liblmdb install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
+make -C contrib/slapd-modules/noopsrch install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
+make -C contrib/slapd-modules/passwd/sha2 install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/data
-rm -f ${RPM_BUILD_ROOT}OZCLE/openldap/noopsrch.a
-rm -f ${RPM_BUILD_ROOT}OZCLE/openldap/pw-sha2.a
-rm -f ${RPM_BUILD_ROOT}OZCE/openldap/DB_CONFIG.example
-chmod 755 ${RPM_BUILD_ROOT}OZCLE/openldap/pw-sha2.la ${RPM_BUILD_ROOT}OZCLE/openldap/noopsrch.la
-chmod 755 ${RPM_BUILD_ROOT}OZCL/libldap* ${RPM_BUILD_ROOT}OZCL/liblber*
+rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.a
+rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.a
+rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/etc/openldap/DB_CONFIG.example
+chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.la ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.la
+chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/libldap* ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/liblber*
 
 %package libs
 Summary:        openldap Libaries
@@ -137,66 +139,66 @@ The zimbra-lmdb-devel package contains the linking libraries and include files
 
 %files libs
 %defattr(-,root,root)
-OZCL/*.so.*
-%exclude OZCL/liblmdb.so.0
-%exclude OZCL/liblmdb.so.0.0.0
+/opt/zimbra/common/lib/*.so.*
+%exclude /opt/zimbra/common/lib/liblmdb.so.0
+%exclude /opt/zimbra/common/lib/liblmdb.so.0.0.0
 
 %files devel
 %defattr(-,root,root)
-OZCI
-OZCL/*.a
-OZCL/*.la
-OZCL/*.so
-%exclude OZCI/lmdb.h
-%exclude OZCL/liblmdb.a
-%exclude OZCL/liblmdb.so
+/opt/zimbra/common/include
+/opt/zimbra/common/lib/*.a
+/opt/zimbra/common/lib/*.la
+/opt/zimbra/common/lib/*.so
+%exclude /opt/zimbra/common/include/lmdb.h
+%exclude /opt/zimbra/common/lib/liblmdb.a
+%exclude /opt/zimbra/common/lib/liblmdb.so
 
 %files server
 %defattr(-,root,root)
 /opt/zimbra/common/sbin
-OZCE
-OZCLE
-OZCS/man
-%exclude OZCE/openldap/ldap.conf
-%exclude OZCE/openldap/ldap.conf.default
-%exclude OZCS/man/man1
-%exclude OZCS/man/man5/ldap.conf.5
-%exclude OZCS/man/man5/ldif.5
+/opt/zimbra/common/etc
+/opt/zimbra/common/libexec
+/opt/zimbra/common/share/man
+%exclude /opt/zimbra/common/etc/openldap/ldap.conf
+%exclude /opt/zimbra/common/etc/openldap/ldap.conf.default
+%exclude /opt/zimbra/common/share/man/man1
+%exclude /opt/zimbra/common/share/man/man5/ldap.conf.5
+%exclude /opt/zimbra/common/share/man/man5/ldif.5
 
 %files client
 %defattr(-,root,root)
-OZCB
-OZCE/openldap/ldap.conf
-OZCE/openldap/ldap.conf.default
-OZCS/man/man1
-OZCS/man/man5/ldap.conf.5
-OZCS/man/man5/ldif.5
-%exclude OZCB/mdb_copy
-%exclude OZCB/mdb_dump
-%exclude OZCB/mdb_load
-%exclude OZCB/mdb_stat
-%exclude OZCS/man/man1/mdb_copy.1
-%exclude OZCS/man/man1/mdb_dump.1
-%exclude OZCS/man/man1/mdb_load.1
-%exclude OZCS/man/man1/mdb_stat.1
+/opt/zimbra/common/bin
+/opt/zimbra/common/etc/openldap/ldap.conf
+/opt/zimbra/common/etc/openldap/ldap.conf.default
+/opt/zimbra/common/share/man/man1
+/opt/zimbra/common/share/man/man5/ldap.conf.5
+/opt/zimbra/common/share/man/man5/ldif.5
+%exclude /opt/zimbra/common/bin/mdb_copy
+%exclude /opt/zimbra/common/bin/mdb_dump
+%exclude /opt/zimbra/common/bin/mdb_load
+%exclude /opt/zimbra/common/bin/mdb_stat
+%exclude /opt/zimbra/common/share/man/man1/mdb_copy.1
+%exclude /opt/zimbra/common/share/man/man1/mdb_dump.1
+%exclude /opt/zimbra/common/share/man/man1/mdb_load.1
+%exclude /opt/zimbra/common/share/man/man1/mdb_stat.1
 
 %files -n zimbra-lmdb
 %defattr(-,root,root)
-OZCB/mdb_copy
-OZCB/mdb_dump
-OZCB/mdb_load
-OZCB/mdb_stat
-OZCS/man/man1/mdb_copy.1
-OZCS/man/man1/mdb_dump.1
-OZCS/man/man1/mdb_load.1
-OZCS/man/man1/mdb_stat.1
+/opt/zimbra/common/bin/mdb_copy
+/opt/zimbra/common/bin/mdb_dump
+/opt/zimbra/common/bin/mdb_load
+/opt/zimbra/common/bin/mdb_stat
+/opt/zimbra/common/share/man/man1/mdb_copy.1
+/opt/zimbra/common/share/man/man1/mdb_dump.1
+/opt/zimbra/common/share/man/man1/mdb_load.1
+/opt/zimbra/common/share/man/man1/mdb_stat.1
 
 %files -n zimbra-lmdb-libs
 %defattr(-,root,root)
-OZCL/liblmdb.so.*
+/opt/zimbra/common/lib/liblmdb.so.*
 
 %files -n zimbra-lmdb-devel
 %defattr(-,root,root)
-OZCI/lmdb.h
-OZCL/liblmdb.a
-OZCL/liblmdb.so
+/opt/zimbra/common/include/lmdb.h
+/opt/zimbra/common/lib/liblmdb.a
+/opt/zimbra/common/lib/liblmdb.so
