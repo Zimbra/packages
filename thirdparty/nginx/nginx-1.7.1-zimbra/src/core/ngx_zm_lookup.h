@@ -145,6 +145,8 @@ typedef struct ngx_zm_lookup_ctx_s ngx_zm_lookup_ctx_t;
 #define ZM_LOOKUP_INVALID_RESPONSE        9
 #define ZM_LOOKUP_CLIENT_CONNECTION_CLOSE 10
 #define ZM_LOOKUP_OTHER_ERROR             50
+#define ZM_LOOKUP_SSL_EVENT_SUCCESS       0
+#define ZM_LOOKUP_SSL_EVENT_FAILED        1
 
 /* the protocols nginx lookup can serve for */
 #define ZM_PROTO_UNKNOWN 0
