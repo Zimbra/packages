@@ -754,6 +754,7 @@ ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
     {
         ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
                          "zm lookup: ngx_zm_lookup_ssl_init_connection ssl event failed");
+        ngx_zm_lookup_ssl_handshake(c);
         return ZM_LOOKUP_SSL_EVENT_FAILED;
     }
 
@@ -825,7 +826,12 @@ ngx_zm_lookup_connect (ngx_zm_lookup_ctx_t * ctx)
 #if (NGX_SSL)
 
     if (ctx->handler->ssl && ctx->peer.connection->ssl == NULL) {
-        ngx_zm_lookup_ssl_init_connection(zlcf->ssl, ctx->peer.connection);
+        if(ngx_zm_lookup_ssl_init_connection(zlcf->ssl, ctx->peer.connection) == ZM_LOOKUP_SSL_EVENT_FAILED)
+        {
+            ngx_log_error(NGX_LOG_WARN, ctx->log, 0, "zm lookup: ngx_zm_lookup_connect "
+                    "connect lookup handle error, fail over to the next one");
+            ngx_zm_lookup_connect(ctx);
+        }
         return;
     }
 
