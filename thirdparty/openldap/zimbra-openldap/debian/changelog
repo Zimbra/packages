@@ -1,53 +1,13 @@
-zimbra-openldap (VERSION-1zimbra8.7b9ZAPPEND) unstable; urgency=medium
-
-  * Another upstream fix for ITS#8448, ITS#8460, ITS#8462, ITS#8490, ITS#8493
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 9 Sep 2016 22:26:24 +0000
-
-zimbra-openldap (VERSION-1zimbra8.7b8ZAPPEND) unstable; urgency=medium
-
-  * Import fix from upstream for ITS#8448, ITS#8460, ITS#8462.
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 28 Jul 2016 22:26:24 +0000
-
-zimbra-openldap (VERSION-1zimbra8.7b7ZAPPEND) unstable; urgency=medium
-
-  * Finalized patch for ITS#8432
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 9 Jun 2016 22:26:24 +0000
-
-zimbra-openldap (VERSION-1zimbra8.7b6ZAPPEND) unstable; urgency=medium
-
-  * syncprov patch for ITS#8432
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 9 Jun 2016 22:26:24 +0000
-
-zimbra-openldap (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=medium
-
-  * Debug logging for ITS#8432
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 9 Jun 2016 22:26:24 +0000
-
-zimbra-openldap (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
-
-  * Add patch for ITS#8413
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 27 Apr 2016 22:26:24 +0000
-
-zimbra-openldap (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
-
-  * Fix strip handling so debug packages are correctly generated.  Unique to OpenLDAP.
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 8 Mar 2016 22:26:24 +0000
-
 zimbra-openldap (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
-  * Add patch for ITS#7506
+  * Update multival patch to make sure a->a_numvals matches id2v counts
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 11 Feb 2016 22:26:24 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 18 Jul 2018 15:50:51 +0000
 
 zimbra-openldap (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
-  * Initial Release.
+  * Initial package for OpenLDAP 2.4.46
+  * Includes multival support
+  * Includes upstream fix for ITS#8843
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 1 May 2015 22:26:24 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Apr 2018 15:50:51 +0000
