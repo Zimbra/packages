@@ -3485,7 +3485,7 @@ ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u,
         if (u->peer.tries == 0 || !(u->conf->next_upstream & ft_type) ||
                 (r->method == NGX_HTTP_POST && !((r->uri.len == 1 &&
                         r->uri.data[r->uri.len - 1] == '/') ||
-                        (ngx_strcasecmp(r->uri.data, zlcf->url.data) == 0)))) {
+                        (ngx_strncasecmp(r->uri.data, zlcf->url.data, zlcf->url.len) == 0)))) {
 #if (NGX_HTTP_CACHE)
 
             if (u->cache_status == NGX_HTTP_CACHE_EXPIRED
