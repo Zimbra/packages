@@ -749,21 +749,22 @@ ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
 
     c->log->action = "SSL handshaking to lookup handler";
 
-    rc = ngx_ssl_handshake(c);
-    if(rc == NGX_ERROR)
-    {
-        ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
-                         "zm lookup: ngx_zm_lookup_ssl_init_connection ssl event failed");
-        ngx_zm_lookup_ssl_handshake(c);
-        return ZM_LOOKUP_SSL_EVENT_FAILED;
-    }
-
-    if (rc == NGX_AGAIN) {
-        c->ssl->handler = ngx_zm_lookup_ssl_handshake;
-        ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
-                         "zm lookup: ngx_zm_lookup_ssl_init_connection ngx_ssl_handshake returned NGX_AGAIN");
-        return ZM_LOOKUP_SSL_EVENT_SUCCESS;
-    }
+    do {
+        rc = ngx_ssl_handshake(c);
+        if(rc == NGX_AGAIN)
+        {
+            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+                    "zm lookup: ngx_zm_lookup_ssl_init_connection ngx_ssl_handshake returned NGX_AGAIN");
+            sleep(1);
+        }
+        else if (rc == NGX_ERROR)
+        {
+            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+                    "zm lookup: ngx_zm_lookup_ssl_init_connection ssl event failed");
+            ngx_zm_lookup_ssl_handshake(c);
+            return ZM_LOOKUP_SSL_EVENT_FAILED;
+        }
+    }while (rc == NGX_AGAIN);
 
     ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
             "zm lookup: ngx_zm_lookup_ssl_init_connection before call to ngx_zm_lookup_ssl_handshake");
