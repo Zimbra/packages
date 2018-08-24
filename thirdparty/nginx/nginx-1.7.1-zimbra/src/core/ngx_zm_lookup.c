@@ -764,12 +764,6 @@ ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
             ngx_zm_lookup_ssl_handshake(c);
             return ZM_LOOKUP_SSL_EVENT_FAILED;
         }
-        else
-        {
-            ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
-                    "zm lookup: ngx_zm_lookup_ssl_init_connection ssl event failed with error %i", rc);
-            return ZM_LOOKUP_SSL_EVENT_FAILED; 
-        }
     }while (rc == NGX_AGAIN);
 
     ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
