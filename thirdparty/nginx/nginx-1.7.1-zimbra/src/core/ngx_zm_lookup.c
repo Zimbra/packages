@@ -733,7 +733,7 @@ ngx_zm_lookup_ssl_handshake(ngx_connection_t *c)
     }
 }
 
-static void
+static ngx_flag_t
 ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
 {
     ngx_int_t   rc;
@@ -749,16 +749,27 @@ ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
 
     c->log->action = "SSL handshaking to lookup handler";
 
-    rc = ngx_ssl_handshake(c);
+    do {
+        rc = ngx_ssl_handshake(c);
+        if(rc == NGX_AGAIN)
+        {
+            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+                    "zm lookup: ngx_zm_lookup_ssl_init_connection ngx_ssl_handshake returned NGX_AGAIN");
+            ngx_msleep(5);
+        }
+        else if (rc == NGX_ERROR)
+        {
+            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+                    "zm lookup: ngx_zm_lookup_ssl_init_connection ssl event failed with NGX_ERROR");
+            ngx_zm_lookup_ssl_handshake(c);
+            return ZM_LOOKUP_SSL_EVENT_FAILED;
+        }
+    }while (rc == NGX_AGAIN);
 
-    if (rc == NGX_AGAIN) {
-        c->ssl->handler = ngx_zm_lookup_ssl_handshake;
-        ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
-                         "zm lookup: ngx_ssl_handshake returned NGX_AGAIN");
-        return;
-    }
-
+    ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+            "zm lookup: ngx_zm_lookup_ssl_init_connection before call to ngx_zm_lookup_ssl_handshake");
     ngx_zm_lookup_ssl_handshake(c);
+    return ZM_LOOKUP_SSL_EVENT_SUCCESS;
 }
 
 #endif
@@ -816,7 +827,12 @@ ngx_zm_lookup_connect (ngx_zm_lookup_ctx_t * ctx)
 #if (NGX_SSL)
 
     if (ctx->handler->ssl && ctx->peer.connection->ssl == NULL) {
-        ngx_zm_lookup_ssl_init_connection(zlcf->ssl, ctx->peer.connection);
+        if(ngx_zm_lookup_ssl_init_connection(zlcf->ssl, ctx->peer.connection) == ZM_LOOKUP_SSL_EVENT_FAILED)
+        {
+            ngx_log_error(NGX_LOG_WARN, ctx->log, 0, "zm lookup: ngx_zm_lookup_connect "
+                    "connect lookup handle error for host:%V, uri:%V, fail over to the next one",ctx->peer.name, &handler->uri);
+            ngx_zm_lookup_connect(ctx);
+        }
         return;
     }
 
