@@ -60,6 +60,7 @@ static ngx_flag_t zmauth_check_activesync(ngx_http_request_t *r, void **extra);
 static ngx_flag_t zmauth_check_ews(ngx_http_request_t *r, void **extra);
 static ngx_flag_t zmauth_check_caldav(ngx_http_request_t *r, void **extra);
 static ngx_flag_t zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t *field, void **extra);
+static ngx_flag_t zmauth_check_jwttoken(ngx_http_request_t *r, ngx_str_t *field, void **extra);
 static ngx_flag_t zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t *field,
         void **extra);
 static zmroutetype_t zmauth_check_uri(ngx_http_request_t *r, void **extra);
@@ -76,11 +77,18 @@ static void zmauth_translate_activesync_ews_usr(ngx_pool_t *pool, ngx_str_t *src
         ngx_str_t *tgt);
 static ngx_flag_t ngx_field_from_zmauthtoken(ngx_log_t *log, ngx_pool_t *pool,
         ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value);
+static ngx_flag_t ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value);
+static ngx_flag_t ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_http_headers_in_t *headers_in, ngx_str_t *value);
+static ngx_flag_t ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_str_t *payload, ngx_str_t *value);
 static ngx_flag_t ngx_get_cookie_value(ngx_log_t *log,
         ngx_table_elt_t **cookies, ngx_uint_t ncookies, ngx_str_t *name,
         ngx_str_t *value);
 static ngx_flag_t ngx_get_query_string_arg(ngx_log_t *log, ngx_str_t *args,
         ngx_str_t *name, ngx_str_t *value);
+
 
 static ngx_str_t NGX_ZMAUTHTOKEN_ID = ngx_string("id");
 static ngx_str_t NGX_ZMAUTHTOKEN_VER = ngx_string("version");
@@ -88,6 +96,9 @@ static ngx_str_t NGX_ZMAUTHTOKEN = ngx_string("ZM_AUTH_TOKEN");
 static ngx_str_t NGX_ZMAUTHTOKEN_ADMIN = ngx_string("ZM_ADMIN_AUTH_TOKEN");
 static ngx_str_t NGX_ZAUTHTOKEN = ngx_string("zauthtoken");
 static ngx_str_t NGX_ACCESS_DENIED_ERRMSG = ngx_string("is not allowed on this domain");
+
+static ngx_str_t NGX_ZMJWT_CLAIM_ID = ngx_string("sub");
+static ngx_str_t NGX_ZJWT_QUERY = ngx_string("zjwt");
 
 static ngx_command_t ngx_http_upstream_zmauth_commands[] =
 {
@@ -330,7 +341,6 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
         if (pool == NULL) {
             return NGX_ERROR;
         }
-
         ctx = ngx_pcalloc(pool, sizeof(ngx_http_upstream_zmauth_ctx_t));
         if (ctx == NULL) {
             ngx_destroy_pool(pool);
@@ -338,7 +348,6 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
         }
 
         ngx_http_set_ctx(r, ctx, ngx_http_upstream_zmauth_module);
-
         ctx->pool = pool;
         ctx->zmp = zmp;
 
@@ -346,7 +355,6 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
         ngx_http_cleanup_t * cln = ngx_http_cleanup_add(r, 0);
         cln->handler = ngx_http_upstream_zmauth_cleanup;
         cln->data = r;
-
         work = ngx_pcalloc(pool, sizeof(ngx_zm_lookup_work_t));
         if(work == NULL) {
             ngx_destroy_pool(pool);
@@ -363,7 +371,6 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
         work->alias_check_stat = ZM_ALIAS_NOT_CHECKED;
         work->on_success = zmauth_lookup_result_handler;
         work->on_failure = zmauth_lookup_result_handler;
-
         schema = r->upstream->schema;
         if (schema.len == sizeof("http://") - 1
                 && ngx_strncmp(schema.data, (u_char *)"http://", sizeof("http://") - 1) == 0) {
@@ -373,18 +380,16 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
             work->protocol = ZM_PROTO_HTTPS;
         }
 
-        if (zmp->zmroutetype == zmroutetype_authtoken) {
+        if (zmp->zmroutetype == zmroutetype_authtoken || zmp->zmroutetype == zmroutetype_jwttoken) {
             work->auth_method = ZM_AUTHMETH_ZIMBRAID;
         } else {
             work->auth_method = ZM_AUTHMETH_USERNAME;
         }
-
         if (type == zmauth_admin_console) {
             work->isAdmin = 1;
         }
         ctx->work = work;
         ctx->connect = us->connect;
-
         ngx_zm_lookup(work);
 
         return NGX_AGAIN; // return NGX_AGAIN to indicate this is an async peer init
@@ -1043,6 +1048,176 @@ ngx_field_from_zmauthtoken(ngx_log_t *log, ngx_pool_t *pool,
     return f;
 }
 
+/* extract the jwt token from Header*/
+static ngx_flag_t
+ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_http_headers_in_t *headers_in, ngx_str_t *value) {
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_get_authheader_bearer entered");
+
+    ngx_str_t authValue;
+    ngx_str_t token;
+
+    authValue = headers_in->authorization->value;
+
+    ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_get_authheader_bearer token:%V", &authValue);
+
+    if (authValue.len >= sizeof("Bearer ") - 1
+            && ngx_memcmp(authValue.data,"Bearer ",sizeof("Bearer ")-1)
+            == 0) {
+        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth: ngx_get_authheader_bearer Bearer token found");
+
+        token = authValue;
+        token.data += (sizeof("Bearer ") - 1);
+        token.len -= (sizeof("Bearer ") - 1);
+
+        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth: ngx_get_authheader_bearer Bearer token found:%V", &token);
+        *value = token;
+
+        return 1; 
+    }
+
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_get_authheader_bearer exit");
+
+    return 0;
+}
+
+/* extract claim data from jwt token */
+static ngx_flag_t
+ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value) {
+    ngx_flag_t f;
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_jwttoken entered");
+
+    ngx_str_t pattern = ngx_string("(?<=\\.)(.*?)(?=\\.)");
+    ngx_regex_compile_t rgc;
+    u_char errstr[NGX_MAX_CONF_ERRSTR];
+    ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
+
+    rgc.pattern  = pattern;
+    rgc.pool     = pool;
+    rgc.err.len  = NGX_MAX_CONF_ERRSTR;
+    rgc.err.data = errstr;
+    if (ngx_regex_compile(&rgc) != NGX_OK) {
+        ngx_log_error(NGX_LOG_INFO, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken regex compilation failed. Error:%s", errstr);
+        return 0;
+    }
+
+    int captures[(1 + rgc.captures) * 3];
+    ngx_int_t  n;
+
+    n = ngx_regex_exec(rgc.regex, authtoken, captures, (1 + rgc.captures) * 3);
+    if (n >= 0) {
+        /* string matches expression */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken match found");
+        ngx_str_t encodedPayload;
+        encodedPayload.data = authtoken->data + captures[0];
+        encodedPayload.len = captures[1] - captures[0];
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken payload is %V", &encodedPayload);
+
+        ngx_str_t urlDecodedPayload;
+        urlDecodedPayload.data = ngx_pnalloc(pool, ngx_base64_decoded_length(encodedPayload.len));
+        if (urlDecodedPayload.data == NULL) {
+            ngx_log_error(NGX_LOG_INFO, log, 0,
+                    "zmauth: ngx_claimdata_from_jwttoken memory allocation from pool failed");
+            return NGX_ERROR;
+        }
+
+        if (ngx_decode_base64url(&urlDecodedPayload, &encodedPayload) != NGX_OK) {
+            ngx_log_error(NGX_LOG_INFO, log, 0,
+                    "zmauth: ngx_claimdata_from_jwttoken base64url decoding failed");
+            return 0;
+        }
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken base64url decoded payload is %V", &urlDecodedPayload);
+        int ret = ngx_claimdata_from_payload(log,pool,&urlDecodedPayload,value);
+        return ret;
+    }
+    else if (n == NGX_REGEX_NO_MATCHED) {
+        /* no match was found */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken no match found");
+        return 0;      
+    }
+    else {
+        /* some error */
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken failed: %i", n);
+        return 0;
+    }
+
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_jwttoken exit");
+ 
+    return 0;
+}
+
+/* extract sub data field from payload */
+static ngx_flag_t
+ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
+        ngx_str_t *payload, ngx_str_t *value) {
+    ngx_flag_t f;
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_payload entered");
+
+    ngx_str_t pattern = ngx_string("\"sub\":[\\s]*\"(.*?)\"[\\s]*");
+    ngx_regex_compile_t rgc;
+    u_char errstr[NGX_MAX_CONF_ERRSTR];
+    ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
+
+    rgc.pattern  = pattern;
+    rgc.pool     = pool;
+    rgc.err.len  = NGX_MAX_CONF_ERRSTR;
+    rgc.err.data = errstr;
+    if (ngx_regex_compile(&rgc) != NGX_OK) {
+        ngx_log_error(NGX_LOG_INFO, log, 0,
+                "zmauth: ngx_claimdata_from_payload regex compilation failed. Error:%s", errstr);
+        return 0;
+    }
+
+    int captures[(1 + rgc.captures) * 3];
+    ngx_int_t  n;
+
+    n = ngx_regex_exec(rgc.regex, payload, captures, (1 + rgc.captures) * 3);
+    if (n >= 0) {
+        /* string matches expression */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_payload match found");
+        ngx_str_t subData;
+        subData.data = payload->data + captures[2];
+        subData.len = captures[3] - captures[2];
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_payload subData is %V", &subData);
+        *value = subData;
+        return 1;
+    }
+    else if (n == NGX_REGEX_NO_MATCHED) {
+        /* no match was found */
+        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_payload no match found");
+        return 0;      
+    }
+    else {
+        /* some error */
+        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
+                "zmauth: ngx_claimdata_from_jwttoken failed: %i", n);
+        return 0;
+    }
+
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+            "zmauth: ngx_claimdata_from_payload exit");
+ 
+    return 0;
+}
+
 static void *
 ngx_http_upstream_zmauth_create_srv_conf(ngx_conf_t *cf) {
     ngx_http_upstream_zmauth_srv_conf_t *zscf;
@@ -1421,6 +1596,7 @@ zmauth_check_caldav(ngx_http_request_t *r, void **extra) {
     return f;
 }
 
+
 /* examine request cookies for ZM_AUTH_TOKEN and extract route if so */
 static ngx_flag_t
 zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
@@ -1485,6 +1661,74 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
 
     return f;
 }
+
+/* examine request header and query parameter for jwt token and extract route if so */
+static ngx_flag_t
+zmauth_check_jwttoken(ngx_http_request_t *r, ngx_str_t* field,
+		void **extra) {
+    ngx_pool_t *pool;
+    ngx_log_t *log;
+    ngx_str_t token, value, *pvalue;
+    ngx_flag_t f;
+
+    pool = r->pool;
+    log = r->connection->log;
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth:zmauth_check_jwttoken starts");
+    //Bearer header extraction starts
+    if (r->headers_in.authorization != NULL
+            && r->headers_in.authorization->value.data != NULL) {
+        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth:zmauth_check_jwttoken authorization header exists");
+        f = ngx_get_authheader_bearer(log, pool, &r->headers_in, &token);
+    }
+    //Bearer header extraction ends
+
+    if (!f) {
+        /* if not found, then look in the query string arg zjwt*/
+        f = ngx_get_query_string_arg(log, &r->args, &NGX_ZJWT_QUERY, &token);
+    }
+
+    if (f) {
+        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth:zmauth_check_jwttoken found ZM_JWT_TOKEN:%V", &token);
+
+        f = ngx_claimdata_from_jwttoken(log, pool, &token, field, &value);
+
+        if (f) {
+            ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
+                    "zmauth: got %V:%V from ZM_AUTH_TOKEN", field, &value);
+            if (value.len > 0) {
+                pvalue = ngx_palloc(pool, sizeof(ngx_str_t));
+                if (pvalue == NULL) {
+                    f = 0;
+                } else {
+                    pvalue->data = ngx_pstrdup(pool, &value); /* TODO: shallowcopy? */
+                    if (pvalue->data == NULL) {
+                        f = 0;
+                    } else {
+                        pvalue->len = value.len;
+                        *((ngx_str_t**) extra) = pvalue;
+                    }
+                }
+            } else {
+                f = 0;
+            }
+        } else {
+            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
+                    "zmauth: no %V in ZM_AUTH_TOKEN", field);
+        }
+
+    } else {
+        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
+                "zmauth: no ZM_AUTH_TOKEN",
+                &token);
+    }
+
+    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth:zmauth_check_jwttoken ends");
+    return f;
+}
+
+
 
 /* examine request cookies for ZM_ADMIN_AUTH_TOKEN and extract route if so */
 static ngx_flag_t
@@ -1572,6 +1816,10 @@ zmauth_check_uri(ngx_http_request_t *r, void **extra) {
         rtype = zmroutetype_authtoken;
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
                 "zmauth: routing by ZM_AUTH_TOKEN");
+    } else if (zmauth_check_jwttoken(r, &NGX_ZMJWT_CLAIM_ID, extra)) {
+        rtype = zmroutetype_jwttoken;
+        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
+                "zmauth: routing by ZM_JWT_TOKEN");
     } else {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
                 "zmauth: routing by iphash");
