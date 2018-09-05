@@ -1,9 +1,9 @@
 Summary:            Zimbra components for proxy package
 Name:               zimbra-proxy-components
-Version:            1.0.1
+Version:            1.0.2
 Release:            ITERATIONZAPPEND
 License:            GPL-2
-Requires:           zimbra-proxy-base, zimbra-nginx >= 1.7.1-1zimbra8.7b7ZAPPEND
+Requires:           zimbra-proxy-base, zimbra-nginx >= 1.7.1-1zimbra8.7b9ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
@@ -11,6 +11,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Tue Sep 5 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.2
+- Updated zimbra-nginx package
 * Tue Jul 18 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1
 - Updated zimbra-nginx package
 * Wed Sep 09 2015  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.0
