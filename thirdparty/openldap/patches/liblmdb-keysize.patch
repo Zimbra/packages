@@ -1,0 +1,11 @@
+--- openldap-2.4.46/libraries/liblmdb/mdb.c.orig	2018-09-07 17:18:22.384349450 +0000
++++ openldap-2.4.46/libraries/liblmdb/mdb.c	2018-09-07 17:19:31.115615450 +0000
+@@ -555,7 +555,7 @@
+ 	 *	#MDB_DUPSORT data items must fit on a node in a regular page.
+ 	 */
+ #ifndef MDB_MAXKEYSIZE
+-#define MDB_MAXKEYSIZE	 ((MDB_DEVEL) ? 0 : 511)
++#define MDB_MAXKEYSIZE	 ((MDB_DEVEL) ? 0 : 1533)
+ #endif
+ 
+ 	/**	The maximum size of a key we can write to the environment. */
