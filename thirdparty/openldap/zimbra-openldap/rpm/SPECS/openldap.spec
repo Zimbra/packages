@@ -1,7 +1,7 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
@@ -11,6 +11,8 @@ Patch3:             ITS8054.patch
 Patch4:             ITS8843.patch
 Patch5:             liblmdb-soname.patch
 Patch6:             multival.patch
+Patch7:             liblmdb-keysize.patch
+Patch8:             index-delete.patch
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-libltdl-devel
@@ -21,6 +23,9 @@ URL:                http://www.openldap.org
 The Zimbra openldap build
 
 %changelog
+* Fri Aug 31 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Update multival for new syntax that allows the capability to work around LDMB 0.9 limitations
+- Update liblmdb library to have a larger max keysize
 * Wed Jul 18 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Update multival patch to make sure a->a_numvals matches id2v counts
 * Tue Apr 24 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
@@ -37,6 +42,8 @@ The Zimbra openldap build
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
