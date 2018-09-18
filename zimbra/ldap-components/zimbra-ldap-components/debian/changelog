@@ -1,8 +1,14 @@
+zimbra-ldap-components (1.0.2-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Updated openldap 2.4.47
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 18 Sep 2018 00:00:00 +0000
+
 zimbra-ldap-components (1.0.1-ITERATIONZAPPEND) unstable; urgency=low
 
   * Updated openldap 2.4.46
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 25 Sep 2018 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 25 Jul 2018 00:00:00 +0000
 
 zimbra-ldap-components (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
 
