@@ -4,8 +4,9 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
+Patch0:             makefile_nowerror.patch
+Patch1:             null.patch
 Requires:           zimbra-mta-base
-Patch0:             qpe.patch
 AutoReqProv:        no
 URL:                http://www.pldaniels.com/altermime/
 
@@ -15,6 +16,7 @@ The Zimbra altermime build
 %prep
 %setup -n altermime-0.3-dev
 %patch0 -p1
+%patch1 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \

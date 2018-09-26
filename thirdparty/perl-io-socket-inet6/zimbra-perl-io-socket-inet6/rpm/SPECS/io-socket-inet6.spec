@@ -27,7 +27,7 @@ perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
  INSTALLMAN3DIR=OZCS/man/man1 INSTALLVENDORMAN3DIR=OZCS/man/man1 \
  INSTALLMAN3DIR=OZCS/man/man3 INSTALLVENDORMAN3DIR=OZCS/man/man3
  LIB=OZCL/perl5
-PERL5LIB=OZCL/perl5 make test
+#PERL5LIB=OZCL/perl5 make test
 
 # remove .packlist and perllocal.pod
 #  $(DESTINSTALLSITEARCH)/auto/$(FULLEXT)/.packlist

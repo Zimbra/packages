@@ -20,7 +20,7 @@ endif
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
-all: clean getsrc build pkgrm1
+all: clean getsrc build pkgrm
 
 getsrc: export HGFOREST_REDIRECT=getsource.out
 getsrc:
@@ -35,6 +35,7 @@ getsrc:
 	patch -p1 < $(PKG_ROOT)/patches/fix-source.patch && \
 	echo "Obtaining source for sub modules.  This make take a very long time." && \
 	./get_source.sh -r $(JDK_TAG) || true && \
+	patch -p0 < $(PKG_ROOT)/patches/readdir.patch && \
 	cd .. && \
 	mv jdk$(JDK_SUB_TREE) $(pname)-$(pvers) && \
 	( cd $(pname)-$(pvers) && find . -name ".hg*" | xargs rm -rf ) && \
@@ -44,12 +45,12 @@ getsrc:
 	rm -rf tmp \
 	)
 
-pkgadd:
-	$(PKG_EXTRACT) $(openjdk)
+#pkgadd:
+#	$(PKG_EXTRACT) $(openjdk)
 
-pkgrm: pkgrm%
-pkgrm%:
-	$(PKG_PURGE) $(openjdk-purge)
+#pkgrm: pkgrm%
+#pkgrm%:
+#	$(PKG_PURGE) $(openjdk-purge)
 
 setup:
 	$(generic-setup)

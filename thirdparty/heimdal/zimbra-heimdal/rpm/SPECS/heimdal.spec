@@ -17,7 +17,7 @@ The Zimbra Heimdal Kerberos build for additional encryption services
 %setup -n heimdal-%{version}
 
 %build
-LDFLAGS="-LOZCL -Wl,-rpath,OZCL"; export LDFLAGS; \
+LDFLAGS="-LOZCL -lpthread -Wl,-rpath,OZCL"; export LDFLAGS; \
 CFLAGS="-O2 -g -D_REENTRANT"; export CFLAGS; \
 CPPFLAGS="-IOZCI"; export CPPFLAGS; \
 ./configure --prefix=OZC \

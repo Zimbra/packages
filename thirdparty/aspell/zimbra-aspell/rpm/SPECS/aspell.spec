@@ -4,6 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            LGPL-2.1
 Source:             %{name}-%{version}.tar.gz
+Patch0:             fixes.patch
 BuildRequires:      ncurses-devel
 Requires:           ncurses-libs, zimbra-aspell-libs = %{version}-%{release}
 AutoReqProv:        no
@@ -14,6 +15,7 @@ The Zimbra Aspell build
 
 %prep
 %setup -n aspell-%{version}
+%patch0 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \

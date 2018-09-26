@@ -75,11 +75,7 @@ thirdparty/perl-net-libidn
 thirdparty/perl-math-bigint
 thirdparty/perl-file-libmagic
 thirdparty/perl-convert-asn1
- RHEL6 only:
- thirdparty/perl-storable
- thirdparty/perl-extutils-constant
 thirdparty/perl-socket
-thirdparty/perl-io-socket-inet6
 thirdparty/perl-io-socket-ip
 thirdparty/perl-net-ssleay
 thirdparty/perl-net-ldap

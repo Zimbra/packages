@@ -8,16 +8,16 @@ zspec := $(pname_lc).spec
 
 .PHONY: all clean build pkgadd pkgrm setup
 
-all: clean build pkgrm1
+all: clean build pkgrm
 
 build: setup pkgadd build_$(PKG_EXT)
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-openjdk
 
-pkgrm: pkgrm%
-pkgrm%:
-	$(PKG_PURGE) zimbra-base
+#pkgrm: pkgrm%
+#pkgrm%:
+#	$(PKG_PURGE) zimbra-base
 
 setup:
 	$(generic-setup)
