@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zlib-devel
-Requires:           zlib, zimbra-libxml2-libs = %{version}-%{release}
+Requires:  zimbra-libxml2-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                http://www.xmlsoft.org
 
@@ -27,7 +27,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        LibXML2 Libaries
-Requires: zlib, zimbra-base
+Requires:  zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -35,7 +35,7 @@ The zimbra-libxml2-libs package contains the libxml2 libraries
 
 %package devel
 Summary:        LibXML2 Development
-Requires: zimbra-libxml2-libs = %{version}-%{release}
+Requires:  zimbra-libxml2-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

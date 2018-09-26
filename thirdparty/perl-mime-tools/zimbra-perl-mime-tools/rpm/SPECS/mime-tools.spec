@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-mailtools, zimbra-perl-convert-binhex
-Requires:           zimbra-perl-base, zimbra-perl-mailtools, zimbra-perl-convert-binhex
+Requires:            zimbra-perl-base, zimbra-perl-mailtools, zimbra-perl-convert-binhex
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

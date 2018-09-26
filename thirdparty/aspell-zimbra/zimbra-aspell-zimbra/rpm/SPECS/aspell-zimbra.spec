@@ -4,7 +4,7 @@ Version:            1.0.0
 Release:            ITERATIONZAPPEND
 License:            GPL-2
 BuildRequires:      zimbra-aspell-en
-Requires:           zimbra-aspell-en
+Requires:            zimbra-aspell-en
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

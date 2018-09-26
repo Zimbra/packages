@@ -5,7 +5,7 @@ Release:            1zimbra8.7b2ZAPPEND
 License:            OpenSSL
 Source:             %{name}-%{version}.tar.gz
 Patch:              ipv6.patch
-Requires:           zimbra-openssl-libs = %{version}-%{release}, perl, perl-core
+Requires:            zimbra-openssl-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                https://www.openssl.org/source
 
@@ -35,7 +35,7 @@ chmod u+w ${RPM_BUILD_ROOT}OZCL/lib* ${RPM_BUILD_ROOT}OZCL/engines/*.so
 
 %package libs
 Summary:	SSL Libaries
-Requires: zimbra-base
+Requires:  zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -43,7 +43,7 @@ The zimbra-openssl-libs package contains the openssl libraries
 
 %package devel
 Summary:	SSL Development
-Requires: zimbra-openssl-libs = %{version}-%{release}
+Requires:  zimbra-openssl-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

@@ -6,7 +6,7 @@ License:            GPL-2
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      perl, perl-core
-Requires:           perl, perl-core, zimbra-base
+Requires:  zimbra-base
 AutoReqProv:        no
 
 %define debug_package %{nil}

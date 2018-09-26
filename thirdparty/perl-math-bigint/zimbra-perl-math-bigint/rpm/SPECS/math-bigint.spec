@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-perl-base, perl-Test-Simple
-Requires:           zimbra-perl-base
+Requires:            zimbra-perl-base
 AutoReqProv:        no
 URL:                https://metacpan.org/release/Math-BigInt/
 

@@ -7,7 +7,7 @@ License:            BSD
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-libevent-devel
 BuildRequires:      pkgconfig
-Requires:           zimbra-libevent-libs, zimbra-memcached-base
+Requires:            zimbra-libevent-libs, zimbra-memcached-base
 AutoReqProv:        no
 URL:                http://memcached.org/
 

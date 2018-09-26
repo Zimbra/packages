@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-bdb-devel
-Requires:           zimbra-perl-base, zimbra-bdb-libs
+Requires:            zimbra-perl-base, zimbra-bdb-libs
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

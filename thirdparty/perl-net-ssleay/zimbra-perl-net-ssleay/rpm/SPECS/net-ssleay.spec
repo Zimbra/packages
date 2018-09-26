@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-openssl-devel
-Requires:           zimbra-perl-base, zimbra-openssl-libs
+Requires:            zimbra-perl-base, zimbra-openssl-libs
 AutoReqProv:        no
 URL:                https://metacpan.org/release/Net-SSLeay
 

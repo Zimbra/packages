@@ -26,7 +26,7 @@ rm -rf ${RPM_BUILD_ROOT}OZCB
 
 %package libs
 Summary:        libltdl Libaries
-Requires:       zimbra-ldap-base
+Requires:        zimbra-ldap-base
 AutoReqProv:    no
 
 %description libs
@@ -34,7 +34,7 @@ The zimbra-libltdl-libs package contains the libltdl libraries
 
 %package devel
 Summary:        libltdl Development
-Requires: zimbra-libltdl-libs = %{version}-%{release}
+Requires:  zimbra-libltdl-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

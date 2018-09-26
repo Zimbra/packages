@@ -6,7 +6,7 @@ License:            BSD
 Source:             %{name}-%{version}.tar.gz
 Patch0:             makefile_nowerror.patch
 Patch1:             null.patch
-Requires:           zimbra-mta-base
+Requires:            zimbra-mta-base
 AutoReqProv:        no
 URL:                http://www.pldaniels.com/altermime/
 

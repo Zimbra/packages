@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-3
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      popt-devel
-Requires:           popt, zimbra-base
+Requires:  zimbra-base
 AutoReqProv:        no
 URL:                https://rsync.samba.org
 

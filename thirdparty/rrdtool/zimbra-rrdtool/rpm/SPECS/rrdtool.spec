@@ -9,8 +9,7 @@ BuildRequires:      zimbra-libart-devel
 BuildRequires:      zimbra-freetype-devel
 BuildRequires:      zlib-devel, pkgconfig
 BuildRequires:      perl-devel
-Requires:           zlib, perl, perl-core
-Requires:           zimbra-rrdtool-libs = %{version}-%{release}
+Requires:            zimbra-rrdtool-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                http://oss.oetiker.ch/rrdtool/
 
@@ -38,10 +37,9 @@ rm -f %{buildroot}OZCL/perl5/%{perl_archname}/auto/*/.packlist
 
 %package libs
 Summary:            RRDTool Libaries
-Requires:           zimbra-libpng-libs, zimbra-base
-Requires:           zimbra-libart-libs
-Requires:           zimbra-freetype-libs
-Requires:           zlib, perl, perl-core
+Requires:            zimbra-libpng-libs, zimbra-base
+Requires:            zimbra-libart-libs
+Requires:            zimbra-freetype-libs
 AutoReqProv:        no
 
 %description libs
@@ -49,7 +47,7 @@ The zimbra-rrdtool-libs package contains the rrdtool libraries
 
 %package devel
 Summary:        RRDTool Development
-Requires:       zimbra-rrdtool-libs = %{version}-%{release}
+Requires:        zimbra-rrdtool-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

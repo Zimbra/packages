@@ -8,7 +8,7 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-openldap-devel, zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-perl-convert-asn1
-Requires:           zimbra-perl-base, zimbra-openldap-libs, zimbra-perl-convert-asn1
+Requires:            zimbra-perl-base, zimbra-openldap-libs, zimbra-perl-convert-asn1
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

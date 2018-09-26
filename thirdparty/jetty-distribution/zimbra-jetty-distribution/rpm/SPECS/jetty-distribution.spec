@@ -4,7 +4,7 @@ Version:            VERSION
 Release:            2.PKG_OS_TAG
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
-Requires:           zimbra-store-base
+Requires:            zimbra-store-base
 AutoReqProv:        no
 URL:                https://www.eclipse.org/jetty/
 

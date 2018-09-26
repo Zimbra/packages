@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-uri
-Requires:           zimbra-perl-base, zimbra-perl-uri
+Requires:            zimbra-perl-base, zimbra-perl-uri
 AutoReqProv:        no
 URL:                https://metacpan.org/release/WWW-RobotRules
 

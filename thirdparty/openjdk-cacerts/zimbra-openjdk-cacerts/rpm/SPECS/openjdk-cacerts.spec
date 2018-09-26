@@ -3,7 +3,7 @@ Name:               zimbra-openjdk-cacerts
 Version:            1.0.5
 Release:            ITERATIONZAPPEND
 License:            MPL-2
-Requires:           zimbra-base, zimbra-openjdk
+Requires:            zimbra-base, zimbra-openjdk
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

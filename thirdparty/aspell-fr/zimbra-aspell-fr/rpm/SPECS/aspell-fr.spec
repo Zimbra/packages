@@ -6,7 +6,7 @@ License:            GPL-2.0
 Patch0:             aspell-fr.patch
 Source:             %{name}-%{version}.tar.bz2
 BuildRequires:      zimbra-aspell
-Requires:           zimbra-aspell
+Requires:            zimbra-aspell
 AutoReqProv:        no
 URL:                http://aspell.net/
 

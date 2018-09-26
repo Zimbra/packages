@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
-Requires:           zimbra-base
+Requires:            zimbra-base
 AutoReqProv:        no
 URL:                https://github.com/roehling/postsrsd
 

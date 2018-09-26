@@ -10,8 +10,7 @@ BuildRequires:      libICE-devel, libSM-devel, libXt, libXt-devel, libXrender-de
 BuildRequires:      keyutils-libs-devel, krb5-devel, libcom_err-devel, libselinux-devel
 BuildRequires:      libsepol-devel, openssl-devel, cups-devel, freetype-devel
 BuildRequires:      alsa-lib-devel, java-1.7.0-openjdk-devel
-Requires:           libX11, libXext, libXi, libXrender, libXtst, alsa-lib, freetype
-Requires:           zimbra-base
+Requires:            zimbra-base
 AutoReqProv:        no
 URL:                http://openjdk.java.net/
 

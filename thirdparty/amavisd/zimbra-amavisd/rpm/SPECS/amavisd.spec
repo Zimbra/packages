@@ -9,7 +9,7 @@ Patch1:             amavis-mc.patch
 Patch2:             perl-path.patch
 Patch3:             socketpath.patch
 Patch4:             zmq-sock.patch
-Requires:           perl, zimbra-mta-base
+Requires:  zimbra-mta-base
 AutoReqProv:        no
 URL:                http://www.ijs.si/software/amavisd/
 

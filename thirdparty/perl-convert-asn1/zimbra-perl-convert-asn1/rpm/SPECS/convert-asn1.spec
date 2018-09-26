@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-perl-base, perl-Test-Simple, zimbra-perl-math-bigint
-Requires:           zimbra-perl-base, zimbra-perl-math-bigint
+Requires:            zimbra-perl-base, zimbra-perl-math-bigint
 AutoReqProv:        no
 URL:                https://metacpan.org/release/Convert-ASN1/
 

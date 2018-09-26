@@ -8,8 +8,7 @@ BuildRequires:      zimbra-apr-devel
 BuildRequires:      zimbra-apr-util-devel
 BuildRequires:      zlib-devel
 BuildRequires:      pcre-devel
-Requires:           zlib, pcre
-Requires:           zimbra-apr-libs, zimbra-apr-util-libs, zimbra-apache-base
+Requires:            zimbra-apr-libs, zimbra-apr-util-libs, zimbra-apache-base
 AutoReqProv:        no
 URL:                http://httpd.apache.org/
 
@@ -41,9 +40,9 @@ mv ${RPM_BUILD_ROOT}/OZC/conf/magic ${RPM_BUILD_ROOT}/opt/zimbra/data/httpd/conf
 
 %package devel
 Summary:        Apache HTTPD Development
-Requires: zimbra-httpd = %{version}-%{release}
-Requires: zimbra-apr-devel
-Requires: zimbra-apr-util-devel
+Requires:  zimbra-httpd = %{version}-%{release}
+Requires:  zimbra-apr-devel
+Requires:  zimbra-apr-util-devel
 AutoReqProv:        no
 
 %description devel

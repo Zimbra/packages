@@ -9,9 +9,9 @@ Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-io-compress, zimbra-perl-uri
 BuildRequires:      zimbra-perl-http-date, zimbra-perl-io-html
 BuildRequires:      zimbra-perl-encode-locale, zimbra-perl-lwp-mediatypes
-Requires:           zimbra-perl-base, zimbra-perl-io-compress, zimbra-perl-uri
-Requires:           zimbra-perl-http-date, zimbra-perl-io-html
-Requires:           zimbra-perl-encode-locale, zimbra-perl-lwp-mediatypes
+Requires:            zimbra-perl-base, zimbra-perl-io-compress, zimbra-perl-uri
+Requires:            zimbra-perl-http-date, zimbra-perl-io-html
+Requires:            zimbra-perl-encode-locale, zimbra-perl-lwp-mediatypes
 AutoReqProv:        no
 URL:                https://metacpan.org/release/HTTP-Message
 

@@ -10,10 +10,10 @@ BuildRequires:      zimbra-perl-base, zimbra-perl-encode-locale, zimbra-perl-fil
 BuildRequires:      zimbra-perl-http-cookies, zimbra-perl-http-daemon, zimbra-perl-http-date
 BuildRequires:      zimbra-perl-http-negotiate, zimbra-perl-http-message, zimbra-perl-lwp-mediatypes
 BuildRequires:      zimbra-perl-uri, zimbra-perl-net-http, zimbra-perl-www-robotrules, zimbra-perl-html-parser
-Requires:           zimbra-perl-base, zimbra-perl-encode-locale, zimbra-perl-file-listing
-Requires:           zimbra-perl-http-cookies, zimbra-perl-http-daemon, zimbra-perl-http-date
-Requires:           zimbra-perl-http-negotiate, zimbra-perl-http-message, zimbra-perl-lwp-mediatypes
-Requires:           zimbra-perl-uri, zimbra-perl-net-http, zimbra-perl-www-robotrules, zimbra-perl-html-parser
+Requires:            zimbra-perl-base, zimbra-perl-encode-locale, zimbra-perl-file-listing
+Requires:            zimbra-perl-http-cookies, zimbra-perl-http-daemon, zimbra-perl-http-date
+Requires:            zimbra-perl-http-negotiate, zimbra-perl-http-message, zimbra-perl-lwp-mediatypes
+Requires:            zimbra-perl-uri, zimbra-perl-net-http, zimbra-perl-www-robotrules, zimbra-perl-html-parser
 AutoReqProv:        no
 URL:                https://metacpan.org/release/libwww-perl
 

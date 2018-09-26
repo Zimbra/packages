@@ -8,8 +8,8 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-mime-types, zimbra-perl-email-date-format
 BuildRequires:      zimbra-perl-mailtools
-Requires:           zimbra-perl-base, zimbra-perl-mime-types, zimbra-perl-email-date-format
-Requires:           zimbra-perl-mailtools
+Requires:            zimbra-perl-base, zimbra-perl-mime-types, zimbra-perl-email-date-format
+Requires:            zimbra-perl-mailtools
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MIME-Lite
 

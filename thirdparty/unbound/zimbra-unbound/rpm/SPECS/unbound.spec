@@ -6,8 +6,8 @@ License:            BSD
 Source:             %{name}-%{version}.tar.gz
 Patch0:             log-facility.patch
 BuildRequires:      expat-devel, zimbra-openssl-devel
-Requires:           expat, zimbra-openssl-libs
-Requires:           zimbra-unbound-libs = %{version}-%{release}
+Requires:  zimbra-openssl-libs
+Requires:            zimbra-unbound-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                https://www.unbound.net/
 
@@ -34,7 +34,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        Unbound Libaries
-Requires:       zimbra-openssl-libs, zimbra-dnscache-base
+Requires:        zimbra-openssl-libs, zimbra-dnscache-base
 AutoReqProv:        no
 
 %description libs
@@ -42,7 +42,7 @@ The zimbra-unbound-libs package contains the unbound libraries
 
 %package devel
 Summary:        Unbound Development
-Requires: zimbra-unbound-libs = %{version}-%{release}
+Requires:  zimbra-unbound-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

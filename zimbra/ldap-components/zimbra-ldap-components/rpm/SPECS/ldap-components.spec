@@ -3,8 +3,8 @@ Name:               zimbra-ldap-components
 Version:            1.0.2
 Release:            ITERATIONZAPPEND
 License:            GPL-2
-Requires:           zimbra-ldap-base, zimbra-lmdb >= 2.4.46-1zimbra8.7b3ZAPPEND
-Requires:           zimbra-openldap-server >= 2.4.46-1zimbra8.7b3ZAPPEND
+Requires:            zimbra-ldap-base, zimbra-lmdb >= 2.4.46-1zimbra8.7b3ZAPPEND
+Requires:            zimbra-openldap-server >= 2.4.46-1zimbra8.7b3ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

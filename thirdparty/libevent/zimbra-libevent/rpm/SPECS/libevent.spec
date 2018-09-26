@@ -4,7 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            BSD
 Source:             %{name}-%{version}-stable.tar.gz
-Requires:           zimbra-libevent-libs = %{version}-%{release}
+Requires:            zimbra-libevent-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                http://libevent.org/
 
@@ -25,7 +25,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        libevent Libaries
-Requires:       zimbra-memcached-base
+Requires:        zimbra-memcached-base
 AutoReqProv:        no
 
 %description libs
@@ -33,7 +33,7 @@ The zimbra-libevent-libs package contains the libevent libraries
 
 %package devel
 Summary:        libevent Development
-Requires: zimbra-libevent-libs = %{version}-%{release}
+Requires:  zimbra-libevent-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

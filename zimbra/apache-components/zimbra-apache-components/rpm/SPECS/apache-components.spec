@@ -3,7 +3,7 @@ Name:               zimbra-apache-components
 Version:            1.0.1
 Release:            1zimbra8.7b1ZAPPEND 
 License:            GPL-2
-Requires:           zimbra-apache-base, zimbra-httpd, zimbra-php >= 5.6.31-1zimbra8.7b2ZAPPEND
+Requires:            zimbra-apache-base, zimbra-httpd, zimbra-php >= 5.6.31-1zimbra8.7b2ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

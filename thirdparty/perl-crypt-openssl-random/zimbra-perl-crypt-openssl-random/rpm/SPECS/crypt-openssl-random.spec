@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-perl-base, zimbra-openssl-devel
-Requires:           zimbra-perl-base, zimbra-openssl-libs
+Requires:            zimbra-perl-base, zimbra-openssl-libs
 AutoReqProv:        no
 URL:                http://search.cpan.org/dist/Crypt-OpenSSL-Random/
 

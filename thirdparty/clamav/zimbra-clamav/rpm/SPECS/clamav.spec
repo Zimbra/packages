@@ -9,8 +9,8 @@ BuildRequires:      ncurses-devel
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-libxml2-devel
 BuildRequires:      zimbra-libmilter-devel
-Requires:           zlib, ncurses-libs, zimbra-clamav-libs = %{version}-%{release}, zimbra-openssl-libs
-Requires:           zimbra-libxml2-libs
+Requires:  zimbra-clamav-libs = %{version}-%{release}, zimbra-openssl-libs
+Requires:            zimbra-libxml2-libs
 AutoReqProv:        no
 URL:                http://www.clamav.net/
 
@@ -42,7 +42,7 @@ rm -rf ${RPM_BUILD_ROOT}/usr/lib/systemd
 
 %package libs
 Summary:        ClamAV Libaries
-Requires: zlib, zimbra-openssl-libs, zimbra-libxml2-libs, zimbra-mta-base
+Requires:  zimbra-openssl-libs, zimbra-libxml2-libs, zimbra-mta-base
 AutoReqProv:        no
 
 %description libs
@@ -50,7 +50,7 @@ The zimbra-clamav-libs package contains the clamav libraries
 
 %package devel
 Summary:        ClamAV Development
-Requires: zimbra-clamav-libs = %{version}-%{release}
+Requires:  zimbra-clamav-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

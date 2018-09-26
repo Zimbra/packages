@@ -8,8 +8,8 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-crypt-openssl-rsa zimbra-perl-digest-sha1
 BuildRequires:      zimbra-perl-net-dns zimbra-perl-mailtools
-Requires:           zimbra-perl-base, zimbra-perl-crypt-openssl-rsa zimbra-perl-digest-sha1
-Requires:           zimbra-perl-net-dns zimbra-perl-mailtools
+Requires:            zimbra-perl-base, zimbra-perl-crypt-openssl-rsa zimbra-perl-digest-sha1
+Requires:            zimbra-perl-net-dns zimbra-perl-mailtools
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

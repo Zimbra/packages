@@ -40,7 +40,6 @@ cat 'build-order' | while read DIR ; do
     echo "ERROR, aborting"
     exit 255
   fi
-  make clean
   echo "$DIR" > "$PACKAGES_DIR/last-built"
 done
 

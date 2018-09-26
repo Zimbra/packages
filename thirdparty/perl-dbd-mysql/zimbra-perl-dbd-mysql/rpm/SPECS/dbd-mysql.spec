@@ -8,7 +8,7 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-dbi, zimbra-mariadb-devel
 BuildRequires:      zimbra-openssl-devel
-Requires:           zimbra-perl-base, zimbra-perl-dbi, zimbra-mariadb-libs
+Requires:            zimbra-perl-base, zimbra-perl-dbi, zimbra-mariadb-libs
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

@@ -4,7 +4,6 @@ Version:            1.0.1
 Release:            ITERATIONZAPPEND
 License:            GPL-2
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
-Requires:           shadow-utils
 Group:              Development/Languages
 AutoReqProv:        no
 

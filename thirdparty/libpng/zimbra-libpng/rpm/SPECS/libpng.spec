@@ -24,7 +24,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        libpng Libaries
-Requires:           zlib, zimbra-base
+Requires:  zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -32,7 +32,7 @@ The zimbra-libpng-libs package contains the libpng libraries
 
 %package devel
 Summary:        libpng Development
-Requires: zimbra-libpng-libs = %{version}-%{release}
+Requires:  zimbra-libpng-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

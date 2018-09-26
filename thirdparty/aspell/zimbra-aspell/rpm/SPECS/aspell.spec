@@ -6,7 +6,7 @@ License:            LGPL-2.1
 Source:             %{name}-%{version}.tar.gz
 Patch0:             fixes.patch
 BuildRequires:      ncurses-devel
-Requires:           ncurses-libs, zimbra-aspell-libs = %{version}-%{release}
+Requires:  zimbra-aspell-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                http://aspell.net/
 
@@ -28,7 +28,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        Aspell Libaries
-Requires:       zimbra-spell-base
+Requires:        zimbra-spell-base
 AutoReqProv:        no
 
 %description libs
@@ -36,7 +36,7 @@ The zimbra-aspell-libs package contains the aspell libraries
 
 %package devel
 Summary:        Aspell Development
-Requires: zimbra-aspell-libs = %{version}-%{release}
+Requires:  zimbra-aspell-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

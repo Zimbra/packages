@@ -3,7 +3,7 @@ Name:               zimbra-osl
 Version:            1.0.9
 Release:            ITERATIONZAPPEND
 License:            GPL-2
-Requires:           zimbra-base
+Requires:            zimbra-base
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

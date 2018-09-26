@@ -89,7 +89,7 @@ chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/libldap* ${RPM_BUILD_ROOT}/opt
 
 %package libs
 Summary:        openldap Libaries
-Requires: zimbra-openssl-libs, zimbra-cyrus-sasl-libs, zimbra-base
+Requires:  zimbra-openssl-libs, zimbra-cyrus-sasl-libs, zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -97,7 +97,7 @@ The zimbra-openldap-libs package contains the openldap libraries
 
 %package devel
 Summary:        openldap Development
-Requires: zimbra-openldap-libs = %{version}-%{release}
+Requires:  zimbra-openldap-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel
@@ -105,8 +105,8 @@ The zimbra-openldap-devel package contains the linking libraries and include fil
 
 %package server
 Summary:        openldap server binaries
-Requires: zimbra-openldap-libs = %{version}-%{release}, zimbra-cyrus-sasl-libs
-Requires: zimbra-libltdl-libs, zimbra-ldap-base
+Requires:  zimbra-openldap-libs = %{version}-%{release}, zimbra-cyrus-sasl-libs
+Requires:  zimbra-libltdl-libs, zimbra-ldap-base
 AutoReqProv:        no
 
 %description server
@@ -114,7 +114,7 @@ The zimbra-openldap-server package contains slapd and its modules
 
 %package client
 Summary:        openldap client binaries
-Requires: zimbra-openldap-libs = %{version}-%{release}, zimbra-cyrus-sasl-libs
+Requires:  zimbra-openldap-libs = %{version}-%{release}, zimbra-cyrus-sasl-libs
 AutoReqProv:        no
 
 %description client
@@ -122,7 +122,7 @@ The zimbra-openldap-client package contains client tools such as ldapsearch
 
 %package -n zimbra-lmdb
 Summary:        LMDB binaries
-Requires:       zimbra-ldap-base
+Requires:        zimbra-ldap-base
 AutoReqProv:        no
 
 %description -n zimbra-lmdb
@@ -130,7 +130,7 @@ The zimbra-lmdb package contains the lmdb binary commands
 
 %package -n zimbra-lmdb-libs
 Summary:        LMDB libraries
-Requires:       zimbra-base
+Requires:        zimbra-base
 AutoReqProv:        no
 
 %description -n zimbra-lmdb-libs
@@ -138,7 +138,7 @@ The zimbra-lmdb-libs package contains the lmdb library
 
 %package -n zimbra-lmdb-devel
 Summary:        LMDB Development
-Requires: zimbra-lmdb-libs = %{version}-%{release}
+Requires:  zimbra-lmdb-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description -n zimbra-lmdb-devel

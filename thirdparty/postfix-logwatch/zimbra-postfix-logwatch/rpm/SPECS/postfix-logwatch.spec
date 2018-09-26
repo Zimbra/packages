@@ -4,7 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tgz
-Requires:           zimbra-base
+Requires:            zimbra-base
 AutoReqProv:        no
 URL:                http://www.logwatch.org/
 

@@ -32,7 +32,7 @@ cp -p * ${RPM_BUILD_ROOT}OZCI/libmilter
 
 %package devel
 Summary:        libmilter Development
-Requires:       zimbra-base
+Requires:        zimbra-base
 AutoReqProv:        no
 
 %description devel

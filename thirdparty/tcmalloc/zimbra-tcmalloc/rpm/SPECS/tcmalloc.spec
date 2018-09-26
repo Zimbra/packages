@@ -24,7 +24,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        tcmalloc Libaries
-Requires:       zimbra-base
+Requires:        zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -32,7 +32,7 @@ The zimbra-tcmalloc-libs package contains the tcmalloc libraries
 
 %package devel
 Summary:        tcmalloc Development
-Requires: zimbra-tcmalloc-libs = %{version}-%{release}
+Requires:  zimbra-tcmalloc-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

@@ -5,10 +5,10 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tgz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
-Requires:           zimbra-mta-base, zimbra-perl-base, zimbra-perl-cache-fastmmap
-Requires:           zimbra-perl-config-inifiles, zimbra-perl-dbi, zimbra-perl-dbd-sqlite
-Requires:           zimbra-perl-mail-spf, zimbra-perl-net-cidr, zimbra-perl-net-dns
-Requires:           zimbra-perl-net-server, zimbra-perl-timedate
+Requires:            zimbra-mta-base, zimbra-perl-base, zimbra-perl-cache-fastmmap
+Requires:            zimbra-perl-config-inifiles, zimbra-perl-dbi, zimbra-perl-dbd-sqlite
+Requires:            zimbra-perl-mail-spf, zimbra-perl-net-cidr, zimbra-perl-net-dns
+Requires:            zimbra-perl-net-server, zimbra-perl-timedate
 AutoReqProv:        no
 URL:                http://wiki.policyd.org/
 

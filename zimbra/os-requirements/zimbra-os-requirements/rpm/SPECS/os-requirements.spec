@@ -5,9 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-Requires:           coreutils, expat, file, gmp, libaio, libidn, libstdc++, pcre
-Requires:           perl, perl-core, sudo, sysstat, unzip, zimbra-base
-Requires:           perl-Socket6, OSDEPS
+Requires:  zimbra-base
 AutoReqProv:        no
 
 %define debug_package %{nil}

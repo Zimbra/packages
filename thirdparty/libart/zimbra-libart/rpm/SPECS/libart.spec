@@ -23,7 +23,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        libart Libaries
-Requires:       zimbra-base
+Requires:        zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -31,7 +31,7 @@ The zimbra-libart-libs package contains the libart libraries
 
 %package devel
 Summary:        libart Development
-Requires: zimbra-libart-libs = %{version}-%{release}
+Requires:  zimbra-libart-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

@@ -4,7 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            Sleepycat
 Source:             %{name}-%{version}.tar.gz
-Requires:           zimbra-bdb-libs = %{version}-%{release}
+Requires:            zimbra-bdb-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/downloads/index.html
 
@@ -28,7 +28,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        Berkeley DB Libaries
-Requires:       zimbra-base
+Requires:        zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -36,7 +36,7 @@ The zimbra-bdb-libs package contains the bdb libraries
 
 %package devel
 Summary:        Berkeley DB Development
-Requires: zimbra-bdb-libs = %{version}-%{release}
+Requires:  zimbra-bdb-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

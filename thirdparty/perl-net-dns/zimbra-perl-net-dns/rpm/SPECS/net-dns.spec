@@ -8,8 +8,8 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-digest-hmac, zimbra-perl-digest-sha1
 BuildRequires:      zimbra-perl-io-socket-inet6
-Requires:           zimbra-perl-base, zimbra-perl-digest-hmac, zimbra-perl-digest-sha1
-Requires:           zimbra-perl-io-socket-inet6
+Requires:            zimbra-perl-base, zimbra-perl-digest-hmac, zimbra-perl-digest-sha1
+Requires:            zimbra-perl-io-socket-inet6
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

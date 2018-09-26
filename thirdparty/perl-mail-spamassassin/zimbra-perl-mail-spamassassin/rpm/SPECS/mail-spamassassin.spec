@@ -12,10 +12,10 @@ BuildRequires:      zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-d
 BuildRequires:      zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
 BuildRequires:      zimbra-perl-mail-dkim, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 BuildRequires:      zimbra-perl-encode-detect
-Requires:           zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
-Requires:           zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
-Requires:           zimbra-perl-mail-dkim, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
-Requires:           zimbra-perl-encode-detect, zimbra-mta-base
+Requires:            zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
+Requires:            zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
+Requires:            zimbra-perl-mail-dkim, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
+Requires:            zimbra-perl-encode-detect, zimbra-mta-base
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

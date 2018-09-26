@@ -7,8 +7,8 @@ Source:             %{name}-%{version}.tar.gz
 BuildRequires:      libaio-devel
 BuildRequires:      ncurses-devel
 BuildRequires:      zimbra-openssl-devel
-Requires:           libaio, zimbra-openssl-libs, zimbra-base
-Requires:           zimbra-mariadb-libs = %{version}-%{release}, ncurses-libs, perl
+Requires:  zimbra-openssl-libs, zimbra-base
+Requires:            zimbra-mariadb-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                https://www.mariadb.org/
 
@@ -74,7 +74,7 @@ ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
 
 %package libs
 Summary:        MariaDB Libaries
-Requires: libaio, zimbra-openssl-libs, zimbra-base
+Requires:  zimbra-openssl-libs, zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -82,7 +82,7 @@ The zimbra-mariadb-libs package contains the mariadb libraries
 
 %package devel
 Summary:        MariaDB Development
-Requires: zimbra-mariadb-libs = %{version}-%{release}
+Requires:  zimbra-mariadb-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

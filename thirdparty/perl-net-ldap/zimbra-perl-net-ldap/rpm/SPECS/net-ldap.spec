@@ -8,7 +8,7 @@ Patch0:             net-ldap-keepalive.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-convert-asn1, zimbra-perl-socket-linux
-Requires:           zimbra-perl-base, zimbra-perl-convert-asn1, zimbra-perl-socket-linux
+Requires:            zimbra-perl-base, zimbra-perl-convert-asn1, zimbra-perl-socket-linux
 AutoReqProv:        no
 URL:                https://metacpan.org/release/perl-ldap
 

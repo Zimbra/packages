@@ -11,11 +11,11 @@ BuildRequires:      zimbra-perl-io-sessiondata, zimbra-perl-io-socket-ssl
 BuildRequires:      zimbra-perl-lwp-protocol-https, zimbra-perl-libwww
 BuildRequires:      zimbra-perl-task-weaken, zimbra-perl-uri, zimbra-perl-xml-parser
 BuildRequires:      zimbra-perl-mime-tools, zimbra-perl-xml-parser-lite
-Requires:           zimbra-perl-base, zimbra-perl-class-inspector, zimbra-perl-io-compress
-Requires:           zimbra-perl-io-sessiondata, zimbra-perl-io-socket-ssl
-Requires:           zimbra-perl-lwp-protocol-https, zimbra-perl-libwww
-Requires:           zimbra-perl-task-weaken, zimbra-perl-uri, zimbra-perl-xml-parser
-Requires:           zimbra-perl-mime-tools, zimbra-perl-xml-parser-lite
+Requires:            zimbra-perl-base, zimbra-perl-class-inspector, zimbra-perl-io-compress
+Requires:            zimbra-perl-io-sessiondata, zimbra-perl-io-socket-ssl
+Requires:            zimbra-perl-lwp-protocol-https, zimbra-perl-libwww
+Requires:            zimbra-perl-task-weaken, zimbra-perl-uri, zimbra-perl-xml-parser
+Requires:            zimbra-perl-mime-tools, zimbra-perl-xml-parser-lite
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 

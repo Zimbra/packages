@@ -24,7 +24,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        libbsd Libaries
-Requires:       zimbra-base
+Requires:        zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -32,7 +32,7 @@ The zimbra-libbsd-libs package contains the libbsd libraries
 
 %package devel
 Summary:        libbsd Development
-Requires: zimbra-libbsd-libs = %{version}-%{release}
+Requires:  zimbra-libbsd-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

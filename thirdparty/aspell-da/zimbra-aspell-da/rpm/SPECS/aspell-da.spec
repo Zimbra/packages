@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2.0
 Source:             %{name}-%{version}.tar.bz2
 BuildRequires:      zimbra-aspell
-Requires:           zimbra-aspell
+Requires:            zimbra-aspell
 AutoReqProv:        no
 URL:                http://aspell.net/
 

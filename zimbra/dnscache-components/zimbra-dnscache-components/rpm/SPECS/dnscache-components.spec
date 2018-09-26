@@ -3,7 +3,7 @@ Name:               zimbra-dnscache-components
 Version:            1.0.0
 Release:            ITERATIONZAPPEND
 License:            GPL-2
-Requires:           zimbra-dnscache-base, zimbra-unbound
+Requires:            zimbra-dnscache-base, zimbra-unbound
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

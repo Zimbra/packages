@@ -8,7 +8,7 @@ Patch0:             inno.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-dbd-mysql, zimbra-perl-term-readkey
-Requires:           zimbra-perl-base, zimbra-perl-dbd-mysql, zimbra-perl-term-readkey
+Requires:            zimbra-perl-base, zimbra-perl-dbd-mysql, zimbra-perl-term-readkey
 AutoReqProv:        no
 URL:                https://github.com/innotop/innotop
 

@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-http-date
-Requires:           zimbra-perl-base, zimbra-perl-http-date
+Requires:            zimbra-perl-base, zimbra-perl-http-date
 AutoReqProv:        no
 URL:                https://metacpan.org/release/File-Listing
 
