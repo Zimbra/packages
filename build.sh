@@ -1,5 +1,5 @@
 #!/bin/bash
-# Before ackaging run: spec_required.sh to remove non-Zimbra packages from
+# Before packaging run: spec_required.sh to remove non-Zimbra packages from
 # dependencies.
 # List installed packages: rpm -qa
 # Remove all RPMs: rpm -e $(rpm -qa)
@@ -40,6 +40,7 @@ cat 'build-order' | while read DIR ; do
     echo "ERROR, aborting"
     exit 255
   fi
+  make clean
   echo "$DIR" > "$PACKAGES_DIR/last-built"
 done
 
