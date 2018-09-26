@@ -1,3 +1,4 @@
+osdeps.UBUNTU18_64 := libgmp10, libperl5.22
 osdeps.UBUNTU16_64 := libgmp10, libperl5.22
 osdeps.UBUNTU14_64 := libgmp10, libperl5.18
 osdeps.UBUNTU12_64 := libgmp3c2, libperl5.14
