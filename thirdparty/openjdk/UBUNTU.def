@@ -3,11 +3,35 @@ openjdk.UBUNTU := libx11-dev x11proto-xext-dev libxext-dev \
 	x11proto-fixes-dev x11proto-record-dev libxtst-dev libxt-dev \
  	openjdk-7-jdk libcups2-dev libfreetype6-dev libasound2-dev \
  	ccache
+openjdk.UBUNTU18_64 := openjdk-11-jdk at-spi2-core ca-certificates-java \
+		libatk-bridge2.0-0 libatk-wrapper-java libatk-wrapper-java-jni \
+		libatspi2.0-0 libfontenc1 libgtk-3-0 libgtk-3-bin libice-dev \
+		libice6 libpthread-stubs0-dev libsm-dev libsm6 libx11-dev \
+		libx11-doc libxau-dev libxaw7 libxcb1-dev libxdmcp-dev libxmu6 \
+		libxmuu1 libxpm4 libxt-dev libxt6 libxv1 libxxf86dga1 \
+		openjdk-11-jdk-headless openjdk-11-jre openjdk-11-jre-headless \
+		x11-utils x11proto-core-dev x11proto-dev xorg-sgml-doctools \
+		xtrans-dev libxext-dev libxrender-dev libxtst-dev libxaw7-dev \
+                libxinerama-dev libgtk-3-dev libfontconfig1-dev xvfb xauth \
+                xfonts-base twm x11-xkb-utils graphviz libcups2-dev \
+                libfreetype6-dev libasound2-dev ccache jtreg ant ant-optional
 openjdk.UBUNTU16_64 := $(openjdk.UBUNTU)
 openjdk.UBUNTU14_64 := $(openjdk.UBUNTU)
 openjdk.UBUNTU12_64 := $(openjdk.UBUNTU)
 openjdk-purge.UBUNTU := libxt-dev libxtst-dev libxrender-dev libxext-dev libx11-dev \
 	libcups2-dev libfreetype6-dev libasound2-dev openjdk-7-jdk ccache
+openjdk-purge.UBUNTU18_64 := openjdk-11-jdk at-spi2-core ca-certificates-java \
+                libatk-bridge2.0-0 libatk-wrapper-java libatk-wrapper-java-jni \
+                libatspi2.0-0 libfontenc1 libgtk-3-0 libgtk-3-bin libice-dev \
+                libice6 libpthread-stubs0-dev libsm-dev libsm6 libx11-dev \
+                libx11-doc libxau-dev libxaw7 libxcb1-dev libxdmcp-dev libxmu6 \
+                libxmuu1 libxpm4 libxt-dev libxt6 libxv1 libxxf86dga1 \
+                openjdk-11-jdk-headless openjdk-11-jre openjdk-11-jre-headless \
+                x11-utils x11proto-core-dev x11proto-dev xorg-sgml-doctools \
+                xtrans-dev libxext-dev libxrender-dev libxtst-dev libxaw7-dev \
+		libxinerama-dev libgtk-3-dev libfontconfig1-dev xvfb xauth \
+		xfonts-base twm x11-xkb-utils graphviz libcups2-dev \
+		libfreetype6-dev libasound2-dev ccache jtreg ant ant-optional
 openjdk-purge.UBUNTU16_64 := $(openjdk-purge.UBUNTU) libsctp1 openjdk-7-jre-headless \
 	x11proto-fixes-dev x11proto-record-dev x11proto-render-dev x11proto-xext-dev \
 	x11proto-core-dev x11proto-input-dev xorg-sgml-doctools at-spi2-core \

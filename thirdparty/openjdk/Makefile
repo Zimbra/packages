@@ -25,23 +25,9 @@ all: clean getsrc build pkgrm1
 getsrc: export HGFOREST_REDIRECT=getsource.out
 getsrc:
 	mkdir -p $(SRC_DIR)
-	(echo "Obtaining source for openjdk.  This may take some time." && \
+	(echo "Copying the already created tar to src dir." && \
 	cd $(SRC_DIR) && \
-	mkdir tmp && \
-	cd tmp && \
-	hg clone -r $(JDK_TAG) http://hg.openjdk.java.net/jdk8u/jdk$(JDK_SUB_TREE) && \
-	cd jdk$(JDK_SUB_TREE) && chmod a+rx get_source.sh && \
-	chmod a+rx configure && \
-	patch -p1 < $(PKG_ROOT)/patches/fix-source.patch && \
-	echo "Obtaining source for sub modules.  This make take a very long time." && \
-	./get_source.sh -r $(JDK_TAG) || true && \
-	cd .. && \
-	mv jdk$(JDK_SUB_TREE) $(pname)-$(pvers) && \
-	( cd $(pname)-$(pvers) && find . -name ".hg*" | xargs rm -rf ) && \
-	tar cfz $(pfile) $(pname)-$(pvers) && \
-	mv $(pfile) .. && \
-	cd .. && \
-	rm -rf tmp \
+	cp -vf $(PKG_ROOT)/$(pfile) . \
 	)
 
 pkgadd:
@@ -75,6 +61,7 @@ build_deb:
 	perl -pi -e 's/DEB_BUILD_OPTIONS=nocheck/DEB_BUILD_OPTIONS=nocheck $(UB_REPLACE)/' debian/rules && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 

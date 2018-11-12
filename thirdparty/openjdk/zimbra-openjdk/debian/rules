@@ -9,9 +9,8 @@ override_dh_auto_clean:
 override_dh_auto_configure:
 	./configure --prefix=OZC \
 	--enable-unlimited-crypto \
-	--with-update-version=JDK_UPDATE \
-	--with-build-number=JDK_BUILD \
-	--with-milestone=zimbra
+	--disable-warnings-as-errors \
+	--enable-debug
 
 override_dh_strip:
 	dh_strip -pzimbra-openjdk --dbg-package=zimbra-openjdk-dbg
@@ -26,14 +25,10 @@ override_dh_auto_install:
 	cd $(CURDIR)/debian/tmpOZCL/jvm && ln -s openjdk* java
 	rm -rf $(CURDIR)/debian/tmp/OZCL/jvm/java/demo
 	rm -rf $(CURDIR)/debian/tmp/OZCL/jvm/java/sample
-	rm -f $(CURDIR)/debian/tmp/OZCL/jvm/java/jre/lib/security/cacerts
-	cd $(CURDIR)/debian/tmp/OZCL/jvm/java/jre/lib/security && \
-	ln -s OZCE/java/cacerts cacerts
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/jar
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/java
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/javac
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/javap
-	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/jhat
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/jmap
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/jps
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/jstack
