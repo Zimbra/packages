@@ -1,5 +1,5 @@
 Summary:            Default ruleset for SpamAssassin
-Name:               zimbra-spamassasin-rules
+Name:               zimbra-spamassassin-rules
 Version:            1.0.0
 Release:            ITERATIONZAPPEND
 License:            Apache-2.0
