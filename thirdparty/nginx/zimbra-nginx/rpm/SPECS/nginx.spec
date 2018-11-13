@@ -17,6 +17,9 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Tue Nov 06 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b10ZAPPEND
+- Patch for nginx bug ZESC-821
+- Patch for nginx bug ZBUG-172
 * Thu Aug 30 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b9ZAPPEND
 - ZCS-4021 for JWT support.
 * Fri Aug 24 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b8ZAPPEND
