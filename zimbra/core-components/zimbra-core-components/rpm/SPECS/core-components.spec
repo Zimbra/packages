@@ -9,6 +9,7 @@ Requires:            zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b1ZAPPEND, zimbra-
 Requires:            zimbra-prepflog, zimbra-tcmalloc-libs, zimbra-perl-innotop
 Requires:            zimbra-openjdk >= 1.8.0u172b01-1zimbra8.7b5ZAPPEND, zimbra-openjdk-cacerts, zimbra-amavis-logwatch
 Requires:            zimbra-postfix-logwatch, zimbra-rrdtool
+Provides:           /bin/sh, /bin/bash
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
