@@ -62,6 +62,7 @@ struct ngx_zm_lookup_work_s {
     ngx_str_t      username;        /* the original username given by user */
     ngx_str_t      auth_id;         /* GSSAPI auth id (principal) */
     ngx_flag_t     isAdmin;         /* whether is admin       */
+    ngx_flag_t     isZx;            /* is /zx/ to the dedicated handlers */
     ngx_uint_t     protocol:3;      /* protocol               */
     ngx_uint_t     auth_method:4;   /* auth method            */
     ngx_uint_t     alias_check_stat:2; /* the alias-->account caching lookup status */
