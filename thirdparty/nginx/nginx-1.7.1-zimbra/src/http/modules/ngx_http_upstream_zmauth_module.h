@@ -69,5 +69,8 @@ ngx_int_t ngx_http_upstream_init_zmauth(ngx_conf_t *cf,
 ngx_int_t ngx_http_upstream_init_admin_zmauth(ngx_conf_t *cf,
         ngx_http_upstream_srv_conf_t *us);
 
+ngx_int_t ngx_http_upstream_init_zx_zmauth(ngx_conf_t *cf,
+        ngx_http_upstream_srv_conf_t *us);
+
 #endif
 

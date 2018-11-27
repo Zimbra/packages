@@ -37,8 +37,9 @@ static void ngx_zm_lookup_delete_cache_handler(mc_work_t *work);
 static ngx_str_t
 ngx_zm_lookup_get_user_route_key(ngx_pool_t *pool, ngx_log_t *log,
         ngx_str_t proto, ngx_str_t account_name, ngx_str_t client_ip);
-static ngx_str_t ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool,
-        ngx_log_t *log, ngx_str_t proto, ngx_str_t id, ngx_flag_t isAdmin);
+static ngx_str_t
+ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool, ngx_log_t *log, ngx_str_t proto,
+        ngx_str_t id, ngx_flag_t isAdmin, ngx_flag_t i);
 
 /* lookup from route lookup servlet */
 static void ngx_zm_lookup_dummy_handler(ngx_event_t *ev);
@@ -598,8 +599,9 @@ ngx_zm_lookup_route_from_cache (ngx_zm_lookup_ctx_t *ctx)
     work = ctx->work;
 
     if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
-        key = ngx_zm_lookup_get_id_route_key(pool, log,
-                ZM_PROTO[work->protocol], work->username, work->isAdmin);
+        key = ngx_zm_lookup_get_id_route_key(
+                pool, log, ZM_PROTO[work->protocol], work->username,
+                work->isAdmin, work->isZx);
     } else {
         if (work->alias_check_stat == ZM_ALIAS_FOUND) {
             username = work->account_name;
@@ -994,6 +996,10 @@ ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx)
         len += sizeof ("Auth-Zimbra-Admin: True" CRLF) - 1;
     }
 
+    if (work->isZx) {
+        len += sizeof ("Auth-Zimbra-Zx: True" CRLF) - 1;
+    }
+
     if (IS_PROTO_WEB(work->protocol)) {
         len += sizeof("X-Proxy-Host: ") - 1 + work->virtual_host.len + sizeof(CRLF) - 1;
     }
@@ -1030,7 +1036,11 @@ ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx)
     b->last = ngx_sprintf(b->last, "Client-IP: %V" CRLF, &work->connection->addr_text);
     if (work->isAdmin) {
        b->last = ngx_cpymem(b->last, "Auth-Zimbra-Admin: True" CRLF, sizeof("Auth-Zimbra-Admin: True" CRLF) - 1);
-   }
+    }
+
+    if (work->isZx) {
+        b->last = ngx_cpymem(b->last, "Auth-Zimbra-Zx: True" CRLF, sizeof("Auth-Zimbra-Zx: True" CRLF) - 1);
+    }
 
     if (IS_PROTO_WEB(work->protocol)) {
         b->last = ngx_sprintf(b->last, "X-Proxy-Host: %V" CRLF, &work->virtual_host);
@@ -1981,8 +1991,9 @@ ngx_zm_lookup_cache_route(ngx_zm_lookup_ctx_t *ctx, ngx_str_t user, ngx_str_t ro
     work = ctx->work;
 
     if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
-            key = ngx_zm_lookup_get_id_route_key(ctx->pool, log,
-                    ZM_PROTO[work->protocol], user, work->isAdmin);
+            key = ngx_zm_lookup_get_id_route_key(
+                    ctx->pool, log,
+                    ZM_PROTO[work->protocol], user, work->isAdmin, work->isZx);
     } else {
         if (zlcf->allow_unqualified == 0 && !is_login_qualified(user)) {
             key = ngx_zm_lookup_get_user_route_key(ctx->pool, log,
@@ -2131,8 +2142,9 @@ ngx_zm_lookup_get_http_alias_key (ngx_pool_t *pool, ngx_log_t *log,
 }
 
 static ngx_str_t
-ngx_zm_lookup_get_id_route_key (ngx_pool_t *pool, ngx_log_t *log,
-    ngx_str_t proto, ngx_str_t id, ngx_flag_t isAdmin)
+ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool, ngx_log_t *log,
+        ngx_str_t proto, ngx_str_t id, ngx_flag_t isAdmin,
+        ngx_flag_t isZx)
 {
     ngx_str_t       key;
     size_t          len;
@@ -2146,6 +2158,9 @@ ngx_zm_lookup_get_id_route_key (ngx_pool_t *pool, ngx_log_t *log,
         id.len;
     if (isAdmin) {
         len += sizeof("admin=1;") - 1;
+    }
+    if (isZx) {
+        len += sizeof("zx=1;") - 1;
     }
 
     key.data = ngx_palloc(pool, len);
@@ -2161,6 +2176,9 @@ ngx_zm_lookup_get_id_route_key (ngx_pool_t *pool, ngx_log_t *log,
     *p++ = ';';
     if (isAdmin) {
         p = ngx_cpymem(p, "admin=1;", sizeof("admin=1;") - 1);
+    }
+    if (isZx) {
+        p = ngx_cpymem(p, "zx=1;", sizeof("zx=1;") - 1);
     }
     p = ngx_cpymem(p, "id=", sizeof("id=") - 1);
     p = ngx_cpymem(p, id.data, id.len);
