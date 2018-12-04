@@ -20,13 +20,6 @@
 #include <ngx_http_upstream_zmauth_module.h>
 #include <ctype.h>
 
-/* zmauth type */
-enum ngx_http_zmauth_type {
-    zmauth_web_client,
-    zmauth_admin_console,
-    zmauth_zx
-};
-
 static char *ngx_http_upstream_fair_set_shm_size(ngx_conf_t *cf,
                                                  ngx_command_t *cmd, void *conf);
 static char * ngx_http_upstream_zmauth(ngx_conf_t *cf, ngx_command_t *cmd,
@@ -48,7 +41,7 @@ static ngx_int_t ngx_http_upstream_init_admin_zmauth_peer(ngx_http_request_t *r,
 static ngx_int_t ngx_http_upstream_init_zx_zmauth_peer(ngx_http_request_t *r,
         ngx_http_upstream_srv_conf_t *us);
 static ngx_int_t ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
-        ngx_http_upstream_srv_conf_t *us, enum ngx_http_zmauth_type type);
+        ngx_http_upstream_srv_conf_t *us, ngx_http_zmauth_t type);
 static ngx_int_t ngx_http_upstream_get_zmauth_peer(ngx_peer_connection_t *pc,
         void *data);
 static void ngx_http_upstream_free_zmauth_peer(ngx_peer_connection_t *pc,
@@ -305,7 +298,7 @@ ngx_http_upstream_init_zx_zmauth_peer(ngx_http_request_t *r,
  */
 static ngx_int_t
 ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
-        ngx_http_upstream_srv_conf_t *us, enum ngx_http_zmauth_type type)
+        ngx_http_upstream_srv_conf_t *us, ngx_http_zmauth_t type)
 {
     ngx_http_upstream_zmauth_peer_data_t *zmp;
     struct sockaddr_in                   *sin;
@@ -430,12 +423,9 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
         } else {
             work->auth_method = ZM_AUTHMETH_USERNAME;
         }
-        if (type == zmauth_admin_console) {
-            work->isAdmin = 1;
-        }
-        if (type == zmauth_zx) {
-            work->isZx = 1;
-        }
+
+        work->type = type;
+
         ctx->work = work;
         ctx->connect = us->connect;
         ngx_zm_lookup(work);
