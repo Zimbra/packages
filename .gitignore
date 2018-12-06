@@ -1,1 +1,3 @@
 build/
+thirdparty/openjdk/openjdk-11.28.tgz
+thirdparty/openjdk/make_openjdk11.log

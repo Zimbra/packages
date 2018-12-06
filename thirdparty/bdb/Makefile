@@ -7,7 +7,7 @@ pname := bdb
 uname := db
 pfile := $(uname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://ftp.nsysu.edu.tw/FreeBSD/ports/distfiles/bdb/$(pfile)
+purl := https://ftp.tw.freebsd.org/distfiles/bdb/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

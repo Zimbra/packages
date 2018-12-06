@@ -4,9 +4,9 @@ include $(PKG_ROOT)/../../package.def
 
 pvers := $(FREETYPE_VERSION)
 pname := freetype
-pfile := $(pname)-$(pvers).tar.gz
+pfile := $(pname)-$(pvers).tar.bz2
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://download.savannah.gnu.org/releases/freetype/$(pfile)
+purl := https://oss.oetiker.ch/rrdtool/pub/libs/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
@@ -33,14 +33,14 @@ build_rpm:
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
 
-build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
+build_deb: z_tgz = $(zname)_$(pvers).orig.tar.bz2
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
 build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
-	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(TAR) xfj ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
 clean:

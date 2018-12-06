@@ -2,13 +2,13 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-pvers := $(MAIL_DKIM)
+pvers := 0.43
 pname := Mail-DKIM
 pname_lc := mail-dkim
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/J/JA/JASLONG/$(pfile)
+purl := https://www.cpan.org/modules/by-module/Mail/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 

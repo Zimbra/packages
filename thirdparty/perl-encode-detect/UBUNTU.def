@@ -1,4 +1,5 @@
 module-build.UBUNTU :=
+module-build.UBUNTU18_64 := libmodule-build-perl
 module-build.UBUNTU16_64 := libmodule-build-perl
 module-build.UBUNTU14_64 := $(module-build.UBUNTU)
 module-build.UBUNTU12_64 := $(module-build.UBUNTU)

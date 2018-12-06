@@ -2,7 +2,7 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-pvers := $(NET_SERVER)
+pvers := 2.009
 pname := Net-Server
 pname_lc := net-server
 

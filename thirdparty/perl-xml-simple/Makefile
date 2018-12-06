@@ -2,7 +2,7 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-pvers := $(XML_SIMPLE)
+pvers := 2.25
 pname := XML-Simple
 pname_lc := xml-simple
 

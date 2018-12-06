@@ -2,13 +2,13 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-pvers := $(DBD_MYSQL)
+pvers := 4.043
 pname := DBD-mysql
 pname_lc := dbd-mysql
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/$(pfile)
+purl := https://www.cpan.org/modules/by-module/DBD/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
