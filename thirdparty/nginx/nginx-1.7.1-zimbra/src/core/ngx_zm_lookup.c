@@ -744,7 +744,7 @@ ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
         != NGX_OK)
     {
         ngx_zm_lookup_close_connection(ctx);
-        return;
+        return ZM_LOOKUP_SSL_EVENT_FAILED;
     }
 
     c->log->action = "SSL handshaking to lookup handler";
