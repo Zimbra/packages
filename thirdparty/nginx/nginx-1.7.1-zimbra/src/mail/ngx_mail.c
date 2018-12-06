@@ -327,6 +327,9 @@ found:
 #if (NGX_HAVE_INET6 && defined IPV6_V6ONLY)
     addr->ipv6only = listen->ipv6only;
 #endif
+    /* Zimbra support for netscaler cip */
+    addr->netscaler_cip = listen->netscaler_cip;
+    addr->netscaler_cip_magic = listen->netscaler_cip_magic;
 
     return NGX_OK;
 }
@@ -464,6 +467,9 @@ ngx_mail_add_addrs(ngx_conf_t *cf, ngx_mail_port_t *mport,
 #if (NGX_MAIL_SSL)
         addrs[i].conf.ssl = addr[i].ssl;
 #endif
+        /* Zimbra support for netscaler cip */
+        addrs[i].conf.netscaler_cip = addr[i].netscaler_cip;
+        addrs[i].conf.netscaler_cip_magic = addr[i].netscaler_cip_magic;
 
         len = ngx_sock_ntop(addr[i].sockaddr, addr[i].socklen, buf,
                             NGX_SOCKADDR_STRLEN, 1);
@@ -513,6 +519,9 @@ ngx_mail_add_addrs6(ngx_conf_t *cf, ngx_mail_port_t *mport,
 #if (NGX_MAIL_SSL)
         addrs6[i].conf.ssl = addr[i].ssl;
 #endif
+        /* Zimbra support for netscaler cip */
+        addrs6[i].conf.netscaler_cip = addr[i].netscaler_cip;
+        addrs6[i].conf.netscaler_cip_magic = addr[i].netscaler_cip_magic;
 
         len = ngx_sock_ntop(addr[i].sockaddr, addr[i].socklen, buf,
                             NGX_SOCKADDR_STRLEN, 1);

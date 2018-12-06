@@ -28,6 +28,13 @@ static void ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c);
 static void ngx_mail_ssl_handshake_handler(ngx_connection_t *c);
 #endif
 
+/* Zimbra support for netscaler cip */
+static void ngx_mail_netscaler_cip_init(ngx_connection_t *c);
+static void ngx_mail_netscaler_cip_handler(ngx_event_t *rev);
+#if (NGX_MAIL_SSL)
+static void ngx_mail_ssl_handshake_start(ngx_connection_t *c);
+#endif
+
 static int ngx_mail_create_sasl_context(ngx_connection_t *s);
 static void ngx_mail_dispose_sasl_context(ngx_mail_session_t *s);
 static int ngx_mail_initialize_sasl(ngx_connection_t *c);
@@ -202,7 +209,7 @@ ngx_mail_init_connection(ngx_connection_t *c)
         c->log->action = "SSL handshaking";
 
         ngx_mail_ssl_init_connection(&sslcf->ssl, c);
-        return;
+        /* no return */
     }
 
     if (addr_conf->ssl) {
@@ -218,9 +225,26 @@ ngx_mail_init_connection(ngx_connection_t *c)
         }
 
         ngx_mail_ssl_init_connection(&sslcf->ssl, c);
+        /* no return */
+    }
+
+    }
+#endif
+
+    /* Zimbra support for netscaler cip */
+    if (addr_conf->netscaler_cip) {
+        s->netscaler_cip_magic = addr_conf->netscaler_cip_magic;
+        /* Handle the CIP header, then transfer control either to
+         * ngx_mail_ssl_handshake_start or ngx_mail_init_session
+         */
+        ngx_mail_netscaler_cip_init(c);
         return;
     }
 
+#if (NGX_MAIL_SSL)
+    if (c->ssl) {
+        ngx_mail_ssl_handshake_start(c);
+        return;
     }
 #endif
 
@@ -246,19 +270,25 @@ ngx_mail_starttls_handler(ngx_event_t *rev)
     sslcf = ngx_mail_get_module_srv_conf(s, ngx_mail_ssl_module);
 
     ngx_mail_ssl_init_connection(&sslcf->ssl, c);
+    ngx_mail_ssl_handshake_start(c);
 }
 
 
 static void
 ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c)
 {
-    ngx_mail_session_t        *s;
-    ngx_mail_core_srv_conf_t  *cscf;
-
+    /* Initialize SSL but do not handshake yet */
     if (ngx_ssl_create_connection(ssl, c, 0) == NGX_ERROR) {
         ngx_mail_close_connection(c);
         return;
     }
+}
+
+void
+ngx_mail_ssl_handshake_start(ngx_connection_t *c)
+{
+    ngx_mail_session_t        *s;
+    ngx_mail_core_srv_conf_t  *cscf;
 
     if (ngx_ssl_handshake(c) == NGX_AGAIN) {
 
@@ -275,7 +305,6 @@ ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c)
 
     ngx_mail_ssl_handshake_handler(c);
 }
-
 
 static void
 ngx_mail_ssl_handshake_handler(ngx_connection_t *c)
@@ -309,6 +338,193 @@ ngx_mail_ssl_handshake_handler(ngx_connection_t *c)
 
 #endif
 
+/* Zimbra support for netscaler cip */
+void ngx_mail_netscaler_cip_init(ngx_connection_t *c)
+{
+    ngx_mail_session_t        *s;
+    ngx_mail_core_srv_conf_t  *cscf;
+
+    s = c->data;
+    cscf = ngx_mail_get_module_srv_conf(s, ngx_mail_core_module);
+
+    c->log->action = "reading netscaler CIP header";
+    ngx_add_timer(c->read, cscf->timeout);
+    c->read->handler = ngx_mail_netscaler_cip_handler;
+    if (ngx_handle_read_event(c->read, 0) != NGX_OK) {
+        ngx_mail_close_connection(c);
+    }
+}
+
+/* Zimbra support for netscaler cip */
+void ngx_mail_netscaler_cip_handler(ngx_event_t *rev)
+{
+#define NGX_NETSCALER_CIP_MAX_HEADER 256
+    u_char               *p, buf[NGX_NETSCALER_CIP_MAX_HEADER];
+    ssize_t               n;
+    ngx_err_t             err;
+    ngx_connection_t     *c;
+    ngx_mail_session_t   *s;
+    ngx_mail_log_ctx_t   *ctx;
+    u_int                 magic, len;
+    u_short               type, h_len, ip_len;
+    ngx_str_t             addr_text;
+
+    c = rev->data;
+    s = c->data;
+    ctx = c->log->data;
+
+    if (rev->timedout) {
+        c->timedout = 1;
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    n = recv(c->fd, (char *) buf, NGX_NETSCALER_CIP_MAX_HEADER, MSG_PEEK);
+    err = ngx_socket_errno;
+    if (n < 12) {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "short read");
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    magic = ntohl(*(u_int *)(buf));
+    len   = ntohl(*(u_int *)(buf + 4));
+    type  = ntohs(*(u_short *)(buf + 8));
+    h_len = ntohs(*(u_short *)(buf + 10));
+
+    if (type != 1) {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "bad type (expected 1, got %ud)", type);
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    if (magic != s->netscaler_cip_magic) {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "bad magic (expected %ud, got %ud)", s->netscaler_cip_magic, magic);
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    if (n < len) {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "short read (%ud < %ud)", n, len);
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    if (len != h_len + 12U) {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "length mismatch (%ud != %ud)", len, h_len + 12U);
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    n = c->recv(c, buf, len);
+    if (n != (ssize_t) len) {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "recv(): %d", n);
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    p = buf + 12;
+    if (h_len < 20) {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "short ip header (%d < 20)", h_len);
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    u_char ip_version = *p >> 4;
+    if (ip_version == 4) {
+        struct sockaddr_in *sa4 = ngx_pcalloc(c->pool, sizeof(*sa4));
+        if (sa4 == NULL) {
+            ngx_log_error(NGX_LOG_ERR, c->log, 0, "bad palloc");
+            ngx_mail_close_connection(c);
+            return;
+        }
+        sa4->sin_family = AF_INET;
+        ngx_memcpy(&sa4->sin_addr, p + 12, sizeof(sa4->sin_addr));
+
+        ip_len = (*p & 0xf) << 2;
+        if (h_len < ip_len + 20) {
+            ngx_log_error(NGX_LOG_ERR, c->log, 0, "short tcp/ip header (%d < %d)", h_len, ip_len + 20);
+            ngx_mail_close_connection(c);
+            return;
+        }
+
+        if (p[9] != IPPROTO_TCP) {
+           ngx_log_error(NGX_LOG_ERR, c->log, 0, "unsupported non-TCP protocol: 0x%xd", p[9]);
+            ngx_mail_close_connection(c);
+            return;
+        }
+
+        ctx->client_port = (p[ip_len] << 8) | p[ip_len + 1];
+        sa4->sin_port = htons(ctx->client_port);
+
+        addr_text.data = ngx_pnalloc(c->pool, NGX_INET_ADDRSTRLEN);
+        if (addr_text.data == NULL) {
+            ngx_log_error(NGX_LOG_ERR, c->log, 0, "bad palloc");
+            ngx_mail_close_connection(c);
+            return;
+        }
+        addr_text.len = ngx_sock_ntop((struct sockaddr *) sa4, sizeof(*sa4), addr_text.data, NGX_INET_ADDRSTRLEN, 0);
+
+        c->sockaddr = (struct sockaddr *) sa4;
+        c->socklen = sizeof(*sa4);
+        c->addr_text = addr_text;
+#if (NGX_HAVE_INET6)
+    } else if (ip_version == 6) {
+        struct sockaddr_in6 *sa6 = ngx_pcalloc(c->pool, sizeof(*sa6));
+        if (sa6 == NULL) {
+            ngx_log_error(NGX_LOG_ERR, c->log, 0, "bad palloc");
+            ngx_mail_close_connection(c);
+            return;
+        }
+        sa6->sin6_family = AF_INET6;
+        ngx_memcpy(&sa6->sin6_addr, p + 8, sizeof(sa6->sin6_addr));
+
+        ip_len = 40;
+        if (h_len < ip_len + 20) {
+            ngx_log_error(NGX_LOG_ERR, c->log, 0, "short tcp/ip header (%d < %d)", h_len, ip_len + 20);
+            ngx_mail_close_connection(c);
+            return;
+        }
+
+        if (p[6] != IPPROTO_TCP) {
+            ngx_log_error(NGX_LOG_ERR, c->log, 0, "unsupported non-TCP protocol: 0x%xd", p[6]);
+            ngx_mail_close_connection(c);
+            return;
+        }
+
+        ctx->client_port = (p[ip_len] << 8) | p[ip_len + 1];
+        sa6->sin6_port = htons(ctx->client_port);
+
+        addr_text.data = ngx_pnalloc(c->pool, NGX_INET6_ADDRSTRLEN);
+        if (addr_text.data == NULL) {
+            ngx_log_error(NGX_LOG_ERR, c->log, 0, "bad palloc");
+            ngx_mail_close_connection(c);
+            return;
+        }
+        addr_text.len = ngx_sock_ntop((struct sockaddr *) sa6, sizeof(*sa6), addr_text.data, NGX_INET6_ADDRSTRLEN, 0);
+
+        c->sockaddr = (struct sockaddr *) sa6;
+        c->socklen = sizeof(*sa6);
+        c->addr_text = addr_text;
+#endif
+    } else {
+        ngx_log_error(NGX_LOG_ERR, c->log, 0, "bad ip version: %d", ip_version);
+        ngx_mail_close_connection(c);
+        return;
+    }
+
+    ngx_log_error(NGX_LOG_INFO, c->log, 0, "rewrote client address");
+
+#if (NGX_MAIL_SSL)
+    if (c->ssl) {
+        c->log->action = "SSL handshaking";
+        ngx_mail_ssl_handshake_start(c);
+        return;
+    }
+#endif
+
+    ngx_mail_init_session(c);
+}
 
 static void
 ngx_mail_init_session(ngx_connection_t *c)
