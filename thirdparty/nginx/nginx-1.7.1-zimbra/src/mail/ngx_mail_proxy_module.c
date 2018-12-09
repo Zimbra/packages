@@ -1742,6 +1742,13 @@ ngx_mail_proxy_upstream_error(ngx_mail_session_t *s)
         ngx_log_debug1(NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
                        "close mail proxy connection: %d",
                        s->proxy->upstream.connection->fd);
+#if (NGX_MAIL_SSL)
+
+        if (s->proxy->upstream.connection->ssl) {
+            s->proxy->upstream.connection->ssl->no_wait_shutdown = 1;
+            ngx_ssl_shutdown(s->proxy->upstream.connection);
+        }
+#endif
 
         ngx_close_connection(s->proxy->upstream.connection);
     }
@@ -1763,6 +1770,13 @@ ngx_mail_proxy_internal_server_error(ngx_mail_session_t *s)
         ngx_log_debug1(NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
                        "close mail proxy connection: %d",
                        s->proxy->upstream.connection->fd);
+#if (NGX_MAIL_SSL)
+
+        if (s->proxy->upstream.connection->ssl) {
+            s->proxy->upstream.connection->ssl->no_wait_shutdown = 1;
+            ngx_ssl_shutdown(s->proxy->upstream.connection);
+        }
+#endif
 
         ngx_close_connection(s->proxy->upstream.connection);
     }
@@ -2058,6 +2072,13 @@ static void ngx_mail_proxy_choke_session(ngx_mail_session_t *s)
         ngx_log_debug1(NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
                        "close mail proxy connection: %d",
                        s->proxy->upstream.connection->fd);
+#if (NGX_MAIL_SSL)
+
+        if (s->proxy->upstream.connection->ssl) {
+            s->proxy->upstream.connection->ssl->no_wait_shutdown = 1;
+            ngx_ssl_shutdown(s->proxy->upstream.connection);
+        }
+#endif
 
         ngx_close_connection(s->proxy->upstream.connection);
     }
