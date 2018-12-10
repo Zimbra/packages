@@ -42,11 +42,14 @@ typedef struct {
     unsigned                ipv6only:1;
 #endif
     unsigned                so_keepalive:2;
+    /* Zimbra support for netscaler cip */
+    unsigned                netscaler_cip:1;
 #if (NGX_HAVE_KEEPALIVE_TUNABLE)
     int                     tcp_keepidle;
     int                     tcp_keepintvl;
     int                     tcp_keepcnt;
 #endif
+    unsigned                netscaler_cip_magic;
 } ngx_mail_listen_t;
 
 
@@ -56,6 +59,9 @@ typedef struct {
 #if (NGX_MAIL_SSL)
     ngx_uint_t              ssl;    /* unsigned   ssl:1; */
 #endif
+    /* Zimbra support for netscaler cip */
+    unsigned                netscaler_cip:1;
+    ngx_uint_t              netscaler_cip_magic;
 } ngx_mail_addr_conf_t;
 
 typedef struct {
@@ -103,11 +109,14 @@ typedef struct {
     unsigned                ipv6only:1;
 #endif
     unsigned                so_keepalive:2;
+    /* Zimbra support for netscaler cip */
+    unsigned                netscaler_cip:1;
 #if (NGX_HAVE_KEEPALIVE_TUNABLE)
     int                     tcp_keepidle;
     int                     tcp_keepintvl;
     int                     tcp_keepcnt;
 #endif
+    ngx_uint_t              netscaler_cip_magic;
 } ngx_mail_conf_addr_t;
 
 
@@ -316,6 +325,9 @@ typedef struct {
 
     /* clean up */
     ngx_mail_cleanup_t    *cleanup;
+
+    /* Zimbra support for netscaler cip */
+    ngx_uint_t              netscaler_cip_magic;
 } ngx_mail_session_t;
 
 

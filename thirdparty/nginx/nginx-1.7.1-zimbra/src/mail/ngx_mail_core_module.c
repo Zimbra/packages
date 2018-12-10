@@ -641,6 +641,20 @@ ngx_mail_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 #endif
         }
 
+        /* Zimbra support for netscaler cip */
+        if (ngx_strncmp(value[i].data, "netscaler_cip=", 14) == 0) {
+            ngx_int_t magic;
+            magic = ngx_atoi(value[i].data + 14, value[i].len - 14);
+            if (magic == NGX_ERROR) {
+                ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                                   "invalid netscaler_cip magic number \"%V\"", &value[i]);
+                return NGX_CONF_ERROR;
+            }
+            ls->netscaler_cip = 1;
+            ls->netscaler_cip_magic = magic;
+            continue;
+        }
+
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                            "the invalid \"%V\" parameter", &value[i]);
         return NGX_CONF_ERROR;
