@@ -20,17 +20,14 @@
 #include <ngx_http_upstream_zmauth_module.h>
 #include <ctype.h>
 
-/* zmauth type */
-enum ngx_http_zmauth_type {
-    zmauth_web_client,
-    zmauth_admin_console
-};
-
 static char *ngx_http_upstream_fair_set_shm_size(ngx_conf_t *cf,
                                                  ngx_command_t *cmd, void *conf);
 static char * ngx_http_upstream_zmauth(ngx_conf_t *cf, ngx_command_t *cmd,
         void *conf);
 static char * ngx_http_upstream_zmauth_admin(ngx_conf_t *cf, ngx_command_t *cmd,
+        void *conf);
+
+static char * ngx_http_upstream_zmauth_zx(ngx_conf_t *cf, ngx_command_t *cmd,
         void *conf);
 
 static void *ngx_http_upstream_zmauth_create_srv_conf(ngx_conf_t *cf);
@@ -41,8 +38,10 @@ static ngx_int_t ngx_http_upstream_init_zmauth_peer(ngx_http_request_t *r,
         ngx_http_upstream_srv_conf_t *us);
 static ngx_int_t ngx_http_upstream_init_admin_zmauth_peer(ngx_http_request_t *r,
         ngx_http_upstream_srv_conf_t *us);
+static ngx_int_t ngx_http_upstream_init_zx_zmauth_peer(ngx_http_request_t *r,
+        ngx_http_upstream_srv_conf_t *us);
 static ngx_int_t ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
-        ngx_http_upstream_srv_conf_t *us, enum ngx_http_zmauth_type type);
+        ngx_http_upstream_srv_conf_t *us, ngx_http_zmauth_t type);
 static ngx_int_t ngx_http_upstream_get_zmauth_peer(ngx_peer_connection_t *pc,
         void *data);
 static void ngx_http_upstream_free_zmauth_peer(ngx_peer_connection_t *pc,
@@ -119,6 +118,13 @@ static ngx_command_t ngx_http_upstream_zmauth_commands[] =
     { ngx_string("zmauth_admin"),
       NGX_HTTP_UPS_CONF|NGX_CONF_NOARGS,
       ngx_http_upstream_zmauth_admin,
+      0,
+      0,
+      NULL },
+
+    { ngx_string("zmauth_zx"),
+      NGX_HTTP_UPS_CONF|NGX_CONF_NOARGS,
+      ngx_http_upstream_zmauth_zx,
       0,
       0,
       NULL },
@@ -214,6 +220,20 @@ ngx_http_upstream_zmauth_admin(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     return NGX_CONF_OK;
 }
 
+static char *
+ngx_http_upstream_zmauth_zx(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+{
+    ngx_http_upstream_srv_conf_t *uscf;
+
+    uscf = ngx_http_conf_get_module_srv_conf(cf, ngx_http_upstream_module);
+    uscf->peer.init_upstream = ngx_http_upstream_init_zx_zmauth;
+
+    uscf->flags = NGX_HTTP_UPSTREAM_CREATE | NGX_HTTP_UPSTREAM_MAX_FAILS
+                  | NGX_HTTP_UPSTREAM_FAIL_TIMEOUT | NGX_HTTP_UPSTREAM_DOWN | NGX_HTTP_UPSTREAM_VERSION;
+
+    return NGX_CONF_OK;
+}
+
 /* This is the 'init_upstream' routine -- called when the main upstream
  configuration is initialized -- at this point, all the component servers
  in the upstream block should already be known, so that data-structures
@@ -241,6 +261,17 @@ ngx_http_upstream_init_admin_zmauth(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t
     return NGX_OK;
 }
 
+ngx_int_t
+ngx_http_upstream_init_zx_zmauth(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
+{
+    if (ngx_http_upstream_init_fair(cf, us) != NGX_OK) {
+        return NGX_ERROR;
+    }
+
+    us->peer.init = ngx_http_upstream_init_zx_zmauth_peer;
+    return NGX_OK;
+}
+
 static ngx_int_t
 ngx_http_upstream_init_zmauth_peer(ngx_http_request_t *r,
         ngx_http_upstream_srv_conf_t *us)
@@ -255,12 +286,19 @@ ngx_http_upstream_init_admin_zmauth_peer(ngx_http_request_t *r,
     return ngx_http_upstream_do_init_zmauth_peer(r, us, zmauth_admin_console);
 }
 
+static ngx_int_t
+ngx_http_upstream_init_zx_zmauth_peer(ngx_http_request_t *r,
+                                         ngx_http_upstream_srv_conf_t *us)
+{
+    return ngx_http_upstream_do_init_zmauth_peer(r, us, zmauth_zx);
+}
+
 /* This function is called when an incoming http request needs to be routed to
  one of the peers inside the upstream block
  */
 static ngx_int_t
 ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
-        ngx_http_upstream_srv_conf_t *us, enum ngx_http_zmauth_type type)
+        ngx_http_upstream_srv_conf_t *us, ngx_http_zmauth_t type)
 {
     ngx_http_upstream_zmauth_peer_data_t *zmp;
     struct sockaddr_in                   *sin;
@@ -317,7 +355,7 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
     zmp->hash = 89;
     zmp->tries = 0;
 
-    if (type == zmauth_web_client) {
+    if (type == zmauth_web_client || type == zmauth_zx) {
         zmp->zmroutetype = zmauth_check_uri(r, &info);
         if (&zmp->fp && (zmp->zmroutetype == zmroutetype_authtoken) && zmauth_check_authtoken(r, &NGX_ZMAUTHTOKEN_VER, &ver)) {
         	zmp->fp.version = *((ngx_str_t*) ver);
@@ -385,9 +423,9 @@ ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
         } else {
             work->auth_method = ZM_AUTHMETH_USERNAME;
         }
-        if (type == zmauth_admin_console) {
-            work->isAdmin = 1;
-        }
+
+        work->type = type;
+
         ctx->work = work;
         ctx->connect = us->connect;
         ngx_zm_lookup(work);
