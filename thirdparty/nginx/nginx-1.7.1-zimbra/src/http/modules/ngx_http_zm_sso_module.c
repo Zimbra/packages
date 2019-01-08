@@ -335,9 +335,9 @@ ngx_http_zm_sso_cert_auth(ngx_http_request_t *r, ngx_zm_lookup_work_t *w)
     zlcf = ngx_http_get_module_loc_conf(r, ngx_http_zm_sso_module);
     w->protocol = ZM_PROTO_HTTP; /* it doesn't matter which protocol is used, for cert auth we don't want route */
     if (zlcf->type == NGX_ZM_SSO_CERTAUTH) {
-        w->isAdmin = 0;
+        w->type = zmauth_web_client;
     } else if (zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN) {
-        w->isAdmin = 1;
+        w->type = zmauth_admin_console;
     } else {
         return NGX_HTTP_FORBIDDEN;
     }
@@ -418,7 +418,7 @@ ngx_http_zm_sso_cert_auth_on_success(ngx_zm_lookup_work_t *w)
                     "login succeed for subject dn %V after client cert auth,"
                     " redirect to common https url", &w->username);
     rc = ngx_http_zm_sso_set_auth_token_and_redirect (r, w->zm_auth_token,
-            w->isAdmin);
+            w->type == zmauth_admin_console);
     ngx_http_zm_sso_finalize_request(r, rc);
 }
 

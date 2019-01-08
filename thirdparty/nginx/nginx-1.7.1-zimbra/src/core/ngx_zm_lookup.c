@@ -992,9 +992,9 @@ ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx)
         + sizeof ("X-Proxy-IP: ") - 1 + proxy_ip.len + sizeof(CRLF) - 1
         + sizeof ("Client-IP: ") - 1 + work->connection->addr_text.len + sizeof(CRLF) - 1;
 
-    if (work->type == admin) {
+    if (work->type == zmauth_admin_console) {
         len += sizeof ("Auth-Zimbra-Admin: True" CRLF) - 1;
-    } else if (work->type == zx) {
+    } else if (work->type == zmauth_zx) {
         len += sizeof ("Auth-Zimbra-Zx: True" CRLF) - 1;
     }
 
@@ -1032,9 +1032,9 @@ ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx)
     b->last = ngx_sprintf(b->last, "Auth-Login-Attempt: %d" CRLF, work->login_attempts);
     b->last = ngx_sprintf(b->last, "X-Proxy-IP: %V" CRLF, &proxy_ip);
     b->last = ngx_sprintf(b->last, "Client-IP: %V" CRLF, &work->connection->addr_text);
-    if (work->type == admin) {
+    if (work->type == zmauth_admin_console) {
        b->last = ngx_cpymem(b->last, "Auth-Zimbra-Admin: True" CRLF, sizeof("Auth-Zimbra-Admin: True" CRLF) - 1);
-    } else if (work->type == zx) {
+    } else if (work->type == zmauth_zx) {
         b->last = ngx_cpymem(b->last, "Auth-Zimbra-Zx: True" CRLF, sizeof("Auth-Zimbra-Zx: True" CRLF) - 1);
     }
 
