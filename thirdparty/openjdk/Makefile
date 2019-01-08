@@ -41,7 +41,12 @@ getsrc:
 	tar cfz $(pfile) $(pname)-$(pvers) && \
 	mv $(pfile) .. && \
 	cd .. && \
-	rm -rf tmp \
+	rm -rf tmp && \
+	wget http://ftp.de.debian.org/debian/pool/main/o/openjdk-7/openjdk-7-jdk_7u161-2.6.12-1_amd64.deb && \
+        wget http://ftp.de.debian.org/debian/pool/main/o/openjdk-7/openjdk-7-jre_7u161-2.6.12-1_amd64.deb && \
+        wget http://ftp.de.debian.org/debian/pool/main/o/openjdk-7/openjdk-7-jre-headless_7u161-2.6.12-1_amd64.deb && \
+        wget http://ftp.de.debian.org/debian/pool/main/libj/libjpeg-turbo/libjpeg62-turbo_1.5.2-2+b1_amd64.deb && \
+        dpkg -i openjdk-7-* libjpeg62-turbo* \
 	)
 
 pkgadd:
