@@ -1,3 +1,9 @@
+zimbra-nginx (VERSION-1zimbra8.7b11ZAPPEND) unstable; urgency=medium
+
+  * Patch for nginx bug ZBUG-838
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 07 Feb 2019 13:48:22 +0000 
+
 zimbra-nginx (VERSION-1zimbra8.7b10ZAPPEND) unstable; urgency=medium
 
   * Patch for nginx bug ZESC-821
