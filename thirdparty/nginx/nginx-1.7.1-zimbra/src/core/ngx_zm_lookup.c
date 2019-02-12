@@ -739,6 +739,7 @@ static ngx_flag_t
 ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
 {
     ngx_int_t   rc;
+    ngx_int_t   marker = 20;
     ngx_zm_lookup_ctx_t *ctx = c->data;
 
     if (ngx_ssl_create_connection(ssl, c,
@@ -766,7 +767,15 @@ ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
             ngx_zm_lookup_ssl_handshake(c);
             return ZM_LOOKUP_SSL_EVENT_FAILED;
         }
-    }while (rc == NGX_AGAIN);
+    }while (rc == NGX_AGAIN && --marker > 0);
+
+    if( 0 == marker )
+    {
+        ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+                "zm lookup: ngx_zm_lookup_ssl_init_connection marker reached");
+        ngx_zm_lookup_ssl_handshake(c);
+        return ZM_LOOKUP_SSL_EVENT_FAILED;
+    }
 
     ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
             "zm lookup: ngx_zm_lookup_ssl_init_connection before call to ngx_zm_lookup_ssl_handshake");
