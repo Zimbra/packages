@@ -1,7 +1,7 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra8.7b11ZAPPEND
+Release:            1zimbra8.7b12ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
@@ -17,6 +17,9 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Thu Feb 12 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b12ZAPPEND
+- Patch for nginx bug ZBUG-838
+- Patch for nginx for drive issue
 * Thu Feb 07 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b11ZAPPEND
 - Patch for nginx bug ZBUG-838
 - Tue Nov 06 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b10ZAPPEND
