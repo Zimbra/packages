@@ -21,6 +21,13 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/conf.h>
+#include <openssl/engine.h>
+#include <openssl/evp.h>
+#include <openssl/ocsp.h>
+
 typedef struct {
     ngx_uint_t  type;                     /* the authentication type */
     ngx_url_t  *redirect_url;             /* if only port is provided, just redirect to $host:port */
@@ -41,7 +48,8 @@ typedef struct {
 /* SSO type */
 #define NGX_ZM_SSO_CERTAUTH       1           /* client cert authentication */
 #define NGX_ZM_SSO_CERTAUTH_ADMIN 2           /* client cert authentication for admin console */
-
+#define NGX_ZM_SSO_CERTAUTH_RFC822NAME       3           /* client cert authentication using RFC822Name */
+#define NGX_ZM_SSO_CERTAUTH_ADMIN_RFC822NAME 4           /* client cert authentication for admin console using RFC822Name */
 
 extern ngx_module_t ngx_http_zm_sso_module;
 
