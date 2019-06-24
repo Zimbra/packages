@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-http-message
-Requires:           zimbra-perl-base, zimbra-perl-http-message
+Requires:            zimbra-perl-base, zimbra-perl-http-message
 AutoReqProv:        no
 URL:                https://metacpan.org/release/HTTP-Negotiate
 

@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-Requires:           zimbra-base
+Requires:            zimbra-base
 AutoReqProv:        no
 
 %define debug_package %{nil}

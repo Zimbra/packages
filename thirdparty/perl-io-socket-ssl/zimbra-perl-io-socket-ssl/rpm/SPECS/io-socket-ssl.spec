@@ -8,8 +8,8 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay
 BuildRequires:      zimbra-perl-io-socket-ip
-Requires:           zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay
-Requires:           zimbra-perl-io-socket-ip
+Requires:            zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay
+Requires:            zimbra-perl-io-socket-ip
 AutoReqProv:        no
 URL:                https://metacpan.org/release/IO-Socket-SSL
 

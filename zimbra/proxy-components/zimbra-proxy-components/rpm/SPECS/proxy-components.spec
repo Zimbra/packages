@@ -3,7 +3,7 @@ Name:               zimbra-proxy-components
 Version:            1.0.2
 Release:            ITERATIONZAPPEND
 License:            GPL-2
-Requires:           zimbra-proxy-base, zimbra-nginx >= 1.7.1-1zimbra8.7b9ZAPPEND
+Requires:            zimbra-proxy-base, zimbra-nginx >= 1.7.1-1zimbra8.7b9ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

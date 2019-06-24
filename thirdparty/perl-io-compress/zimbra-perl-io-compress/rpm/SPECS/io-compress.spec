@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-compress-raw-bzip2, zimbra-perl-compress-raw-zlib
-Requires:           zimbra-perl-base, zimbra-perl-compress-raw-bzip2, zimbra-perl-compress-raw-zlib
+Requires:            zimbra-perl-base, zimbra-perl-compress-raw-bzip2, zimbra-perl-compress-raw-zlib
 AutoReqProv:        no
 URL:                https://metacpan.org/release/IO-Compress
 

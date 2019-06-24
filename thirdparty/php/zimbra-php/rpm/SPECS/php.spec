@@ -9,9 +9,9 @@ BuildRequires:      zimbra-httpd-devel
 BuildRequires:      zimbra-aspell-devel
 BuildRequires:      zimbra-aspell
 BuildRequires:      zimbra-libxml2-devel
-Requires:           zimbra-aspell-libs
-Requires:           zimbra-libxml2-libs
-Requires:           zlib, zimbra-spell-base
+Requires:            zimbra-aspell-libs
+Requires:            zimbra-libxml2-libs
+Requires:  zimbra-spell-base
 AutoReqProv:        no
 URL:                http://php.net
 

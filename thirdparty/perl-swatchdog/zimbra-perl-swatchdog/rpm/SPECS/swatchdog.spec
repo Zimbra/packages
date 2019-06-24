@@ -8,8 +8,8 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-date-calc, zimbra-perl-file-tail
 BuildRequires:      zimbra-perl-date-manip, zimbra-perl-timedate
-Requires:           zimbra-perl-base, zimbra-perl-date-calc, zimbra-perl-file-tail
-Requires:           zimbra-perl-date-manip, zimbra-perl-timedate
+Requires:            zimbra-perl-base, zimbra-perl-date-calc, zimbra-perl-file-tail
+Requires:            zimbra-perl-date-manip, zimbra-perl-timedate
 AutoReqProv:        no
 URL:                http://sourceforge.net/projects/swatch/
 

@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base
-Requires:           zimbra-perl-base
+Requires:            zimbra-perl-base
 AutoReqProv:        no
 URL:                https://metacpan.org/release/Email-Date-Format
 

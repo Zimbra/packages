@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-canary-stability
-Requires:           zimbra-perl-base
+Requires:            zimbra-perl-base
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -20,7 +20,7 @@ Perl routines for UUlib encoding/decoding
 %setup -n MODNAME-%{version}
 
 %build
-perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
+PERL_CANARY_STABILITY_NOPROMPT=1 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
  INSTALLSITEMAN1DIR=OZCS/man/man1 INSTALLSITEMAN3DIR=OZCS/man/man3 \
  INSTALLMAN3DIR=OZCS/man/man1 INSTALLVENDORMAN3DIR=OZCS/man/man1 \
  INSTALLMAN3DIR=OZCS/man/man3 INSTALLVENDORMAN3DIR=OZCS/man/man3 \

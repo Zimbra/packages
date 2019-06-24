@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
-Requires:           zimbra-base, zimbra-perl-base, zimbra-perl-date-calc
+Requires:            zimbra-base, zimbra-perl-base, zimbra-perl-date-calc
 AutoReqProv:        no
 URL:                http://jimsun.linxnet.com/postfix_contrib.html
 

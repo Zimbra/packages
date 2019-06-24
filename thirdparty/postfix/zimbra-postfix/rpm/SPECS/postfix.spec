@@ -10,10 +10,9 @@ BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-mariadb-devel
 BuildRequires:      zimbra-lmdb-devel
 BuildRequires:      pcre-devel
-Requires:           pcre
-Requires:           zimbra-openldap-libs, zimbra-mta-base
-Requires:           zimbra-cyrus-sasl, zimbra-mariadb
-Requires:           zimbra-lmdb-libs, zimbra-openssl-libs
+Requires:            zimbra-openldap-libs, zimbra-mta-base
+Requires:            zimbra-cyrus-sasl, zimbra-mariadb
+Requires:            zimbra-lmdb-libs, zimbra-openssl-libs
 Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch

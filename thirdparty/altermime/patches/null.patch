@@ -1,0 +1,24 @@
+diff -ru a/pldstr.c b/pldstr.c
+--- a/pldstr.c	2016-06-30 16:47:14.000000000 +0200
++++ b/pldstr.c	2018-09-24 16:29:22.942911894 +0200
+@@ -297,7 +297,7 @@
+ 
+ 	result = st->start;
+ 
+-	if ((st->start)&&(st->start != '\0'))
++	if ((st->start)&&(st->start != NULL))
+ 	{
+ 		stop = strpbrk( st->start, delimeters ); /* locate our next delimeter */
+ 
+diff -ru a/qpe.c b/qpe.c
+--- a/qpe.c	2016-06-30 16:47:14.000000000 +0200
++++ b/qpe.c	2018-09-24 16:58:31.112883500 +0200
+@@ -106,7 +106,7 @@
+ 		char charout[4];
+ 		int charout_size=0;
+ 
+-		if (lineend != '\0') {
++		if (lineend != NULL) {
+ 			if (linestart == NULL) {
+ 				linestart = in;
+ 			} else {

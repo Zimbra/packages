@@ -31,7 +31,7 @@ build_rpm:
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
-	$(PKG_BUILD) $(specfile)
+	$(PKG_BUILD) $(specfile) --define 'PKG_OS_TAG r2'
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))

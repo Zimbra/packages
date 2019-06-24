@@ -24,7 +24,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        libsodium Libaries
-Requires:       zimbra-base
+Requires:        zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -32,7 +32,7 @@ The zimbra-libsodium-libs package contains the libsodium libraries
 
 %package devel
 Summary:        libsodium Development
-Requires: zimbra-libsodium-libs = %{version}-%{release}
+Requires:  zimbra-libsodium-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

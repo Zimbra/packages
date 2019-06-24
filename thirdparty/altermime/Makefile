@@ -6,7 +6,7 @@ pvers := $(ALTMIME_VERSION)
 pname := altermime
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://www.pldaniels.com/altermime/altermime-0.3-dev.tar.gz
+purl := http://pldaniels.com/altermime/altermime-0.3-dev.tar.gz
 zname := zimbra-altermime
 zspec := $(pname).spec
 

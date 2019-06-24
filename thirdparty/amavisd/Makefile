@@ -7,7 +7,7 @@ pname := amavisd
 uname := $(pname)-new
 pfile := $(uname)-$(pvers).tar.bz2
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://www.ijs.si/software/amavisd/$(pfile)
+purl := https://www.ijs.si/software/amavisd/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

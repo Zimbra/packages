@@ -3,7 +3,7 @@ Name:               zimbra-clamav-db
 Version:            1.0.0
 Release:            ITERATIONZAPPEND
 License:            GPL-2
-Requires:           zimbra-base
+Requires:            zimbra-base
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

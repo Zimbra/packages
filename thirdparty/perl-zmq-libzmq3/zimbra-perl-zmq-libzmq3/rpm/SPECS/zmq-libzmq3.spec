@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-zeromq-devel, zimbra-perl-zmq-constants
-Requires:           zimbra-perl-base, zimbra-zeromq-libs, zimbra-perl-zmq-constants
+Requires:            zimbra-perl-base, zimbra-zeromq-libs, zimbra-perl-zmq-constants
 AutoReqProv:        no
 URL:                https://metacpan.org/release/ZMQ-LibZMQ3
 

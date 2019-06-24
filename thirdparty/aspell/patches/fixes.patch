@@ -1,0 +1,24 @@
+diff -ru '--exclude=*.Po' '--exclude=*.Plo' aspell-0.60.6.1.orig/modules/filter/tex.cpp aspell-0.60.6.1/modules/filter/tex.cpp
+--- aspell-0.60.6.1.orig/modules/filter/tex.cpp	2011-07-02 23:09:09.000000000 +0200
++++ aspell-0.60.6.1/modules/filter/tex.cpp	2018-09-25 17:56:43.004654346 +0200
+@@ -174,7 +174,7 @@
+ 
+     if (c == '{') {
+ 
+-      if (top.in_what == Parm || top.in_what == Opt || top.do_check == '\0')
++      if (top.in_what == Parm || top.in_what == Opt || top.do_check == NULL)
+ 	push_command(Parm);
+ 
+       top.in_what = Parm;
+diff -ru '--exclude=*.Po' '--exclude=*.Plo' aspell-0.60.6.1.orig/prog/check_funs.cpp aspell-0.60.6.1/prog/check_funs.cpp
+--- aspell-0.60.6.1.orig/prog/check_funs.cpp	2011-07-04 11:17:27.000000000 +0200
++++ aspell-0.60.6.1/prog/check_funs.cpp	2018-09-25 17:58:03.994653031 +0200
+@@ -647,7 +647,7 @@
+     }
+   }
+   if (i == width-1) {
+-    if (word == '\0')
++    if (word == NULL)
+       put(out,' ');
+     else if (word[len] == '\0')
+       put(out, word, len);

@@ -24,7 +24,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        freetype Libaries
-Requires:           zlib, bzip2-libs, zimbra-base
+Requires:  zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -32,7 +32,7 @@ The zimbra-freetype-libs package contains the freetype libraries
 
 %package devel
 Summary:        freetype Development
-Requires: zimbra-freetype-libs = %{version}-%{release}
+Requires:  zimbra-freetype-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

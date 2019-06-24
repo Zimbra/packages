@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zlib-devel
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-heimdal-devel
-Requires:           zlib, zimbra-curl-libs = %{version}-%{release}, zimbra-openssl-libs, zimbra-heimdal-libs
+Requires:  zimbra-curl-libs = %{version}-%{release}, zimbra-openssl-libs, zimbra-heimdal-libs
 AutoReqProv:        no
 URL:                http://curl.haxx.se/
 
@@ -40,7 +40,7 @@ cp -f lib/ca-bundle.crt ${RPM_BUILD_ROOT}OZCS/curl/ca-bundle.crt
 
 %package libs
 Summary:        Curl Libaries
-Requires: zlib, zimbra-openssl-libs, zimbra-heimdal-libs, zimbra-base
+Requires:  zimbra-openssl-libs, zimbra-heimdal-libs, zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -48,7 +48,7 @@ The zimbra-curl-libs package contains the curl libraries
 
 %package devel
 Summary:        Curl Development
-Requires: zimbra-curl-libs = %{version}-%{release}
+Requires:  zimbra-curl-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

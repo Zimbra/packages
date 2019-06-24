@@ -8,8 +8,8 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-libwww, zimbra-perl-net-http
 BuildRequires:      zimbra-perl-io-socket-ssl, zimbra-perl-mozilla-ca
-Requires:           zimbra-perl-base, zimbra-perl-libwww, zimbra-perl-net-http
-Requires:           zimbra-perl-io-socket-ssl, zimbra-perl-mozilla-ca
+Requires:            zimbra-perl-base, zimbra-perl-libwww, zimbra-perl-net-http
+Requires:            zimbra-perl-io-socket-ssl, zimbra-perl-mozilla-ca
 AutoReqProv:        no
 URL:                https://metacpan.org/release/LWP-Protocol-https
 

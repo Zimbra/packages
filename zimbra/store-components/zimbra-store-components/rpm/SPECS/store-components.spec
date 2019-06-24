@@ -3,7 +3,7 @@ Name:               zimbra-store-components
 Version:            1.0.1
 Release:            1zimbra8.7b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-store-base, zimbra-mariadb >= 10.1.25-1zimbra8.7b1ZAPPEND
+Requires:            zimbra-store-base, zimbra-mariadb >= 10.1.25-1zimbra8.7b1ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no

@@ -7,9 +7,8 @@ Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-cyrus-sasl-devel
-Requires:           pcre, zlib
-Requires:           zimbra-openssl-libs
-Requires:           zimbra-cyrus-sasl-libs, zimbra-proxy-base
+Requires:            zimbra-openssl-libs
+Requires:            zimbra-cyrus-sasl-libs, zimbra-proxy-base
 AutoReqProv:        no
 URL:                http://nginx.org
 

@@ -4,10 +4,12 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
+Patch0:             rpm.patch
+Patch1:             0001-CHANGES-BUG-2712-Fix-Perl-module-compilation.patch
+Patch2:             0001-Remove-U64-typedef.patch
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      perl-devel
-Requires:           perl, perl-core
-Requires:           zimbra-net-snmp-libs = %{version}-%{release}
+Requires:            zimbra-net-snmp-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                http://www.net-snmp.org/
 
@@ -16,10 +18,13 @@ The Zimbra NetSNMP build
 
 %prep
 %setup -n net-snmp-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
-CFLAGS="-O2 -g"; export CFLAGS; \
+CFLAGS="-O2 -g -DHAVE_HEADERGET"; export CFLAGS; \
 ./configure --prefix=OZC \
   --with-default-snmp-version=3 --with-sys-contact="admin" \
   --with-sys-location="unknown" --with-logfile="/opt/zimbra/log/snmpd.log" \
@@ -38,7 +43,7 @@ rm -f %{buildroot}OZCL/perl5/%{perl_archname}/auto/*/*/.packlist
 
 %package libs
 Summary:            NetSNMP Libaries
-Requires:           zimbra-openssl-libs, zimbra-snmp-base
+Requires:            zimbra-openssl-libs, zimbra-snmp-base
 AutoReqProv:        no
 
 %description libs
@@ -46,7 +51,7 @@ The zimbra-net-snmp-libs package contains the net-snmp libraries
 
 %package devel
 Summary:        NetSNMP Development
-Requires:       zimbra-net-snmp-libs = %{version}-%{release}
+Requires:        zimbra-net-snmp-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

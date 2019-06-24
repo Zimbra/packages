@@ -1,0 +1,13 @@
+diff -ru a/Makefile b/Makefile
+--- a/Makefile	2016-06-30 16:47:14.000000000 +0200
++++ b/Makefile	2018-09-26 15:13:03.508208535 +0200
+@@ -8,8 +8,7 @@
+ #	ALTERMIME_PRETEXT - Allows prefixing of the email body with a file, sort of the
+ #								opposite of a disclaimer.
+ ALTERMIME_OPTIONS=-DALTERMIME_PRETEXT
+-#ALTERMIME_OPTIONS=
+-CFLAGS=-Wall -Werror -g -I. -O2 $(ALTERMIME_OPTIONS)
++CFLAGS=$(ALTERMIME_OPTIONS)
+ OBJS= strstack.o mime_alter.o ffget.o pldstr.o filename-filters.o logger.o MIME_headers.o libmime-decoders.o boundary-stack.o qpe.o
+ 
+ 

@@ -12,8 +12,8 @@ BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-heimdal-devel
 BuildRequires:      zimbra-libxml2-devel
 BuildRequires:      zimbra-curl-devel
-Requires:           zlib, zimbra-cyrus-sasl-libs = %{version}-%{release}, zimbra-openssl-libs, zimbra-heimdal-libs
-Requires:           zimbra-libxml2-libs, zimbra-curl-libs
+Requires:  zimbra-cyrus-sasl-libs = %{version}-%{release}, zimbra-openssl-libs, zimbra-heimdal-libs
+Requires:            zimbra-libxml2-libs, zimbra-curl-libs
 AutoReqProv:        no
 URL:                https://cyrusimap.org/
 
@@ -63,7 +63,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        Cyrus-SASL Libaries
-Requires: zimbra-openssl-libs, zimbra-heimdal-libs, zimbra-base
+Requires:  zimbra-openssl-libs, zimbra-heimdal-libs, zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -71,7 +71,7 @@ The zimbra-cyrus-sasl-libs package contains the curl libraries
 
 %package devel
 Summary:        Cyrus-SASL Development
-Requires: zimbra-cyrus-sasl-libs = %{version}-%{release}
+Requires:  zimbra-cyrus-sasl-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel

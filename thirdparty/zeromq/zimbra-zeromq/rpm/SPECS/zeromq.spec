@@ -6,7 +6,7 @@ License:            LGPL-3
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-libsodium-devel
 BuildRequires:      pkgconfig
-Requires:           zimbra-zeromq-libs = %{version}-%{release}
+Requires:            zimbra-zeromq-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                http://zeromq.org/
 
@@ -30,7 +30,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        0MQ Libaries
-Requires:       zimbra-libsodium-libs, zimbra-base
+Requires:        zimbra-libsodium-libs, zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -38,7 +38,7 @@ The zimbra-zeromq-libs package contains the zeromq libraries
 
 %package devel
 Summary:        0MQ Development
-Requires: zimbra-zeromq-libs = %{version}-%{release}
+Requires:  zimbra-zeromq-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel
