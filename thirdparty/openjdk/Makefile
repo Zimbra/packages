@@ -4,7 +4,7 @@ include $(PKG_ROOT)/../../package.def
 
 pvers := $(JDK_VERSION)
 pname := openjdk
-pfile := $(pname)-$(pvers).tgz
+pfile := $(pname)-$(pvers)_linux-x64_bin.tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
@@ -25,11 +25,12 @@ all: clean getsrc build pkgrm1
 getsrc: export HGFOREST_REDIRECT=getsource.out
 getsrc:
 	mkdir -p $(SRC_DIR)
-	(echo "Copying the already created tar to src dir." && \
+	(echo "Downloading openjdk binaries.  This may take some time." && \
 	cd $(SRC_DIR) && \
-	cp -vf $(PKG_ROOT)/$(pfile) . \
-	)
-
+	wget https://download.java.net/java/GA/jdk$(JDK_SUB_TREE)/9/GPL/$(pfile) && \
+	tar xvzf $(pfile) && \
+	mv jdk-$(pvers) openjdk-$(pvers)-zimbra && \
+	tar -czf ../openjdk-$(pvers)-zimbra.tgz  openjdk-$(pvers)-zimbra )
 pkgadd:
 	$(PKG_EXTRACT) $(openjdk)
 
@@ -61,9 +62,8 @@ build_deb:
 	perl -pi -e 's/DEB_BUILD_OPTIONS=nocheck/DEB_BUILD_OPTIONS=nocheck $(UB_REPLACE)/' debian/rules && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
-	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
-	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
-	$(PKG_BUILD)
+	$(TAR) xfz ../$(z_tgz)  && \
+	($(PKG_BUILD) -b)
 
 clean: pkgrm
 	$(generic-clean)

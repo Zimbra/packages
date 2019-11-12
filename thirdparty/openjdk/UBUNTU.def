@@ -1,8 +1,7 @@
 openjdk.UBUNTU := libx11-dev x11proto-xext-dev libxext-dev \
 	x11proto-render-dev libxrender-dev libxfixes-dev libxi-dev \
 	x11proto-fixes-dev x11proto-record-dev libxtst-dev libxt-dev \
- 	openjdk-7-jdk libcups2-dev libfreetype6-dev libasound2-dev \
- 	ccache
+ 	libcups2-dev libfreetype6-dev libasound2-dev ccache
 openjdk.UBUNTU18_64 := openjdk-11-jdk at-spi2-core ca-certificates-java \
 		libatk-bridge2.0-0 libatk-wrapper-java libatk-wrapper-java-jni \
 		libatspi2.0-0 libfontenc1 libgtk-3-0 libgtk-3-bin libice-dev \
