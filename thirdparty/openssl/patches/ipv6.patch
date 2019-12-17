@@ -126,7 +126,7 @@ index ce7a1d6..e97909c 100644
      ret = 0;
   end:
 diff --git a/apps/s_socket.c b/apps/s_socket.c
-index b3848dd..64d1a26 100644
+index b3848dd..24b0779 100644
 --- a/apps/s_socket.c
 +++ b/apps/s_socket.c
 @@ -106,9 +106,9 @@ static struct hostent *GetHostByName(char *name);
@@ -370,7 +370,7 @@ index b3848dd..64d1a26 100644
   err:
      if ((ret == 0) && (s != -1)) {
          SHUTDOWN(s);
-@@ -377,21 +391,23 @@ static int init_server_long(int *sock, int port, char *ip, int type)
+@@ -377,21 +391,19 @@ static int init_server_long(int *sock, int port, char *ip, int type)
      return (ret);
  }
  
@@ -385,23 +385,19 @@ index b3848dd..64d1a26 100644
  {
      int ret;
 -
-+    struct hostent *h2;
-+    static struct sockaddr_storage from;
-+    int rc;
      if (!ssl_sock_init())
          return 0;
 -
 -# ifndef OPENSSL_SYS_WINDOWS
 - redoit:
 -# endif
-+    static const int host_buf_len = INET6_ADDRSTRLEN;
 +    # ifndef OPENSSL_SYS_WINDOWS
 +      redoit:
 +    # endif
  
      /*
       * Note: under VMS with SOCKETSHR the fourth parameter is currently of
-@@ -399,7 +415,7 @@ static int do_accept(int acc_sock, int *sock)
+@@ -399,7 +411,7 @@ static int do_accept(int acc_sock, int *sock)
       * have a cast it will choke the compiler: if you do have a cast then you
       * can either go for (int *) or (void *).
       */
@@ -410,7 +406,7 @@ index b3848dd..64d1a26 100644
      if (ret == INVALID_SOCKET) {
  # if defined(OPENSSL_SYS_WINDOWS) || (defined(OPENSSL_SYS_NETWARE) && !defined(NETWARE_BSDSOCK))
          int i;
-@@ -428,7 +444,7 @@ int extract_host_port(char *str, char **host_ptr, unsigned char *ip,
+@@ -428,7 +440,7 @@ int extract_host_port(char *str, char **host_ptr, unsigned char *ip,
      char *h, *p;
  
      h = str;
@@ -419,7 +415,7 @@ index b3848dd..64d1a26 100644
      if (p == NULL) {
          BIO_printf(bio_err, "no port defined\n");
          return (0);
-@@ -467,18 +483,18 @@ static int host_ip(char *str, unsigned char ip[4])
+@@ -467,18 +479,18 @@ static int host_ip(char *str, unsigned char ip[4])
          struct hostent *he;
  
          if (!ssl_sock_init())
