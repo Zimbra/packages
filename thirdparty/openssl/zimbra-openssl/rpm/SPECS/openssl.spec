@@ -21,11 +21,10 @@ The Zimbra OpenSSL build allows for secure communication between various process
 %prep
 %setup -n openssl-%{version}
 %patch -p1
-
 %build
 ./Configure no-idea enable-ec_nistp_64_gcc_128 no-mdc2 no-rc5 no-ssl2 \
   no-hw --prefix=OZC --libdir=lib --openssldir=OZCE/ssl \
-  shared linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
+  shared fips --with-fipslibdir=/usr/local/ssl/fips-2.0/lib/ linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
 LD_RUN_PATH=OZCL make depend
 LD_RUN_PATH=OZCL make all
 
