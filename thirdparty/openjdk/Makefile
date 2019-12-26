@@ -4,7 +4,7 @@ include $(PKG_ROOT)/../../package.def
 
 pvers := $(JDK_VERSION)
 pname := openjdk
-pfile := $(pname)-$(pvers).tgz
+pfile := $(pname)-$(pvers)_linux-x64_bin.tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
@@ -25,25 +25,12 @@ all: clean getsrc build pkgrm1
 getsrc: export HGFOREST_REDIRECT=getsource.out
 getsrc:
 	mkdir -p $(SRC_DIR)
-	(echo "Obtaining source for openjdk.  This may take some time." && \
+	(echo "Downloading openjdk binaries.  This may take some time." && \
 	cd $(SRC_DIR) && \
-	mkdir tmp && \
-	cd tmp && \
-	hg clone -r $(JDK_TAG) http://hg.openjdk.java.net/jdk8u/jdk$(JDK_SUB_TREE) && \
-	cd jdk$(JDK_SUB_TREE) && chmod a+rx get_source.sh && \
-	chmod a+rx configure && \
-	patch -p1 < $(PKG_ROOT)/patches/fix-source.patch && \
-	echo "Obtaining source for sub modules.  This make take a very long time." && \
-	./get_source.sh -r $(JDK_TAG) || true && \
-	cd .. && \
-	mv jdk$(JDK_SUB_TREE) $(pname)-$(pvers) && \
-	( cd $(pname)-$(pvers) && find . -name ".hg*" | xargs rm -rf ) && \
-	tar cfz $(pfile) $(pname)-$(pvers) && \
-	mv $(pfile) .. && \
-	cd .. && \
-	rm -rf tmp \
-	)
-
+	wget https://download.java.net/java/GA/jdk$(JDK_SUB_TREE)/9/GPL/$(pfile) && \
+	tar xvzf $(pfile) && \
+	mv jdk-$(pvers) openjdk-$(pvers)-zimbra && \
+	tar -czf ../openjdk-$(pvers)-zimbra.tgz  openjdk-$(pvers)-zimbra )
 pkgadd:
 	$(PKG_EXTRACT) $(openjdk)
 
@@ -75,8 +62,8 @@ build_deb:
 	perl -pi -e 's/DEB_BUILD_OPTIONS=nocheck/DEB_BUILD_OPTIONS=nocheck $(UB_REPLACE)/' debian/rules && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
-	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
-	$(PKG_BUILD)
+	$(TAR) xfz ../$(z_tgz)  && \
+	($(PKG_BUILD) -b)
 
 clean: pkgrm
 	$(generic-clean)

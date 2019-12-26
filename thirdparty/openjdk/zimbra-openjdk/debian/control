@@ -1,7 +1,5 @@
 Source: zimbra-openjdk
-Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), libx11-dev,
- libxext-dev, libxrender-dev, libxtst-dev, libxt-dev, openjdk-7-jdk,
- libcups2-dev, libfreetype6-dev, libasound2-dev, ccache, zip
+Build-Depends: m4, lsb-release, zip, unzip 
 Section: utils
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>

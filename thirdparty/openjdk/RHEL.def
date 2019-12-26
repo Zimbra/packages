@@ -3,8 +3,7 @@ openjdk.RHEL := libX11-devel libXau-devel libXext-devel \
 	xorg-x11-proto-devel libICE-devel libSM-devel libXt \
 	libXt-devel libXrender-devel keyutils-libs-devel \
 	krb5-devel libcom_err-devel libselinux-devel \
-	libsepol-devel openssl-devel cups-devel freetype-devel \
-	alsa-lib-devel java-1.7.0-openjdk-devel
+	libsepol-devel openssl-devel cups-devel freetype-devel
 openjdk.RHEL7_64 := $(openjdk.RHEL)
 openjdk.RHEL6_64 := $(openjdk.RHEL)
 openjdk-purge.RHEL := alsa-lib-devel freetype-devel cups-devel openssl-devel \

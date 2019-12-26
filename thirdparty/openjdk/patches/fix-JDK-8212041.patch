@@ -1,0 +1,228 @@
+--- a/src/hotspot/os/linux/os_linux.cpp	Tue Jul 17 12:03:10 2018 -0700
++++ b/src/hotspot/os/linux/os_linux.cpp	Tue Jul 17 15:59:47 2018 -0400
+@@ -5375,8 +5375,7 @@
+ 
+   // Scan the directory
+   bool result = true;
+-  char buf[sizeof(struct dirent) + MAX_PATH];
+-  while (result && (ptr = ::readdir(dir)) != NULL) {
++  while (result && (ptr = readdir(dir)) != NULL) {
+     if (strcmp(ptr->d_name, ".") != 0 && strcmp(ptr->d_name, "..") != 0) {
+       result = false;
+     }
+--- a/src/hotspot/os/linux/os_linux.inline.hpp	Tue Jul 17 12:03:10 2018 -0700
++++ b/src/hotspot/os/linux/os_linux.inline.hpp	Tue Jul 17 15:59:47 2018 -0400
+@@ -69,17 +69,6 @@
+ 
+ inline const int os::default_file_open_flags() { return 0;}
+ 
+-inline DIR* os::opendir(const char* dirname)
+-{
+-  assert(dirname != NULL, "just checking");
+-  return ::opendir(dirname);
+-}
+-
+-inline int os::readdir_buf_size(const char *path)
+-{
+-  return NAME_MAX + sizeof(dirent) + 1;
+-}
+-
+ inline jlong os::lseek(int fd, jlong offset, int whence) {
+   return (jlong) ::lseek64(fd, offset, whence);
+ }
+@@ -92,17 +81,6 @@
+   return ::ftruncate64(fd, length);
+ }
+ 
+-inline struct dirent* os::readdir(DIR* dirp, dirent *dbuf)
+-{
+-  assert(dirp != NULL, "just checking");
+-  return ::readdir(dirp);
+-}
+-
+-inline int os::closedir(DIR *dirp) {
+-  assert(dirp != NULL, "argument is NULL");
+-  return ::closedir(dirp);
+-}
+-
+ // macros for restartable system calls
+ 
+ #define RESTARTABLE(_cmd, _result) do { \
+--- a/src/hotspot/os/linux/os_perf_linux.cpp	Tue Jul 17 12:03:10 2018 -0700
++++ b/src/hotspot/os/linux/os_perf_linux.cpp	Tue Jul 17 15:59:47 2018 -0400
+@@ -895,21 +895,14 @@
+ }
+ 
+ int SystemProcessInterface::SystemProcesses::ProcessIterator::next_process() {
+-  struct dirent* entry;
+-
+   if (!is_valid()) {
+     return OS_ERR;
+   }
+ 
+   do {
+-      entry = os::readdir(_dir, _entry);
+-    if (entry == NULL) {
+-      // error
+-      _valid = false;
+-      return OS_ERR;
+-    }
++    _entry = os::readdir(_dir);
+     if (_entry == NULL) {
+-      // reached end
++      // Error or reached end.  Could use errno to distinguish those cases.
+       _valid = false;
+       return OS_ERR;
+     }
+@@ -926,11 +919,8 @@
+ }
+ 
+ bool SystemProcessInterface::SystemProcesses::ProcessIterator::initialize() {
+-  _dir = opendir("/proc");
+-  _entry = (struct dirent*)NEW_C_HEAP_ARRAY(char, sizeof(struct dirent) + NAME_MAX + 1, mtInternal);
+-  if (NULL == _entry) {
+-    return false;
+-  }
++  _dir = os::opendir("/proc");
++  _entry = NULL;
+   _valid = true;
+   next_process();
+ 
+@@ -938,11 +928,8 @@
+ }
+ 
+ SystemProcessInterface::SystemProcesses::ProcessIterator::~ProcessIterator() {
+-  if (_entry != NULL) {
+-    FREE_C_HEAP_ARRAY(char, _entry);
+-  }
+   if (_dir != NULL) {
+-    closedir(_dir);
++    os::closedir(_dir);
+   }
+ }
+ 
+--- a/src/hotspot/os/linux/perfMemory_linux.cpp	Tue Jul 17 12:03:10 2018 -0700
++++ b/src/hotspot/os/linux/perfMemory_linux.cpp	Tue Jul 17 15:59:47 2018 -0400
+@@ -561,9 +561,8 @@
+   // to determine the user name for the process id.
+   //
+   struct dirent* dentry;
+-  char* tdbuf = NEW_C_HEAP_ARRAY(char, os::readdir_buf_size(tmpdirname), mtInternal);
+   errno = 0;
+-  while ((dentry = os::readdir(tmpdirp, (struct dirent *)tdbuf)) != NULL) {
++  while ((dentry = os::readdir(tmpdirp)) != NULL) {
+ 
+     // check if the directory entry is a hsperfdata file
+     if (strncmp(dentry->d_name, PERFDATA_NAME, strlen(PERFDATA_NAME)) != 0) {
+@@ -597,9 +596,8 @@
+     }
+ 
+     struct dirent* udentry;
+-    char* udbuf = NEW_C_HEAP_ARRAY(char, os::readdir_buf_size(usrdir_name), mtInternal);
+     errno = 0;
+-    while ((udentry = os::readdir(subdirp, (struct dirent *)udbuf)) != NULL) {
++    while ((udentry = os::readdir(subdirp)) != NULL) {
+ 
+       if (filename_to_pid(udentry->d_name) == searchpid) {
+         struct stat statbuf;
+@@ -643,11 +641,9 @@
+       }
+     }
+     os::closedir(subdirp);
+-    FREE_C_HEAP_ARRAY(char, udbuf);
+     FREE_C_HEAP_ARRAY(char, usrdir_name);
+   }
+   os::closedir(tmpdirp);
+-  FREE_C_HEAP_ARRAY(char, tdbuf);
+ 
+   return(oldest_user);
+ }
+@@ -769,10 +765,8 @@
+   // opendir/readdir.
+   //
+   struct dirent* entry;
+-  char* dbuf = NEW_C_HEAP_ARRAY(char, os::readdir_buf_size(dirname), mtInternal);
+-
+   errno = 0;
+-  while ((entry = os::readdir(dirp, (struct dirent *)dbuf)) != NULL) {
++  while ((entry = os::readdir(dirp)) != NULL) {
+ 
+     pid_t pid = filename_to_pid(entry->d_name);
+ 
+@@ -809,8 +803,6 @@
+ 
+   // close the directory and reset the current working directory
+   close_directory_secure_cwd(dirp, saved_cwd_fd);
+-
+-  FREE_C_HEAP_ARRAY(char, dbuf);
+ }
+ 
+ // make the user specific temporary directory. Returns true if
+
+--- a/src/hotspot/os/posix/os_posix.cpp	Tue Jul 17 12:03:10 2018 -0700
++++ b/src/hotspot/os/posix/os_posix.cpp	Tue Jul 17 15:59:47 2018 -0400
+@@ -35,6 +35,7 @@
+ #include "utilities/macros.hpp"
+ #include "utilities/vmError.hpp"
+ 
++#include <dirent.h>
+ #include <dlfcn.h>
+ #include <pthread.h>
+ #include <signal.h>
+@@ -527,6 +528,21 @@
+   ::funlockfile(fp);
+ }
+ 
++DIR* os::opendir(const char* dirname) {
++  assert(dirname != NULL, "just checking");
++  return ::opendir(dirname);
++}
++
++struct dirent* os::readdir(DIR* dirp) {
++  assert(dirp != NULL, "just checking");
++  return ::readdir(dirp);
++}
++
++int os::closedir(DIR *dirp) {
++  assert(dirp != NULL, "just checking");
++  return ::closedir(dirp);
++}
++
+ // Builds a platform dependent Agent_OnLoad_<lib_name> function name
+ // which is used to find statically linked in agents.
+ // Parameters:
+
+--- a/src/hotspot/share/jfr/recorder/repository/jfrRepository.cpp	Tue Jul 17 12:03:10 2018 -0700
++++ b/src/hotspot/share/jfr/recorder/repository/jfrRepository.cpp	Tue Jul 17 15:59:47 2018 -0400
+@@ -241,11 +241,7 @@
+       return;
+     }
+     struct dirent* dentry;
+-    char* dir_buffer = NEW_RESOURCE_ARRAY_RETURN_NULL(char, os::readdir_buf_size(_repo));
+-    if (dir_buffer == NULL) {
+-      return;
+-    }
+-    while ((dentry = os::readdir(dirp, (struct dirent*)dir_buffer)) != NULL) {
++    while ((dentry = os::readdir(dirp)) != NULL) {
+       const char* const entry_path = filter(dentry->d_name);
+       if (NULL != entry_path) {
+         _files->append(entry_path);
+--- a/src/hotspot/share/runtime/os.hpp	Tue Jul 17 12:03:10 2018 -0700
++++ b/src/hotspot/share/runtime/os.hpp	Tue Jul 17 15:59:47 2018 -0400
+@@ -580,8 +580,7 @@
+ 
+   // Reading directories.
+   static DIR*           opendir(const char* dirname);
+-  static int            readdir_buf_size(const char *path);
+-  static struct dirent* readdir(DIR* dirp, dirent* dbuf);
++  static struct dirent* readdir(DIR* dirp);
+   static int            closedir(DIR* dirp);
+ 
+   // Dynamic library extension
+--- a/test/jdk/ProblemList.txt	Tue Jul 17 12:03:10 2018 -0700
++++ b/test/jdk/ProblemList.txt	Tue Jul 17 15:59:47 2018 -0400
+@@ -873,4 +873,3 @@
+ 
+ jdk/jfr/event/io/TestInstrumentation.java                       8202142    generic-all
+ jdk/jfr/event/sampling/TestNative.java                          8202142    generic-all
+-jdk/jfr/event/os/TestSystemProcess.java                         8202835    linux-all
