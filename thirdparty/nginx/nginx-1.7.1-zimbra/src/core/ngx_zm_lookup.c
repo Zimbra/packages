@@ -253,7 +253,7 @@ ngx_zm_lookup_create_conf(ngx_cycle_t *cycle)
     zlcf->ssl->log = log;
 
     // don't support SSLv2 anymore
-    if (ngx_ssl_create(zlcf->ssl, NGX_SSL_SSLv3|NGX_SSL_TLSv1, NULL)
+    if (ngx_ssl_create(zlcf->ssl, ~(NGX_SSL_SSLv2|NGX_SSL_SSLv3), NULL)
             != NGX_OK) {
         return NGX_CONF_ERROR;
     }
