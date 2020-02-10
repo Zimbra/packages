@@ -177,9 +177,9 @@
 --- openldap-2.4.40/include/ldap.h.orig	2014-11-13 17:13:26.897824122 -0600
 +++ openldap-2.4.40/include/ldap.h	2014-11-13 17:13:58.789823060 -0600
 @@ -158,6 +158,8 @@
- #define LDAP_OPT_X_TLS_NEWCTX		0x600f
  #define LDAP_OPT_X_TLS_CRLFILE		0x6010	/* GNUtls only */
  #define LDAP_OPT_X_TLS_PACKAGE		0x6011
+ #define LDAP_OPT_X_TLS_ECNAME		0x6012
 +#define LDAP_OPT_X_TLS_VERSION		0x6013  /* read-only */
 +#define LDAP_OPT_X_TLS_CIPHER		0x6014  /* read-only */
  
