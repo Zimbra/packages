@@ -1,9 +1,3 @@
-ITS5037.patch
-writers.patch
-ITS7683.patch
 ITS8054.patch
-ITS8843.patch
 liblmdb-soname.patch
-multival.patch
 liblmdb-keysize.patch
-index-delete.patch

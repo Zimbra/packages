@@ -74,7 +74,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> nist-sip-1.2
    >>> nviennot-nginx-tcp-keepalive-4d7186d
    >>> opendkim-2.10.3
-   >>> openldap-2.4.44
+   >>> openldap-2.4.49
    >>> openssl-1.0.2h
    >>> owasp-java-html-sanitizer.jar-r239
    >>> perl-data-uuid-1.221
@@ -148,7 +148,7 @@ SECTION 2: Apache License, V2.0
    >>> ridl-4.0.2
    >>> selenium-2.51.0
    >>> smack-3.2.1
-   >>> spamassassin-3.4.1
+   >>> spamassassin-3.4.4
    >>> spring-framework-3.0.7
    >>> stax2-api-3.1.1
    >>> testng-5.12.1
@@ -217,7 +217,7 @@ SECTION 6: GNU General Public License, V1.0
 SECTION 7: GNU General Public License, V2.0
 
    >>> amavisd-2.10.1
-   >>> clamav-0.99.2
+   >>> clamav-0.102.2
    >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
    >>> freetype-2.6.3
    >>> innotop-1.9.1
@@ -4626,7 +4626,7 @@ Portions Copyright (c) 2010-2012, The Trusted Domain Project.
 All rights reserved.
 
 
->>> openldap-2.4.44
+>>> openldap-2.4.49
 
 The OpenLDAP Public License
 Version 2.8, 17 August 2003
@@ -12748,7 +12748,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> spamassassin-3.4.1
+>>> spamassassin-3.4.4
 
 License: Apache 2.0
 
@@ -14873,7 +14873,7 @@ A copy of the license is included in the section entitled "GNU
 Free Documentation License".
 
 
->>> clamav-0.99.2
+>>> clamav-0.102.2
 
 Copyright (C) 2015 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
 Copyright (C) 2007-2009 Sourcefire, Inc.
@@ -14896,7 +14896,7 @@ ADDITIONAL LICENSE INFORMATION :
 
 > BSD
 
-clamav-0.99.2\COPYING.bzip2
+clamav-0.102.2\COPYING.bzip2
 
 This program, "bzip2", the associated library "libbzip2", and all
 documentation, are copyright (C) 1996-2006 Julian R Seward.  All
@@ -14939,7 +14939,7 @@ bzip2/libbzip2 version 1.0.4 of 20 December 2006
 
 > MIT
 
-clamav-0.99.2\COPYING.getopt
+clamav-0.102.2\COPYING.getopt
 
 getopt.c - my re-implementation of getopt.
 Copyright 1997, 2000, 2001, 2002, 2006, Benjamin Sittler
@@ -14966,7 +14966,7 @@ DEALINGS IN THE SOFTWARE.
 
 > LLVM License
 
-clamav-0.99.2\COPYING.llvm
+clamav-0.102.2\COPYING.llvm
 
 LLVM Release License
 ==============================================================================
@@ -15013,7 +15013,7 @@ SOFTWARE.
 
 > Public Domain
 
-clamav-0.99.2\COPYING.lzma
+clamav-0.102.2\COPYING.lzma
 
 The original lzma.txt license file, a small portion of which is reproduced below,
 is available under libclamav/7z/lzma.txt.
@@ -15025,7 +15025,7 @@ LZMA SDK is written and placed in the public domain by Igor Pavlov
 
 > Unrar License
 
-clamav-0.99.2\COPYING.unrar
+clamav-0.102.2\COPYING.unrar
 
 The libclamunrar code is based on the work of Alexander L. Roshal (C)
 
@@ -15079,7 +15079,7 @@ Thank you for your interest in RAR and UnRAR.
 
 > LGPL 2.1
 
-clamav-0.99.2\libclamunrar_iface\unrar_iface.h
+clamav-0.102.2\libclamunrar_iface\unrar_iface.h
 
 Interface to libclamunrar
 Copyright (C) 2007 Sourcefire, Inc.
@@ -15096,7 +15096,7 @@ Lesser General Public License for more details.
 
 > LGPL 2.0
 
-clamav-0.99.2\libltdl\argz.c
+clamav-0.102.2\libltdl\argz.c
 
 Copyright (C) 2004, 2006, 2007, 2008 Free Software Foundation, Inc.
 Written by Gary V. Vaughan, 2004
