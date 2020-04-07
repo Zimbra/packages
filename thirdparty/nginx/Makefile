@@ -16,17 +16,17 @@ all: clean getsrc build pkgrm1
 
 getsrc:
 	mkdir -p $(SRC_DIR)
-	mkdir -p $(psrctmp)
-	cp -pr $(pname)-$(pvers)-zimbra $(psrctmp)
-	mkdir -p $(psrctmp)/$(pname)-$(pvers)-zimbra/modules
-	cd $(psrctmp)/$(pname)-$(pvers)-zimbra/modules && \
+	curl -sLo $(SRC_DIR)/nginx-$(pvers).tgz "https://nginx.org/download/nginx-$(pvers).tar.gz"
+	cd $(SRC_DIR) && tar zxf nginx-$(pvers).tgz && rm nginx-$(pvers).tgz
+	mv $(SRC_DIR)/nginx-$(pvers) $(SRC_DIR)/nginx-$(pvers)-zimbra
+	mkdir -p $(SRC_DIR)/nginx-$(pvers)-zimbra/modules
+	cd $(SRC_DIR)/nginx-$(pvers)-zimbra/modules && \
 	git clone https://github.com/nviennot/nginx-tcp-keepalive.git nviennot-nginx-tcp-keepalive >/dev/null 2>&1 && \
 	cd nviennot-nginx-tcp-keepalive && \
 	git reset --hard $(NGINX_HTTP_KEEPALIVE) >/dev/null 2>&1 && \
 	rm -rf .git
-	cd $(psrctmp) && tar cfz $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra
-	mv $(psrctmp)/$(zname)-$(pvers).tar.gz $(SRC_DIR)
-	rm -rf $(psrctmp)
+	cd $(SRC_DIR) && tar zcf $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra && \
+	rm -rf $(SRC_DIR)/$(pname)-$(pvers)-zimbra
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV)
