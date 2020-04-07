@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-apache-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-apache-base, zimbra-httpd, zimbra-php (>= 5.6.31-1zimbra8.7b2ZAPPEND)
+ zimbra-apache-base, zimbra-httpd (>= 2.4.38-1zimbra8.7b1ZAPPEND), zimbra-php (>= 7.3.1-1zimbra8.7b3ZAPPEND)
 Description: Zimbra components for apache package
  Zimbra apache components pulls in all the packages used by
  zimbra-apache
