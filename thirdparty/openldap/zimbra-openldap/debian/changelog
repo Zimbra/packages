@@ -1,4 +1,4 @@
-zimbra-openldap (VERSION-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+zimbra-openldap (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Update for OpenLDAP 2.4.49
 
