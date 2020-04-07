@@ -1,20 +1,5 @@
-zimbra-openldap (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+zimbra-openldap (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
-  * Update multival for new syntax that allows the capability to work around LDMB 0.9 limitations
-  * Update liblmdb library to have a larger max keysize
+  * Update for OpenLDAP 2.4.49
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 31 Aug 2018 14:52:31 +0000
-
-zimbra-openldap (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
-
-  * Update multival patch to make sure a->a_numvals matches id2v counts
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 18 Jul 2018 15:50:51 +0000
-
-zimbra-openldap (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
-
-  * Initial package for OpenLDAP 2.4.46
-  * Includes multival support
-  * Includes upstream fix for ITS#8843
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Apr 2018 15:50:51 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 10 Feb 2020 11:25:24 +0000
