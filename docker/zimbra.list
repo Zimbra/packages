@@ -1,0 +1,4 @@
+deb  [arch=amd64] https://repo.zimbra.com/apt/87 xenial zimbra
+deb  [arch=amd64] https://repo.zimbra.com/apt/90 xenial zimbra
+deb-src [arch=amd64] https://repo.zimbra.com/apt/87 xenial zimbra
+deb  [arch=amd64] https://repo.zimbra.com/apt/90-ne xenial zimbra
