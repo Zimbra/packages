@@ -1,28 +1,15 @@
-zimbra-core-components (1.0.4-1zimbra8.7b1ZAPPEND) unstable; urgency=low
-
-  * Updated zimbra-openjdk package.
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 18 May 2018 00:00:00 +0000
-
-zimbra-core-components (1.0.3-1zimbra8.7b1ZAPPEND) unstable; urgency=low
-
-  * Updated zimbra-openjdk package.
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 28 Jul 2017 00:00:00 +0000
-
-zimbra-core-components (1.0.2-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+zimbra-core-components (2.0.2-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-openssl package.
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 28 Jul 2017 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 31 Mar 2020 00:00:00 +0000
+zimbra-core-components (2.0.1-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
-zimbra-core-components (1.0.1-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+  * Updated zimbra-openjdk package.
 
-  * Updated zimbra-mariadb package.
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 11 Dec 2019 00:00:00 +0000
+zimbra-core-components (2.0.0-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 24 Jul 2017 00:00:00 +0000
-zimbra-core-components (1.0.0-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+  * Updated zimbra-openjdk package.
 
-  * Initial Release.
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 9 Sep 2015 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 20 May 2019 00:00:00 +0000
