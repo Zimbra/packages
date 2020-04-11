@@ -1,7 +1,7 @@
 Summary:            Zimbra's ClamAV build
 Name:               zimbra-clamav
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zlib-devel
@@ -16,6 +16,10 @@ URL:                http://www.clamav.net/
 
 %description
 The Zimbra ClamAV build
+
+%changelog
+* Sun Mar 15 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+- Upgraded clamav to 0.102.2
 
 %prep
 %setup -n clamav-%{version}
