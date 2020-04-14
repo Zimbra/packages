@@ -13,7 +13,7 @@ Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
  zimbra-mariadb-lib (>= 10.1.25-1zimbra8.7b1ZAPPEND), zimbra-openldap-client, zimbra-prepflog,
  zimbra-tcmalloc-lib, zimbra-perl-innotop, zimbra-openjdk (>= 13.0.1-1zimbra8.8b1ZAPPEND),
  zimbra-openjdk-cacerts, zimbra-osl, zimbra-amavis-logwatch,
- zimbra-postfix-logwatch, zimbra-rrdtool
+ zimbra-postfix-logwatch, zimbra-rrdtool, zimbra-openldap-server (>= 2.4.49-1zimbra8.8b1ZAPPEND)
 Description: Zimbra components for core package
  Zimbra core components pulls in all the packages used by
  zimbra-core
