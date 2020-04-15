@@ -26,12 +26,14 @@ override_dh_auto_configure:
 	--http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
 	--without-http_scgi_module \
 	--without-http_uwsgi_module \
+	--with-http_v2_module \
+	--with-mail-sasl \
+	--with-ipv6 \
+	--with-http_upstream_zmauth_module \
+	--with-http_zm_sso_module \
+	--with-mail_throttle \
+	--with-mail_zmauth \
 	--add-module=modules/nviennot-nginx-tcp-keepalive
-#	--with-mail-sasl \
-#	--with-http_spdy_module \
-#	--with-ipv6 \
-#	--with-http_upstream_zmauth_module \
-#	--with-http_zm_sso_module \
 
 override_dh_strip:
 	dh_strip -pzimbra-nginx --dbg-package=zimbra-nginx-dbg

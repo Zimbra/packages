@@ -18,14 +18,15 @@ getsrc:
 	mkdir -p $(SRC_DIR)
 	curl -sLo $(SRC_DIR)/nginx-$(pvers).tgz "https://nginx.org/download/nginx-$(pvers).tar.gz"
 	cd $(SRC_DIR) && tar zxf nginx-$(pvers).tgz && rm nginx-$(pvers).tgz
-	mv $(SRC_DIR)/nginx-$(pvers) $(SRC_DIR)/nginx-$(pvers)-zimbra
-	mkdir -p $(SRC_DIR)/nginx-$(pvers)-zimbra/modules
+	mv $(SRC_DIR)/$(pname)-$(pvers) $(SRC_DIR)/$(pname)-$(pvers)-zimbra
+	mkdir -p $(SRC_DIR)/$(pname)-$(pvers)-zimbra/modules
 	cd $(SRC_DIR)/nginx-$(pvers)-zimbra/modules && \
 	git clone https://github.com/nviennot/nginx-tcp-keepalive.git nviennot-nginx-tcp-keepalive >/dev/null 2>&1 && \
-	cd nviennot-nginx-tcp-keepalive && \
+	cd $(SRC_DIR)/$(pname)-$(pvers)-zimbra/modules/nviennot-nginx-tcp-keepalive && \
 	git reset --hard $(NGINX_HTTP_KEEPALIVE) >/dev/null 2>&1 && \
-	rm -rf .git
-	cd $(SRC_DIR) && tar zcf $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra && \
+	rm -rf .git && cd $(SRC_DIR)/nginx-$(pvers)-zimbra && \
+	patch -p1 < $(PKG_ROOT)/patches/zimbra-1.17.9.patch && \
+	cd $(SRC_DIR) && tar zcf $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra
 	rm -rf $(SRC_DIR)/$(pname)-$(pvers)-zimbra
 
 pkgadd:
