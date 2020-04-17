@@ -58,15 +58,10 @@ CFLAGS="-g -O0"; export CFLAGS; \
   --with-cc-opt="-g -IOZCI" \
   --with-ld-opt="-Wl,-rpath,OZCL -LOZCL" \
   --with-debug \
-  --with-ipv6 \
   --with-http_ssl_module \
   --with-http_stub_status_module \
   --with-pcre \
-  --with-http_upstream_zmauth_module \
-  --with-http_zm_sso_module \
-  --with-http_spdy_module \
   --with-mail \
-  --with-mail-sasl \
   --with-mail_ssl_module \
   --error-log-path=/opt/zimbra/log/nginx.log \
   --http-log-path=/opt/zimbra/log/nginx.access.log \
@@ -75,6 +70,13 @@ CFLAGS="-g -O0"; export CFLAGS; \
   --http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
   --without-http_scgi_module \
   --without-http_uwsgi_module \
+  --with-http_v2_module \
+  --with-mail-sasl \
+  --with-ipv6 \
+  --with-http_upstream_zmauth_module \
+  --with-http_zm_sso_module \
+  --with-mail_throttle \
+  --with-mail_zmauth \
   --add-module=modules/nviennot-nginx-tcp-keepalive
 make
 
