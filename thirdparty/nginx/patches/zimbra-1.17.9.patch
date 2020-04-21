@@ -1,5 +1,5 @@
 diff --git a/auto/cc/gcc b/auto/cc/gcc
-index a5c5c18fb..8a688914b 100644
+index a5c5c18f..8a688914 100644
 --- a/auto/cc/gcc
 +++ b/auto/cc/gcc
 @@ -50,7 +50,7 @@ esac
@@ -12,7 +12,7 @@ index a5c5c18fb..8a688914b 100644
  #CFLAGS="$CFLAGS -fomit-frame-pointer"
  
 diff --git a/auto/lib/conf b/auto/lib/conf
-index 2c7af1040..273309660 100644
+index 2c7af104..27330966 100644
 --- a/auto/lib/conf
 +++ b/auto/lib/conf
 @@ -1,7 +1,7 @@
@@ -35,7 +35,7 @@ index 2c7af1040..273309660 100644
 +
 diff --git a/auto/lib/sasl/conf b/auto/lib/sasl/conf
 new file mode 100644
-index 000000000..a83d09cbb
+index 00000000..a83d09cb
 --- /dev/null
 +++ b/auto/lib/sasl/conf
 @@ -0,0 +1,93 @@
@@ -133,7 +133,7 @@ index 000000000..a83d09cbb
 +
 +fi
 diff --git a/auto/modules b/auto/modules
-index d78e2823a..362d256cb 100644
+index d78e2823..e44bbe94 100644
 --- a/auto/modules
 +++ b/auto/modules
 @@ -1,7 +1,7 @@
@@ -145,7 +145,23 @@ index d78e2823a..362d256cb 100644
  
  if [ $EVENT_SELECT = NO -a $EVENT_FOUND = NO ]; then
      EVENT_SELECT=YES
-@@ -898,6 +898,32 @@ if [ $HTTP = YES ]; then
+@@ -77,6 +77,7 @@ if [ $HTTP = YES ]; then
+                          src/http/ngx_http_variables.h \
+                          src/http/ngx_http_script.h \
+                          src/http/ngx_http_upstream.h \
++                         src/http/ngx_http_upstream_fair.h \
+                          src/http/ngx_http_upstream_round_robin.h"
+         ngx_module_srcs="src/http/ngx_http.c \
+                          src/http/ngx_http_core_module.c \
+@@ -88,6 +89,7 @@ if [ $HTTP = YES ]; then
+                          src/http/ngx_http_variables.c \
+                          src/http/ngx_http_script.c \
+                          src/http/ngx_http_upstream.c \
++                         src/http/ngx_http_upstream_fair.c \
+                          src/http/ngx_http_upstream_round_robin.c"
+         ngx_module_libs=
+         ngx_module_link=YES
+@@ -898,6 +900,32 @@ if [ $HTTP = YES ]; then
          . auto/module
      fi
  
@@ -178,7 +194,7 @@ index d78e2823a..362d256cb 100644
      if [ $HTTP_STUB_STATUS = YES ]; then
          have=NGX_STAT_STUB . auto/have
  
-@@ -936,6 +962,11 @@ if [ $MAIL != NO ]; then
+@@ -936,6 +964,11 @@ if [ $MAIL != NO ]; then
  
      ngx_module_incs=
  
@@ -190,7 +206,7 @@ index d78e2823a..362d256cb 100644
      if [ $MAIL_SSL = YES ]; then
          USE_OPENSSL=YES
          have=NGX_MAIL_SSL . auto/have
-@@ -974,6 +1005,32 @@ if [ $MAIL != NO ]; then
+@@ -974,6 +1007,32 @@ if [ $MAIL != NO ]; then
          . auto/module
      fi
  
@@ -223,7 +239,7 @@ index d78e2823a..362d256cb 100644
      ngx_module_name=ngx_mail_auth_http_module
      ngx_module_deps=
      ngx_module_srcs=src/mail/ngx_mail_auth_http_module.c
-@@ -1268,6 +1325,8 @@ fi
+@@ -1268,6 +1327,8 @@ fi
  
  
  modules="$CORE_MODULES $EVENT_MODULES"
@@ -233,7 +249,7 @@ index d78e2823a..362d256cb 100644
  
  # thread pool module should be initialized after events
 diff --git a/auto/options b/auto/options
-index 521c9768d..0ca041e2b 100644
+index 521c9768..0ca041e2 100644
 --- a/auto/options
 +++ b/auto/options
 @@ -1,7 +1,7 @@
@@ -339,7 +355,7 @@ index 521c9768d..0ca041e2b 100644
  
  END
 diff --git a/auto/sources b/auto/sources
-index 3dad11132..899fd5a03 100644
+index 3dad1113..899fd5a0 100644
 --- a/auto/sources
 +++ b/auto/sources
 @@ -1,7 +1,7 @@
@@ -386,7 +402,7 @@ index 3dad11132..899fd5a03 100644
 -
  HTTP_FILE_CACHE_SRCS=src/http/ngx_http_file_cache.c
 diff --git a/auto/summary b/auto/summary
-index 9aa776edf..f1de5c8e8 100644
+index 9aa776ed..f1de5c8e 100644
 --- a/auto/summary
 +++ b/auto/summary
 @@ -2,6 +2,7 @@
@@ -413,7 +429,7 @@ index 9aa776edf..f1de5c8e8 100644
  
 diff --git a/html/zmerror_upstream_502.html b/html/zmerror_upstream_502.html
 new file mode 100644
-index 000000000..8a8217c5f
+index 00000000..8a8217c5
 --- /dev/null
 +++ b/html/zmerror_upstream_502.html
 @@ -0,0 +1,29 @@
@@ -448,7 +464,7 @@ index 000000000..8a8217c5f
 +</html>
 diff --git a/html/zmerror_upstream_504.html b/html/zmerror_upstream_504.html
 new file mode 100644
-index 000000000..c2e8a1884
+index 00000000..c2e8a188
 --- /dev/null
 +++ b/html/zmerror_upstream_504.html
 @@ -0,0 +1,29 @@
@@ -482,7 +498,7 @@ index 000000000..c2e8a1884
 +</body>
 +</html>
 diff --git a/src/core/nginx.c b/src/core/nginx.c
-index 9fcb0eb23..edd9af475 100644
+index 9fcb0eb2..edd9af47 100644
 --- a/src/core/nginx.c
 +++ b/src/core/nginx.c
 @@ -29,6 +29,7 @@ static char *ngx_load_module(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
@@ -494,7 +510,7 @@ index 9fcb0eb23..edd9af475 100644
  
  static ngx_conf_enum_t  ngx_debug_points[] = {
 diff --git a/src/core/nginx.h b/src/core/nginx.h
-index 796c25c20..3945ef3ad 100644
+index 796c25c2..3945ef3a 100644
 --- a/src/core/nginx.h
 +++ b/src/core/nginx.h
 @@ -10,7 +10,7 @@
@@ -507,7 +523,7 @@ index 796c25c20..3945ef3ad 100644
  
  #ifdef NGX_BUILD
 diff --git a/src/core/ngx_cycle.c b/src/core/ngx_cycle.c
-index 95f4bdfab..923cb31ff 100644
+index 95f4bdfa..923cb31f 100644
 --- a/src/core/ngx_cycle.c
 +++ b/src/core/ngx_cycle.c
 @@ -4,6 +4,9 @@
@@ -539,7 +555,7 @@ index 95f4bdfab..923cb31ff 100644
          if (fcntl(file[i].fd, F_SETFD, FD_CLOEXEC) == -1) {
              ngx_log_error(NGX_LOG_EMERG, log, ngx_errno,
 diff --git a/src/core/ngx_inet.c b/src/core/ngx_inet.c
-index 4228504ad..eaee8afd4 100644
+index 4228504a..eaee8afd 100644
 --- a/src/core/ngx_inet.c
 +++ b/src/core/ngx_inet.c
 @@ -4,6 +4,9 @@
@@ -695,7 +711,7 @@ index 4228504ad..eaee8afd4 100644
  }
  
 diff --git a/src/core/ngx_log.c b/src/core/ngx_log.c
-index 8e9408df0..c9b643c37 100644
+index 8e9408df..c9b643c3 100644
 --- a/src/core/ngx_log.c
 +++ b/src/core/ngx_log.c
 @@ -4,6 +4,10 @@
@@ -719,7 +735,7 @@ index 8e9408df0..c9b643c37 100644
  
  
 diff --git a/src/core/ngx_log.h b/src/core/ngx_log.h
-index afb73bf71..034a43dea 100644
+index afb73bf7..034a43de 100644
 --- a/src/core/ngx_log.h
 +++ b/src/core/ngx_log.h
 @@ -4,6 +4,10 @@
@@ -752,7 +768,7 @@ index afb73bf71..034a43dea 100644
  
 diff --git a/src/core/ngx_memcache.c b/src/core/ngx_memcache.c
 new file mode 100644
-index 000000000..0562c68ae
+index 00000000..0562c68a
 --- /dev/null
 +++ b/src/core/ngx_memcache.c
 @@ -0,0 +1,2156 @@
@@ -2914,7 +2930,7 @@ index 000000000..0562c68ae
 +}
 diff --git a/src/core/ngx_memcache.h b/src/core/ngx_memcache.h
 new file mode 100644
-index 000000000..d402d8d0f
+index 00000000..d402d8d0
 --- /dev/null
 +++ b/src/core/ngx_memcache.h
 @@ -0,0 +1,157 @@
@@ -3076,7 +3092,7 @@ index 000000000..d402d8d0f
 +
 +#endif
 diff --git a/src/core/ngx_string.c b/src/core/ngx_string.c
-index 468e9600c..aebab06c9 100644
+index 468e9600..aebab06c 100644
 --- a/src/core/ngx_string.c
 +++ b/src/core/ngx_string.c
 @@ -4,6 +4,9 @@
@@ -3116,7 +3132,7 @@ index 468e9600c..aebab06c9 100644
  /*
   * supported formats:
 diff --git a/src/core/ngx_string.h b/src/core/ngx_string.h
-index 0fb9be72e..1d13249af 100644
+index 0fb9be72..1d13249a 100644
 --- a/src/core/ngx_string.h
 +++ b/src/core/ngx_string.h
 @@ -4,6 +4,10 @@
@@ -3140,10 +3156,10 @@ index 0fb9be72e..1d13249af 100644
  u_char * ngx_cdecl ngx_slprintf(u_char *buf, u_char *last, const char *fmt,
 diff --git a/src/core/ngx_zm_lookup.c b/src/core/ngx_zm_lookup.c
 new file mode 100644
-index 000000000..165f85854
+index 00000000..a507ac25
 --- /dev/null
 +++ b/src/core/ngx_zm_lookup.c
-@@ -0,0 +1,2283 @@
+@@ -0,0 +1,2282 @@
 +/*
 + * ***** BEGIN LICENSE BLOCK *****
 + * Zimbra Collaboration Suite Server
@@ -3183,8 +3199,9 @@ index 000000000..165f85854
 +static ngx_str_t
 +ngx_zm_lookup_get_user_route_key(ngx_pool_t *pool, ngx_log_t *log,
 +        ngx_str_t proto, ngx_str_t account_name, ngx_str_t client_ip);
-+static ngx_str_t ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool,
-+        ngx_log_t *log, ngx_str_t proto, ngx_str_t id, ngx_flag_t isAdmin);
++static ngx_str_t
++ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool, ngx_log_t *log, ngx_str_t proto,
++        ngx_str_t id, ngx_http_zmauth_t type);
 +
 +/* lookup from route lookup servlet */
 +static void ngx_zm_lookup_dummy_handler(ngx_event_t *ev);
@@ -3492,24 +3509,24 @@ index 000000000..165f85854
 +        u.uri_part = 1;
 +        add = 0;
 +
-+       if (ngx_strncasecmp(u.url.data, (u_char *) "http://", 7) == 0) {
-+           add = 7;
-+       } else if (ngx_strncasecmp(u.url.data, (u_char *) "https://", 8) == 0) {
-+if (NGX_SSL)
-+           add = 8;
-+else
-+           ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-+                              "https protocol requires SSL support");
-+           return NGX_CONF_ERROR;
-+endif
-+       } else {
-+           ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "invalid URL prefix");
-+           return NGX_CONF_ERROR;
-+       }
-+       u.url.len -= add;
-+       u.url.data += add;
++        if (ngx_strncasecmp(u.url.data, (u_char *) "http://", 7) == 0) {
++            add = 7;
++        } else if (ngx_strncasecmp(u.url.data, (u_char *) "https://", 8) == 0) {
++#if (NGX_SSL)
++            add = 8;
++#else
++            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                               "https protocol requires SSL support");
++            return NGX_CONF_ERROR;
++#endif
++        } else {
++            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "invalid URL prefix");
++            return NGX_CONF_ERROR;
++        }
++        u.url.len -= add;
++        u.url.data += add;
 +
-+       if (ngx_parse_url(cf->pool, &u) != NGX_OK) {
++        if (ngx_parse_url(cf->pool, &u) != NGX_OK) {
 +            if (u.err) {
 +                ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
 +                    "%s in zm lookup handlers \"%V\"", u.err, &u.url);
@@ -3526,11 +3543,10 @@ index 000000000..165f85854
 +        handler->host = u.host;
 +        handler->uri = u.uri;
 +        handler->failure_time = 0;
-+
 +        if (add == 7) {
-+          handler->ssl = 0;
++            handler->ssl = 0;
 +        } else if (add == 8) {
-+          handler->ssl = 1;
++            handler->ssl = 1;
 +        }
 +
 +        ngx_conf_log_error(NGX_LOG_INFO, cf, 0,
@@ -3744,8 +3760,9 @@ index 000000000..165f85854
 +    work = ctx->work;
 +
 +    if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
-+        key = ngx_zm_lookup_get_id_route_key(pool, log,
-+                ZM_PROTO[work->protocol], work->username, work->isAdmin);
++        key = ngx_zm_lookup_get_id_route_key(
++                pool, log, ZM_PROTO[work->protocol], work->username,
++                work->type);
 +    } else {
 +        if (work->alias_check_stat == ZM_ALIAS_FOUND) {
 +            username = work->account_name;
@@ -3975,8 +3992,6 @@ index 000000000..165f85854
 +     ctx->peer.connection->data = ctx;
 +     ctx->peer.connection->pool = ctx->pool;
 +     ctx->peer.connection->log = ctx->log;
-+     ctx->peer.connection->read->handler = ngx_zm_lookup_dummy_handler;
-+     ctx->peer.connection->write->handler = ngx_zm_lookup_connect_handler;
 +     ngx_add_timer(ctx->peer.connection->read, zlcf->timeout);
 +     ngx_add_timer(ctx->peer.connection->write, zlcf->timeout);
 +
@@ -4076,12 +4091,12 @@ index 000000000..165f85854
 +    zlcf = (ngx_zm_lookup_conf_t *)ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
 +
 +    if (wev->timedout) {
-+        ngx_log_error(NGX_LOG_ERR, wev->log, NGX_ETIMEDOUT,
-+            "zm lookup: route handler timed out, failing over to the next one");
-+        ngx_zm_lookup_close_connection(ctx);
++    	ngx_log_error(NGX_LOG_ERR, wev->log, NGX_ETIMEDOUT,
++    	    "zm lookup: route handler timed out, failing over to the next one");
++    	ngx_zm_lookup_close_connection(ctx);
 +
-+        /* try again */
-+        ngx_zm_lookup_connect(ctx);
++    	/* try again */
++    	ngx_zm_lookup_connect(ctx);
 +        return;
 +    }
 +
@@ -4186,11 +4201,11 @@ index 000000000..165f85854
 +    b->last = ngx_sprintf(b->last, "Auth-Login-Attempt: %d" CRLF, work->login_attempts);
 +    b->last = ngx_sprintf(b->last, "X-Proxy-IP: %V" CRLF, &proxy_ip);
 +    b->last = ngx_sprintf(b->last, "Client-IP: %V" CRLF, &work->connection->addr_text);
-+   if (work->type == zmauth_admin_console) {
++    if (work->type == zmauth_admin_console) {
 +       b->last = ngx_cpymem(b->last, "Auth-Zimbra-Admin: True" CRLF, sizeof("Auth-Zimbra-Admin: True" CRLF) - 1);
-+   } else if (work->type == zmauth_zx) {
-+       b->last = ngx_cpymem(b->last, "Auth-Zimbra-Zx: True" CRLF, sizeof("Auth-Zimbra-Zx: True" CRLF) - 1);
-+   }
++    } else if (work->type == zmauth_zx) {
++        b->last = ngx_cpymem(b->last, "Auth-Zimbra-Zx: True" CRLF, sizeof("Auth-Zimbra-Zx: True" CRLF) - 1);
++    }
 +
 +    if (IS_PROTO_WEB(work->protocol)) {
 +        b->last = ngx_sprintf(b->last, "X-Proxy-Host: %V" CRLF, &work->virtual_host);
@@ -4266,7 +4281,6 @@ index 000000000..165f85854
 +
 +    ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, rev->log, 0,
 +            "zm lookup: ngx_recv() returned %d bytes", n);
-+
 +    if(n > 0) {
 +        ctx->lookup_resp->last += n;
 +        ctx->lookup_response_handler (ctx);
@@ -4275,7 +4289,7 @@ index 000000000..165f85854
 +
 +    if(n == NGX_AGAIN) {
 +        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, rev->log, 0,
-+                "zm lookup: ngx_recv() returned NGX_AGAIN");
++                    "zm lookup: ngx_recv() returned NGX_AGAIN");
 +        return;
 +    }
 +
@@ -5305,6 +5319,7 @@ index 000000000..165f85854
 +        sizeof(";") - 1 +
 +        sizeof("id=") - 1 +
 +        id.len;
++
 +    if (type == zmauth_admin_console) {
 +        len += sizeof("admin=1;") - 1;
 +    } else if (type == zmauth_zx) {
@@ -5429,10 +5444,10 @@ index 000000000..165f85854
 +}
 diff --git a/src/core/ngx_zm_lookup.h b/src/core/ngx_zm_lookup.h
 new file mode 100644
-index 000000000..3e8a482e5
+index 00000000..db6b90a4
 --- /dev/null
 +++ b/src/core/ngx_zm_lookup.h
-@@ -0,0 +1,204 @@
+@@ -0,0 +1,207 @@
 +/*
 + * ***** BEGIN LICENSE BLOCK *****
 + * Zimbra Collaboration Suite Server
@@ -5496,6 +5511,7 @@ index 000000000..3e8a482e5
 +    zmauth_zx
 +} ngx_http_zmauth_t;
 +
++
 +struct ngx_zm_lookup_work_s {
 +    ngx_pool_t    *pool;
 +    ngx_log_t     *log;
@@ -5503,7 +5519,9 @@ index 000000000..3e8a482e5
 +    /* input */
 +    ngx_str_t      username;        /* the original username given by user */
 +    ngx_str_t      auth_id;         /* GSSAPI auth id (principal) */
++
 +    ngx_http_zmauth_t    type;     /* whether is web, admin or /zx/ */
++
 +    ngx_uint_t     protocol:3;      /* protocol               */
 +    ngx_uint_t     auth_method:4;   /* auth method            */
 +    ngx_uint_t     alias_check_stat:2; /* the alias-->account caching lookup status */
@@ -5639,10 +5657,10 @@ index 000000000..3e8a482e5
 +#endif
 diff --git a/src/http/modules/ngx_http_upstream_zmauth_module.c b/src/http/modules/ngx_http_upstream_zmauth_module.c
 new file mode 100644
-index 000000000..fcbb452a6
+index 00000000..9582dd96
 --- /dev/null
 +++ b/src/http/modules/ngx_http_upstream_zmauth_module.c
-@@ -0,0 +1,1547 @@
+@@ -0,0 +1,2003 @@
 +/*
 + * ***** BEGIN LICENSE BLOCK *****
 + * Zimbra Collaboration Suite Server
@@ -5665,15 +5683,14 @@ index 000000000..fcbb452a6
 +#include <ngx_http_upstream_zmauth_module.h>
 +#include <ctype.h>
 +
-+/* zmauth type */
-+enum ngx_http_zmauth_type {
-+    zmauth_web_client,
-+    zmauth_admin_console
-+};
-+
++static char *ngx_http_upstream_fair_set_shm_size(ngx_conf_t *cf,
++                                                 ngx_command_t *cmd, void *conf);
 +static char * ngx_http_upstream_zmauth(ngx_conf_t *cf, ngx_command_t *cmd,
 +        void *conf);
 +static char * ngx_http_upstream_zmauth_admin(ngx_conf_t *cf, ngx_command_t *cmd,
++        void *conf);
++
++static char * ngx_http_upstream_zmauth_zx(ngx_conf_t *cf, ngx_command_t *cmd,
 +        void *conf);
 +
 +static void *ngx_http_upstream_zmauth_create_srv_conf(ngx_conf_t *cf);
@@ -5684,8 +5701,10 @@ index 000000000..fcbb452a6
 +        ngx_http_upstream_srv_conf_t *us);
 +static ngx_int_t ngx_http_upstream_init_admin_zmauth_peer(ngx_http_request_t *r,
 +        ngx_http_upstream_srv_conf_t *us);
++static ngx_int_t ngx_http_upstream_init_zx_zmauth_peer(ngx_http_request_t *r,
++        ngx_http_upstream_srv_conf_t *us);
 +static ngx_int_t ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
-+        ngx_http_upstream_srv_conf_t *us, enum ngx_http_zmauth_type type);
++        ngx_http_upstream_srv_conf_t *us, ngx_http_zmauth_t type);
 +static ngx_int_t ngx_http_upstream_get_zmauth_peer(ngx_peer_connection_t *pc,
 +        void *data);
 +static void ngx_http_upstream_free_zmauth_peer(ngx_peer_connection_t *pc,
@@ -5693,16 +5712,18 @@ index 000000000..fcbb452a6
 +static void zmauth_lookup_result_handler(ngx_zm_lookup_work_t *work);
 +static void ngx_http_upstream_zmauth_cleanup(void *data);
 +
-+static ngx_http_upstream_rr_peer_t* zmauth_get_current_peer(
++static ngx_uint_t zmauth_get_current_peer(
 +        ngx_http_upstream_zmauth_peer_data_t *zmp);
 +static inline void zmauth_set_peer(ngx_peer_connection_t *pc,
 +        ngx_http_upstream_zmauth_peer_data_t *zmp);
 +
 +static ngx_flag_t zmauth_check_rest(ngx_http_request_t *r, void **extra);
 +static ngx_flag_t zmauth_check_activesync(ngx_http_request_t *r, void **extra);
++static ngx_flag_t zmauth_check_ews(ngx_http_request_t *r, void **extra);
 +static ngx_flag_t zmauth_check_caldav(ngx_http_request_t *r, void **extra);
-+static ngx_flag_t zmauth_check_authtoken(ngx_http_request_t *r, void **extra);
-+static ngx_flag_t zmauth_check_admin_authtoken(ngx_http_request_t *r,
++static ngx_flag_t zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t *field, void **extra);
++static ngx_flag_t zmauth_check_jwttoken(ngx_http_request_t *r, ngx_str_t *field, void **extra);
++static ngx_flag_t zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t *field,
 +        void **extra);
 +static zmroutetype_t zmauth_check_uri(ngx_http_request_t *r, void **extra);
 +static zmroutetype_t zmauth_check_admin_uri(ngx_http_request_t *r, void **extra);
@@ -5714,23 +5735,42 @@ index 000000000..fcbb452a6
 +(ngx_log_t *log, ngx_pool_t *pool, ngx_table_elt_t *cookie, ngx_addr_t *peer);
 +#endif
 +
-+static void zmauth_translate_activesync_usr(ngx_pool_t *pool, ngx_str_t *src,
++static void zmauth_translate_activesync_ews_usr(ngx_pool_t *pool, ngx_str_t *src,
 +        ngx_str_t *tgt);
 +static ngx_flag_t ngx_field_from_zmauthtoken(ngx_log_t *log, ngx_pool_t *pool,
 +        ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value);
++static ngx_flag_t ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
++        ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value);
++static ngx_flag_t ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
++        ngx_http_headers_in_t *headers_in, ngx_str_t *value);
++static ngx_flag_t ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
++        ngx_str_t *payload, ngx_str_t *value);
 +static ngx_flag_t ngx_get_cookie_value(ngx_log_t *log,
 +        ngx_table_elt_t **cookies, ngx_uint_t ncookies, ngx_str_t *name,
 +        ngx_str_t *value);
 +static ngx_flag_t ngx_get_query_string_arg(ngx_log_t *log, ngx_str_t *args,
 +        ngx_str_t *name, ngx_str_t *value);
 +
++
 +static ngx_str_t NGX_ZMAUTHTOKEN_ID = ngx_string("id");
++static ngx_str_t NGX_ZMAUTHTOKEN_VER = ngx_string("version");
 +static ngx_str_t NGX_ZMAUTHTOKEN = ngx_string("ZM_AUTH_TOKEN");
 +static ngx_str_t NGX_ZMAUTHTOKEN_ADMIN = ngx_string("ZM_ADMIN_AUTH_TOKEN");
 +static ngx_str_t NGX_ZAUTHTOKEN = ngx_string("zauthtoken");
++static ngx_str_t NGX_ACCESS_DENIED_ERRMSG = ngx_string("is not allowed on this domain");
++
++static ngx_str_t NGX_ZMJWT_CLAIM_ID = ngx_string("sub");
++static ngx_str_t NGX_ZJWT_QUERY = ngx_string("zjwt");
 +
 +static ngx_command_t ngx_http_upstream_zmauth_commands[] =
 +{
++    { ngx_string("upstream_fair_shm_size"),
++        NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
++        ngx_http_upstream_fair_set_shm_size,
++        0,
++        0,
++        NULL },
++
 +    { ngx_string("zmauth"),
 +      NGX_HTTP_UPS_CONF|NGX_CONF_NOARGS,
 +      ngx_http_upstream_zmauth,
@@ -5741,6 +5781,13 @@ index 000000000..fcbb452a6
 +    { ngx_string("zmauth_admin"),
 +      NGX_HTTP_UPS_CONF|NGX_CONF_NOARGS,
 +      ngx_http_upstream_zmauth_admin,
++      0,
++      0,
++      NULL },
++
++    { ngx_string("zmauth_zx"),
++      NGX_HTTP_UPS_CONF|NGX_CONF_NOARGS,
++      ngx_http_upstream_zmauth_zx,
 +      0,
 +      0,
 +      NULL },
@@ -5774,6 +5821,38 @@ index 000000000..fcbb452a6
 +        NGX_MODULE_V1_PADDING
 +};
 +
++static char *
++ngx_http_upstream_fair_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    ssize_t                         new_shm_size;
++    ngx_str_t                      *value;
++
++    value = cf->args->elts;
++
++    new_shm_size = ngx_parse_size(&value[1]);
++
++    if (new_shm_size == NGX_ERROR) {
++        ngx_log_error(NGX_LOG_EMERG, cf->log, 0, "Invalid memory area size `%V'", &value[1]);
++        return NGX_CONF_ERROR;
++    }
++
++    new_shm_size = ngx_align(new_shm_size, ngx_pagesize);
++
++    if (new_shm_size < 8 * (ssize_t) ngx_pagesize) {
++        ngx_log_error(NGX_LOG_WARN, cf->log, 0, "The upstream_fair_shm_size value must be at least %udKiB", (8 * ngx_pagesize) >> 10);
++        new_shm_size = 8 * ngx_pagesize;
++    }
++
++    if (*shm_size && *shm_size != (ngx_uint_t) new_shm_size) {
++        ngx_log_error(NGX_LOG_WARN, cf->log, 0, "Cannot change memory area size without restart, ignoring change");
++    } else {
++        *shm_size = new_shm_size;
++    }
++    ngx_log_error(NGX_LOG_NOTICE, cf->log, 0, "Using %udKiB of shared memory for upstream_fair", *shm_size >> 10);
++
++    return NGX_CONF_OK;
++}
++
 +/* handle the `zmauth' configuration directive in an upstream block
 + */
 +static char *
@@ -5785,7 +5864,7 @@ index 000000000..fcbb452a6
 +    uscf->peer.init_upstream = ngx_http_upstream_init_zmauth;
 +
 +    uscf->flags = NGX_HTTP_UPSTREAM_CREATE | NGX_HTTP_UPSTREAM_MAX_FAILS
-+            | NGX_HTTP_UPSTREAM_FAIL_TIMEOUT | NGX_HTTP_UPSTREAM_DOWN;
++            | NGX_HTTP_UPSTREAM_FAIL_TIMEOUT | NGX_HTTP_UPSTREAM_DOWN | NGX_HTTP_UPSTREAM_VERSION;
 +
 +    return NGX_CONF_OK;
 +}
@@ -5799,7 +5878,21 @@ index 000000000..fcbb452a6
 +    uscf->peer.init_upstream = ngx_http_upstream_init_admin_zmauth;
 +
 +    uscf->flags = NGX_HTTP_UPSTREAM_CREATE | NGX_HTTP_UPSTREAM_MAX_FAILS
-+            | NGX_HTTP_UPSTREAM_FAIL_TIMEOUT | NGX_HTTP_UPSTREAM_DOWN;
++            | NGX_HTTP_UPSTREAM_FAIL_TIMEOUT | NGX_HTTP_UPSTREAM_DOWN | NGX_HTTP_UPSTREAM_VERSION;
++
++    return NGX_CONF_OK;
++}
++
++static char *
++ngx_http_upstream_zmauth_zx(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    ngx_http_upstream_srv_conf_t *uscf;
++
++    uscf = ngx_http_conf_get_module_srv_conf(cf, ngx_http_upstream_module);
++    uscf->peer.init_upstream = ngx_http_upstream_init_zx_zmauth;
++
++    uscf->flags = NGX_HTTP_UPSTREAM_CREATE | NGX_HTTP_UPSTREAM_MAX_FAILS
++                  | NGX_HTTP_UPSTREAM_FAIL_TIMEOUT | NGX_HTTP_UPSTREAM_DOWN | NGX_HTTP_UPSTREAM_VERSION;
 +
 +    return NGX_CONF_OK;
 +}
@@ -5812,7 +5905,7 @@ index 000000000..fcbb452a6
 +ngx_int_t
 +ngx_http_upstream_init_zmauth(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
 +{
-+    if (ngx_http_upstream_init_round_robin(cf, us) != NGX_OK) {
++    if (ngx_http_upstream_init_fair(cf, us) != NGX_OK) {
 +        return NGX_ERROR;
 +    }
 +
@@ -5823,11 +5916,22 @@ index 000000000..fcbb452a6
 +ngx_int_t
 +ngx_http_upstream_init_admin_zmauth(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
 +{
-+    if (ngx_http_upstream_init_round_robin(cf, us) != NGX_OK) {
++    if (ngx_http_upstream_init_fair(cf, us) != NGX_OK) {
 +        return NGX_ERROR;
 +    }
 +
 +    us->peer.init = ngx_http_upstream_init_admin_zmauth_peer;
++    return NGX_OK;
++}
++
++ngx_int_t
++ngx_http_upstream_init_zx_zmauth(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
++{
++    if (ngx_http_upstream_init_fair(cf, us) != NGX_OK) {
++        return NGX_ERROR;
++    }
++
++    us->peer.init = ngx_http_upstream_init_zx_zmauth_peer;
 +    return NGX_OK;
 +}
 +
@@ -5845,12 +5949,19 @@ index 000000000..fcbb452a6
 +    return ngx_http_upstream_do_init_zmauth_peer(r, us, zmauth_admin_console);
 +}
 +
++static ngx_int_t
++ngx_http_upstream_init_zx_zmauth_peer(ngx_http_request_t *r,
++                                         ngx_http_upstream_srv_conf_t *us)
++{
++    return ngx_http_upstream_do_init_zmauth_peer(r, us, zmauth_zx);
++}
++
 +/* This function is called when an incoming http request needs to be routed to
 + one of the peers inside the upstream block
 + */
 +static ngx_int_t
 +ngx_http_upstream_do_init_zmauth_peer(ngx_http_request_t *r,
-+        ngx_http_upstream_srv_conf_t *us, enum ngx_http_zmauth_type type)
++        ngx_http_upstream_srv_conf_t *us, ngx_http_zmauth_t type)
 +{
 +    ngx_http_upstream_zmauth_peer_data_t *zmp;
 +    struct sockaddr_in                   *sin;
@@ -5861,27 +5972,28 @@ index 000000000..fcbb452a6
 +    ngx_http_upstream_zmauth_ctx_t       *ctx;
 +    ngx_pool_t                           *pool;
 +    void                                 *info;
++    void								 *ver;
 +    ngx_zm_lookup_work_t                 *work;
 +
 +    ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, r->connection->log, 0,
 +            "zmauth: lookup route for web proxy");
 +
-+    zmp = ngx_palloc(r->pool, sizeof(ngx_http_upstream_zmauth_peer_data_t));
++    zmp = ngx_pcalloc(r->pool, sizeof(ngx_http_upstream_zmauth_peer_data_t));
 +
 +    if (zmp == NULL) {
 +        return NGX_ERROR;
 +    }
 +
-+    r->upstream->peer.data = &zmp->rrp;
-+    if (ngx_http_upstream_init_round_robin_peer(r, us) != NGX_OK) {
++    r->upstream->peer.data = &zmp->fp;
++    if (ngx_http_upstream_init_fair_peer(r, us) != NGX_OK) {
 +        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-+                "zmauth: cannot initialize round-robin fallback");
++                "zmauth: cannot initialize fair fallback");
 +        return NGX_ERROR;
 +    }
 +
 +    r->upstream->peer.get = ngx_http_upstream_get_zmauth_peer;
 +    r->upstream->peer.free = ngx_http_upstream_free_zmauth_peer;
-+    zmp->get_rr_peer = ngx_http_upstream_get_round_robin_peer;
++    zmp->get_fair_peer = ngx_http_upstream_get_fair_peer;
 +
 +    /* initialize data for iphash for cases before AUTH TOKEN (prelogin) */
 +    zmp->family = r->connection->sockaddr->sa_family;
@@ -5906,10 +6018,16 @@ index 000000000..fcbb452a6
 +    zmp->hash = 89;
 +    zmp->tries = 0;
 +
-+    if (type == zmauth_web_client) {
++    if (type == zmauth_web_client || type == zmauth_zx) {
 +        zmp->zmroutetype = zmauth_check_uri(r, &info);
++        if (&zmp->fp && (zmp->zmroutetype == zmroutetype_authtoken) && zmauth_check_authtoken(r, &NGX_ZMAUTHTOKEN_VER, &ver)) {
++        	zmp->fp.version = *((ngx_str_t*) ver);
++        }
 +    } else if (type == zmauth_admin_console) {
 +        zmp->zmroutetype = zmauth_check_admin_uri(r, &info);
++        if (&zmp->fp && (zmp->zmroutetype == zmroutetype_authtoken) && zmauth_check_admin_authtoken(r, &NGX_ZMAUTHTOKEN_VER, &ver)) {
++            zmp->fp.version = *((ngx_str_t*) ver);
++        }
 +    } else {
 +        zmp->zmroutetype = zmroutetype_fallback;
 +    }
@@ -5924,7 +6042,6 @@ index 000000000..fcbb452a6
 +        if (pool == NULL) {
 +            return NGX_ERROR;
 +        }
-+
 +        ctx = ngx_pcalloc(pool, sizeof(ngx_http_upstream_zmauth_ctx_t));
 +        if (ctx == NULL) {
 +            ngx_destroy_pool(pool);
@@ -5932,7 +6049,6 @@ index 000000000..fcbb452a6
 +        }
 +
 +        ngx_http_set_ctx(r, ctx, ngx_http_upstream_zmauth_module);
-+
 +        ctx->pool = pool;
 +        ctx->zmp = zmp;
 +
@@ -5940,7 +6056,6 @@ index 000000000..fcbb452a6
 +        ngx_http_cleanup_t * cln = ngx_http_cleanup_add(r, 0);
 +        cln->handler = ngx_http_upstream_zmauth_cleanup;
 +        cln->data = r;
-+
 +        work = ngx_pcalloc(pool, sizeof(ngx_zm_lookup_work_t));
 +        if(work == NULL) {
 +            ngx_destroy_pool(pool);
@@ -5957,7 +6072,6 @@ index 000000000..fcbb452a6
 +        work->alias_check_stat = ZM_ALIAS_NOT_CHECKED;
 +        work->on_success = zmauth_lookup_result_handler;
 +        work->on_failure = zmauth_lookup_result_handler;
-+
 +        schema = r->upstream->schema;
 +        if (schema.len == sizeof("http://") - 1
 +                && ngx_strncmp(schema.data, (u_char *)"http://", sizeof("http://") - 1) == 0) {
@@ -5967,18 +6081,16 @@ index 000000000..fcbb452a6
 +            work->protocol = ZM_PROTO_HTTPS;
 +        }
 +
-+        if (zmp->zmroutetype == zmroutetype_authtoken) {
++        if (zmp->zmroutetype == zmroutetype_authtoken || zmp->zmroutetype == zmroutetype_jwttoken) {
 +            work->auth_method = ZM_AUTHMETH_ZIMBRAID;
 +        } else {
 +            work->auth_method = ZM_AUTHMETH_USERNAME;
 +        }
 +
-+        if (type == zmauth_admin_console) {
-+            work->isAdmin = 1;
-+        }
++        work->type = type;
++
 +        ctx->work = work;
 +        ctx->connect = us->connect;
-+
 +        ngx_zm_lookup(work);
 +
 +        return NGX_AGAIN; // return NGX_AGAIN to indicate this is an async peer init
@@ -5995,7 +6107,7 @@ index 000000000..fcbb452a6
 +ngx_http_upstream_get_zmauth_peer(ngx_peer_connection_t *pc,
 +        void *data) {
 +    ngx_http_upstream_zmauth_peer_data_t *zmp = data;
-+    ngx_http_upstream_rr_peer_t *peer;
++    ngx_http_upstream_fair_peer_t *peer;
 +    time_t now;
 +    uintptr_t m;
 +    ngx_uint_t i, n, p, hash, len;
@@ -6007,47 +6119,58 @@ index 000000000..fcbb452a6
 +    now = ngx_time();
 +
 +    if (zmp->zmroutetype != zmroutetype_fallback) {
-+        zmp->rrp.current = zmauth_get_current_peer(zmp);
-+        if (zmp->rrp.current != NGX_INVALID_ARRAY_INDEX) {
++		ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, pc->log, 0,
++		            "zmauth: version in zm_auth_token: %V", &zmp->fp.version);
++        zmp->fp.current = zmauth_get_current_peer(zmp);
++        if (zmp->fp.current != NGX_INVALID_ARRAY_INDEX) {
 +            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, pc->log, 0,
-+                    "zmauth: upstream server %d is returned by zmlookup", zmp->rrp.current);
++                    "zmauth: upstream server %d is returned by zmlookup", zmp->fp.current);
 +
-+            peer = &zmp->rrp.peers->peer[zmp->rrp.current];
++            peer = &zmp->fp.peers->peer[zmp->fp.current];
 +            if (!peer->down) {
 +
-+                if (peer->max_fails == 0 || peer->fails < peer->max_fails) {
++                if (peer->max_fails == 0 || peer->shared->fails < peer->max_fails) {
 +                    zmauth_set_peer(pc, zmp);
 +                    return NGX_OK;
 +                }
 +
 +                if (now - peer->accessed > peer->fail_timeout) {
-+                    peer->fails = 0;
++                    peer->shared->fails = 0;
 +                    zmauth_set_peer(pc, zmp);
 +                    return NGX_OK;
 +                }
 +            }
 +
-+            zmp->rrp.current = NGX_INVALID_ARRAY_INDEX;
++            zmp->fp.current = NGX_INVALID_ARRAY_INDEX;
 +            return NGX_BUSY;
 +
 +        } else {
 +            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, pc->log, 0,
 +                    "zmauth: upstream server %V returned by zmlookup "
-+                    "is not defined in upstream block, ignore failure check",
++                    "is not defined in upstream block, fallback to IPHASH/Fair to pick an upstream from the upstream block",
 +                    &zmp->zmpeer.name);
 +            /* if the peer returned by zmlookup is not found in upstream block, just use it */
-+            if (zmp->tries > 0) { /* have tried, won't try again*/
++            /*
++            if (zmp->tries > 0) { // have tried, won't try again
 +                return NGX_BUSY;
 +            }
 +            zmauth_set_peer(pc, zmp);
 +            zmp->tries++;
 +            return NGX_OK;
++            */
 +        }
 +    }
 +
-+    /* check whether to use round robin */
-+    if (zmp->tries > 20 || zmp->rrp.peers->number == 1) {
-+        return zmp->get_rr_peer(pc, &zmp->rrp);
++    if (zmp->access_denied) {
++        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, pc->log, 0,
++                "zmauth: client IP %V", &NGX_ACCESS_DENIED_ERRMSG);
++        zmp->access_denied = 0;
++        return NGX_DECLINED;
++    }
++
++    /* check whether to use fair LB */
++    if (zmp->tries > 20 || zmp->fp.peers->number == 1) {
++        return zmp->get_fair_peer(pc, &zmp->fp);
 +    }
 +
 +    pc->cached = 0;
@@ -6056,6 +6179,7 @@ index 000000000..fcbb452a6
 +    hash = zmp->hash;
 +
 +    for (;;) {
++
 +        /* use all four octets of ipv4 address, plus two bytes of ipv4 port,
 +         for computation of ip-hash. this ensures better distribution
 +         */
@@ -6064,55 +6188,65 @@ index 000000000..fcbb452a6
 +            hash = (hash * 113 + zmp->addr[i]) % 6271;
 +        }
 +
-+	/*
-+	 * since client IP PORT can change, client IP PORTS are not
-+	 * used to generate HASH
-+	 */
-+
++        /*
++         * since client IP PORT can change, client IP PORTS are not
++         * used to generate HASH
++         */
 +        //hash = (hash * 113 + zmp->porth) % 6271;
 +        //hash = (hash * 113 + zmp->portl) % 6271;
 +
 +        zmp->hash = hash;
 +
-+        p = hash % zmp->rrp.peers->number;
++        p = hash % zmp->fp.peers->number;
 +
 +        n = p / (8 * sizeof(uintptr_t));
 +        m = 1 << p % (8 * sizeof(uintptr_t));
 +
-+        if (!(zmp->rrp.tried[n] & m)) {
++        if (!(zmp->fp.tried[n] & m)) {
 +
-+            ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
-+                    "get ip hash peer, hash: %ui %04XA", p, m);
++            ngx_log_debug4(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++                    "zmauth: get ip hash peer, peers = %ui hash = %ui selected peer index = %ui %04XA",
++                    zmp->fp.peers->number, hash, p, m);
 +
-+            peer = &zmp->rrp.peers->peer[p];
++            peer = &zmp->fp.peers->peer[p];
 +
-+            /* ngx_lock_mutex(iphp->rrp.peers->mutex); */
++            /* ngx_lock_mutex(iphp->fp.peers->mutex); */
 +
 +            if (!peer->down) {
++            	if (ngx_http_upstream_fair_peer_version_allowed(peer, &zmp->fp, pc->log) == 0) {
++            		ngx_log_debug1(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++            		                    "zmauth: %V skipped because of version check, hash to a different upstream", &peer->name);
++            		zmp->fp.tried[n] |= m;
++            		pc->tries--;
++            		if (++zmp->tries >= 20) {
++            			return zmp->get_fair_peer(pc, &zmp->fp);
++            		}
++            		continue;
++            	}
 +
-+                if (peer->max_fails == 0 || peer->fails < peer->max_fails) {
++                if (peer->max_fails == 0 || peer->shared->fails < peer->max_fails) {
 +                    break;
 +                }
 +
 +                if (now - peer->accessed > peer->fail_timeout) {
-+                    peer->fails = 0;
++                    peer->shared->fails = 0;
 +                    break;
 +                }
 +            }
 +
-+            zmp->rrp.tried[n] |= m;
++            zmp->fp.tried[n] |= m;
 +
-+            /* ngx_unlock_mutex(iphp->rrp.peers->mutex); */
++            /* ngx_unlock_mutex(iphp->fp.peers->mutex); */
 +
 +            pc->tries--;
 +        }
 +
 +        if (++zmp->tries >= 20) {
-+            return zmp->get_rr_peer(pc, &zmp->rrp);
++            return zmp->get_fair_peer(pc, &zmp->fp);
 +        }
 +    }
 +
-+    zmp->rrp.current = peer;
++    zmp->fp.current = p;
 +
 +    pc->sockaddr = peer->sockaddr;
 +    pc->socklen = peer->socklen;
@@ -6121,9 +6255,9 @@ index 000000000..fcbb452a6
 +    ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, pc->log, 0,
 +            "zmauth: %V elected by iphash", &peer->name);
 +
-+    /* ngx_unlock_mutex(zmp->rrp.peers->mutex); */
++    /* ngx_unlock_mutex(zmp->fp.peers->mutex); */
 +
-+    zmp->rrp.tried[n] |= m;
++    zmp->fp.tried[n] |= m;
 +    zmp->hash = hash;
 +
 +    return NGX_OK;
@@ -6170,13 +6304,19 @@ index 000000000..fcbb452a6
 +                &work->err);
 +        /* fallback to IPHASH (bug 54641, bug 52553) */
 +        zmp->zmroutetype = zmroutetype_fallback;
++        /* Client IP not allowed, need to be thrown a 403 (bug 55152) */
++        if (work->err.len && ngx_strstr(work->err.data, NGX_ACCESS_DENIED_ERRMSG.data)) {
++            zmp->access_denied = 1;
++        }
 +    }
++
++    void (*connect_func)(ngx_http_request_t*, ngx_http_upstream_t*) = ctx->connect;
 +
 +    ngx_destroy_pool(ctx->pool);
 +    ngx_http_set_ctx(r, NULL, ngx_http_upstream_zmauth_module);
 +
 +    /* bug 64775, 62374, we have to invoke "connect" at last statement */
-+    ctx->connect(r, r->upstream); /* async invoke ngx_http_upstream_connect */
++    connect_func(r, r->upstream); /* async invoke ngx_http_upstream_connect */
 +}
 +
 +static void
@@ -6186,8 +6326,8 @@ index 000000000..fcbb452a6
 +    /* only handle the case when the upstream returned by zmlookup is within
 +     * upstream block in the config file
 +     */
-+    if (zmp->rrp.current != NULL) {
-+        ngx_http_upstream_free_round_robin_peer(pc, &zmp->rrp, state);
++    if (zmp->fp.current != NGX_INVALID_ARRAY_INDEX) {
++        ngx_http_upstream_free_fair_peer(pc, &zmp->fp, state);
 +    }
 +}
 +
@@ -6551,7 +6691,7 @@ index 000000000..fcbb452a6
 +            "zmauth: decoded(auth-token(#2)): %V",
 +            &t2);
 +
-+    /* now we need to search for the named field
++    /* now we need to search for the named field 
 +     the decoded portion of the authtoken(#2) looks like
 +     field=len:value;field=len:value;...
 +     */
@@ -6607,6 +6747,176 @@ index 000000000..fcbb452a6
 +    }
 +
 +    return f;
++}
++
++/* extract the jwt token from Header*/
++static ngx_flag_t
++ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
++        ngx_http_headers_in_t *headers_in, ngx_str_t *value) {
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++            "zmauth: ngx_get_authheader_bearer entered");
++
++    ngx_str_t authValue;
++    ngx_str_t token;
++
++    authValue = headers_in->authorization->value;
++
++    ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
++            "zmauth: ngx_get_authheader_bearer token:%V", &authValue);
++
++    if (authValue.len >= sizeof("Bearer ") - 1
++            && ngx_memcmp(authValue.data,"Bearer ",sizeof("Bearer ")-1)
++            == 0) {
++        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++                "zmauth: ngx_get_authheader_bearer Bearer token found");
++
++        token = authValue;
++        token.data += (sizeof("Bearer ") - 1);
++        token.len -= (sizeof("Bearer ") - 1);
++
++        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
++                "zmauth: ngx_get_authheader_bearer Bearer token found:%V", &token);
++        *value = token;
++
++        return 1; 
++    }
++
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++            "zmauth: ngx_get_authheader_bearer exit");
++
++    return 0;
++}
++
++/* extract claim data from jwt token */
++static ngx_flag_t
++ngx_claimdata_from_jwttoken(ngx_log_t *log, ngx_pool_t *pool,
++        ngx_str_t *authtoken, ngx_str_t *field, ngx_str_t *value) {
++    ngx_flag_t f;
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++            "zmauth: ngx_claimdata_from_jwttoken entered");
++
++    ngx_str_t pattern = ngx_string("(?<=\\.)(.*?)(?=\\.)");
++    ngx_regex_compile_t rgc;
++    u_char errstr[NGX_MAX_CONF_ERRSTR];
++    ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
++
++    rgc.pattern  = pattern;
++    rgc.pool     = pool;
++    rgc.err.len  = NGX_MAX_CONF_ERRSTR;
++    rgc.err.data = errstr;
++    if (ngx_regex_compile(&rgc) != NGX_OK) {
++        ngx_log_error(NGX_LOG_INFO, log, 0,
++                "zmauth: ngx_claimdata_from_jwttoken regex compilation failed. Error:%s", errstr);
++        return 0;
++    }
++
++    int captures[(1 + rgc.captures) * 3];
++    ngx_int_t  n;
++
++    n = ngx_regex_exec(rgc.regex, authtoken, captures, (1 + rgc.captures) * 3);
++    if (n >= 0) {
++        /* string matches expression */
++        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_jwttoken match found");
++        ngx_str_t encodedPayload;
++        encodedPayload.data = authtoken->data + captures[0];
++        encodedPayload.len = captures[1] - captures[0];
++        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_jwttoken payload is %V", &encodedPayload);
++
++        ngx_str_t urlDecodedPayload;
++        urlDecodedPayload.data = ngx_pnalloc(pool, ngx_base64_decoded_length(encodedPayload.len));
++        if (urlDecodedPayload.data == NULL) {
++            ngx_log_error(NGX_LOG_INFO, log, 0,
++                    "zmauth: ngx_claimdata_from_jwttoken memory allocation from pool failed");
++            return NGX_ERROR;
++        }
++
++        if (ngx_decode_base64url(&urlDecodedPayload, &encodedPayload) != NGX_OK) {
++            ngx_log_error(NGX_LOG_INFO, log, 0,
++                    "zmauth: ngx_claimdata_from_jwttoken base64url decoding failed");
++            return 0;
++        }
++        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_jwttoken base64url decoded payload is %V", &urlDecodedPayload);
++        int ret = ngx_claimdata_from_payload(log,pool,&urlDecodedPayload,value);
++        return ret;
++    }
++    else if (n == NGX_REGEX_NO_MATCHED) {
++        /* no match was found */
++        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_jwttoken no match found");
++        return 0;      
++    }
++    else {
++        /* some error */
++        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_jwttoken failed: %i", n);
++        return 0;
++    }
++
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++            "zmauth: ngx_claimdata_from_jwttoken exit");
++ 
++    return 0;
++}
++
++/* extract sub data field from payload */
++static ngx_flag_t
++ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
++        ngx_str_t *payload, ngx_str_t *value) {
++    ngx_flag_t f;
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++            "zmauth: ngx_claimdata_from_payload entered");
++
++    ngx_str_t pattern = ngx_string("\"sub\":[\\s]*\"(.*?)\"[\\s]*");
++    ngx_regex_compile_t rgc;
++    u_char errstr[NGX_MAX_CONF_ERRSTR];
++    ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
++
++    rgc.pattern  = pattern;
++    rgc.pool     = pool;
++    rgc.err.len  = NGX_MAX_CONF_ERRSTR;
++    rgc.err.data = errstr;
++    if (ngx_regex_compile(&rgc) != NGX_OK) {
++        ngx_log_error(NGX_LOG_INFO, log, 0,
++                "zmauth: ngx_claimdata_from_payload regex compilation failed. Error:%s", errstr);
++        return 0;
++    }
++
++    int captures[(1 + rgc.captures) * 3];
++    ngx_int_t  n;
++
++    n = ngx_regex_exec(rgc.regex, payload, captures, (1 + rgc.captures) * 3);
++    if (n >= 0) {
++        /* string matches expression */
++        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_payload match found");
++        ngx_str_t subData;
++        subData.data = payload->data + captures[2];
++        subData.len = captures[3] - captures[2];
++        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_payload subData is %V", &subData);
++        *value = subData;
++        return 1;
++    }
++    else if (n == NGX_REGEX_NO_MATCHED) {
++        /* no match was found */
++        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_payload no match found");
++        return 0;      
++    }
++    else {
++        /* some error */
++        ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "zmauth: ngx_claimdata_from_jwttoken failed: %i", n);
++        return 0;
++    }
++
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++            "zmauth: ngx_claimdata_from_payload exit");
++ 
++    return 0;
 +}
 +
 +static void *
@@ -6801,7 +7111,7 @@ index 000000000..fcbb452a6
 +                        usr = ngx_palloc(pool, sizeof(ngx_str_t));
 +
 +                        if (usr != NULL) {
-+                            zmauth_translate_activesync_usr(pool, &credusr, usr);
++                            zmauth_translate_activesync_ews_usr(pool, &credusr, usr);
 +                            ngx_log_debug2(NGX_LOG_DEBUG_HTTP,log,0,
 +                                    "ActiveSync: user:%V translated to user:%V for route discovery",
 +                                    &credusr,usr);
@@ -6822,6 +7132,98 @@ index 000000000..fcbb452a6
 +            if (usr != NULL && zmauth_find_arg(&r->args, &userArg, usr) != 0) {
 +                ngx_log_debug1(NGX_LOG_DEBUG_HTTP,log,0,
 +                        "ActiveSync: fallback to HTTP argument User1:%V",
++                        usr);
++
++                *extra = usr;
++                rc = 1;
++            }
++        }
++    }
++
++    return rc;
++}
++
++static ngx_flag_t
++zmauth_check_ews(ngx_http_request_t *r, void **extra) {
++    ngx_log_t *log;
++    ngx_pool_t *pool;
++    ngx_str_t authval, cred64, cred, credusr, *usr;
++    u_char *p;
++    ngx_flag_t rc;
++    ngx_str_t userArg = ngx_string("User");
++
++    rc = 0;
++    log = r->connection->log;
++    pool = r->pool;
++
++    ngx_log_debug1(NGX_LOG_DEBUG_HTTP,log,0,
++            "zmauth: examining uri:%V for EWS", &r->uri);
++
++    if (r->uri.len >= sizeof("/ews/Exchange.asmx") - 1
++            && ngx_strncasecmp(r->uri.data, (u_char *)"/ews/Exchange.asmx", sizeof("/ews/Exchange.asmx")-1)
++                    == 0) {
++        if (r->headers_in.authorization != NULL
++                && r->headers_in.authorization->value.data != NULL) {
++            ngx_log_debug1(NGX_LOG_DEBUG_HTTP,log,0,
++                    "EWS: Found RFC 2617 authorization header: %V",
++                    &r->headers_in.authorization->value);
++            authval = r->headers_in.authorization->value;
++            if (authval.len >= sizeof("Basic ") - 1
++                    && ngx_memcmp(authval.data,"Basic ",sizeof("Basic ")-1)
++                            == 0) {
++                cred64 = authval;
++                cred64.data += (sizeof("Basic ") - 1);
++                cred64.len -= (sizeof("Basic ") - 1);
++                cred.len = ngx_base64_decoded_length(cred64.len);
++                cred.data = ngx_palloc(pool, cred.len);
++                if (cred.data != NULL) {
++                    if (ngx_decode_base64(&cred, &cred64) == NGX_OK) {
++
++#if (NGX_DEBUG_HTTP_PASSWD)
++     ngx_log_debug1(NGX_LOG_DEBUG_HTTP,log,0,
++                    "EWS: found auth basic credentials: %V", &cred);
++#endif
++
++                        /* (RFC 2617)
++
++                         basic-credentials = base64-user-pass
++                         base64-user-pass  = <base64 [4] encoding of user-pass,
++                         except not limited to 76 char/line>
++                         user-pass   = userid ":" password
++                         userid      = *<TEXT excluding ":">
++                         password    = *TEXT
++                         */
++
++                        credusr.data = cred.data;
++                        p = cred.data;
++                        while (p < cred.data + cred.len && *p != ':') {
++                            ++p;
++                        }
++                        credusr.len = p - cred.data;
++                        usr = ngx_palloc(pool, sizeof(ngx_str_t));
++
++                        if (usr != NULL) {
++                            zmauth_translate_activesync_ews_usr(pool, &credusr, usr);
++                            ngx_log_debug2(NGX_LOG_DEBUG_HTTP,log,0,
++                                    "EWS: user:%V translated to user:%V for route discovery",
++                                    &credusr,usr);
++
++                            *extra = usr;
++                            rc = 1;
++                        }
++                    }
++                }
++            }
++
++        } else {
++            ngx_log_debug1(NGX_LOG_DEBUG_HTTP,log,0,
++                    "EWS: No authorization header, examine args: [%V]",
++                    &r->args);
++
++            usr = ngx_palloc(pool, sizeof(ngx_str_t));
++            if (usr != NULL && zmauth_find_arg(&r->args, &userArg, usr) != 0) {
++                ngx_log_debug1(NGX_LOG_DEBUG_HTTP,log,0,
++                        "EWS: fallback to HTTP argument User1:%V",
 +                        usr);
 +
 +                *extra = usr;
@@ -6895,12 +7297,14 @@ index 000000000..fcbb452a6
 +    return f;
 +}
 +
++
 +/* examine request cookies for ZM_AUTH_TOKEN and extract route if so */
 +static ngx_flag_t
-+zmauth_check_authtoken(ngx_http_request_t *r, void **extra) {
++zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
++		void **extra) {
 +    ngx_pool_t *pool;
 +    ngx_log_t *log;
-+    ngx_str_t token, id, *pid;
++    ngx_str_t token, value, *pvalue;
 +    ngx_flag_t f;
 +
 +    pool = r->pool;
@@ -6924,33 +7328,30 @@ index 000000000..fcbb452a6
 +                "zmauth: found ZM_AUTH_TOKEN:%V",
 +                &token);
 +
-+        f = ngx_field_from_zmauthtoken(log, pool, &token, &NGX_ZMAUTHTOKEN_ID,
-+                &id);
-+
++        f = ngx_field_from_zmauthtoken(log, pool, &token, field, &value);
 +        if (f) {
-+            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-+                    "zmauth: got id:%V from ZM_AUTH_TOKEN",
-+                    &id);
-+            if (id.len > 0) {
-+                pid = ngx_palloc(pool, sizeof(ngx_str_t));
-+                if (pid == NULL) {
++            ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
++                    "zmauth: got %V:%V from ZM_AUTH_TOKEN",
++                    field, &value);
++            if (value.len > 0) {
++                pvalue = ngx_palloc(pool, sizeof(ngx_str_t));
++                if (pvalue == NULL) {
 +                    f = 0;
 +                } else {
-+                    pid->data = ngx_pstrdup(pool, &id); /* TODO: shallowcopy? */
-+                    if (pid->data == NULL) {
++                    pvalue->data = ngx_pstrdup(pool, &value); /* TODO: shallowcopy? */
++                    if (pvalue->data == NULL) {
 +                        f = 0;
 +                    } else {
-+                        pid->len = id.len;
-+                        *((ngx_str_t**) extra) = pid;
++                        pvalue->len = value.len;
++                        *((ngx_str_t**) extra) = pvalue;
 +                    }
 +                }
 +            } else {
 +                f = 0;
 +            }
 +        } else {
-+            ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
-+                    "zmauth: no id in ZM_AUTH_TOKEN"
-+            )   ;
++            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
++                    "zmauth: no %V in ZM_AUTH_TOKEN", field);
 +        }
 +
 +    } else {
@@ -6962,13 +7363,81 @@ index 000000000..fcbb452a6
 +    return f;
 +}
 +
++/* examine request header and query parameter for jwt token and extract route if so */
++static ngx_flag_t
++zmauth_check_jwttoken(ngx_http_request_t *r, ngx_str_t* field,
++		void **extra) {
++    ngx_pool_t *pool;
++    ngx_log_t *log;
++    ngx_str_t token, value, *pvalue;
++    ngx_flag_t f;
++
++    pool = r->pool;
++    log = r->connection->log;
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth:zmauth_check_jwttoken starts");
++    //Bearer header extraction starts
++    if (r->headers_in.authorization != NULL
++            && r->headers_in.authorization->value.data != NULL) {
++        ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
++                "zmauth:zmauth_check_jwttoken authorization header exists");
++        f = ngx_get_authheader_bearer(log, pool, &r->headers_in, &token);
++    }
++    //Bearer header extraction ends
++
++    if (!f) {
++        /* if not found, then look in the query string arg zjwt*/
++        f = ngx_get_query_string_arg(log, &r->args, &NGX_ZJWT_QUERY, &token);
++    }
++
++    if (f) {
++        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
++                "zmauth:zmauth_check_jwttoken found ZM_JWT_TOKEN:%V", &token);
++
++        f = ngx_claimdata_from_jwttoken(log, pool, &token, field, &value);
++
++        if (f) {
++            ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
++                    "zmauth: got %V:%V from ZM_AUTH_TOKEN", field, &value);
++            if (value.len > 0) {
++                pvalue = ngx_palloc(pool, sizeof(ngx_str_t));
++                if (pvalue == NULL) {
++                    f = 0;
++                } else {
++                    pvalue->data = ngx_pstrdup(pool, &value); /* TODO: shallowcopy? */
++                    if (pvalue->data == NULL) {
++                        f = 0;
++                    } else {
++                        pvalue->len = value.len;
++                        *((ngx_str_t**) extra) = pvalue;
++                    }
++                }
++            } else {
++                f = 0;
++            }
++        } else {
++            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
++                    "zmauth: no %V in ZM_AUTH_TOKEN", field);
++        }
++
++    } else {
++        ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
++                "zmauth: no ZM_AUTH_TOKEN",
++                &token);
++    }
++
++    ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0, "zmauth:zmauth_check_jwttoken ends");
++    return f;
++}
++
++
++
 +/* examine request cookies for ZM_ADMIN_AUTH_TOKEN and extract route if so */
 +static ngx_flag_t
-+zmauth_check_admin_authtoken(ngx_http_request_t *r,
++zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
 +        void **extra) {
 +    ngx_pool_t *pool;
 +    ngx_log_t *log;
-+    ngx_str_t token, id, *pid;
++    ngx_str_t token, value, *pvalue;
 +    ngx_flag_t f;
 +
 +    pool = r->pool;
@@ -6987,33 +7456,31 @@ index 000000000..fcbb452a6
 +                "zmauth: found ZM_AUTH_TOKEN:%V",
 +                &token);
 +
-+        f = ngx_field_from_zmauthtoken(log, pool, &token, &NGX_ZMAUTHTOKEN_ID,
-+                &id);
-+
++        f = ngx_field_from_zmauthtoken(log, pool, &token, field, &value);
 +        if (f) {
-+            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-+                    "zmauth: got id:%V from ZM_AUTH_TOKEN",
-+                    &id);
-+            if (id.len > 0) {
-+                pid = ngx_palloc(pool, sizeof(ngx_str_t));
-+                if (pid == NULL) {
++        	ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
++        			"zmauth: got %V:%V from ZM_AUTH_TOKEN",
++        			field, &value);
++
++            if (value.len > 0) {
++                pvalue = ngx_palloc(pool, sizeof(ngx_str_t));
++                if (pvalue == NULL) {
 +                    f = 0;
 +                } else {
-+                    pid->data = ngx_pstrdup(pool, &id); /* TODO: shallowcopy? */
-+                    if (pid->data == NULL) {
++                    pvalue->data = ngx_pstrdup(pool, &value); /* TODO: shallowcopy? */
++                    if (pvalue->data == NULL) {
 +                        f = 0;
 +                    } else {
-+                        pid->len = id.len;
-+                        *((ngx_str_t**) extra) = pid;
++                        pvalue->len = value.len;
++                        *((ngx_str_t**) extra) = pvalue;
 +                    }
 +                }
 +            } else {
 +                f = 0;
 +            }
 +        } else {
-+            ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
-+                    "zmauth: no id in ZM_ADMIN_AUTH_TOKEN"
-+            )   ;
++            ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
++                    "zmauth: no %V in ZM_ADMIN_AUTH_TOKEN", field);
 +        }
 +
 +    } else {
@@ -7038,14 +7505,22 @@ index 000000000..fcbb452a6
 +        rtype = zmroutetype_activesync;
 +        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
 +                "zmauth: routing for ActiveSync");
++    } else if (zmauth_check_ews(r, extra)) {
++        rtype = zmroutetype_ews;
++        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
++                "zmauth: routing for EWS");
 +    } else if (zmauth_check_caldav(r, extra)) {
 +        rtype = zmroutetype_caldav;
 +        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
 +                "zmauth: routing for caldav");
-+    } else if (zmauth_check_authtoken(r, extra)) {
++    } else if (zmauth_check_authtoken(r, &NGX_ZMAUTHTOKEN_ID, extra)) {
 +        rtype = zmroutetype_authtoken;
 +        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
 +                "zmauth: routing by ZM_AUTH_TOKEN");
++    } else if (zmauth_check_jwttoken(r, &NGX_ZMJWT_CLAIM_ID, extra)) {
++        rtype = zmroutetype_jwttoken;
++        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
++                "zmauth: routing by ZM_JWT_TOKEN");
 +    } else {
 +        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
 +                "zmauth: routing by iphash");
@@ -7058,7 +7533,7 @@ index 000000000..fcbb452a6
 +    zmroutetype_t rtype;
 +
 +    rtype = zmroutetype_fallback;
-+    if (zmauth_check_admin_authtoken(r, extra)) {
++    if (zmauth_check_admin_authtoken(r, &NGX_ZMAUTHTOKEN_ID, extra)) {
 +        rtype = zmroutetype_authtoken;
 +        ngx_log_debug0(NGX_LOG_DEBUG_HTTP,r->connection->log,0,
 +                "zmauth: routing by ZM_ADMIN_AUTH_TOKEN");
@@ -7066,12 +7541,12 @@ index 000000000..fcbb452a6
 +    return rtype;
 +}
 +
-+/* translate an activesync user rep to zimbra user rep
++/* translate an activesync/ews user rep to zimbra user rep
 + domain\user becomes user@domain
 + others remain identical
 + */
 +static void
-+zmauth_translate_activesync_usr(ngx_pool_t *pool, ngx_str_t *src,
++zmauth_translate_activesync_ews_usr(ngx_pool_t *pool, ngx_str_t *src,
 +        ngx_str_t *tgt) {
 +    u_char *p, *q;
 +
@@ -7144,17 +7619,16 @@ index 000000000..fcbb452a6
 +}
 +
 +/* find the upstream server returned by zmlookup in upstream block,
-+ * return pointer if found or null if not found */
-+static ngx_http_upstream_rr_peer_t *
-+zmauth_get_current_peer(
-+        ngx_http_upstream_zmauth_peer_data_t *zmp) {
++ * return NGX_MAX_UINT32_VALUE if not found */
++static ngx_uint_t
++zmauth_get_current_peer(ngx_http_upstream_zmauth_peer_data_t *zmp) {
 +    struct sockaddr_in *zmaddr, *peeraddr;
 +    struct sockaddr_in6 *zmaddr6, *peeraddr6;
-+    ngx_http_upstream_rr_peer_t *peer;
++    ngx_http_upstream_fair_peer_t *peer;
 +    ngx_uint_t i;
 +
-+    for (i = 0; i < zmp->rrp.peers->number; i++) {
-+        peer = &zmp->rrp.peers->peer[i];
++    for (i = 0; i < zmp->fp.peers->number; i++) {
++        peer = &zmp->fp.peers->peer[i];
 +
 +        if (zmp->zmpeer.sockaddr->sa_family != peer->sockaddr->sa_family) {
 +            continue;
@@ -7166,7 +7640,7 @@ index 000000000..fcbb452a6
 +
 +            if (ngx_memcmp(&zmaddr->sin_addr, &peeraddr->sin_addr, 4) == 0
 +                    && zmaddr->sin_port == peeraddr->sin_port) {
-+                return peer;
++                return i;
 +            }
 +        } else { /* AF_INET6 */
 +            zmaddr6 = (struct sockaddr_in6 *) zmp->zmpeer.sockaddr;
@@ -7174,12 +7648,12 @@ index 000000000..fcbb452a6
 +
 +            if (ngx_memcmp(&zmaddr6->sin6_addr, &peeraddr6->sin6_addr, 16) == 0
 +                    && zmaddr6->sin6_port == peeraddr6->sin6_port) {
-+                return peer;
++                return i;
 +            }
 +        }
 +    }
 +
-+    return NULL;
++    return NGX_INVALID_ARRAY_INDEX;
 +}
 +
 +/* set the peer from zmlookup to peer connection */
@@ -7192,10 +7666,10 @@ index 000000000..fcbb452a6
 +}
 diff --git a/src/http/modules/ngx_http_upstream_zmauth_module.h b/src/http/modules/ngx_http_upstream_zmauth_module.h
 new file mode 100644
-index 000000000..9bc5999ae
+index 00000000..b208074c
 --- /dev/null
 +++ b/src/http/modules/ngx_http_upstream_zmauth_module.h
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,77 @@
 +/*
 + * ***** BEGIN LICENSE BLOCK *****
 + * Zimbra Collaboration Suite Server
@@ -7214,17 +7688,21 @@ index 000000000..9bc5999ae
 +#if !defined(_NGX_HTTP_UPSTREAM_ZMAUTH_H_INCLUDED_)
 +#define _NGX_HTTP_UPSTREAM_ZMAUTH_H_INCLUDED_
 +
++#include <ngx_http_upstream_fair.h>
++
 +typedef enum {
 +    zmroutetype_fallback = 0,
 +    zmroutetype_authtoken,
 +    zmroutetype_rest,
 +    zmroutetype_activesync,
-+    zmroutetype_caldav
++    zmroutetype_caldav,
++    zmroutetype_ews,
++    zmroutetype_jwttoken,
 +} zmroutetype_t;
 +
 +typedef struct {
-+    /* the round robin data must be first */
-+    ngx_http_upstream_rr_peer_data_t    rrp;
++    /* the fair peer data must be first */
++    ngx_http_upstream_fair_peer_data_t  fp;
 +
 +    /* IPHASH */
 +    ngx_uint_t                          hash;
@@ -7238,9 +7716,10 @@ index 000000000..9bc5999ae
 +    u_char                              portl;      /* AF_INET port-lo */
 +    u_char                              tries;
 +
-+    ngx_event_get_peer_pt               get_rr_peer;
++    ngx_event_get_peer_pt               get_fair_peer;
 +    zmroutetype_t                       zmroutetype;
 +    ngx_addr_t                          zmpeer;
++    u_char                              access_denied;
 +} ngx_http_upstream_zmauth_peer_data_t;
 +
 +typedef struct {
@@ -7264,11 +7743,13 @@ index 000000000..9bc5999ae
 +ngx_int_t ngx_http_upstream_init_admin_zmauth(ngx_conf_t *cf,
 +        ngx_http_upstream_srv_conf_t *us);
 +
-+#endif
++ngx_int_t ngx_http_upstream_init_zx_zmauth(ngx_conf_t *cf,
++        ngx_http_upstream_srv_conf_t *us);
 +
++#endif
 diff --git a/src/http/modules/ngx_http_zm_sso_module.c b/src/http/modules/ngx_http_zm_sso_module.c
 new file mode 100644
-index 000000000..52bd62bc8
+index 00000000..d01eb8f1
 --- /dev/null
 +++ b/src/http/modules/ngx_http_zm_sso_module.c
 @@ -0,0 +1,552 @@
@@ -7608,9 +8089,9 @@ index 000000000..52bd62bc8
 +    zlcf = ngx_http_get_module_loc_conf(r, ngx_http_zm_sso_module);
 +    w->protocol = ZM_PROTO_HTTP; /* it doesn't matter which protocol is used, for cert auth we don't want route */
 +    if (zlcf->type == NGX_ZM_SSO_CERTAUTH) {
-+        w->isAdmin = 0;
++        w->type = zmauth_web_client;
 +    } else if (zlcf->type == NGX_ZM_SSO_CERTAUTH_ADMIN) {
-+        w->isAdmin = 1;
++        w->type = zmauth_admin_console;
 +    } else {
 +        return NGX_HTTP_FORBIDDEN;
 +    }
@@ -7691,7 +8172,7 @@ index 000000000..52bd62bc8
 +                    "login succeed for subject dn %V after client cert auth,"
 +                    " redirect to common https url", &w->username);
 +    rc = ngx_http_zm_sso_set_auth_token_and_redirect (r, w->zm_auth_token,
-+            w->isAdmin);
++            w->type == zmauth_admin_console);
 +    ngx_http_zm_sso_finalize_request(r, rc);
 +}
 +
@@ -7826,7 +8307,7 @@ index 000000000..52bd62bc8
 +}
 diff --git a/src/http/modules/ngx_http_zm_sso_module.h b/src/http/modules/ngx_http_zm_sso_module.h
 new file mode 100644
-index 000000000..a7faa0f3f
+index 00000000..a7faa0f3
 --- /dev/null
 +++ b/src/http/modules/ngx_http_zm_sso_module.h
 @@ -0,0 +1,48 @@
@@ -7878,8 +8359,38 @@ index 000000000..a7faa0f3f
 +extern ngx_module_t ngx_http_zm_sso_module;
 +
 +#endif
+diff --git a/src/http/ngx_http_core_module.c b/src/http/ngx_http_core_module.c
+index 4867bed2..5525c662 100644
+--- a/src/http/ngx_http_core_module.c
++++ b/src/http/ngx_http_core_module.c
+@@ -761,6 +761,13 @@ static ngx_command_t  ngx_http_core_commands[] = {
+ 
+ #endif
+ 
++    { ngx_string("exact_version_check"),
++      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
++      ngx_conf_set_flag_slot,
++      NGX_HTTP_LOC_CONF_OFFSET,
++      offsetof(ngx_http_core_loc_conf_t, exact_version_check),
++      NULL },
++
+       ngx_null_command
+ };
+ 
+diff --git a/src/http/ngx_http_core_module.h b/src/http/ngx_http_core_module.h
+index f5434cc5..b15b9eef 100644
+--- a/src/http/ngx_http_core_module.h
++++ b/src/http/ngx_http_core_module.h
+@@ -396,6 +396,7 @@ struct ngx_http_core_loc_conf_s {
+     ngx_uint_t    server_tokens;           /* server_tokens */
+     ngx_flag_t    chunked_transfer_encoding; /* chunked_transfer_encoding */
+     ngx_flag_t    etag;                    /* etag */
++    ngx_flag_t    exact_version_check;     /* exact_version_check added by zimbra */
+ 
+ #if (NGX_HTTP_GZIP)
+     ngx_flag_t    gzip_vary;               /* gzip_vary */
 diff --git a/src/http/ngx_http_parse.c b/src/http/ngx_http_parse.c
-index cfc42f9dd..6c1c42255 100644
+index cfc42f9d..6c1c4225 100644
 --- a/src/http/ngx_http_parse.c
 +++ b/src/http/ngx_http_parse.c
 @@ -538,6 +538,7 @@ ngx_http_parse_request_line(ngx_http_request_t *r, ngx_buf_t *b)
@@ -7899,7 +8410,7 @@ index cfc42f9dd..6c1c42255 100644
              case '#':
                  r->complex_uri = 1;
 diff --git a/src/http/ngx_http_request.c b/src/http/ngx_http_request.c
-index eb53996b1..8149e26f9 100644
+index eb53996b..8149e26f 100644
 --- a/src/http/ngx_http_request.c
 +++ b/src/http/ngx_http_request.c
 @@ -3708,6 +3708,11 @@ ngx_http_log_error(ngx_log_t *log, u_char *buf, size_t len)
@@ -7953,7 +8464,7 @@ index eb53996b1..8149e26f9 100644
                           &ctx->connection->listening->addr_text);
      }
 diff --git a/src/http/ngx_http_upstream.c b/src/http/ngx_http_upstream.c
-index 89e1319f9..de2cfc96f 100644
+index 89e1319f..dd4abddf 100644
 --- a/src/http/ngx_http_upstream.c
 +++ b/src/http/ngx_http_upstream.c
 @@ -8,6 +8,7 @@
@@ -7999,7 +8510,7 @@ index 89e1319f9..de2cfc96f 100644
      }
  
 -    if (u->conf->ssl_session_reuse) {
-+    if (u->conf->ssl_session_reuse && rrp->current != NGX_INVALID_ARRAY_INDEX) {
++    if (u->conf->ssl_session_reuse && rrp->current != NULL) {
          c->ssl->save_session = ngx_http_upstream_ssl_save_session;
  
          if (u->peer.set_session(&u->peer, u->peer.data) != NGX_OK) {
@@ -8117,7 +8628,17 @@ index 89e1319f9..de2cfc96f 100644
      if (u->peer.connection) {
          ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                         "close http upstream connection: %d",
-@@ -5826,6 +5844,9 @@ ngx_http_upstream(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
+@@ -5740,7 +5758,8 @@ ngx_http_upstream(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
+                                          |NGX_HTTP_UPSTREAM_MAX_FAILS
+                                          |NGX_HTTP_UPSTREAM_FAIL_TIMEOUT
+                                          |NGX_HTTP_UPSTREAM_DOWN
+-                                         |NGX_HTTP_UPSTREAM_BACKUP);
++                                         |NGX_HTTP_UPSTREAM_BACKUP
++                                         |NGX_HTTP_UPSTREAM_VERSION);
+     if (uscf == NULL) {
+         return NGX_CONF_ERROR;
+     }
+@@ -5826,6 +5845,9 @@ ngx_http_upstream(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
          return NGX_CONF_ERROR;
      }
  
@@ -8127,8 +8648,55 @@ index 89e1319f9..de2cfc96f 100644
      return rv;
  }
  
+@@ -5836,7 +5858,7 @@ ngx_http_upstream_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+     ngx_http_upstream_srv_conf_t  *uscf = conf;
+ 
+     time_t                       fail_timeout;
+-    ngx_str_t                   *value, s;
++    ngx_str_t                   *value, s, version;
+     ngx_url_t                    u;
+     ngx_int_t                    weight, max_conns, max_fails;
+     ngx_uint_t                   i;
+@@ -5855,6 +5877,8 @@ ngx_http_upstream_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+     max_conns = 0;
+     max_fails = 1;
+     fail_timeout = 10;
++    version.len = 0;
++    version.data = NULL;
+ 
+     for (i = 2; i < cf->args->nelts; i++) {
+ 
+@@ -5943,6 +5967,20 @@ ngx_http_upstream_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+             continue;
+         }
+ 
++        if (ngx_strncmp(value[i].data, "version=", 8) == 0) {
++
++            if (!(uscf->flags & NGX_HTTP_UPSTREAM_VERSION)) {
++                goto invalid;
++            }
++
++            s.len = value[i].len - 8;
++            s.data = &value[i].data[8];
++
++            version = s;
++
++            continue;
++        }
++
+         goto invalid;
+     }
+ 
+@@ -5967,6 +6005,7 @@ ngx_http_upstream_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+     us->max_conns = max_conns;
+     us->max_fails = max_fails;
+     us->fail_timeout = fail_timeout;
++    us->version = version;
+ 
+     return NGX_CONF_OK;
+ 
 diff --git a/src/http/ngx_http_upstream.h b/src/http/ngx_http_upstream.h
-index 6079d7236..5cbfbc82b 100644
+index 6079d723..a8e51c69 100644
 --- a/src/http/ngx_http_upstream.h
 +++ b/src/http/ngx_http_upstream.h
 @@ -73,6 +73,9 @@ typedef struct {
@@ -8141,7 +8709,29 @@ index 6079d7236..5cbfbc82b 100644
                                               /* ngx_http_upstream_srv_conf_t */
  } ngx_http_upstream_main_conf_t;
  
-@@ -134,6 +137,9 @@ struct ngx_http_upstream_srv_conf_s {
+@@ -100,6 +103,7 @@ typedef struct {
+     ngx_uint_t                       max_fails;
+     time_t                           fail_timeout;
+     ngx_msec_t                       slow_start;
++    ngx_str_t                        version;
+     ngx_uint_t                       down;
+ 
+     unsigned                         backup:1;
+@@ -115,6 +119,7 @@ typedef struct {
+ #define NGX_HTTP_UPSTREAM_FAIL_TIMEOUT  0x0008
+ #define NGX_HTTP_UPSTREAM_DOWN          0x0010
+ #define NGX_HTTP_UPSTREAM_BACKUP        0x0020
++#define NGX_HTTP_UPSTREAM_VERSION       0x0040
+ #define NGX_HTTP_UPSTREAM_MAX_CONNS     0x0100
+ 
+ 
+@@ -129,11 +134,15 @@ struct ngx_http_upstream_srv_conf_s {
+     u_char                          *file_name;
+     ngx_uint_t                       line;
+     in_port_t                        port;
++    in_port_t                        default_port;
+     ngx_uint_t                       no_port;  /* unsigned no_port:1 */
+ 
  #if (NGX_HTTP_UPSTREAM_ZONE)
      ngx_shm_zone_t                  *shm_zone;
  #endif
@@ -8151,17 +8741,1528 @@ index 6079d7236..5cbfbc82b 100644
  };
  
  
-@@ -433,5 +439,4 @@ extern ngx_module_t        ngx_http_upstream_module;
+@@ -433,5 +442,4 @@ extern ngx_module_t        ngx_http_upstream_module;
  extern ngx_conf_bitmask_t  ngx_http_upstream_cache_method_mask[];
  extern ngx_conf_bitmask_t  ngx_http_upstream_ignore_headers_masks[];
  
 -
  #endif /* _NGX_HTTP_UPSTREAM_H_INCLUDED_ */
+diff --git a/src/http/ngx_http_upstream_fair.c b/src/http/ngx_http_upstream_fair.c
+new file mode 100644
+index 00000000..c0ce6cba
+--- /dev/null
++++ b/src/http/ngx_http_upstream_fair.c
+@@ -0,0 +1,1304 @@
++/*
++ * ***** BEGIN LICENSE BLOCK *****
++ * Zimbra Collaboration Suite Server
++ * Copyright (C) 2011 Zimbra Software, LLC.
++ *
++ * The contents of this file are subject to the Zimbra Public License
++ * Version 1.4 ("License"); you may not use this file except in
++ * compliance with the License.  You may obtain a copy of the License at
++ * http://www.zimbra.com/license.
++ *
++ * Software distributed under the License is distributed on an "AS IS"
++ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
++ * ***** END LICENSE BLOCK *****
++ */
++
++#include <ngx_config.h>
++#include <ngx_core.h>
++#include <ngx_http.h>
++#include <ngx_http_upstream_fair.h>
++
++#if 0
++static char *ngx_http_upstream_fair(ngx_conf_t *cf, ngx_command_t *cmd,
++    void *conf);
++static ngx_chain_t *ngx_http_upstream_fair_report_status(ngx_http_request_t *r,
++    ngx_int_t *length);
++#endif
++
++#if (NGX_HTTP_SSL)
++static ngx_int_t ngx_http_upstream_fair_set_session(ngx_peer_connection_t *pc,
++    void *data);
++static void ngx_http_upstream_fair_save_session(ngx_peer_connection_t *pc,
++    void *data);
++#endif
++
++static ngx_http_module_t  ngx_http_upstream_fair_module_ctx = {
++    NULL,                                  /* preconfiguration */
++    NULL,                                  /* postconfiguration */
++
++    NULL,                                  /* create main configuration */
++    NULL,                                  /* init main configuration */
++
++    NULL,                                  /* create server configuration */
++    NULL,                                  /* merge server configuration */
++
++    NULL,                                  /* create location configuration */
++    NULL,                                  /* merge location configuration */
++
++#if 0
++    ngx_http_upstream_fair_report_status,
++#endif
++};
++
++
++ngx_module_t  ngx_http_upstream_fair_module = {
++    NGX_MODULE_V1,
++    &ngx_http_upstream_fair_module_ctx, /* module context */
++    NULL,                                  /* module directives */
++    NGX_HTTP_MODULE,                       /* module type */
++    NULL,                                  /* init master */
++    NULL,                                  /* init module */
++    NULL,                                  /* init process */
++    NULL,                                  /* init thread */
++    NULL,                                  /* exit thread */
++    NULL,                                  /* exit process */
++    NULL,                                  /* exit master */
++    NGX_MODULE_V1_PADDING
++};
++
++static ngx_uint_t ngx_http_upstream_fair_shm_size;
++static ngx_shm_zone_t * ngx_http_upstream_fair_shm_zone;
++static ngx_rbtree_t * ngx_http_upstream_fair_rbtree;
++static ngx_uint_t ngx_http_upstream_fair_generation;
++
++ngx_uint_t *shm_size = &ngx_http_upstream_fair_shm_size;
++
++static int
++ngx_http_upstream_fair_compare_rbtree_node(const ngx_rbtree_node_t *v_left,
++    const ngx_rbtree_node_t *v_right)
++{
++    ngx_http_upstream_fair_shm_block_t *left, *right;
++
++    left = (ngx_http_upstream_fair_shm_block_t *) v_left;
++    right = (ngx_http_upstream_fair_shm_block_t *) v_right;
++
++    if (left->generation < right->generation) {
++        return -1;
++    } else if (left->generation > right->generation) {
++        return 1;
++    } else { /* left->generation == right->generation */
++        if (left->peers < right->peers) {
++            return -1;
++        } else if (left->peers > right->peers) {
++            return 1;
++        } else {
++            return 0;
++        }
++    }
++}
++
++/*
++ * generic functions start here
++ */
++static void
++ngx_rbtree_generic_insert(ngx_rbtree_node_t *temp,
++    ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel,
++    int (*compare)(const ngx_rbtree_node_t *left, const ngx_rbtree_node_t *right))
++{
++    for ( ;; ) {
++        if (node->key < temp->key) {
++
++            if (temp->left == sentinel) {
++                temp->left = node;
++                break;
++            }
++
++            temp = temp->left;
++
++        } else if (node->key > temp->key) {
++
++            if (temp->right == sentinel) {
++                temp->right = node;
++                break;
++            }
++
++            temp = temp->right;
++
++        } else { /* node->key == temp->key */
++            if (compare(node, temp) < 0) {
++
++                if (temp->left == sentinel) {
++                    temp->left = node;
++                    break;
++                }
++
++                temp = temp->left;
++
++            } else {
++
++                if (temp->right == sentinel) {
++                    temp->right = node;
++                    break;
++                }
++
++                temp = temp->right;
++            }
++        }
++    }
++
++    node->parent = temp;
++    node->left = sentinel;
++    node->right = sentinel;
++    ngx_rbt_red(node);
++}
++
++#define NGX_BITVECTOR_ELT_SIZE (sizeof(uintptr_t) * 8)
++
++static uintptr_t *
++ngx_bitvector_alloc(ngx_pool_t *pool, ngx_uint_t size, uintptr_t *small)
++{
++    ngx_uint_t nelts = (size + NGX_BITVECTOR_ELT_SIZE - 1) / NGX_BITVECTOR_ELT_SIZE;
++
++    if (small && nelts == 1) {
++        *small = 0;
++        return small;
++    }
++
++    return ngx_pcalloc(pool, nelts * NGX_BITVECTOR_ELT_SIZE);
++}
++
++static ngx_int_t
++ngx_bitvector_test(uintptr_t *bv, ngx_uint_t bit)
++{
++    ngx_uint_t                      n, m;
++
++    n = bit / NGX_BITVECTOR_ELT_SIZE;
++    m = 1 << (bit % NGX_BITVECTOR_ELT_SIZE);
++
++    return bv[n] & m;
++}
++
++static void
++ngx_bitvector_set(uintptr_t *bv, ngx_uint_t bit)
++{
++    ngx_uint_t                      n, m;
++
++    n = bit / NGX_BITVECTOR_ELT_SIZE;
++    m = 1 << (bit % NGX_BITVECTOR_ELT_SIZE);
++
++    bv[n] |= m;
++}
++
++/*
++ * generic functions end here
++ */
++
++static void
++ngx_http_upstream_fair_rbtree_insert(ngx_rbtree_node_t *temp,
++    ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel) {
++
++    ngx_rbtree_generic_insert(temp, node, sentinel,
++        ngx_http_upstream_fair_compare_rbtree_node);
++}
++
++
++static ngx_int_t
++ngx_http_upstream_fair_init_shm_zone(ngx_shm_zone_t *shm_zone, void *data)
++{
++    ngx_slab_pool_t                *shpool;
++    ngx_rbtree_t                   *tree;
++    ngx_rbtree_node_t              *sentinel;
++
++    if (data) {
++        shm_zone->data = data;
++        return NGX_OK;
++    }
++
++    shpool = (ngx_slab_pool_t *) shm_zone->shm.addr;
++    tree = ngx_slab_alloc(shpool, sizeof *tree);
++    if (tree == NULL) {
++        return NGX_ERROR;
++    }
++
++    sentinel = ngx_slab_alloc(shpool, sizeof *sentinel);
++    if (sentinel == NULL) {
++        return NGX_ERROR;
++    }
++
++    ngx_rbtree_sentinel_init(sentinel);
++    tree->root = sentinel;
++    tree->sentinel = sentinel;
++    tree->insert = ngx_http_upstream_fair_rbtree_insert;
++    shm_zone->data = tree;
++    ngx_http_upstream_fair_rbtree = tree;
++
++    return NGX_OK;
++}
++
++#if 0
++static char *
++ngx_http_upstream_fair(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    ngx_http_upstream_srv_conf_t  *uscf;
++    ngx_uint_t i;
++    ngx_uint_t extra_peer_flags = 0;
++
++    for (i = 1; i < cf->args->nelts; i++) {
++        ngx_str_t *value = cf->args->elts;
++        if (ngx_strcmp(value[i].data, "no_rr") == 0) {
++            extra_peer_flags |= NGX_HTTP_UPSTREAM_FAIR_NO_RR;
++        } else if (ngx_strcmp(value[i].data, "weight_mode=peak") == 0) {
++            if (extra_peer_flags & NGX_HTTP_UPSTREAM_FAIR_WEIGHT_MODE_MASK) {
++                ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "weight_mode= options are mutually exclusive");
++                return NGX_CONF_ERROR;
++            }
++            extra_peer_flags |= NGX_HTTP_UPSTREAM_FAIR_WEIGHT_MODE_PEAK;
++        } else if (ngx_strcmp(value[i].data, "weight_mode=idle") == 0) {
++            if (extra_peer_flags & NGX_HTTP_UPSTREAM_FAIR_WEIGHT_MODE_MASK) {
++                ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "weight_mode= options are mutually exclusive");
++                return NGX_CONF_ERROR;
++            }
++            extra_peer_flags |= NGX_HTTP_UPSTREAM_FAIR_WEIGHT_MODE_IDLE;
++        } else {
++            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "Invalid `fair' parameter `%V'", &value[i]);
++            return NGX_CONF_ERROR;
++        }
++    }
++
++    uscf = ngx_http_conf_get_module_srv_conf(cf, ngx_http_upstream_module);
++
++    uscf->peer.init_upstream = ngx_http_upstream_init_fair;
++
++    uscf->flags = NGX_HTTP_UPSTREAM_CREATE
++                  |NGX_HTTP_UPSTREAM_WEIGHT
++                  |NGX_HTTP_UPSTREAM_MAX_FAILS
++                  |NGX_HTTP_UPSTREAM_FAIL_TIMEOUT
++                  |NGX_HTTP_UPSTREAM_DOWN
++                  |NGX_HTTP_UPSTREAM_VERSION
++                  |extra_peer_flags;
++
++    return NGX_CONF_OK;
++}
++#endif
++
++static ngx_int_t
++ngx_http_upstream_cmp_servers(const void *one, const void *two)
++{
++    const ngx_http_upstream_fair_peer_t  *first, *second;
++
++    first = one;
++    second = two;
++
++    return (first->weight < second->weight);
++}
++
++
++/* TODO: Actually support backup servers */
++static ngx_int_t
++ngx_http_upstream_init_fair_rr(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
++{
++    ngx_url_t                      u;
++    ngx_uint_t                     i, j, n;
++    ngx_http_upstream_server_t    *server;
++    ngx_http_upstream_fair_peers_t  *peers, *backup;
++
++    if (us->servers) {
++        server = us->servers->elts;
++
++        n = 0;
++
++        for (i = 0; i < us->servers->nelts; i++) {
++            if (server[i].backup) {
++                continue;
++            }
++
++            n += server[i].naddrs;
++        }
++
++        peers = ngx_pcalloc(cf->pool, sizeof(ngx_http_upstream_fair_peers_t)
++                              + sizeof(ngx_http_upstream_fair_peer_t) * (n - 1));
++        if (peers == NULL) {
++            return NGX_ERROR;
++        }
++
++        peers->number = n;
++        peers->name = &us->host;
++
++        n = 0;
++
++        for (i = 0; i < us->servers->nelts; i++) {
++            for (j = 0; j < server[i].naddrs; j++) {
++                if (server[i].backup) {
++                    continue;
++                }
++
++                peers->peer[n].sockaddr = server[i].addrs[j].sockaddr;
++                peers->peer[n].socklen = server[i].addrs[j].socklen;
++                peers->peer[n].name = server[i].addrs[j].name;
++                peers->peer[n].max_fails = server[i].max_fails;
++                peers->peer[n].fail_timeout = server[i].fail_timeout;
++                peers->peer[n].down = server[i].down;
++                peers->peer[n].weight = server[i].down ? 0 : server[i].weight;
++                peers->peer[n].version = server[i].version;
++                n++;
++            }
++        }
++
++        us->peer.data = peers;
++
++        ngx_sort(&peers->peer[0], (size_t) n,
++                 sizeof(ngx_http_upstream_fair_peer_t),
++                 ngx_http_upstream_cmp_servers);
++
++        /* backup servers */
++
++        n = 0;
++
++        for (i = 0; i < us->servers->nelts; i++) {
++            if (!server[i].backup) {
++                continue;
++            }
++
++            n += server[i].naddrs;
++        }
++
++        if (n == 0) {
++            return NGX_OK;
++        }
++
++        backup = ngx_pcalloc(cf->pool, sizeof(ngx_http_upstream_fair_peers_t)
++                              + sizeof(ngx_http_upstream_fair_peer_t) * (n - 1));
++        if (backup == NULL) {
++            return NGX_ERROR;
++        }
++
++        backup->number = n;
++        backup->name = &us->host;
++
++        n = 0;
++
++        for (i = 0; i < us->servers->nelts; i++) {
++            for (j = 0; j < server[i].naddrs; j++) {
++                if (!server[i].backup) {
++                    continue;
++                }
++
++                backup->peer[n].sockaddr = server[i].addrs[j].sockaddr;
++                backup->peer[n].socklen = server[i].addrs[j].socklen;
++                backup->peer[n].name = server[i].addrs[j].name;
++                backup->peer[n].weight = server[i].weight;
++                backup->peer[n].max_fails = server[i].max_fails;
++                backup->peer[n].fail_timeout = server[i].fail_timeout;
++                backup->peer[n].down = server[i].down;
++                backup->peer[n].version = server[i].version;
++                n++;
++            }
++        }
++
++        peers->next = backup;
++
++        ngx_sort(&backup->peer[0], (size_t) n,
++                 sizeof(ngx_http_upstream_fair_peer_t),
++                 ngx_http_upstream_cmp_servers);
++
++        return NGX_OK;
++    }
++
++
++    /* an upstream implicitly defined by proxy_pass, etc. */
++
++    if (us->port == 0 && us->default_port == 0) {
++        ngx_log_error(NGX_LOG_EMERG, cf->log, 0,
++                      "no port in upstream \"%V\" in %s:%ui",
++                      &us->host, us->file_name, us->line);
++        return NGX_ERROR;
++    }
++
++    ngx_memzero(&u, sizeof(ngx_url_t));
++
++    u.host = us->host;
++    u.port = (in_port_t) (us->port ? us->port : us->default_port);
++
++    if (ngx_inet_resolve_host(cf->pool, &u) != NGX_OK) {
++        if (u.err) {
++            ngx_log_error(NGX_LOG_EMERG, cf->log, 0,
++                          "%s in upstream \"%V\" in %s:%ui",
++                          u.err, &us->host, us->file_name, us->line);
++        }
++
++        return NGX_ERROR;
++    }
++
++    n = u.naddrs;
++
++    peers = ngx_pcalloc(cf->pool, sizeof(ngx_http_upstream_fair_peers_t)
++                              + sizeof(ngx_http_upstream_fair_peer_t) * (n - 1));
++    if (peers == NULL) {
++        return NGX_ERROR;
++    }
++
++    peers->number = n;
++    peers->name = &us->host;
++
++    for (i = 0; i < u.naddrs; i++) {
++        peers->peer[i].sockaddr = u.addrs[i].sockaddr;
++        peers->peer[i].socklen = u.addrs[i].socklen;
++        peers->peer[i].name = u.addrs[i].name;
++        peers->peer[i].weight = 1;
++        peers->peer[i].max_fails = 1;
++        peers->peer[i].fail_timeout = 10;
++        peers->peer[n].version.len = 0;
++        peers->peer[n].version.data = NULL;
++    }
++
++    us->peer.data = peers;
++
++    /* implicitly defined upstream has no backup servers */
++
++    return NGX_OK;
++}
++
++ngx_int_t
++ngx_http_upstream_init_fair(ngx_conf_t *cf, ngx_http_upstream_srv_conf_t *us)
++{
++    ngx_http_upstream_fair_peers_t     *peers;
++    ngx_uint_t                          n;
++    ngx_str_t                          *shm_name;
++
++    /* do the dirty work using rr module */
++    if (ngx_http_upstream_init_fair_rr(cf, us) != NGX_OK) {
++        return NGX_ERROR;
++    }
++
++    /* setup our wrapper around rr */
++    peers = ngx_palloc(cf->pool, sizeof *peers);
++    if (peers == NULL) {
++        return NGX_ERROR;
++    }
++    peers = us->peer.data;
++    n = peers->number;
++
++    shm_name = ngx_palloc(cf->pool, sizeof *shm_name);
++    shm_name->len = sizeof("upstream_fair") - 1;
++    shm_name->data = (unsigned char *) "upstream_fair";
++
++    if (ngx_http_upstream_fair_shm_size == 0) {
++        ngx_log_error(NGX_LOG_DEBUG_ZIMBRA, cf->log, 0, "The upstream_fair_shm_size is 0. The upstream_fair_shm_size value must be at least %udKiB", (8 * ngx_pagesize) >> 10);
++        ngx_http_upstream_fair_shm_size = 8 * ngx_pagesize;
++    }
++
++    ngx_log_error(NGX_LOG_DEBUG_ZIMBRA, cf->log, 0, "The upstream_fair_shm_size value is %udKiB", ngx_http_upstream_fair_shm_size >> 10);
++
++    ngx_http_upstream_fair_shm_zone = ngx_shared_memory_add(
++        cf, shm_name, ngx_http_upstream_fair_shm_size, &ngx_http_upstream_fair_module);
++    if (ngx_http_upstream_fair_shm_zone == NULL) {
++        return NGX_ERROR;
++    }
++    ngx_http_upstream_fair_shm_zone->init = ngx_http_upstream_fair_init_shm_zone;
++
++    peers->shared = NULL;
++    peers->current = n - 1;
++    peers->no_rr = 1;
++    peers->weight_mode = WM_PEAK;
++    peers->size_err = 0;
++    ngx_http_upstream_fair_generation++;
++
++    us->peer.init = ngx_http_upstream_init_fair_peer;
++
++    return NGX_OK;
++}
++
++
++static void
++ngx_http_upstream_fair_update_nreq(ngx_http_upstream_fair_peer_data_t *fp, int delta, ngx_log_t *log)
++{
++#if (NGX_DEBUG)
++    ngx_uint_t                          nreq;
++    ngx_uint_t                          total_nreq;
++
++    nreq = (fp->peers->peer[fp->current].shared->nreq += delta);
++    total_nreq = (fp->peers->shared->total_nreq += delta);
++
++    ngx_log_debug6(NGX_LOG_DEBUG_HTTP, log, 0,
++        "[upstream_fair] nreq for peer %ui @ %p/%p now %d, total %d, delta %d",
++        fp->current, fp->peers, fp->peers->peer[fp->current].shared, nreq,
++        total_nreq, delta);
++#endif
++}
++
++/*
++ * SCHED_COUNTER_BITS is the portion of an ngx_uint_t which represents
++ * the req_delta part (number of requests serviced on _other_
++ * backends). The rest (top bits) represents the number of currently
++ * processed requests.
++ *
++ * The value is not too critical because overflow is handled via
++ * saturation. With the default value of 20, scheduling is exact for
++ * fewer than 4k concurrent requests per backend (on 32-bit
++ * architectures) and fewer than 1M concurrent requests to all backends
++ * together. Beyond these limits, the algorithm essentially falls back
++ * to pure weighted round-robin.
++ *
++ * A higher score means less suitable.
++ *
++ * The `delta' parameter is bit-negated so that high values yield low
++ * scores and get chosen more often.
++ */
++
++#define SCHED_COUNTER_BITS 20
++#define SCHED_NREQ_MAX ((~0UL) >> SCHED_COUNTER_BITS)
++#define SCHED_COUNTER_MAX ((1 << SCHED_COUNTER_BITS) - 1)
++#define SCHED_SCORE(nreq,delta) (((nreq) << SCHED_COUNTER_BITS) | (~(delta) & SCHED_COUNTER_MAX))
++#define ngx_upstream_fair_min(a,b) (((a) < (b)) ? (a) : (b))
++
++static ngx_uint_t
++ngx_http_upstream_fair_sched_score(ngx_peer_connection_t *pc,
++    ngx_http_upstream_fair_peer_data_t *fp,
++    ngx_uint_t n)
++{
++    ngx_http_upstream_fair_peer_t      *peer = &fp->peers->peer[n];
++    ngx_http_upstream_fair_shared_t    *fs = peer->shared;
++    ngx_uint_t req_delta = fp->peers->shared->total_requests - fs->last_req_id;
++
++    /* sanity check */
++    if ((ngx_int_t)fs->nreq < 0) {
++        ngx_log_error(NGX_LOG_WARN, pc->log, 0, "[upstream_fair] upstream %ui has negative nreq (%i)", n, fs->nreq);
++        return SCHED_SCORE(0, req_delta);
++    }
++
++    ngx_log_debug3(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] peer %ui: nreq = %i, req_delta = %ui", n, fs->nreq, req_delta);
++
++    return SCHED_SCORE(
++        ngx_upstream_fair_min(fs->nreq, SCHED_NREQ_MAX),
++        ngx_upstream_fair_min(req_delta, SCHED_COUNTER_MAX));
++}
++
++/*
++ * the core of load balancing logic
++ */
++
++static ngx_int_t
++ngx_http_upstream_fair_try_peer(ngx_peer_connection_t *pc,
++    ngx_http_upstream_fair_peer_data_t *fp,
++    ngx_uint_t peer_id)
++{
++    ngx_http_upstream_fair_peer_t        *peer;
++
++    if (ngx_bitvector_test(fp->tried, peer_id))
++        return NGX_BUSY;
++
++    peer = &fp->peers->peer[peer_id];
++
++    if (!peer->down) {
++        if (peer->max_fails == 0 || peer->shared->fails < peer->max_fails) {
++            return NGX_OK;
++        }
++
++        if (ngx_time() - peer->accessed > peer->fail_timeout) {
++            ngx_log_debug3(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] resetting fail count for peer %d, time delta %d > %d",
++                peer_id, ngx_time() - peer->accessed, peer->fail_timeout);
++            peer->shared->fails = 0;
++            return NGX_OK;
++        }
++    }
++
++    return NGX_BUSY;
++}
++
++static ngx_uint_t
++ngx_http_upstream_choose_fair_peer_idle(ngx_peer_connection_t *pc,
++    ngx_http_upstream_fair_peer_data_t *fp)
++{
++    ngx_uint_t                          i, n;
++    ngx_uint_t                          npeers = fp->peers->number;
++    ngx_uint_t                          weight_mode = fp->peers->weight_mode;
++    ngx_uint_t                          best_idx = NGX_PEER_INVALID;
++    ngx_uint_t                          best_nreq = ~0U;
++
++    for (i = 0, n = fp->current; i < npeers; i++, n = (n + 1) % npeers) {
++        ngx_uint_t nreq = fp->peers->peer[n].shared->nreq;
++        ngx_uint_t weight = fp->peers->peer[n].weight;
++        ngx_http_upstream_fair_peer_t      *peer;
++        peer = &fp->peers->peer[n];
++
++        if (fp->peers->peer[n].shared->fails > 0)
++            continue;
++
++        if (nreq >= weight || (nreq > 0 && weight_mode != WM_IDLE)) {
++            continue;
++        }
++
++        if (ngx_http_upstream_fair_try_peer(pc, fp, n) != NGX_OK) {
++            continue;
++        }
++
++        if (ngx_http_upstream_fair_peer_version_allowed(peer, fp, pc->log) == 0) {
++            continue;
++        }
++
++        /* not in WM_IDLE+no_rr mode: the first completely idle backend gets chosen */
++        if (weight_mode != WM_IDLE || !fp->peers->no_rr) {
++            best_idx = n;
++            break;
++        }
++
++        /* in WM_IDLE+no_rr mode we actually prefer slightly loaded backends
++         * to totally idle ones, under the assumption that they're spawned
++         * on demand and can handle up to 'weight' concurrent requests
++         */
++        if (best_idx == NGX_PEER_INVALID || nreq) {
++            if (best_nreq <= nreq) {
++                continue;
++            }
++            best_idx = n;
++            best_nreq = nreq;
++        }
++    }
++
++    return best_idx;
++}
++
++static ngx_int_t
++ngx_http_upstream_choose_fair_peer_busy(ngx_peer_connection_t *pc,
++    ngx_http_upstream_fair_peer_data_t *fp)
++{
++    ngx_uint_t                          i, n;
++    ngx_uint_t                          npeers = fp->peers->number;
++    ngx_uint_t                          weight_mode = fp->peers->weight_mode;
++    ngx_uint_t                          best_idx = NGX_PEER_INVALID;
++    ngx_uint_t                          sched_score;
++    ngx_uint_t                          best_sched_score = ~0UL;
++
++    /*
++     * calculate sched scores for all the peers, choosing the lowest one
++     */
++    for (i = 0, n = fp->current; i < npeers; i++, n = (n + 1) % npeers) {
++        ngx_http_upstream_fair_peer_t      *peer;
++        ngx_uint_t                          nreq;
++        ngx_uint_t                          weight;
++
++        peer = &fp->peers->peer[n];
++        nreq = fp->peers->peer[n].shared->nreq;
++
++        if (weight_mode == WM_PEAK && nreq >= peer->weight) {
++            ngx_log_debug3(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] backend %d has nreq %ui >= weight %ui in WM_PEAK mode", n, nreq, peer->weight);
++            continue;
++        }
++
++        if (ngx_http_upstream_fair_try_peer(pc, fp, n) != NGX_OK) {
++            if (!pc->tries) {
++                ngx_log_debug(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] all backends exhausted");
++                return NGX_PEER_INVALID;
++            }
++
++            ngx_log_debug1(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] backend %d already tried", n);
++            continue;
++        }
++
++        if (ngx_http_upstream_fair_peer_version_allowed(peer, fp, pc->log) == 0) {
++            continue;
++        }
++
++        sched_score = ngx_http_upstream_fair_sched_score(pc, fp, n);
++
++        if (weight_mode == WM_DEFAULT) {
++            /*
++             * take peer weight into account
++             */
++            weight = peer->shared->current_weight;
++            if (peer->max_fails) {
++                ngx_uint_t mf = peer->max_fails;
++                weight = peer->shared->current_weight * (mf - peer->shared->fails) / mf;
++            }
++            if (weight > 0) {
++                sched_score /= weight;
++            }
++            ngx_log_debug8(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] bss = %ui, ss = %ui (n = %d, w = %d/%d, f = %d/%d, weight = %d)",
++                best_sched_score, sched_score, n, peer->shared->current_weight, peer->weight, peer->shared->fails, peer->max_fails, weight);
++        }
++
++        if (sched_score <= best_sched_score) {
++            best_idx = n;
++            best_sched_score = sched_score;
++        }
++    }
++
++    return best_idx;
++}
++
++static ngx_int_t
++ngx_http_upstream_choose_fair_peer(ngx_peer_connection_t *pc,
++    ngx_http_upstream_fair_peer_data_t *fp, ngx_uint_t *peer_id)
++{
++    ngx_uint_t                          npeers;
++    ngx_uint_t                          best_idx = NGX_PEER_INVALID;
++    ngx_uint_t                          weight_mode;
++
++    npeers = fp->peers->number;
++    weight_mode = fp->peers->weight_mode;
++
++    /* just a single backend */
++    if (npeers == 1) {
++        *peer_id = 0;
++        return NGX_OK;
++    }
++
++    /* any idle backends? */
++    best_idx = ngx_http_upstream_choose_fair_peer_idle(pc, fp);
++    if (best_idx != NGX_PEER_INVALID) {
++        ngx_log_debug1(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] peer %i is idle", best_idx);
++        goto chosen;
++    }
++
++    /* no idle backends, choose the least loaded one */
++    best_idx = ngx_http_upstream_choose_fair_peer_busy(pc, fp);
++    if (best_idx != NGX_PEER_INVALID) {
++        goto chosen;
++    }
++
++    return NGX_BUSY;
++
++chosen:
++    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] chose peer %i", best_idx);
++    *peer_id = best_idx;
++    ngx_bitvector_set(fp->tried, best_idx);
++
++    if (weight_mode == WM_DEFAULT) {
++        ngx_http_upstream_fair_peer_t      *peer = &fp->peers->peer[best_idx];
++
++        if (peer->shared->current_weight-- == 0) {
++            peer->shared->current_weight = peer->weight;
++            ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] peer %d expired weight, reset to %d", best_idx, peer->weight);
++        }
++    }
++    return NGX_OK;
++}
++
++ngx_int_t
++ngx_http_upstream_get_fair_peer(ngx_peer_connection_t *pc, void *data)
++{
++    ngx_int_t                           ret;
++    ngx_uint_t                          peer_id, i;
++    ngx_http_upstream_fair_peer_data_t *fp = data;
++    ngx_http_upstream_fair_peer_t      *peer;
++    ngx_atomic_t                       *lock;
++
++    peer_id = fp->current;
++    fp->current = (fp->current + 1) % fp->peers->number;
++
++    lock = &fp->peers->shared->lock;
++    ngx_spinlock(lock, ngx_pid, 1024);
++    ret = ngx_http_upstream_choose_fair_peer(pc, fp, &peer_id);
++    ngx_log_debug3(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] fp->current = %d, peer_id = %d, ret = %d",
++        fp->current, peer_id, ret);
++
++    if (pc)
++        pc->tries--;
++
++    if (ret == NGX_BUSY) {
++        for (i = 0; i < fp->peers->number; i++) {
++            fp->peers->peer[i].shared->fails = 0;
++        }
++
++        pc->name = fp->peers->name;
++        fp->current = NGX_PEER_INVALID;
++        ngx_spinlock_unlock(lock);
++        return NGX_BUSY;
++    }
++
++    /* assert(ret == NGX_OK); */
++    peer = &fp->peers->peer[peer_id];
++    fp->current = peer_id;
++    if (!fp->peers->no_rr) {
++        fp->peers->current = peer_id;
++    }
++    pc->sockaddr = peer->sockaddr;
++    pc->socklen = peer->socklen;
++    pc->name = &peer->name;
++
++    peer->shared->last_req_id = fp->peers->shared->total_requests;
++    ngx_http_upstream_fair_update_nreq(fp, 1, pc->log);
++    peer->shared->total_req++;
++    ngx_spinlock_unlock(lock);
++    return ret;
++}
++
++
++void
++ngx_http_upstream_free_fair_peer(ngx_peer_connection_t *pc, void *data,
++    ngx_uint_t state)
++{
++    ngx_http_upstream_fair_peer_data_t     *fp = data;
++    ngx_http_upstream_fair_peer_t          *peer;
++    ngx_atomic_t                           *lock;
++
++    ngx_log_debug4(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[upstream_fair] fp->current = %d, state = %ui, pc->tries = %d, pc->data = %p",
++        fp->current, state, pc->tries, pc->data);
++
++    if (fp->current == NGX_PEER_INVALID) {
++        return;
++    }
++
++    lock = &fp->peers->shared->lock;
++    ngx_spinlock(lock, ngx_pid, 1024);
++    if (!ngx_bitvector_test(fp->done, fp->current)) {
++        ngx_bitvector_set(fp->done, fp->current);
++        ngx_http_upstream_fair_update_nreq(fp, -1, pc->log);
++    }
++
++    if (fp->peers->number == 1) {
++        pc->tries = 0;
++    }
++
++    if (state & NGX_PEER_FAILED) {
++        peer = &fp->peers->peer[fp->current];
++
++        peer->shared->fails++;
++        peer->accessed = ngx_time();
++    }
++    ngx_spinlock_unlock(lock);
++}
++
++/*
++ * walk through the rbtree, removing old entries and looking for
++ * a matching one -- compared by (cycle, peers) pair
++ *
++ * no attempt at optimisation is made, for two reasons:
++ *  - the tree will be quite small, anyway
++ *  - being called once per worker startup per upstream block,
++ *    this code isn't really the hot path
++ */
++static ngx_http_upstream_fair_shm_block_t *
++ngx_http_upstream_fair_walk_shm(
++    ngx_slab_pool_t *shpool,
++    ngx_rbtree_node_t *node,
++    ngx_rbtree_node_t *sentinel,
++    ngx_http_upstream_fair_peers_t *peers)
++{
++    ngx_http_upstream_fair_shm_block_t     *uf_node;
++    ngx_http_upstream_fair_shm_block_t     *found_node = NULL;
++    ngx_http_upstream_fair_shm_block_t     *tmp_node;
++
++    if (node == sentinel) {
++        return NULL;
++    }
++
++    /* visit left node */
++    if (node->left != sentinel) {
++        tmp_node = ngx_http_upstream_fair_walk_shm(shpool, node->left,
++            sentinel, peers);
++        if (tmp_node) {
++            found_node = tmp_node;
++        }
++    }
++
++    /* visit right node */
++    if (node->right != sentinel) {
++        tmp_node = ngx_http_upstream_fair_walk_shm(shpool, node->right,
++            sentinel, peers);
++        if (tmp_node) {
++            found_node = tmp_node;
++        }
++    }
++
++    /* visit current node */
++    uf_node = (ngx_http_upstream_fair_shm_block_t *) node;
++    if (uf_node->generation != ngx_http_upstream_fair_generation) {
++        ngx_spinlock(&uf_node->lock, ngx_pid, 1024);
++        if (uf_node->total_nreq == 0) {
++            /* don't bother unlocking */
++            ngx_rbtree_delete(ngx_http_upstream_fair_rbtree, node);
++            ngx_slab_free_locked(shpool, node);
++        }
++        ngx_spinlock_unlock(&uf_node->lock);
++    } else if (uf_node->peers == (uintptr_t) peers) {
++        found_node = uf_node;
++    }
++
++    return found_node;
++}
++
++static ngx_int_t
++ngx_http_upstream_fair_shm_alloc(ngx_http_upstream_fair_peers_t *usfp, ngx_log_t *log)
++{
++    ngx_slab_pool_t                        *shpool;
++    ngx_uint_t                              i;
++
++    if (usfp->shared) {
++        return NGX_OK;
++    }
++
++    shpool = (ngx_slab_pool_t *)ngx_http_upstream_fair_shm_zone->shm.addr;
++
++    ngx_shmtx_lock(&shpool->mutex);
++
++    usfp->shared = ngx_http_upstream_fair_walk_shm(shpool,
++        ngx_http_upstream_fair_rbtree->root,
++        ngx_http_upstream_fair_rbtree->sentinel,
++        usfp);
++
++    if (usfp->shared) {
++        ngx_shmtx_unlock(&shpool->mutex);
++        return NGX_OK;
++    }
++
++    usfp->shared = ngx_slab_alloc_locked(shpool,
++        sizeof(ngx_http_upstream_fair_shm_block_t) +
++        (usfp->number - 1) * sizeof(ngx_http_upstream_fair_shared_t));
++
++    if (!usfp->shared) {
++        ngx_shmtx_unlock(&shpool->mutex);
++        if (!usfp->size_err) {
++            ngx_log_error(NGX_LOG_EMERG, log, 0,
++                "upstream_fair_shm_size too small (current value is %udKiB)",
++                ngx_http_upstream_fair_shm_size >> 10);
++            usfp->size_err = 1;
++        }
++        return NGX_ERROR;
++    }
++
++    usfp->shared->node.key = ngx_crc32_short((u_char *) &ngx_cycle, sizeof ngx_cycle) ^
++        ngx_crc32_short((u_char *) &usfp, sizeof(usfp));
++
++    usfp->shared->generation = ngx_http_upstream_fair_generation;
++    usfp->shared->peers = (uintptr_t) usfp;
++    usfp->shared->total_nreq = 0;
++    usfp->shared->total_requests = 0;
++
++    for (i = 0; i < usfp->number; i++) {
++            usfp->shared->stats[i].nreq = 0;
++            usfp->shared->stats[i].last_req_id = 0;
++            usfp->shared->stats[i].total_req = 0;
++    }
++
++    ngx_rbtree_insert(ngx_http_upstream_fair_rbtree, &usfp->shared->node);
++
++    ngx_shmtx_unlock(&shpool->mutex);
++    return NGX_OK;
++}
++
++ngx_int_t
++ngx_http_upstream_init_fair_peer(ngx_http_request_t *r,
++    ngx_http_upstream_srv_conf_t *us)
++{
++    ngx_http_upstream_fair_peer_data_t     *fp;
++    ngx_http_upstream_fair_peers_t         *usfp;
++    ngx_uint_t                              n;
++    ngx_http_core_loc_conf_t               *clcf;
++
++    fp = r->upstream->peer.data;
++
++    if (fp == NULL) {
++        fp = ngx_palloc(r->pool, sizeof(ngx_http_upstream_fair_peer_data_t));
++        if (fp == NULL) {
++            return NGX_ERROR;
++        }
++
++        r->upstream->peer.data = fp;
++    }
++
++    usfp = us->peer.data;
++    clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
++    if (clcf) {
++        fp->exact_version_check = clcf->exact_version_check;
++    }
++    fp->version.data = (u_char*) "";
++    fp->version.len = 0;
++
++    fp->tried = ngx_bitvector_alloc(r->pool, usfp->number, &fp->data);
++    fp->done = ngx_bitvector_alloc(r->pool, usfp->number, &fp->data2);
++
++    if (fp->tried == NULL || fp->done == NULL) {
++        return NGX_ERROR;
++    }
++
++    /* set up shared memory area */
++    ngx_http_upstream_fair_shm_alloc(usfp, r->connection->log);
++
++    fp->current = usfp->current;
++    fp->peers = usfp;
++    usfp->shared->total_requests++;
++
++    for (n = 0; n < usfp->number; n++) {
++        usfp->peer[n].shared = &usfp->shared->stats[n];
++    }
++
++    r->upstream->peer.get = ngx_http_upstream_get_fair_peer;
++    r->upstream->peer.free = ngx_http_upstream_free_fair_peer;
++    r->upstream->peer.tries = usfp->number;
++#if (NGX_HTTP_SSL)
++    r->upstream->peer.set_session =
++                               ngx_http_upstream_fair_set_session;
++    r->upstream->peer.save_session =
++                               ngx_http_upstream_fair_save_session;
++#endif
++
++    return NGX_OK;
++}
++
++/* check if this upstream peer is allowed (same exact version/same major-minor version based on exact_version_check flag)
++ * return 1 if allowed, 0 if not */
++ngx_flag_t
++ngx_http_upstream_fair_peer_version_allowed(ngx_http_upstream_fair_peer_t *peer, void* data,
++                                       ngx_log_t* log) {
++    ngx_http_upstream_fair_peer_data_t* fp = data;
++    ngx_uint_t peer_version[2], auth_token_version[2];
++    ngx_flag_t f = 1;
++    ngx_uint_t j = 0;
++    char *ptr = NULL;
++
++    /* Version check enforcement when the auth_token contains a version */
++    if (fp->version.len && peer->version.len == 0) {
++        // Peer does not have version set in nginx conf
++        ngx_log_debug0(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "auth_token has a version but the peer doesn't, skipping peer");
++        return 0;
++    } else if (fp->version.len && peer->version.len) {
++        // Peer has version set in nginx conf
++        if (fp->exact_version_check) {
++            // if the server version check is non-permissive (needs to be an exact match)
++            ngx_log_debug0(NGX_LOG_DEBUG_HTTP, log, 0,
++                    "exact_version_check is on");
++            if (fp->version.len != peer->version.len || ngx_memcmp(fp->version.data, peer->version.data, fp->version.len)) {
++                ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "skipping peer at a different version %V", &peer->version);
++                f = 0;
++            }
++        } else {
++            // if the server version check is permissive (eg. all 8.5.x will be treated same by nginx)
++            ngx_log_debug0(NGX_LOG_DEBUG_HTTP, log, 0,
++                    "exact_version_check is off");
++
++            ptr = strtok ((char *)fp->version.data,".");
++            while (ptr != NULL && (j < 2)) {
++                auth_token_version[j] = atoi(ptr);
++                ngx_log_debug2(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "auth_token_version[%d] = %d", j, auth_token_version[j]);
++                ptr = strtok (NULL, ".");
++                j++;
++            }
++            j = 0;
++            ptr = strtok ((char *)peer->version.data,".");
++            while (ptr != NULL && (j < 2)) {
++                peer_version[j] = atoi(ptr);
++                ngx_log_debug2(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "peer_version[%d] = %d", j, peer_version[j]);
++                ptr = strtok (NULL, ".");
++                j++;
++            }
++            // Compare if the major and minor revisions are same
++            for (j = 0; j < 2; j++) {
++                if (auth_token_version[j] != peer_version[j]) {
++                    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
++                            "skipping peer at a different major/minor version %V", &peer->version);
++                    f = 0;
++                }
++            }
++        }
++    }
++
++    return f;
++}
++
++#if (NGX_HTTP_SSL)
++static ngx_int_t
++ngx_http_upstream_fair_set_session(ngx_peer_connection_t *pc, void *data)
++{
++    ngx_http_upstream_fair_peer_data_t  *fp = data;
++
++    ngx_int_t                      rc;
++    ngx_ssl_session_t             *ssl_session;
++    ngx_http_upstream_fair_peer_t *peer;
++
++    if (fp->current == NGX_PEER_INVALID)
++        return NGX_OK;
++
++    peer = &fp->peers->peer[fp->current];
++
++    /* TODO: threads only mutex */
++    /* ngx_lock_mutex(fp->peers->mutex); */
++
++    ssl_session = peer->ssl_session;
++
++    rc = ngx_ssl_set_session(pc->connection, ssl_session);
++
++    ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++                   "set session: %p:%d",
++                   ssl_session, ssl_session ? ssl_session->references : 0);
++
++    /* ngx_unlock_mutex(fp->peers->mutex); */
++
++    return rc;
++}
++
++static void
++ngx_http_upstream_fair_save_session(ngx_peer_connection_t *pc, void *data)
++{
++    ngx_http_upstream_fair_peer_data_t  *fp = data;
++
++    ngx_ssl_session_t             *old_ssl_session, *ssl_session;
++    ngx_http_upstream_fair_peer_t *peer;
++
++    if (fp->current == NGX_PEER_INVALID)
++        return;
++
++    ssl_session = ngx_ssl_get_session(pc->connection);
++
++    if (ssl_session == NULL) {
++        return;
++    }
++
++    ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++                   "save session: %p:%d", ssl_session, ssl_session->references);
++
++    peer = &fp->peers->peer[fp->current];
++
++    /* TODO: threads only mutex */
++    /* ngx_lock_mutex(fp->peers->mutex); */
++
++    old_ssl_session = peer->ssl_session;
++    peer->ssl_session = ssl_session;
++
++    /* ngx_unlock_mutex(fp->peers->mutex); */
++
++    if (old_ssl_session) {
++
++        ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++                       "old session: %p:%d",
++                       old_ssl_session, old_ssl_session->references);
++
++        /* TODO: may block */
++
++        ngx_ssl_free_session(old_ssl_session);
++    }
++}
++
++#endif
++
++#if 0
++static void
++ngx_http_upstream_fair_walk_status(ngx_pool_t *pool, ngx_chain_t *cl, ngx_int_t *length,
++    ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel)
++{
++    ngx_http_upstream_fair_shm_block_t     *s_node = (ngx_http_upstream_fair_shm_block_t *) node;
++    ngx_http_upstream_fair_peers_t         *peers;
++    ngx_chain_t                            *new_cl;
++    ngx_buf_t                              *b;
++    ngx_uint_t                              size, i;
++
++    if (node == sentinel) {
++        return;
++    }
++
++    if (node->left != sentinel) {
++        ngx_http_upstream_fair_walk_status(pool, cl, length, node->left, sentinel);
++    }
++
++    if (s_node->generation != ngx_http_upstream_fair_generation) {
++        size = 100;
++        peers = NULL;
++    } else {
++        /* this is rather ugly (casting an uintptr_t back into a pointer
++         * but as long as the generation is still the same (verified above),
++         * it should be still safe
++         */
++        peers = (ngx_http_upstream_fair_peers_t *) s_node->peers;
++        if (!peers->shared) {
++            goto next;
++        }
++
++        size = 200 + peers->number * 120; /* LOTS of slack */
++    }
++
++    b = ngx_create_temp_buf(pool, size);
++    if (!b) {
++        goto next;
++    }
++
++    new_cl = ngx_alloc_chain_link(pool);
++    if (!new_cl) {
++        goto next;
++    }
++
++    new_cl->buf = b;
++    new_cl->next = NULL;
++
++    while (cl->next) {
++        cl = cl->next;
++    }
++    cl->next = new_cl;
++
++    if (peers) {
++        b->last = ngx_sprintf(b->last, "upstream %V (%p): current peer %d/%d, total requests: %ui\n", peers->name, (void*) node, peers->current, peers->number, s_node->total_requests);
++        for (i = 0; i < peers->number; i++) {
++            ngx_http_upstream_fair_peer_t *peer = &peers->peer[i];
++            ngx_http_upstream_fair_shared_t *sh = peer->shared;
++            b->last = ngx_sprintf(b->last, " peer %d: %V weight: %d/%d, fails: %d/%d, acc: %d, down: %d, nreq: %d, total_req: %ui, last_req: %ui\n",
++                i, &peer->name, sh->current_weight, peer->weight, sh->fails, peer->max_fails, peer->accessed, peer->down,
++                sh->nreq, sh->total_req, sh->last_req_id);
++        }
++    } else {
++        b->last = ngx_sprintf(b->last, "upstream %p: gen %ui != %ui, total_nreq = %ui", (void*) node, s_node->generation, ngx_http_upstream_fair_generation, s_node->total_nreq);
++    }
++    b->last = ngx_sprintf(b->last, "\n");
++    b->last_buf = 1;
++
++    *length += b->last - b->pos;
++
++    if (cl->buf) {
++        cl->buf->last_buf = 0;
++    }
++
++    cl = cl->next;
++next:
++
++    if (node->right != sentinel) {
++        ngx_http_upstream_fair_walk_status(pool, cl, length, node->right, sentinel);
++    }
++}
++
++static ngx_chain_t*
++ngx_http_upstream_fair_report_status(ngx_http_request_t *r, ngx_int_t *length)
++{
++    ngx_buf_t              *b;
++    ngx_chain_t            *cl;
++    ngx_slab_pool_t        *shpool;
++
++    b = ngx_create_temp_buf(r->pool, sizeof("\nupstream_fair status report:\n"));
++    if (!b) {
++        return NULL;
++    }
++
++    cl = ngx_alloc_chain_link(r->pool);
++    if (!cl) {
++        return NULL;
++    }
++    cl->next = NULL;
++    cl->buf = b;
++
++    b->last = ngx_cpymem(b->last, "\nupstream_fair status report:\n",
++        sizeof("\nupstream_fair status report:\n") - 1);
++
++    *length = b->last - b->pos;
++
++    shpool = (ngx_slab_pool_t *)ngx_http_upstream_fair_shm_zone->shm.addr;
++
++    ngx_shmtx_lock(&shpool->mutex);
++
++    ngx_http_upstream_fair_walk_status(r->pool, cl,
++        length,
++        ngx_http_upstream_fair_rbtree->root,
++        ngx_http_upstream_fair_rbtree->sentinel);
++
++    ngx_shmtx_unlock(&shpool->mutex);
++
++    if (!cl->next || !cl->next->buf) {
++        /* no upstream_fair status to report */
++        return NULL;
++    }
++
++    return cl;
++}
++#endif
++
++/* vim: set et ts=4 sw=4: */
+diff --git a/src/http/ngx_http_upstream_fair.h b/src/http/ngx_http_upstream_fair.h
+new file mode 100644
+index 00000000..d45fe9b6
+--- /dev/null
++++ b/src/http/ngx_http_upstream_fair.h
+@@ -0,0 +1,113 @@
++/*
++ * ***** BEGIN LICENSE BLOCK *****
++ * Zimbra Collaboration Suite Server
++ * Copyright (C) 2011 Zimbra Software, LLC.
++ *
++ * The contents of this file are subject to the Zimbra Public License
++ * Version 1.4 ("License"); you may not use this file except in
++ * compliance with the License.  You may obtain a copy of the License at
++ * http://www.zimbra.com/license.
++ *
++ * Software distributed under the License is distributed on an "AS IS"
++ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
++ * ***** END LICENSE BLOCK *****
++ */
++
++#ifndef _NGX_HTTP_UPSTREAM_FAIR_H_INCLUDED_
++#define _NGX_HTTP_UPSTREAM_FAIR_H_INCLUDED_
++
++
++#include <ngx_config.h>
++#include <ngx_core.h>
++#include <ngx_http.h>
++
++typedef struct {
++    ngx_uint_t                          nreq;
++    ngx_uint_t                          total_req;
++    ngx_uint_t                          last_req_id;
++    ngx_uint_t                          fails;
++    ngx_uint_t                          current_weight;
++} ngx_http_upstream_fair_shared_t;
++
++typedef struct ngx_http_upstream_fair_peers_s ngx_http_upstream_fair_peers_t;
++
++typedef struct {
++    ngx_rbtree_node_t                   node;
++    ngx_uint_t                          generation;
++    uintptr_t                           peers;      /* forms a unique cookie together with generation */
++    ngx_uint_t                          total_nreq;
++    ngx_uint_t                          total_requests;
++    ngx_atomic_t                        lock;
++    ngx_http_upstream_fair_shared_t     stats[1];
++} ngx_http_upstream_fair_shm_block_t;
++
++/* ngx_spinlock is defined without a matching unlock primitive */
++#define ngx_spinlock_unlock(lock)       (void) ngx_atomic_cmp_set(lock, ngx_pid, 0)
++
++typedef struct {
++    ngx_http_upstream_fair_shared_t    *shared;
++    struct sockaddr                    *sockaddr;
++    socklen_t                           socklen;
++    ngx_str_t                           name;
++
++    ngx_uint_t                          weight;
++    ngx_uint_t                          max_fails;
++    time_t                              fail_timeout;
++
++    time_t                              accessed;
++    ngx_uint_t                          down:1;
++    ngx_str_t                           version;       /* upstream server version */
++
++#if (NGX_HTTP_SSL)
++    ngx_ssl_session_t                  *ssl_session;    /* local to a process */
++#endif
++
++} ngx_http_upstream_fair_peer_t;
++
++#define NGX_HTTP_UPSTREAM_FAIR_NO_RR            (1<<26)
++#define NGX_HTTP_UPSTREAM_FAIR_WEIGHT_MODE_IDLE (1<<27)
++#define NGX_HTTP_UPSTREAM_FAIR_WEIGHT_MODE_PEAK (1<<28)
++#define NGX_HTTP_UPSTREAM_FAIR_WEIGHT_MODE_MASK ((1<<27) | (1<<28))
++
++enum { WM_DEFAULT = 0, WM_IDLE, WM_PEAK };
++
++struct ngx_http_upstream_fair_peers_s {
++    ngx_http_upstream_fair_shm_block_t *shared;
++    ngx_uint_t                          current;
++    ngx_uint_t                          size_err:1;
++    ngx_uint_t                          no_rr:1;
++    ngx_uint_t                          weight_mode:2;
++    ngx_uint_t                          number;
++    ngx_str_t                          *name;
++    ngx_http_upstream_fair_peers_t     *next;           /* for backup peers support, not really used yet */
++    ngx_http_upstream_fair_peer_t       peer[1];
++};
++
++
++#define NGX_PEER_INVALID (~0UL)
++
++typedef struct {
++    ngx_http_upstream_fair_peers_t     *peers;
++    ngx_uint_t                          current;
++    uintptr_t                          *tried;
++    uintptr_t                          *done;
++    uintptr_t                           data;
++    uintptr_t                           data2;
++    ngx_str_t                           version;
++    ngx_flag_t                          exact_version_check;
++} ngx_http_upstream_fair_peer_data_t;
++
++extern ngx_uint_t *shm_size;
++
++ngx_int_t ngx_http_upstream_init_fair(ngx_conf_t *cf,
++    ngx_http_upstream_srv_conf_t *us);
++ngx_int_t ngx_http_upstream_init_fair_peer(ngx_http_request_t *r,
++    ngx_http_upstream_srv_conf_t *us);
++ngx_int_t ngx_http_upstream_get_fair_peer(ngx_peer_connection_t *pc,
++    void *data);
++void ngx_http_upstream_free_fair_peer(ngx_peer_connection_t *pc,
++    void *data, ngx_uint_t state);
++ngx_flag_t ngx_http_upstream_fair_peer_version_allowed(ngx_http_upstream_fair_peer_t *peer,
++    void* data, ngx_log_t* log);
++
++#endif /* _NGX_HTTP_UPSTREAM_FAIR_H_INCLUDED_ */
 diff --git a/src/http/ngx_http_upstream_round_robin.c b/src/http/ngx_http_upstream_round_robin.c
-index 8e7b4ea8b..fe0243d86 100644
+index 8e7b4ea8..b59e2fc8 100644
 --- a/src/http/ngx_http_upstream_round_robin.c
 +++ b/src/http/ngx_http_upstream_round_robin.c
-@@ -405,7 +405,7 @@ ngx_http_upstream_create_round_robin_peer(ngx_http_request_t *r,
+@@ -15,7 +15,7 @@
+ 
+ 
+ static ngx_http_upstream_rr_peer_t *ngx_http_upstream_get_peer(
+-    ngx_http_upstream_rr_peer_data_t *rrp);
++                                                               ngx_http_upstream_rr_peer_data_t *rrp, ngx_log_t* log);
+ 
+ #if (NGX_HTTP_SSL)
+ 
+@@ -97,6 +97,7 @@ ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
+                 peer[n].fail_timeout = server[i].fail_timeout;
+                 peer[n].down = server[i].down;
+                 peer[n].server = server[i].name;
++                peer[n].version = server[i].version;
+ 
+                 *peerp = &peer[n];
+                 peerp = &peer[n].next;
+@@ -141,6 +142,7 @@ ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
+         backup->total_weight = w;
+         backup->name = &us->host;
+ 
++
+         n = 0;
+         peerp = &backup->peer;
+ 
+@@ -161,7 +163,7 @@ ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
+                 peer[n].fail_timeout = server[i].fail_timeout;
+                 peer[n].down = server[i].down;
+                 peer[n].server = server[i].name;
+-
++                peer[n].version = server[i].version;
+                 *peerp = &peer[n];
+                 peerp = &peer[n].next;
+                 n++;
+@@ -228,6 +230,8 @@ ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
+         peer[i].max_conns = 0;
+         peer[i].max_fails = 1;
+         peer[i].fail_timeout = 10;
++        peer[i].version.len = 0;
++        peer[i].version.data = NULL;
+         *peerp = &peer[i];
+         peerp = &peer[i].next;
+     }
+@@ -246,6 +250,7 @@ ngx_http_upstream_init_round_robin_peer(ngx_http_request_t *r,
+ {
+     ngx_uint_t                         n;
+     ngx_http_upstream_rr_peer_data_t  *rrp;
++    ngx_http_core_loc_conf_t          *clcf;
+ 
+     rrp = r->upstream->peer.data;
+ 
+@@ -261,6 +266,12 @@ ngx_http_upstream_init_round_robin_peer(ngx_http_request_t *r,
+     rrp->peers = us->peer.data;
+     rrp->current = NULL;
+     rrp->config = 0;
++    clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
++    if (clcf) {
++        rrp->exact_version_check = clcf->exact_version_check;
++    }
++    rrp->version.data = (u_char*) "";
++    rrp->version.len = 0;
+ 
+     n = rrp->peers->number;
+ 
+@@ -344,6 +355,8 @@ ngx_http_upstream_create_round_robin_peer(ngx_http_request_t *r,
+         peer[0].max_conns = 0;
+         peer[0].max_fails = 1;
+         peer[0].fail_timeout = 10;
++        peer[0].version.len = 0;
++        peer[0].version.data = NULL;
+         peers->peer = peer;
+ 
+     } else {
+@@ -378,6 +391,8 @@ ngx_http_upstream_create_round_robin_peer(ngx_http_request_t *r,
+             peer[i].max_conns = 0;
+             peer[i].max_fails = 1;
+             peer[i].fail_timeout = 10;
++            peer[i].version.len = 0;
++            peer[i].version.data = NULL;
+             *peerp = &peer[i];
+             peerp = &peer[i].next;
+         }
+@@ -405,7 +420,7 @@ ngx_http_upstream_create_round_robin_peer(ngx_http_request_t *r,
      r->upstream->peer.free = ngx_http_upstream_free_round_robin_peer;
      r->upstream->peer.tries = ngx_http_upstream_tries(rrp->peers);
  #if (NGX_HTTP_SSL)
@@ -8170,8 +10271,149 @@ index 8e7b4ea8b..fe0243d86 100644
      r->upstream->peer.save_session = ngx_http_upstream_empty_save_session;
  #endif
  
+@@ -449,15 +464,15 @@ ngx_http_upstream_get_round_robin_peer(ngx_peer_connection_t *pc, void *data)
+ 
+         /* there are several peers */
+ 
+-        peer = ngx_http_upstream_get_peer(rrp);
++        peer = ngx_http_upstream_get_peer(rrp, pc->log);
+ 
+         if (peer == NULL) {
+             goto failed;
+         }
+ 
+-        ngx_log_debug2(NGX_LOG_DEBUG_HTTP, pc->log, 0,
+-                       "get rr peer, current: %p %i",
+-                       peer, peer->current_weight);
++        ngx_log_debug3(NGX_LOG_DEBUG_HTTP, pc->log, 0,
++                       "get rr peer, current: %ui %i version:%s",
++                       rrp->current, peer->current_weight, peer->version);
+     }
+ 
+     pc->sockaddr = peer->sockaddr;
+@@ -505,7 +520,7 @@ failed:
+ 
+ 
+ static ngx_http_upstream_rr_peer_t *
+-ngx_http_upstream_get_peer(ngx_http_upstream_rr_peer_data_t *rrp)
++ngx_http_upstream_get_peer(ngx_http_upstream_rr_peer_data_t *rrp, ngx_log_t* log)
+ {
+     time_t                        now;
+     uintptr_t                     m;
+@@ -548,6 +563,10 @@ ngx_http_upstream_get_peer(ngx_http_upstream_rr_peer_data_t *rrp)
+             continue;
+         }
+ 
++        if (ngx_http_upstream_rr_peer_version_allowed(peer, rrp, log) == 0) {
++        	continue;
++        }
++
+         peer->current_weight += peer->effective_weight;
+         total += peer->effective_weight;
+ 
+@@ -655,6 +674,69 @@ ngx_http_upstream_free_round_robin_peer(ngx_peer_connection_t *pc, void *data,
+     }
+ }
+ 
++/* check if this upstream peer is allowed (same exact version/same major-minor version based on exact_version_check flag)
++ * return 1 if allowed, 0 if not */
++ngx_flag_t
++ngx_http_upstream_rr_peer_version_allowed(ngx_http_upstream_rr_peer_t *peer, void* data,
++                                       ngx_log_t* log) {
++    ngx_http_upstream_rr_peer_data_t* rrp = data;
++    ngx_uint_t peer_version[2], auth_token_version[2];
++    ngx_flag_t f = 1;
++    ngx_uint_t j = 0;
++    char *ptr = NULL;
++
++    /* Version check enforcement when the auth_token contains a version */
++    if (rrp->version.len && peer->version.len == 0) {
++        // Peer does not have version set in nginx conf
++        ngx_log_debug0(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "auth_token has a version but the peer doesn't, skipping peer");
++        return 0;
++    } else if (rrp->version.len && peer->version.len) {
++        // Peer has version set in nginx conf
++        if (rrp->exact_version_check) {
++            // if the server version check is non-permissive (needs to be an exact match)
++            ngx_log_debug0(NGX_LOG_DEBUG_HTTP, log, 0,
++                    "exact_version_check is on");
++            if (rrp->version.len != peer->version.len || ngx_memcmp(rrp->version.data, peer->version.data, rrp->version.len)) {
++                ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "skipping peer at a different version %V", &peer->version);
++                f = 0;
++            }
++        } else {
++            // if the server version check is permissive (eg. all 8.5.x will be treated same by nginx)
++            ngx_log_debug0(NGX_LOG_DEBUG_HTTP, log, 0,
++                    "exact_version_check is off");
++
++            ptr = strtok ((char *)rrp->version.data,".");
++            while (ptr != NULL && (j < 2)) {
++                auth_token_version[j] = atoi(ptr);
++                ngx_log_debug2(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "auth_token_version[%d] = %d", j, auth_token_version[j]);
++                ptr = strtok (NULL, ".");
++                j++;
++            }
++            j = 0;
++            ptr = strtok ((char *)peer->version.data,".");
++            while (ptr != NULL && (j < 2)) {
++                peer_version[j] = atoi(ptr);
++                ngx_log_debug2(NGX_LOG_DEBUG_HTTP, log, 0,
++                        "peer_version[%d] = %d", j, peer_version[j]);
++                ptr = strtok (NULL, ".");
++                j++;
++            }
++            // Compare if the major and minor revisions are same
++            for (j = 0; j < 2; j++) {
++                if (auth_token_version[j] != peer_version[j]) {
++                    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
++                            "skipping peer at a different major/minor version %V", &peer->version);
++                    f = 0;
++                }
++            }
++        }
++    }
++
++    return f;
++}
+ 
+ #if (NGX_HTTP_SSL)
+ 
+diff --git a/src/http/ngx_http_upstream_round_robin.h b/src/http/ngx_http_upstream_round_robin.h
+index 45f258d2..81a9e28b 100644
+--- a/src/http/ngx_http_upstream_round_robin.h
++++ b/src/http/ngx_http_upstream_round_robin.h
+@@ -40,6 +40,8 @@ struct ngx_http_upstream_rr_peer_s {
+ 
+     ngx_uint_t                      down;
+ 
++    ngx_str_t                       version;       /* upstream server version */
++
+ #if (NGX_HTTP_SSL || NGX_COMPAT)
+     void                           *ssl_session;
+     int                             ssl_session_len;
+@@ -130,6 +132,8 @@ typedef struct {
+     ngx_http_upstream_rr_peer_t    *current;
+     uintptr_t                      *tried;
+     uintptr_t                       data;
++    ngx_str_t                       version;
++    ngx_flag_t                      exact_version_check;
+ } ngx_http_upstream_rr_peer_data_t;
+ 
+ 
+@@ -143,6 +147,8 @@ ngx_int_t ngx_http_upstream_get_round_robin_peer(ngx_peer_connection_t *pc,
+     void *data);
+ void ngx_http_upstream_free_round_robin_peer(ngx_peer_connection_t *pc,
+     void *data, ngx_uint_t state);
++ngx_flag_t ngx_http_upstream_rr_peer_version_allowed(ngx_http_upstream_rr_peer_t *peer,
++	void* data, ngx_log_t* log);
+ 
+ #if (NGX_HTTP_SSL)
+ ngx_int_t
 diff --git a/src/mail/ngx_mail.h b/src/mail/ngx_mail.h
-index d904f25f1..71c03cc7a 100644
+index d904f25f..71c03cc7 100644
 --- a/src/mail/ngx_mail.h
 +++ b/src/mail/ngx_mail.h
 @@ -4,6 +4,10 @@
@@ -8456,7 +10698,7 @@ index d904f25f1..71c03cc7a 100644
  extern ngx_uint_t    ngx_mail_max_module;
  extern ngx_module_t  ngx_mail_core_module;
 diff --git a/src/mail/ngx_mail_auth_http_module.c b/src/mail/ngx_mail_auth_http_module.c
-index 6b57358b4..ac7c8a10c 100644
+index 6b57358b..ac7c8a10 100644
 --- a/src/mail/ngx_mail_auth_http_module.c
 +++ b/src/mail/ngx_mail_auth_http_module.c
 @@ -1446,6 +1446,7 @@ ngx_mail_auth_http_merge_conf(ngx_conf_t *cf, void *parent, void *child)
@@ -8477,7 +10719,7 @@ index 6b57358b4..ac7c8a10c 100644
      ngx_conf_merge_msec_value(conf->timeout, prev->timeout, 60000);
  
 diff --git a/src/mail/ngx_mail_core_module.c b/src/mail/ngx_mail_core_module.c
-index e16d70238..f1968d60f 100644
+index e16d7023..f1968d60 100644
 --- a/src/mail/ngx_mail_core_module.c
 +++ b/src/mail/ngx_mail_core_module.c
 @@ -4,6 +4,10 @@
@@ -8644,7 +10886,7 @@ index e16d70238..f1968d60f 100644
 +    return cln;
 +}
 diff --git a/src/mail/ngx_mail_handler.c b/src/mail/ngx_mail_handler.c
-index 803a247d2..ca34b7c7c 100644
+index 803a247d..7890eb2a 100644
 --- a/src/mail/ngx_mail_handler.c
 +++ b/src/mail/ngx_mail_handler.c
 @@ -10,8 +10,18 @@
@@ -8738,12 +10980,13 @@ index 803a247d2..ca34b7c7c 100644
      ctx->session = s;
  
      c->log->connection = c->number;
-@@ -335,10 +377,13 @@ ngx_mail_init_session(ngx_connection_t *c)
+@@ -335,10 +377,14 @@ ngx_mail_init_session(ngx_connection_t *c)
  {
      ngx_mail_session_t        *s;
      ngx_mail_core_srv_conf_t  *cscf;
 +    ngx_mail_throttle_srv_conf_t *tscf;
 +    throttle_callback_t       *cb;
++    ngx_uint_t           login_ip_max;
  
      s = c->data;
  
@@ -8752,7 +10995,7 @@ index 803a247d2..ca34b7c7c 100644
  
      s->protocol = cscf->protocol->type;
  
-@@ -348,18 +393,243 @@ ngx_mail_init_session(ngx_connection_t *c)
+@@ -348,18 +394,245 @@ ngx_mail_init_session(ngx_connection_t *c)
          return;
      }
  
@@ -8766,6 +11009,7 @@ index 803a247d2..ca34b7c7c 100644
 +    }
 +
 +    ngx_memset(cb, 0, sizeof(throttle_callback_t));
++
 +    cb->session = s;
 +    cb->connection = c;
 +    cb->log = ngx_cycle->log;
@@ -8773,10 +11017,11 @@ index 803a247d2..ca34b7c7c 100644
 +    cb->on_allow = ngx_mail_allow_session;
 +    cb->on_deny = ngx_mail_choke_session;
 +
-+    if (tscf->mail_login_ip_max == 0) {
++    login_ip_max = ngx_mail_throttle_ip_max_for_protocol(tscf, s->protocol);
++    if (login_ip_max == 0) {
 +        cb->on_allow(cb); //unlimited, direct allow session
 +    } else {
-+        ngx_mail_throttle_ip(c->addr_text, cb);
++        ngx_mail_throttle_whitelist_ip(c->addr_text, cb);
 +    }
 +}
 +
@@ -8997,7 +11242,7 @@ index 803a247d2..ca34b7c7c 100644
                                 + NGX_TIME_T_LEN
                                 + cscf->server_name.len);
      if (s->salt.data == NULL) {
-@@ -397,14 +667,42 @@ ngx_mail_starttls_only(ngx_mail_session_t *s, ngx_connection_t *c)
+@@ -397,14 +670,42 @@ ngx_mail_starttls_only(ngx_mail_session_t *s, ngx_connection_t *c)
  #endif
  
  
@@ -9041,7 +11286,7 @@ index 803a247d2..ca34b7c7c 100644
  #if (NGX_DEBUG_MAIL_PASSWD)
      ngx_log_debug1(NGX_LOG_DEBUG_MAIL, c->log, 0,
                     "mail auth plain: \"%V\"", &arg[n]);
-@@ -421,6 +719,8 @@ ngx_mail_auth_plain(ngx_mail_session_t *s, ngx_connection_t *c, ngx_uint_t n)
+@@ -421,6 +722,8 @@ ngx_mail_auth_plain(ngx_mail_session_t *s, ngx_connection_t *c, ngx_uint_t n)
          return NGX_MAIL_PARSE_INVALID_COMMAND;
      }
  
@@ -9050,7 +11295,7 @@ index 803a247d2..ca34b7c7c 100644
      p = plain.data;
      last = p + plain.len;
  
-@@ -432,6 +732,9 @@ ngx_mail_auth_plain(ngx_mail_session_t *s, ngx_connection_t *c, ngx_uint_t n)
+@@ -432,6 +735,9 @@ ngx_mail_auth_plain(ngx_mail_session_t *s, ngx_connection_t *c, ngx_uint_t n)
          return NGX_MAIL_PARSE_INVALID_COMMAND;
      }
  
@@ -9060,7 +11305,7 @@ index 803a247d2..ca34b7c7c 100644
      s->login.data = p;
  
      while (p < last && *p) { p++; }
-@@ -447,11 +750,29 @@ ngx_mail_auth_plain(ngx_mail_session_t *s, ngx_connection_t *c, ngx_uint_t n)
+@@ -447,11 +753,29 @@ ngx_mail_auth_plain(ngx_mail_session_t *s, ngx_connection_t *c, ngx_uint_t n)
      s->passwd.len = last - p;
      s->passwd.data = p;
  
@@ -9090,7 +11335,7 @@ index 803a247d2..ca34b7c7c 100644
      return NGX_DONE;
  }
  
-@@ -467,6 +788,23 @@ ngx_mail_auth_login_username(ngx_mail_session_t *s, ngx_connection_t *c,
+@@ -467,6 +791,23 @@ ngx_mail_auth_login_username(ngx_mail_session_t *s, ngx_connection_t *c,
      ngx_log_debug1(NGX_LOG_DEBUG_MAIL, c->log, 0,
                     "mail auth login username: \"%V\"", &arg[n]);
  
@@ -9114,7 +11359,7 @@ index 803a247d2..ca34b7c7c 100644
      s->login.data = ngx_pnalloc(c->pool, ngx_base64_decoded_length(arg[n].len));
      if (s->login.data == NULL) {
          return NGX_ERROR;
-@@ -481,7 +819,7 @@ ngx_mail_auth_login_username(ngx_mail_session_t *s, ngx_connection_t *c,
+@@ -481,7 +822,7 @@ ngx_mail_auth_login_username(ngx_mail_session_t *s, ngx_connection_t *c,
      ngx_log_debug1(NGX_LOG_DEBUG_MAIL, c->log, 0,
                     "mail auth login username: \"%V\"", &s->login);
  
@@ -9123,7 +11368,7 @@ index 803a247d2..ca34b7c7c 100644
  }
  
  
-@@ -496,7 +834,21 @@ ngx_mail_auth_login_password(ngx_mail_session_t *s, ngx_connection_t *c)
+@@ -496,7 +837,21 @@ ngx_mail_auth_login_password(ngx_mail_session_t *s, ngx_connection_t *c)
      ngx_log_debug1(NGX_LOG_DEBUG_MAIL, c->log, 0,
                     "mail auth login password: \"%V\"", &arg[0]);
  #endif
@@ -9145,7 +11390,7 @@ index 803a247d2..ca34b7c7c 100644
      s->passwd.data = ngx_pnalloc(c->pool,
                                   ngx_base64_decoded_length(arg[0].len));
      if (s->passwd.data == NULL) {
-@@ -514,6 +866,9 @@ ngx_mail_auth_login_password(ngx_mail_session_t *s, ngx_connection_t *c)
+@@ -514,6 +869,9 @@ ngx_mail_auth_login_password(ngx_mail_session_t *s, ngx_connection_t *c)
                     "mail auth login password: \"%V\"", &s->passwd);
  #endif
  
@@ -9155,7 +11400,7 @@ index 803a247d2..ca34b7c7c 100644
      return NGX_DONE;
  }
  
-@@ -591,10 +946,719 @@ ngx_mail_auth_cram_md5(ngx_mail_session_t *s, ngx_connection_t *c)
+@@ -591,10 +949,719 @@ ngx_mail_auth_cram_md5(ngx_mail_session_t *s, ngx_connection_t *c)
                     "mail auth cram-md5: \"%V\" \"%V\"", &s->login, &s->passwd);
  
      s->auth_method = NGX_MAIL_AUTH_CRAM_MD5;
@@ -9875,7 +12120,7 @@ index 803a247d2..ca34b7c7c 100644
  
  ngx_int_t
  ngx_mail_auth_external(ngx_mail_session_t *s, ngx_connection_t *c,
-@@ -671,7 +1735,7 @@ ngx_mail_send(ngx_event_t *wev)
+@@ -671,7 +1738,7 @@ ngx_mail_send(ngx_event_t *wev)
          }
  
          if (s->quit) {
@@ -9884,7 +12129,7 @@ index 803a247d2..ca34b7c7c 100644
              return;
          }
  
-@@ -701,6 +1765,82 @@ again:
+@@ -701,6 +1768,82 @@ again:
      }
  }
  
@@ -9967,7 +12212,7 @@ index 803a247d2..ca34b7c7c 100644
  
  ngx_int_t
  ngx_mail_read_command(ngx_mail_session_t *s, ngx_connection_t *c)
-@@ -787,20 +1927,71 @@ ngx_mail_auth(ngx_mail_session_t *s, ngx_connection_t *c)
+@@ -787,20 +1930,71 @@ ngx_mail_auth(ngx_mail_session_t *s, ngx_connection_t *c)
      ngx_mail_auth_http_init(s);
  }
  
@@ -10042,7 +12287,7 @@ index 803a247d2..ca34b7c7c 100644
  
  void
  ngx_mail_close_connection(ngx_connection_t *c)
-@@ -834,6 +2025,13 @@ ngx_mail_close_connection(ngx_connection_t *c)
+@@ -834,6 +2028,13 @@ ngx_mail_close_connection(ngx_connection_t *c)
      ngx_destroy_pool(pool);
  }
  
@@ -10056,7 +12301,7 @@ index 803a247d2..ca34b7c7c 100644
  
  u_char *
  ngx_mail_log_error(ngx_log_t *log, u_char *buf, size_t len)
-@@ -850,7 +2048,11 @@ ngx_mail_log_error(ngx_log_t *log, u_char *buf, size_t len)
+@@ -850,7 +2051,11 @@ ngx_mail_log_error(ngx_log_t *log, u_char *buf, size_t len)
  
      ctx = log->data;
  
@@ -10069,7 +12314,7 @@ index 803a247d2..ca34b7c7c 100644
      len -= p - buf;
      buf = p;
  
-@@ -877,8 +2079,125 @@ ngx_mail_log_error(ngx_log_t *log, u_char *buf, size_t len)
+@@ -877,8 +2082,125 @@ ngx_mail_log_error(ngx_log_t *log, u_char *buf, size_t len)
      if (s->proxy == NULL) {
          return p;
      }
@@ -10196,7 +12441,7 @@ index 803a247d2..ca34b7c7c 100644
 +    return res;
 +}
 diff --git a/src/mail/ngx_mail_imap_handler.c b/src/mail/ngx_mail_imap_handler.c
-index 3bf09ec3c..ba253e733 100644
+index 3bf09ec3..032a3290 100644
 --- a/src/mail/ngx_mail_imap_handler.c
 +++ b/src/mail/ngx_mail_imap_handler.c
 @@ -4,6 +4,10 @@
@@ -10204,7 +12449,7 @@ index 3bf09ec3c..ba253e733 100644
   */
  
 +/*
-+ * Portions Copyright (c) Zimbra Software, LLC. [1998-2011]. All Rights Reserved.
++ * Portions Copyright (c) Zimbra Software, LLC. [1998-2020]. All Rights Reserved.
 + */
 +
  
@@ -10762,7 +13007,7 @@ index 3bf09ec3c..ba253e733 100644
 +    return NGX_OK;
 +}
 diff --git a/src/mail/ngx_mail_imap_module.c b/src/mail/ngx_mail_imap_module.c
-index 1f187fdee..82d6e89d9 100644
+index 1f187fde..74c104f2 100644
 --- a/src/mail/ngx_mail_imap_module.c
 +++ b/src/mail/ngx_mail_imap_module.c
 @@ -4,6 +4,10 @@
@@ -10770,7 +13015,7 @@ index 1f187fdee..82d6e89d9 100644
   */
  
 +/*
-+ * Portions Copyright (c) Zimbra Software, LLC. [1998-2011]. All Rights Reserved.
++ * Portions Copyright (c) Zimbra Software, LLC. [1998-2020]. All Rights Reserved.
 + */
 +
  
@@ -10782,7 +13027,7 @@ index 1f187fdee..82d6e89d9 100644
      void *child);
 +static char *ngx_mail_imap_id (ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
  
-+static ngx_str_t default_imap_greeting = ngx_string("* OK IMAP4 ready");
++static ngx_str_t default_imap_greeting = ngx_string("* OK IMAP4rev1 proxy server ready");
  
  static ngx_str_t  ngx_mail_imap_default_capabilities[] = {
      ngx_string("IMAP4"),
@@ -11195,7 +13440,7 @@ index 1f187fdee..82d6e89d9 100644
 +    }
 +}
 diff --git a/src/mail/ngx_mail_imap_module.h b/src/mail/ngx_mail_imap_module.h
-index 131b44597..e45747ef7 100644
+index 131b4459..8fd7d18b 100644
 --- a/src/mail/ngx_mail_imap_module.h
 +++ b/src/mail/ngx_mail_imap_module.h
 @@ -4,6 +4,10 @@
@@ -11203,7 +13448,7 @@ index 131b44597..e45747ef7 100644
   */
  
 +/*
-+ * Portions Copyright (c) Zimbra Software, LLC. [1998-2011]. All Rights Reserved.
++ * Portions Copyright (c) Zimbra Software, LLC. [1998-2020]. All Rights Reserved.
 + */
 +
  
@@ -11226,7 +13471,7 @@ index 131b44597..e45747ef7 100644
  
  
 diff --git a/src/mail/ngx_mail_parse.c b/src/mail/ngx_mail_parse.c
-index 2c2cdffa1..d335caf0f 100644
+index 2c2cdffa..d335caf0 100644
 --- a/src/mail/ngx_mail_parse.c
 +++ b/src/mail/ngx_mail_parse.c
 @@ -4,6 +4,9 @@
@@ -12533,7 +14778,7 @@ index 2c2cdffa1..d335caf0f 100644
 +    return NGX_MAIL_PARSE_INVALID_AUTH_MECH;
  }
 diff --git a/src/mail/ngx_mail_pop3_handler.c b/src/mail/ngx_mail_pop3_handler.c
-index 9310c2750..305e1f6d5 100644
+index 9310c275..0d4bcc6b 100644
 --- a/src/mail/ngx_mail_pop3_handler.c
 +++ b/src/mail/ngx_mail_pop3_handler.c
 @@ -4,6 +4,10 @@
@@ -12541,7 +14786,7 @@ index 9310c2750..305e1f6d5 100644
   */
  
 +/*
-+ * Portions Copyright (c) Zimbra Software, LLC. [1998-2011]. All Rights Reserved.
++ * Portions Copyright (c) Zimbra Software, LLC. [1998-2020]. All Rights Reserved.
 + */
 +
  
@@ -12786,12 +15031,8 @@ index 9310c2750..305e1f6d5 100644
      s->passwd.len = arg[0].len;
      s->passwd.data = ngx_pnalloc(c->pool, s->passwd.len);
      if (s->passwd.data == NULL) {
-@@ -332,10 +400,13 @@ ngx_mail_pop3_pass(ngx_mail_session_t *s, ngx_connection_t *c)
- 
- #if (NGX_DEBUG_MAIL_PASSWD)
-     ngx_log_debug1(NGX_LOG_DEBUG_MAIL, c->log, 0,
--                   "pop3 passwd: \"%V\"", &s->passwd);
-+                                   "pop3 passwd: \"%V\"", &s->passwd);
+@@ -335,7 +403,10 @@ ngx_mail_pop3_pass(ngx_mail_session_t *s, ngx_connection_t *c)
+                    "pop3 passwd: \"%V\"", &s->passwd);
  #endif
  
 -    return NGX_DONE;
@@ -12929,7 +15170,7 @@ index 9310c2750..305e1f6d5 100644
  
      return rc;
 diff --git a/src/mail/ngx_mail_pop3_module.c b/src/mail/ngx_mail_pop3_module.c
-index a67307073..c7ab3213a 100644
+index a6730707..25b7a57a 100644
 --- a/src/mail/ngx_mail_pop3_module.c
 +++ b/src/mail/ngx_mail_pop3_module.c
 @@ -4,6 +4,10 @@
@@ -12937,7 +15178,7 @@ index a67307073..c7ab3213a 100644
   */
  
 +/*
-+ * Portions Copyright (c) Zimbra Software, LLC. [1998-2011]. All Rights Reserved.
++ * Portions Copyright (c) Zimbra Software, LLC. [1998-2020]. All Rights Reserved.
 + */
 +
  
@@ -13199,7 +15440,7 @@ index a67307073..c7ab3213a 100644
      return NGX_CONF_OK;
  }
 diff --git a/src/mail/ngx_mail_pop3_module.h b/src/mail/ngx_mail_pop3_module.h
-index 86947a772..090e9bc6b 100644
+index 86947a77..4bf9c602 100644
 --- a/src/mail/ngx_mail_pop3_module.h
 +++ b/src/mail/ngx_mail_pop3_module.h
 @@ -4,6 +4,10 @@
@@ -13207,7 +15448,7 @@ index 86947a772..090e9bc6b 100644
   */
  
 +/*
-+ * Portions Copyright (c) Zimbra Software, LLC. [1998-2011]. All Rights Reserved.
++ * Portions Copyright (c) Zimbra Software, LLC. [1998-2020]. All Rights Reserved.
 + */
 +
  
@@ -13232,7 +15473,7 @@ index 86947a772..090e9bc6b 100644
  
  
 diff --git a/src/mail/ngx_mail_proxy_module.c b/src/mail/ngx_mail_proxy_module.c
-index 1c86e54cf..938bd36e9 100644
+index 1c86e54c..4ef1fef7 100644
 --- a/src/mail/ngx_mail_proxy_module.c
 +++ b/src/mail/ngx_mail_proxy_module.c
 @@ -4,19 +4,35 @@
@@ -13240,7 +15481,7 @@ index 1c86e54cf..938bd36e9 100644
   */
  
 +/*
-+ * Portions Copyright (c) Zimbra Software, LLC. [1998-2011]. All Rights Reserved.
++ * Portions Copyright (c) Zimbra Software, LLC. [1998-2020]. All Rights Reserved.
 + */
  
 +#include <nginx.h>
@@ -14125,12 +16366,8 @@ index 1c86e54cf..938bd36e9 100644
  #endif
          break;
      }
-@@ -590,10 +1162,10 @@ ngx_mail_proxy_smtp_handler(ngx_event_t *rev)
-             return;
-         }
- 
--        line.len = ngx_sprintf(line.data,
-+            line.len = ngx_sprintf(line.data,
+@@ -593,7 +1165,7 @@ ngx_mail_proxy_smtp_handler(ngx_event_t *rev)
+         line.len = ngx_sprintf(line.data,
                         ((s->esmtp) ? "EHLO %V" CRLF : "HELO %V" CRLF),
                         &s->smtp_helo)
 -                   - line.data;
@@ -14890,7 +17127,7 @@ index 1c86e54cf..938bd36e9 100644
 +
 +#endif
 diff --git a/src/mail/ngx_mail_smtp_module.c b/src/mail/ngx_mail_smtp_module.c
-index 3b5a2d8f3..2ca4347e1 100644
+index 3b5a2d8f..2ca4347e 100644
 --- a/src/mail/ngx_mail_smtp_module.c
 +++ b/src/mail/ngx_mail_smtp_module.c
 @@ -49,7 +49,8 @@ static ngx_mail_protocol_t  ngx_mail_smtp_protocol = {
@@ -14905,7 +17142,7 @@ index 3b5a2d8f3..2ca4347e1 100644
  
 diff --git a/src/mail/ngx_mail_throttle_module.c b/src/mail/ngx_mail_throttle_module.c
 new file mode 100644
-index 000000000..96e85297b
+index 00000000..96e85297
 --- /dev/null
 +++ b/src/mail/ngx_mail_throttle_module.c
 @@ -0,0 +1,1564 @@
@@ -16475,7 +18712,7 @@ index 000000000..96e85297b
 +}
 diff --git a/src/mail/ngx_mail_throttle_module.h b/src/mail/ngx_mail_throttle_module.h
 new file mode 100644
-index 000000000..90d2dadb5
+index 00000000..90d2dadb
 --- /dev/null
 +++ b/src/mail/ngx_mail_throttle_module.h
 @@ -0,0 +1,80 @@
@@ -16561,7 +18798,7 @@ index 000000000..90d2dadb5
 +#endif
 diff --git a/src/mail/ngx_mail_zmauth_module.c b/src/mail/ngx_mail_zmauth_module.c
 new file mode 100644
-index 000000000..3f5189f1e
+index 00000000..3f5189f1
 --- /dev/null
 +++ b/src/mail/ngx_mail_zmauth_module.c
 @@ -0,0 +1,561 @@
@@ -17128,7 +19365,7 @@ index 000000000..3f5189f1e
 +}
 diff --git a/src/mail/ngx_mail_zmauth_module.h b/src/mail/ngx_mail_zmauth_module.h
 new file mode 100644
-index 000000000..2d5c46bc4
+index 00000000..2d5c46bc
 --- /dev/null
 +++ b/src/mail/ngx_mail_zmauth_module.h
 @@ -0,0 +1,35 @@
@@ -17168,7 +19405,7 @@ index 000000000..2d5c46bc4
 +
 +#endif
 diff --git a/src/os/unix/ngx_process_cycle.c b/src/os/unix/ngx_process_cycle.c
-index 5817a2c23..3fd6bbcea 100644
+index 5817a2c2..3fd6bbce 100644
 --- a/src/os/unix/ngx_process_cycle.c
 +++ b/src/os/unix/ngx_process_cycle.c
 @@ -4,6 +4,10 @@
