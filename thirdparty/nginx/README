@@ -24,27 +24,28 @@ In order to facilitate development a Docker image was created containing
 the relevant Zimbra files to assist with compilation.
 It is found in the `docker` directory at the root of this repository.
 
+    pwd
+    /home/ubuntu/packages
+
 Building the docker image is accomplished with the following command:
 
-    docker build -t zimbra/thirdparty:develop ../../docker
-
-Or you can go to the `packages` directory and run it from there:
-
-    cd ../..
     docker build -t zimbra/thirdparty:develop ./docker
+    docker build -t zimbra/thirdparty:develop --build-arg=VERSION=16.04 ./docker
 
 In order to allow all the helper scripts and files to be found the directory containing the `packages` and `zimbra-package-stub` directories should be mounted in to the container.
 
-Once the image is built you can run it as follows:
+Once the image is built you can run it as follows from the parent directory of the `packages` repository:
 
-    cd ../../..;
-    docker run -it --rm -v `pwd`:/work zimbra/third-party:develop bash
+    ls /home/ubuntu/zimbra
+    packages
+
+    docker run -it --rm -v /home/ubuntu/zimbra:/work zimbra/third-party:develop bash
 
 Building nginx is done as follows:
 
     cd /work/packages/thirdparty/nginx/
 
-    build@dfd86d090e02:/work/packages/thirdparty/nginx$ make build
+    build@dfd86d090e02:/work/packages/thirdparty/nginx$ make getsrc build
     sudo apt-get --assume-yes --verbose-versions install zimbra-base zimbra-openssl-dev zimbra-cyrus-sasl-dev
     Reading package lists... Done
     Building dependency tree
