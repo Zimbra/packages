@@ -72,7 +72,6 @@ CFLAGS="-g -O0"; export CFLAGS; \
   --without-http_uwsgi_module \
   --with-http_v2_module \
   --with-mail-sasl \
-  --with-ipv6 \
   --with-http_upstream_zmauth_module \
   --with-http_zm_sso_module \
   --with-mail_throttle \
