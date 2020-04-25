@@ -70,6 +70,3 @@ OZCL/*.so
 OZCI
 OZCL/pkgconfig
 
-%changelog
-* Wed May 20 2015 Zimbra Packaging Services <packaging-devel@zimbra.com>
-- initial packaging
