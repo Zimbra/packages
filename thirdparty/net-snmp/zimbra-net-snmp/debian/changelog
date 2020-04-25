@@ -1,5 +1,11 @@
 zimbra-net-snmp (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
+  * Upgraded net-snmp to 5.8.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 24 Apr 2020 22:26:24 +0000
+
+zimbra-net-snmp (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+
   * Initial Release.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 1 May 2015 22:26:24 +0000

@@ -14,6 +14,10 @@ URL:                http://www.net-snmp.org/
 %description
 The Zimbra NetSNMP build
 
+%changelog
+* Tue Apr 24 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded net-snmp to 5.8
+
 %prep
 %setup -n net-snmp-%{version}
 
