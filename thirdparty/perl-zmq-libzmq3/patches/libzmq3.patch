@@ -1,0 +1,21 @@
+diff -ruN a/Makefile.PL b/Makefile.PL
+--- a/Makefile.PL	2020-04-24 13:29:48.791634233 +0000
++++ b/Makefile.PL	2020-04-24 13:30:27.439635323 +0000
+@@ -17,7 +17,7 @@
+ all_from 'lib/ZMQ/LibZMQ3.pm';
+
+ # Detect libzmq, and display it for sanity
+-do 'tools/detect_zmq.pl';
++do './tools/detect_zmq.pl';
+ print "Detected the following ZMQ settings:\n";
+ foreach my $env (qw(ZMQ_HOME ZMQ_H ZMQ_INCLUDES ZMQ_LIBS ZMQ_TRACE)) {
+     printf " + %s = %s\n", $env, exists $ENV{$env} ? $ENV{$env} : "(null)";
+@@ -192,7 +192,7 @@
+ homepage "https://github.com/lestrrat/p5-ZMQ";
+ bugtracker "https://github.com/lestrrat/p5-ZMQ/issues";
+
+-do 'tools/genfiles.pl';
++do './tools/genfiles.pl';
+ WriteAll;
+
+ if ($^O eq 'darwin' && -f "Makefile") {
