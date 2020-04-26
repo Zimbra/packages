@@ -14,6 +14,10 @@ URL:                https://metacpan.org/release/Compress-Raw-Zlib
 %description
 This module provides a Perl interface to the zlib compression library.
 
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded Compress-Raw-Zlib to 2.093
+
 %define debug_package %{nil}
 
 %prep
