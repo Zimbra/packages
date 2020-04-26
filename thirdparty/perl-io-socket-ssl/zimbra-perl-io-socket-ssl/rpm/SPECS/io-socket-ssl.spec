@@ -20,6 +20,10 @@ providing secure defaults whenever possible. This way, existing
 applications can be made SSL-aware without much effort, at least if
 you do blocking I/O and don't use select or poll.
 
+%changelog
+* Tue Apr 21 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded IO-Socket-SSL to 2.068
+
 %define debug_package %{nil}
 
 %prep
