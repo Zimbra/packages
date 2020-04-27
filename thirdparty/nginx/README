@@ -53,6 +53,21 @@ Building nginx is done as follows (Ubuntu example):
     zimbra-base set to manually installed.
     ...
 
+In order to retrieve all the required Zimbra packages for building you may need to create '/etc/apt/sources.list.d/zimbra.list' with the following contents:
+
+    deb  [arch=amd64] https://repo.zimbra.com/apt/87 xenial zimbra
+    deb  [arch=amd64] https://repo.zimbra.com/apt/90 xenial zimbra
+    deb-src [arch=amd64] https://repo.zimbra.com/apt/87 xenial zimbra
+    deb  [arch=amd64] https://repo.zimbra.com/apt/90-ne xenial zimbra
+
+If you encounter an error about a GPG key you may import it in the following fashion:
+
+    W: GPG error: https://repo.zimbra.com/apt/87 xenial InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 5234D2B73B6996C7
+
+Importing the GPG key:
+
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5234D2B73B6996C7
+
 Updating the patch
 ------------------
 
