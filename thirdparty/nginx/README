@@ -17,8 +17,64 @@ Note: The Nginx source SHOULD NOT be checked in to this repository.
       The intent is all changes are made in https://github.com/Zimbra/nginx .
       Please see `Updating the patch` below for how to update and generate the patch file being applied.
 
+Contents
+--------
+
+  ./docs/
+    contains instructions for building, configuring, and running nginx-zimbra
+    Please see the `Building` section below for how to build.
+
+  ./extras/
+    contains a sample nginx configuration file suitable for use with zimbra
+    (old and not up to date)
+
+  ./patches/
+    contains the patch for Nginx 1.17.9
+
 Building
 --------
+
+The Makefile targets to build are:
+
+ - getsrc: Downloads the unmodified Nginx source code and patches it using the
+           patches/zimbra-1.17.9.patch file.
+ - build : Builds the deb/rpm file depending on build platform.
+
+Building nginx is done as follows (Ubuntu example):
+
+    cd /work/packages/thirdparty/nginx/
+
+    build@dfd86d090e02:/work/packages/thirdparty/nginx$ make getsrc build
+    sudo apt-get --assume-yes --verbose-versions install zimbra-base zimbra-openssl-dev zimbra-cyrus-sasl-dev
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    zimbra-base is already the newest version (1.0.2-1zimbra8.7b1.16.04).
+    zimbra-base set to manually installed.
+    ...
+
+Updating the patch
+------------------
+
+All source code adjustments should be done in the Zimbra/nginx repository.
+Repository URL: https://github.com/Zimbra/nginx
+
+Once the changes needed are implemented check in all changes to your branch.
+
+The diff is generated directly by git as follows:
+
+    git diff release-1.17.9 > zimbra.patch
+
+You then will need to delete the portion that adds the `configure` script in the patch file.
+The patch *MUST* apply cleanly without user interaction to approve anything.
+Test applying this to a clean checked out copy of the version of nginx you are basing your patch on before checking it in.
+
+Once you are satisfied with your patch update the `packages/versions.def` file in the parent directory with the NGINX_VERSION and also update the Makefile to ensure the `getsrc` target applies your patch.
+
+At that point you should be able to `make build` and create debian / rpm packages containing your patched version of Nginx.
+
+Building with Docker
+--------------------
 
 In order to facilitate development a Docker image was created containing
 the relevant Zimbra files to assist with compilation.
@@ -53,37 +109,3 @@ Building nginx is done as follows:
     zimbra-base is already the newest version (1.0.2-1zimbra8.7b1.16.04).
     zimbra-base set to manually installed.
     ...
-
-Updating the patch
-------------------
-
-All source code adjustments should be done in the Zimbra/nginx repository.
-Repository URL: https://github.com/Zimbra/nginx
-
-Once the changes needed are implemented check in all changes to your branch.
-
-The diff is generated directly by git as follows:
-
-    git diff release-1.17.9 > zimbra.patch
-
-You then will need to delete the portion that adds the `configure` script in the patch file.
-The patch *MUST* apply cleanly without user interaction to approve anything.
-Test applying this to a clean checked out copy of the version of nginx you are basing your patch on before checking it in.
-
-Once you are satisfied with your patch update the `packages/versions.def` file in the parent directory with the NGINX_VERSION and also update the Makefile to ensure the `getsrc` target applies your patch.
-
-At that point you should be able to `make build` and create debian / rpm packages containing your patched version of Nginx.
-
-
-Contents
---------
-
-  ./docs/
-    contains instructions for building, configuring, and running nginx-zimbra
-
-  ./extras/
-    contains a sample nginx configuration file suitable for use with zimbra
-
-
-  ./patches/
-    contains the patches for the different versions of Nginx
