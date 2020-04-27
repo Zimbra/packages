@@ -1,18 +1,22 @@
 Summary:            Archive::Zip - Provide an interface to ZIP archive files
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-compress-raw-zlib
-Requires:           zimbra-perl-base, zimbra-perl-compress-raw-zlib
+BuildRequires:      zimbra-perl-base, zimbra-perl-compress-raw-zlib >= 2.093-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-compress-raw-zlib >= 2.093-1zimbra8.7b1ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
 %description
 Perl interface to Zip archive files
+
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-compress-raw-zlib
 
 %define debug_package %{nil}
 
