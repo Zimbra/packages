@@ -15,6 +15,10 @@ URL:                https://metacpan.org/release/MODNAME
 List::MoreUtils provides functions missing from the
 core List::Util module
 
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded List-MoreUtils to 0.428
+
 %define debug_package %{nil}
 
 %prep
