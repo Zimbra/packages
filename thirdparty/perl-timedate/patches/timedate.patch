@@ -1,0 +1,24 @@
+diff -ruN a/t/date.t b/t/date.t
+--- a/t/date.t	2020-04-24 13:43:04.875656697 +0000
++++ b/t/date.t	2020-04-24 13:43:25.543657280 +0000
+@@ -177,7 +177,7 @@
+
+    $x = time2str("%a %b %e %T %Y %Z",$time,'GMT');
+
+-   printf "%-40s\t%s\n", $_,$x,"\n";
++   printf "%-40s\t%s\n", $_, $x;
+
+    $y = str2time($x);
+
+diff -ruN a/t/getdate.t b/t/getdate.t
+--- a/t/getdate.t	2020-04-24 13:46:19.035662176 +0000
++++ b/t/getdate.t	2020-04-24 13:46:47.951662992 +0000
+@@ -156,7 +156,7 @@
+ !;
+
+ require Time::Local;
+-my $offset = Time::Local::timegm(0,0,0,1,0,70);
++my $offset = Time::Local::timegm(0,0,0,1,0,1970);
+
+ @data = split(/\n/, $data);
+

@@ -2,6 +2,7 @@ Summary:            TimeDate - Date formatting subroutines
 Name:               zimbra-perl-timedate
 Version:            VERSION
 Release:            ITERATIONZAPPEND
+Patch0:             timedate.patch
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -18,6 +19,7 @@ Date formatting subroutines
 
 %prep
 %setup -n TimeDate-%{version}
+%patch0 -p1
 
 %build
 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
