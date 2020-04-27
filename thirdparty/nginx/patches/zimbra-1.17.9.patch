@@ -555,7 +555,7 @@ index 95f4bdfa..923cb31f 100644
          if (fcntl(file[i].fd, F_SETFD, FD_CLOEXEC) == -1) {
              ngx_log_error(NGX_LOG_EMERG, log, ngx_errno,
 diff --git a/src/core/ngx_inet.c b/src/core/ngx_inet.c
-index 4228504a..eaee8afd 100644
+index 4228504a..21ba8405 100644
 --- a/src/core/ngx_inet.c
 +++ b/src/core/ngx_inet.c
 @@ -4,6 +4,9 @@
@@ -568,138 +568,15 @@ index 4228504a..eaee8afd 100644
  
  #include <ngx_config.h>
  #include <ngx_core.h>
-@@ -14,6 +17,7 @@ static ngx_int_t ngx_parse_inet_url(ngx_pool_t *pool, ngx_url_t *u);
- static ngx_int_t ngx_parse_inet6_url(ngx_pool_t *pool, ngx_url_t *u);
- static ngx_int_t ngx_inet_add_addr(ngx_pool_t *pool, ngx_url_t *u,
-     struct sockaddr *sockaddr, socklen_t socklen, ngx_uint_t total);
-+static ngx_int_t ngx_resolve_hostname(ngx_pool_t *pool, ngx_url_t *u);
- 
- 
- in_addr_t
-@@ -966,6 +970,8 @@ no_port:
-         }
- 
-         return ngx_inet_add_addr(pool, u, &u->sockaddr.sockaddr, u->socklen, 1);
-+    } else {
-+        return ngx_resolve_hostname(pool, u);
-     }
- 
-     if (u->no_resolve) {
-@@ -984,6 +990,113 @@ no_port:
+@@ -984,7 +987,6 @@ no_port:
      return NGX_OK;
  }
  
-+static ngx_int_t
-+ngx_resolve_hostname(ngx_pool_t *pool, ngx_url_t *u) {
-+    u_char               *p;
-+    ngx_uint_t            family;
-+    in_addr_t             in_addr;
-+    struct sockaddr_in   *sin;
-+
-+#if (NGX_HAVE_INET6)
-+    struct addrinfo       hints, *addrinfo;
-+    struct in6_addr       in6_addr;
-+    struct sockaddr_in6  *sin6;
-+    int                   n;
-+#else
-+    struct hostent       *h;
-+#endif
-+
-+    in_addr = 0;
-+
-+    /* resolve the IP address through host name.
-+     * only the first IP address will be used.   */
-+    p = ngx_alloc(u->host.len + 1, pool->log);
-+
-+    if (p == NULL) {
-+      return NGX_ERROR;
-+    }
-+
-+    ngx_cpystrn(p, u->host.data, u->host.len + 1);
-+
-+#if (NGX_HAVE_INET6)
-+
-+    ngx_memzero (&hints, sizeof (struct addrinfo));
-+
-+    if (u->listen) {
-+       hints.ai_flags = AI_PASSIVE;
-+    } else {
-+       hints.ai_flags = AI_CANONNAME;
-+    }
-+
-+    hints.ai_protocol = IPPROTO_TCP;
-+
-+    n = getaddrinfo((const char *) p,
-+           NULL, &hints, &addrinfo);
-+
-+    if (n != NGX_OK) {
-+       u->err = "host not found";
-+       return NGX_ERROR;
-+    }
-+
-+    if (addrinfo->ai_family == AF_INET) {
-+       family = AF_INET;
-+       in_addr = ((struct sockaddr_in *) addrinfo->ai_addr)->sin_addr.s_addr;
-+
-+    } else { /* AF_INET6 */
-+       family = AF_INET6;
-+       in6_addr = ((struct sockaddr_in6 *) addrinfo->ai_addr)->sin6_addr;
-+
-+    }
-+#else
-+    h = gethostbyname((const char *) p);
-+
-+    if (h == NULL || h->h_addr_list[0] == NULL) {
-+        u->err = "host not found";
-+        return NGX_ERROR;
-+    }
-+
-+    in_addr = *(in_addr_t *) (h->h_addr_list[0]);
-+#endif
-+
-+    ngx_free(p);
-+
-+    switch (family) {
-+
-+#if (NGX_HAVE_INET6)
-+    case AF_INET6:
-+       sin6 = (struct sockaddr_in6 *) &u->sockaddr;
-+       sin6->sin6_family = AF_INET6;
-+       sin6->sin6_port = htons(u->port);
-+       u->family = AF_INET6;
-+       u->socklen = sizeof (struct sockaddr_in6);
-+       ngx_memcpy(sin6->sin6_addr.s6_addr, in6_addr.s6_addr, 16);
-+
-+       if (IN6_IS_ADDR_UNSPECIFIED(&sin6->sin6_addr)) {
-+           u->wildcard = 1;
-+       }
-+       break;
-+#endif
-+
-+    default: /* AF_INET */
-+       sin = (struct sockaddr_in *) &u->sockaddr;
-+       sin->sin_family = AF_INET;
-+       sin->sin_port = htons(u->port);
-+       u->family = AF_INET;
-+       u->socklen = sizeof (struct sockaddr_in);
-+       sin->sin_addr.s_addr = in_addr;
-+       if (sin->sin_addr.s_addr == INADDR_ANY) {
-+           u->wildcard = 1;
-+       }
-+       break;
-+    }
-+
-+    if (u->listen) {
-+        return NGX_OK;
-+    }
-+
-+    return ngx_inet_resolve_host(pool, u);
-+}
-+
- 
+-
  static ngx_int_t
  ngx_parse_inet6_url(ngx_pool_t *pool, ngx_url_t *u)
-@@ -1253,6 +1366,10 @@ ngx_inet_resolve_host(ngx_pool_t *pool, ngx_url_t *u)
+ {
+@@ -1253,6 +1255,10 @@ ngx_inet_resolve_host(ngx_pool_t *pool, ngx_url_t *u)
          }
      }
  
@@ -768,10 +645,10 @@ index afb73bf7..034a43de 100644
  
 diff --git a/src/core/ngx_memcache.c b/src/core/ngx_memcache.c
 new file mode 100644
-index 00000000..0562c68a
+index 00000000..9a868a3f
 --- /dev/null
 +++ b/src/core/ngx_memcache.c
-@@ -0,0 +1,2156 @@
+@@ -0,0 +1,2154 @@
 +/*
 + * ***** BEGIN LICENSE BLOCK *****
 + * Zimbra Collaboration Suite Server
@@ -938,18 +815,16 @@ index 00000000..0562c68a
 +static void *ngx_memcache_create_conf(ngx_cycle_t *cycle)
 +{
 +    ngx_memcache_conf_t *mcf;
-+    ngx_pool_t          *pool;
 +    ngx_log_t           *log;
 +
 +    log = cycle->log;
-+    pool = ngx_create_pool (8 * ngx_pagesize, cycle->log);
 +
-+    mcf = ngx_pcalloc (pool, sizeof(ngx_memcache_conf_t));
++    mcf = ngx_pcalloc (cycle->pool, sizeof(ngx_memcache_conf_t));
 +    if (mcf == NULL) {
 +        return NGX_CONF_ERROR;
 +    }
 +
-+    mcf->cpool = pool;
++    mcf->cpool = cycle->pool;
 +    mcf->log = log;
 +
 +    if(ngx_array_init (&mcf->servers, mcf->cpool, 4, sizeof(ngx_addr_t*))
@@ -3156,10 +3031,10 @@ index 0fb9be72..1d13249a 100644
  u_char * ngx_cdecl ngx_slprintf(u_char *buf, u_char *last, const char *fmt,
 diff --git a/src/core/ngx_zm_lookup.c b/src/core/ngx_zm_lookup.c
 new file mode 100644
-index 00000000..a507ac25
+index 00000000..6be3a95c
 --- /dev/null
 +++ b/src/core/ngx_zm_lookup.c
-@@ -0,0 +1,2282 @@
+@@ -0,0 +1,2280 @@
 +/*
 + * ***** BEGIN LICENSE BLOCK *****
 + * Zimbra Collaboration Suite Server
@@ -3389,24 +3264,22 @@ index 00000000..a507ac25
 +ngx_zm_lookup_create_conf(ngx_cycle_t *cycle)
 +{
 +    ngx_zm_lookup_conf_t *zlcf;
-+    ngx_pool_t          *pool;
 +    ngx_log_t           *log;
 +
 +    log = cycle->log;
-+    pool = ngx_create_pool (8 * ngx_pagesize, cycle->log);
 +
-+    zlcf = ngx_pcalloc (pool, sizeof(ngx_zm_lookup_conf_t));
++    zlcf = ngx_pcalloc (cycle->pool, sizeof(ngx_zm_lookup_conf_t));
 +    if (zlcf == NULL) {
 +        return NGX_CONF_ERROR;
 +    }
 +
-+    zlcf->pool = pool;
++    zlcf->pool = cycle->pool;
 +    zlcf->log = log;
 +
 +#if (NGX_SSL)
 +
 +    ngx_pool_cleanup_t    *cln;
-+    zlcf->ssl = ngx_pcalloc(pool, sizeof(ngx_ssl_t));
++    zlcf->ssl = ngx_pcalloc(cycle->pool, sizeof(ngx_ssl_t));
 +
 +    if (zlcf->ssl == NULL) {
 +        return NGX_CONF_ERROR;
@@ -8360,10 +8233,20 @@ index 00000000..a7faa0f3
 +
 +#endif
 diff --git a/src/http/ngx_http_core_module.c b/src/http/ngx_http_core_module.c
-index 4867bed2..5525c662 100644
+index 4867bed2..eb80a33d 100644
 --- a/src/http/ngx_http_core_module.c
 +++ b/src/http/ngx_http_core_module.c
-@@ -761,6 +761,13 @@ static ngx_command_t  ngx_http_core_commands[] = {
+@@ -4,6 +4,9 @@
+  * Copyright (C) Nginx, Inc.
+  */
+ 
++/*
++ * Portions Copyright (c) Zimbra Software, LLC. [1998 – 2020]. All Rights Reserved.
++ */
+ 
+ #include <ngx_config.h>
+ #include <ngx_core.h>
+@@ -761,6 +764,13 @@ static ngx_command_t  ngx_http_core_commands[] = {
  
  #endif
  
@@ -8377,11 +8260,40 @@ index 4867bed2..5525c662 100644
        ngx_null_command
  };
  
+@@ -3443,6 +3453,7 @@ ngx_http_core_create_loc_conf(ngx_conf_t *cf)
+     clcf->open_file_cache_min_uses = NGX_CONF_UNSET_UINT;
+     clcf->open_file_cache_errors = NGX_CONF_UNSET;
+     clcf->open_file_cache_events = NGX_CONF_UNSET;
++    clcf->exact_version_check = NGX_CONF_UNSET;
+ 
+ #if (NGX_HTTP_GZIP)
+     clcf->gzip_vary = NGX_CONF_UNSET;
+@@ -3728,6 +3739,10 @@ ngx_http_core_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
+ 
+     ngx_conf_merge_sec_value(conf->open_file_cache_events,
+                               prev->open_file_cache_events, 0);
++
++    ngx_conf_merge_value(conf->exact_version_check,
++                          prev->exact_version_check, 1);
++
+ #if (NGX_HTTP_GZIP)
+ 
+     ngx_conf_merge_value(conf->gzip_vary, prev->gzip_vary, 0);
 diff --git a/src/http/ngx_http_core_module.h b/src/http/ngx_http_core_module.h
-index f5434cc5..b15b9eef 100644
+index f5434cc5..54696cf3 100644
 --- a/src/http/ngx_http_core_module.h
 +++ b/src/http/ngx_http_core_module.h
-@@ -396,6 +396,7 @@ struct ngx_http_core_loc_conf_s {
+@@ -4,6 +4,9 @@
+  * Copyright (C) Nginx, Inc.
+  */
+ 
++/*
++ * Portions Copyright (c) Zimbra Software, LLC. [1998 – 2020]. All Rights Reserved.
++ */
+ 
+ #ifndef _NGX_HTTP_CORE_H_INCLUDED_
+ #define _NGX_HTTP_CORE_H_INCLUDED_
+@@ -396,6 +399,7 @@ struct ngx_http_core_loc_conf_s {
      ngx_uint_t    server_tokens;           /* server_tokens */
      ngx_flag_t    chunked_transfer_encoding; /* chunked_transfer_encoding */
      ngx_flag_t    etag;                    /* etag */
@@ -15170,7 +15082,7 @@ index 9310c275..0d4bcc6b 100644
  
      return rc;
 diff --git a/src/mail/ngx_mail_pop3_module.c b/src/mail/ngx_mail_pop3_module.c
-index a6730707..25b7a57a 100644
+index a6730707..8e0e773e 100644
 --- a/src/mail/ngx_mail_pop3_module.c
 +++ b/src/mail/ngx_mail_pop3_module.c
 @@ -4,6 +4,10 @@
@@ -15192,7 +15104,7 @@ index a6730707..25b7a57a 100644
  
  static ngx_str_t  ngx_mail_pop3_default_capabilities[] = {
      ngx_string("TOP"),
-@@ -28,8 +33,10 @@ static ngx_str_t  ngx_mail_pop3_default_capabilities[] = {
+@@ -28,12 +33,13 @@ static ngx_str_t  ngx_mail_pop3_default_capabilities[] = {
  static ngx_conf_bitmask_t  ngx_mail_pop3_auth_methods[] = {
      { ngx_string("plain"), NGX_MAIL_AUTH_PLAIN_ENABLED },
      { ngx_string("apop"), NGX_MAIL_AUTH_APOP_ENABLED },
@@ -15203,7 +15115,31 @@ index a6730707..25b7a57a 100644
      { ngx_null_string, 0 }
  };
  
-@@ -56,11 +63,18 @@ static ngx_mail_protocol_t  ngx_mail_pop3_protocol = {
+-
+ static ngx_str_t  ngx_mail_pop3_auth_methods_names[] = {
+     ngx_string("PLAIN"),
+     ngx_string("LOGIN"),
+@@ -43,6 +49,19 @@ static ngx_str_t  ngx_mail_pop3_auth_methods_names[] = {
+     ngx_null_string   /* NONE */
+ };
+ 
++static ngx_str_t  ngx_mail_pop3_auth_plain_capability =
++    ngx_string("+OK methods supported:" CRLF
++               "LOGIN" CRLF
++               "PLAIN" CRLF
++               "." CRLF);
++
++
++static ngx_str_t  ngx_mail_pop3_auth_cram_md5_capability =
++    ngx_string("+OK methods supported:" CRLF
++               "LOGIN" CRLF
++               "PLAIN" CRLF
++               "CRAM-MD5" CRLF
++               "." CRLF);
+ 
+ static ngx_mail_protocol_t  ngx_mail_pop3_protocol = {
+     ngx_string("pop3"),
+@@ -56,11 +75,18 @@ static ngx_mail_protocol_t  ngx_mail_pop3_protocol = {
  
      ngx_string("-ERR internal server error" CRLF),
      ngx_string("-ERR SSL certificate error" CRLF),
@@ -15223,7 +15159,7 @@ index a6730707..25b7a57a 100644
  
      { ngx_string("pop3_capabilities"),
        NGX_MAIL_MAIN_CONF|NGX_MAIL_SRV_CONF|NGX_CONF_1MORE,
-@@ -76,6 +90,13 @@ static ngx_command_t  ngx_mail_pop3_commands[] = {
+@@ -76,6 +102,13 @@ static ngx_command_t  ngx_mail_pop3_commands[] = {
        offsetof(ngx_mail_pop3_srv_conf_t, auth_methods),
        &ngx_mail_pop3_auth_methods },
  
@@ -15237,7 +15173,7 @@ index a6730707..25b7a57a 100644
        ngx_null_command
  };
  
-@@ -117,6 +138,8 @@ ngx_mail_pop3_create_srv_conf(ngx_conf_t *cf)
+@@ -117,6 +150,8 @@ ngx_mail_pop3_create_srv_conf(ngx_conf_t *cf)
          return NULL;
      }
  
@@ -15246,36 +15182,45 @@ index a6730707..25b7a57a 100644
      if (ngx_array_init(&pscf->capabilities, cf->pool, 4, sizeof(ngx_str_t))
          != NGX_OK)
      {
-@@ -133,15 +156,25 @@ ngx_mail_pop3_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
+@@ -126,25 +161,29 @@ ngx_mail_pop3_create_srv_conf(ngx_conf_t *cf)
+     return pscf;
+ }
+ 
+-
+ static char *
+ ngx_mail_pop3_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
+ {
      ngx_mail_pop3_srv_conf_t *prev = parent;
      ngx_mail_pop3_srv_conf_t *conf = child;
  
 -    u_char      *p;
-+    u_char      *p, *p1, *p2, *p3;
-+    size_t      s1, s2, s3;
-     size_t       size, stls_only_size;
+-    size_t       size, stls_only_size;
++    u_char       *p, *p1, *p2, *p3;
++    size_t       s1, s2, s3;
      ngx_str_t   *c, *d;
-     ngx_uint_t   i, m;
- 
+-    ngx_uint_t   i, m;
++    ngx_uint_t   i;
++
 +    ngx_conf_merge_size_value(conf->client_buffer_size,
 +                              prev->client_buffer_size,
 +                              (size_t) 4*ngx_pagesize);
-+
+ 
      ngx_conf_merge_bitmask_value(conf->auth_methods,
                                   prev->auth_methods,
 -                                 (NGX_CONF_BITMASK_SET
 -                                  |NGX_MAIL_AUTH_PLAIN_ENABLED));
 +                                 NGX_CONF_BITMASK_SET);
-+
+ 
+-    if (conf->auth_methods & NGX_MAIL_AUTH_PLAIN_ENABLED) {
+-        conf->auth_methods |= NGX_MAIL_AUTH_LOGIN_ENABLED;
 +    ngx_conf_merge_str_value(conf->greeting, prev->greeting,"");
 +
 +    if (conf->greeting.len == 0) {
 +        conf->greeting = default_pop3_greeting;
-+    }
+     }
  
-     if (conf->auth_methods & NGX_MAIL_AUTH_PLAIN_ENABLED) {
-         conf->auth_methods |= NGX_MAIL_AUTH_LOGIN_ENABLED;
-@@ -163,23 +196,41 @@ ngx_mail_pop3_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
+     if (conf->capabilities.nelts == 0) {
+@@ -163,160 +202,125 @@ ngx_mail_pop3_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
          }
      }
  
@@ -15283,65 +15228,119 @@ index a6730707..25b7a57a 100644
 -           + sizeof("." CRLF) - 1;
 -
 -    stls_only_size = size + sizeof("STLS" CRLF) - 1;
+-
+-    c = conf->capabilities.elts;
+-    for (i = 0; i < conf->capabilities.nelts; i++) {
+-        size += c[i].len + sizeof(CRLF) - 1;
+-
+-        if (ngx_strcasecmp(c[i].data, (u_char *) "USER") == 0) {
+-            continue;
+-        }
+-
+-        stls_only_size += c[i].len + sizeof(CRLF) - 1;
 +    s1 = sizeof("+OK Capability list follows" CRLF) - 1
 +         + sizeof("." CRLF)-1;
 +    if (conf->auth_methods &
-+        (NGX_MAIL_AUTH_PLAIN_ENABLED | NGX_MAIL_AUTH_GSSAPI_ENABLED)){
-+         s1 += sizeof("SASL" CRLF)-1;
-+    }
++        (NGX_MAIL_AUTH_PLAIN_ENABLED | NGX_MAIL_AUTH_GSSAPI_ENABLED)) {
++        s1 += sizeof("SASL" CRLF)-1;
+     }
 +    s2 = s1;
 +    s3 = s1;
  
-     c = conf->capabilities.elts;
-     for (i = 0; i < conf->capabilities.nelts; i++) {
--        size += c[i].len + sizeof(CRLF) - 1;
-+        s1 += c[i].len + sizeof(CRLF) - 1;
-+        s2 += c[i].len + sizeof(CRLF) - 1;
- 
-         if (ngx_strcasecmp(c[i].data, (u_char *) "USER") == 0) {
-+            s3 += c[i].len + sizeof(CRLF) - 1;
-             continue;
+-    size += sizeof("SASL") - 1 + sizeof(CRLF) - 1;
+-
+-    for (m = NGX_MAIL_AUTH_PLAIN_ENABLED, i = 0;
+-         m <= NGX_MAIL_AUTH_EXTERNAL_ENABLED;
+-         m <<= 1, i++)
++    c = conf->capabilities.elts;
++    for (i=0; i<conf->capabilities.nelts; ++i)
+     {
+-        if (ngx_mail_pop3_auth_methods_names[i].len == 0) {
+-            continue;
+-        }
+-
+-        if (m & conf->auth_methods) {
+-            size += 1 + ngx_mail_pop3_auth_methods_names[i].len;
++        s1 += c[i].len + sizeof (CRLF)-1;
++        s2 += c[i].len + sizeof (CRLF)-1;
++        if (ngx_strcasecmp(c[i].data, (u_char *) "USER") != 0) {
++            s3 += c[i].len + sizeof (CRLF)-1;
          }
- 
-         stls_only_size += c[i].len + sizeof(CRLF) - 1;
      }
  
--    size += sizeof("SASL") - 1 + sizeof(CRLF) - 1;
+-    p = ngx_pnalloc(cf->pool, size);
+-    if (p == NULL) {
+-        return NGX_CONF_ERROR;
 +    if (conf->auth_methods & NGX_MAIL_AUTH_PLAIN_ENABLED) {
 +        s1 += sizeof(" PLAIN") - 1;
 +        s2 += sizeof(" PLAIN") - 1;
 +        s3 += sizeof(" PLAIN") - 1;
-+    }
+     }
+-
+-    conf->capability.len = size;
+-    conf->capability.data = p;
+-
+-    p = ngx_cpymem(p, "+OK Capability list follows" CRLF,
+-                   sizeof("+OK Capability list follows" CRLF) - 1);
+-
+-    for (i = 0; i < conf->capabilities.nelts; i++) {
+-        p = ngx_cpymem(p, c[i].data, c[i].len);
+-        *p++ = CR; *p++ = LF;
 +    if (conf->auth_methods & NGX_MAIL_AUTH_GSSAPI_ENABLED) {
 +        s1 += sizeof(" GSSAPI") - 1;
 +        s2 += sizeof(" GSSAPI") - 1;
 +        s3 += sizeof(" GSSAPI") - 1;
-+    }
-+
+     }
+ 
+-    p = ngx_cpymem(p, "SASL", sizeof("SASL") - 1);
+-
+-    for (m = NGX_MAIL_AUTH_PLAIN_ENABLED, i = 0;
+-         m <= NGX_MAIL_AUTH_EXTERNAL_ENABLED;
+-         m <<= 1, i++)
+-    {
+-        if (ngx_mail_pop3_auth_methods_names[i].len == 0) {
+-            continue;
+-        }
 +    s2 += sizeof("STLS" CRLF) - 1;
 +    s3 += sizeof("STLS" CRLF) - 1;
  
-     for (m = NGX_MAIL_AUTH_PLAIN_ENABLED, i = 0;
-          m <= NGX_MAIL_AUTH_EXTERNAL_ENABLED;
-@@ -199,17 +250,75 @@ ngx_mail_pop3_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
-         return NGX_CONF_ERROR;
-     }
- 
--    conf->capability.len = size;
--    conf->capability.data = p;
+-        if (m & conf->auth_methods) {
+-            *p++ = ' ';
+-            p = ngx_cpymem(p, ngx_mail_pop3_auth_methods_names[i].data,
+-                           ngx_mail_pop3_auth_methods_names[i].len);
+-        }
 +    p1 = ngx_pnalloc(cf->pool,s1);
 +    if (p1 == NULL) {
 +        return NGX_CONF_ERROR;
-+    }
+     }
+-
+-    *p++ = CR; *p++ = LF;
+-
+-    *p++ = '.'; *p++ = CR; *p = LF;
+-
+-
+-    size += sizeof("STLS" CRLF) - 1;
+-
+-    p = ngx_pnalloc(cf->pool, size);
+-    if (p == NULL) {
 +    p2 = ngx_palloc(cf->pool,s2);
 +    if (p2 == NULL) {
 +        return NGX_CONF_ERROR;
 +    }
 +    p3 = ngx_pnalloc(cf->pool,s3);
 +    if (p3 == NULL) {
-+        return NGX_CONF_ERROR;
-+    }
-+
+         return NGX_CONF_ERROR;
+     }
+ 
+-    conf->starttls_capability.len = size;
+-    conf->starttls_capability.data = p;
+-
+-    p = ngx_cpymem(p, conf->capability.data,
+-                   conf->capability.len - (sizeof("." CRLF) - 1));
+-
+-    p = ngx_cpymem(p, "STLS" CRLF, sizeof("STLS" CRLF) - 1);
+-    *p++ = '.'; *p++ = CR; *p = LF;
+-
 +    conf->capability.len = s1;
 +    conf->capability.data = p1;
 +    conf->starttls_capability.len = s2;
@@ -15349,28 +15348,36 @@ index a6730707..25b7a57a 100644
 +    conf->starttls_only_capability.len = s3;
 +    conf->starttls_only_capability.data = p3;
  
--    p = ngx_cpymem(p, "+OK Capability list follows" CRLF,
+-    size = sizeof("+OK methods supported:" CRLF) - 1
+-           + sizeof("." CRLF) - 1;
 +    p1 = ngx_cpymem(p1, "+OK Capability list follows" CRLF,
-                    sizeof("+OK Capability list follows" CRLF) - 1);
++                        sizeof("+OK Capability list follows" CRLF) - 1);
 +    p2 = ngx_cpymem(p2, "+OK Capability list follows" CRLF,
-+                    sizeof("+OK Capability list follows" CRLF) - 1);
++                        sizeof("+OK Capability list follows" CRLF) - 1);
 +    p3 = ngx_cpymem(p3, "+OK Capability list follows" CRLF,
-+                    sizeof("+OK Capability list follows" CRLF) - 1);
++                        sizeof("+OK Capability list follows" CRLF) - 1);
  
+-    for (m = NGX_MAIL_AUTH_PLAIN_ENABLED, i = 0;
+-         m <= NGX_MAIL_AUTH_EXTERNAL_ENABLED;
+-         m <<= 1, i++)
 +    c = conf->capabilities.elts;
-     for (i = 0; i < conf->capabilities.nelts; i++) {
--        p = ngx_cpymem(p, c[i].data, c[i].len);
--        *p++ = CR; *p++ = LF;
-+        p1 = ngx_cpymem(p1, c[i].data, c[i].len);
-+        p2 = ngx_cpymem(p2, c[i].data, c[i].len);
++    for (i = 0; i < conf->capabilities.nelts; ++i)
+     {
+-        if (ngx_mail_pop3_auth_methods_names[i].len == 0) {
+-            continue;
++        p1 = ngx_cpymem(p1,c[i].data,c[i].len);
++        p2 = ngx_cpymem(p2,c[i].data,c[i].len);
 +        *p1++ = CR; *p1++ = LF;
 +        *p2++ = CR; *p2++ = LF;
 +        if (ngx_strcasecmp(c[i].data, (u_char *) "USER") != 0) {
 +            p3 = ngx_cpymem(p3,c[i].data,c[i].len);
 +            *p3++ = CR; *p3++ = LF;
-+        }
-     }
+         }
++    }
  
+-        if (m & conf->auth_methods) {
+-            size += ngx_mail_pop3_auth_methods_names[i].len
+-                    + sizeof(CRLF) - 1;
 +    if (conf->auth_methods &
 +        (NGX_MAIL_AUTH_PLAIN_ENABLED | NGX_MAIL_AUTH_GSSAPI_ENABLED)) {
 +        p1 = ngx_cpymem(p1,"SASL",sizeof("SASL") - 1);
@@ -15386,28 +15393,50 @@ index a6730707..25b7a57a 100644
 +            p1 = ngx_cpymem(p1," GSSAPI",sizeof(" GSSAPI") - 1);
 +            p2 = ngx_cpymem(p2," GSSAPI",sizeof(" GSSAPI") - 1);
 +            p3 = ngx_cpymem(p3," GSSAPI",sizeof(" GSSAPI") - 1);
-+        }
-+
+         }
+-    }
+ 
+-    p = ngx_pnalloc(cf->pool, size);
+-    if (p == NULL) {
+-        return NGX_CONF_ERROR;
 +        *p1++ = CR; *p1++ = LF;
 +        *p2++ = CR; *p2++ = LF;
 +        *p3++ = CR; *p3++ = LF;
-+    }
-+
+     }
+ 
+-    conf->auth_capability.data = p;
+-    conf->auth_capability.len = size;
 +    p2 = ngx_cpymem(p2,"STLS" CRLF, sizeof("STLS" CRLF)-1);
 +    p3 = ngx_cpymem(p3,"STLS" CRLF, sizeof("STLS" CRLF)-1);
-+
+ 
+-    p = ngx_cpymem(p, "+OK methods supported:" CRLF,
+-                   sizeof("+OK methods supported:" CRLF) - 1);
 +    *p1++ = '.'; *p1++ = CR; *p1++ = LF;
 +    *p2++ = '.'; *p2++ = CR; *p2++ = LF;
 +    *p3++ = '.'; *p3++ = CR; *p3++ = LF;
-+
+ 
+-    for (m = NGX_MAIL_AUTH_PLAIN_ENABLED, i = 0;
+-         m <= NGX_MAIL_AUTH_EXTERNAL_ENABLED;
+-         m <<= 1, i++)
+-    {
+-        if (ngx_mail_pop3_auth_methods_names[i].len == 0) {
+-            continue;
+-        }
 +    /* not required */
-     p = ngx_cpymem(p, "SASL", sizeof("SASL") - 1);
++    if (conf->auth_methods & NGX_MAIL_AUTH_CRAM_MD5_ENABLED) {
++        conf->auth_capability = ngx_mail_pop3_auth_cram_md5_capability;
  
-     for (m = NGX_MAIL_AUTH_PLAIN_ENABLED, i = 0;
-@@ -294,29 +403,15 @@ ngx_mail_pop3_merge_srv_conf(ngx_conf_t *cf, void *parent, void *child)
+-        if (m & conf->auth_methods) {
+-            p = ngx_cpymem(p, ngx_mail_pop3_auth_methods_names[i].data,
+-                           ngx_mail_pop3_auth_methods_names[i].len);
+-            *p++ = CR; *p++ = LF;
+-        }
++    } else {
++        conf->auth_capability = ngx_mail_pop3_auth_plain_capability;
+     }
  
-     *p++ = '.'; *p++ = CR; *p = LF;
- 
+-    *p++ = '.'; *p++ = CR; *p = LF;
+-
 -
 -    p = ngx_pnalloc(cf->pool, stls_only_size);
 +    p = ngx_pnalloc(cf->pool,conf->greeting.len + 2);
