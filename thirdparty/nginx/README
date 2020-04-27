@@ -124,3 +124,8 @@ Building nginx is done as follows:
     zimbra-base is already the newest version (1.0.2-1zimbra8.7b1.16.04).
     zimbra-base set to manually installed.
     ...
+
+Reference
+---------
+Nginx Development Guide: http://nginx.org/en/docs/dev/development_guide.html
+Emiller's Guide: https://www.evanmiller.org/nginx-modules-guide.html
