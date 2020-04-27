@@ -1,15 +1,15 @@
 Summary:            HTTP-Message
 Name:               zimbra-perl-http-message
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-io-compress, zimbra-perl-uri
+BuildRequires:      zimbra-perl-base, zimbra-perl-io-compress >= 2.093-1zimbra8.7b1ZAPPEND, zimbra-perl-uri
 BuildRequires:      zimbra-perl-http-date, zimbra-perl-io-html
 BuildRequires:      zimbra-perl-encode-locale, zimbra-perl-lwp-mediatypes
-Requires:           zimbra-perl-base, zimbra-perl-io-compress, zimbra-perl-uri
+Requires:           zimbra-perl-base, zimbra-perl-io-compress >= 2.093-1zimbra8.7b1ZAPPEND, zimbra-perl-uri
 Requires:           zimbra-perl-http-date, zimbra-perl-io-html
 Requires:           zimbra-perl-encode-locale, zimbra-perl-lwp-mediatypes
 AutoReqProv:        no
@@ -19,6 +19,10 @@ URL:                https://metacpan.org/release/HTTP-Message
 The HTTP-Message distribution contains classes useful for representing the
 messages passed in HTTP style communication.  These are classes representing
 requests, responses and the headers contained within them.
+
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-io-compress
 
 %define debug_package %{nil}
 
