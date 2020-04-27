@@ -1,18 +1,22 @@
 Summary:            XML::Simple - Easily read/write XML (esp config files)
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-xml-sax-expat
-Requires:           zimbra-perl-base, zimbra-perl-xml-sax-expat
+BuildRequires:      zimbra-perl-base, zimbra-perl-xml-sax-expat >= 0.51-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-xml-sax-expat >= 0.51-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
 %description
 Easily read/write XML (esp config files)
+
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-xml-sax-expat
 
 %define debug_package %{nil}
 
