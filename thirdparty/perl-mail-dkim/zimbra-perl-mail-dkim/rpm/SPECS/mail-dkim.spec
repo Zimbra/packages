@@ -4,6 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
+Patch0:             public_key.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-crypt-openssl-rsa zimbra-perl-digest-sha1
@@ -24,6 +25,7 @@ RFC4870, for DomainKeys
 
 %prep
 %setup -n MODNAME-%{version}
+%patch0 -p1
 
 %build
 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
