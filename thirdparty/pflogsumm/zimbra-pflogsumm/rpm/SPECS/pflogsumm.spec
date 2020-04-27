@@ -1,11 +1,11 @@
 Summary:            Postfix Log Entry Summarizer
 Name:               zimbra-pflogsumm
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
-Requires:           zimbra-base, zimbra-perl-base, zimbra-perl-date-calc
+Requires:           zimbra-base, zimbra-perl-base, zimbra-perl-date-calc >= 6.4-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                http://jimsun.linxnet.com/postfix_contrib.html
 
@@ -13,6 +13,10 @@ URL:                http://jimsun.linxnet.com/postfix_contrib.html
 pflogsumm.pl is designed to provide an over-view of postfix
 activity, with just enough detail to give the administrator
 a "heads up" for potential trouble spots.
+
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-date-calc
 
 %define debug_package %{nil}
 
