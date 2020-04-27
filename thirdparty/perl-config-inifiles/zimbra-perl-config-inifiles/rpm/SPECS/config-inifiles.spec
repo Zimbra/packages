@@ -1,13 +1,13 @@
 Summary:            Config::IniFiles - A module for reading .ini-style configuration files
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-list-moreutils
-Requires:           zimbra-perl-base, zimbra-perl-list-moreutils
+BuildRequires:      zimbra-perl-base, zimbra-perl-list-moreutils >= 0.428-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-list-moreutils >= 0.428-1zimbra8.7b1ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -16,6 +16,10 @@ Config::IniFiles provides a way to have readable configuration files
 outside your Perl script. Configurations can be imported (inherited,
 stacked,...), sections can be grouped, and settings can be accessed from
 a tied hash.
+
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-list-moreutils
 
 %define debug_package %{nil}
 
