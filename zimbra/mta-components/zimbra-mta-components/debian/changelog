@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated dependencies zimbra-perl-mail-spamassassin, zimbra-spamassassin-rules
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 25 Apr 2020 00:00:00 +0000
+
 zimbra-mta-components (1.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-clamav, zimbra-perl-mail-spamassassin, zimbra-spamassassin-rules packages
