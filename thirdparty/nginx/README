@@ -110,7 +110,7 @@ Once the image is built you can run it as follows from the parent directory of t
     ls /home/ubuntu/zimbra
     packages
 
-    docker run -it --rm -v /home/ubuntu/zimbra:/work zimbra/third-party:develop bash
+    docker run -it --rm -v /home/ubuntu/zimbra:/work zimbra/thirdparty:develop bash
 
 Building nginx is done as follows:
 
