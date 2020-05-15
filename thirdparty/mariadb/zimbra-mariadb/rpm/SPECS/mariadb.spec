@@ -69,6 +69,8 @@ rm -f ${RPM_BUILD_ROOT}OZC/sbin/rcmysql
 rm -f ${RPM_BUILD_ROOT}OZCL/libmysqlclient_r.so.18
 rm -f ${RPM_BUILD_ROOT}OZCL/libmysqlclient_r.so.18.0.0
 cd ${RPM_BUILD_ROOT}OZCL && \
+ln -s libmariadb.so.3 libmysqlclient.so.18 && \
+ln -s libmariadb.so.3 libmysqlclient.so.18.0.0 && \
 ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
 ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
 
