@@ -1,7 +1,7 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.8b1ZAPPEND
+Release:            1zimbra8.8b2ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
@@ -21,6 +21,8 @@ URL:                http://www.openldap.org
 The Zimbra openldap build
 
 %changelog
+* Tue Jun 09 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+- Fix for ZBUG-1441
 * Mon Feb 10 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - Update for OpenLDAP 2.4.49
 
@@ -155,6 +157,10 @@ The zimbra-lmdb-devel package contains the linking libraries and include files
 /opt/zimbra/common/etc
 /opt/zimbra/common/libexec
 /opt/zimbra/common/share/man
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.conf
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.conf.default
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.ldif
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.ldif.default
 %exclude /opt/zimbra/common/etc/openldap/ldap.conf
 %exclude /opt/zimbra/common/etc/openldap/ldap.conf.default
 %exclude /opt/zimbra/common/share/man/man1
