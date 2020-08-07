@@ -27,7 +27,10 @@ override_dh_auto_configure:
 	--http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
 	--without-http_scgi_module \
 	--without-http_uwsgi_module \
-	--add-module=modules/nviennot-nginx-tcp-keepalive
+	--add-module=modules/nviennot-nginx-tcp-keepalive \
+	--add-module=zmmodules/http/sso \
+	--add-module=zmmodules/http/upstreamzmauth
+
 
 override_dh_strip:
 	dh_strip -pzimbra-nginx --dbg-package=zimbra-nginx-dbg
