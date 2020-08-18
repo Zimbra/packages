@@ -1,0 +1,90 @@
+--- a/src/xsasl/xsasl_cyrus_server.c	2020-07-08 05:31:52.989677893 +0000
++++ b/src/xsasl/xsasl_cyrus_server.c	2020-07-08 05:57:50.257721837 +0000
+@@ -310,26 +310,15 @@
+ #define NO_SESSION_CALLBACKS	((sasl_callback_t *) 0)
+ #define NO_AUTH_REALM		((char *) 0)
+ 
+-#if SASL_VERSION_MAJOR >= 2 && defined(USE_IP_CYRUS_SASL_AUTH)
+-
+-    /*
+-     * Get IP address and port of local and remote endpoints for SASL. Some
+-     * implementation supports "[ipv6addr]:port" and "ipv4addr:port" (e.g.,
+-     * https://illumos.org/man/3sasl/sasl_server_new), They still support the
+-     * historical "address;port" syntax, so we stick with that for now.
+-     */
+     server_addr_port = (*args->server_addr && *args->server_port ?
+ 			concatenate(args->server_addr, ";",
+-				    args->server_port, (char *) 0) : 0);
++				    args->server_port, (char *) "127.0.0.1") : 0);
+     client_addr_port = (*args->client_addr && *args->client_port ?
+ 			concatenate(args->client_addr, ";",
+-				    args->client_port, (char *) 0) : 0);
+-#else
+-
+-    /*
+-     * Don't give any IP address information to SASL.
+-     */
+-#endif
++				    args->client_port, (char *) "127.0.0.1") : 0);
++    if (msg_verbose)
++		msg_info("%s: args->server_addr=%s, args->client_addr=%s, server_addr_port=%s, client_addr_port=%s",
++			myname, args->server_addr, args->client_addr, server_addr_port, client_addr_port);
+ 
+     if ((sasl_status =
+ 	 SASL_SERVER_NEW(args->service, var_myhostname,
+--- a/src/smtpd/smtpd_sasl_glue.c	2020-07-08 06:05:33.765734916 +0000
++++ b/src/smtpd/smtpd_sasl_glue.c	2020-07-08 06:13:23.885748182 +0000
+@@ -126,6 +126,7 @@
+ 
+ #include <sys_defs.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ #include <string.h>
+ 
+ /* Utility library. */
+@@ -154,6 +155,8 @@
+  * Silly little macros.
+  */
+ #define STR(s)	vstring_str(s)
++/* Max buffer len for client ip and port */
++#define CLIENT_IP_PORT_LEN 1024
+ 
+  /*
+   * SASL server implementation handle.
+@@ -188,6 +191,8 @@
+     const char *mechanism_list;
+     XSASL_SERVER_CREATE_ARGS create_args;
+     int     tls_flag;
++    char client_ip_port[CLIENT_IP_PORT_LEN+1];
++    char *caddr, *cport;
+ 
+     /*
+      * Sanity check.
+@@ -214,17 +219,22 @@
+ #endif
+ #define ADDR_OR_EMPTY(addr, unknown) (strcmp(addr, unknown) ? addr : "")
+ #define REALM_OR_NULL(realm) (*(realm) ? (realm) : (char *) 0)
++    caddr = ADDR_OR_EMPTY(state->addr, CLIENT_ADDR_UNKNOWN);
++    cport = ADDR_OR_EMPTY(state->port, CLIENT_PORT_UNKNOWN);
++    if (strlen(caddr) + strlen(cport) < CLIENT_IP_PORT_LEN)
++        sprintf(client_ip_port, "%s;%s", state->addr, state->port);
++    else
++	strcpy(client_ip_port, "127.0.0.1");
+ 
+     if ((state->sasl_server =
+ 	 XSASL_SERVER_CREATE(smtpd_sasl_impl, &create_args,
+ 			     stream = state->client,
+ 			     addr_family = state->addr_family,
+-			     server_addr = ADDR_OR_EMPTY(state->dest_addr,
+-						       SERVER_ADDR_UNKNOWN),
++			     server_addr = (state->dest_addr ?
++				     state->dest_addr : "127.0.0.1"),
+ 			     server_port = ADDR_OR_EMPTY(state->dest_port,
+ 						       SERVER_PORT_UNKNOWN),
+-			     client_addr = ADDR_OR_EMPTY(state->addr,
+-						       CLIENT_ADDR_UNKNOWN),
++			     client_addr = client_ip_port,
+ 			     client_port = ADDR_OR_EMPTY(state->port,
+ 						       CLIENT_PORT_UNKNOWN),
+ 			     service = var_smtpd_sasl_service,
+

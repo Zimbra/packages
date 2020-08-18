@@ -44,6 +44,9 @@ override_dh_strip:
 	dh_strip -pzimbra-postfix --dbg-package=zimbra-postfix-dbg
 	dh_strip -Nzimbra-postfix
 
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
 override_dh_auto_install:
 	make non-interactive-package install_root=$$(pwd)/debian/tmp
 	sed  -e 's|postconf|OZC/sbin/postconf|' auxiliary/qshape/qshape.pl > $$(pwd)/debian/tmpOZC/sbin/qshape.pl

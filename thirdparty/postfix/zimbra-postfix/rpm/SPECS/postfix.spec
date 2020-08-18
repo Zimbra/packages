@@ -1,7 +1,7 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-openldap-devel
@@ -18,12 +18,16 @@ Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
 Patch3:             lmdb-default.patch
-Patch4:             pass-ip-address.patch
+Patch4:             pass-ip-address-new.patch
 AutoReqProv:        no
 URL:                https://www.postfix.org/
 
 %description
 The Zimbra Postfix build
+
+%changelog
+* Wed Jul 15 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded postfix to 3.5.4
 
 %prep
 %setup -n postfix-%{version}

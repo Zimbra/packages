@@ -1,3 +1,9 @@
+zimbra-openssl (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded openssl.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 20 Jul 2020 05:12:55 +0000
+
 zimbra-openssl (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
   * Bug 106869: Updated openssl.

@@ -1,2 +1,2 @@
-libssl 1.0.0 zimbra-openssl-lib (>= VERSION-ITERATION)
-libcrypto 1.0.0 zimbra-openssl-lib (>= VERSION-ITERATION)
+libssl 1.0.0 zimbra-openssl-lib (>= VERSION-1zimbra8.7b3ZAPPEND)
+libcrypto 1.0.0 zimbra-openssl-lib (>= VERSION-1zimbra8.7b3ZAPPEND)
