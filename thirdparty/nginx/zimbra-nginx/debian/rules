@@ -20,6 +20,7 @@ override_dh_auto_configure:
 	--with-http_v2_module \
 	--with-pcre \
 	--with-mail \
+	--with-mail-sasl \
 	--with-mail_ssl_module \
 	--error-log-path=/opt/zimbra/log/nginx.log \
 	--http-log-path=/opt/zimbra/log/nginx.access.log \
@@ -30,7 +31,10 @@ override_dh_auto_configure:
 	--without-http_uwsgi_module \
 	--add-module=modules/nviennot-nginx-tcp-keepalive \
 	--add-module=zmmodules/http/sso \
-	--add-module=zmmodules/http/upstreamzmauth
+	--add-module=zmmodules/http/upstreamzmauth \
+	--add-module=zmmodules/mail/zmauth \
+	--add-module=zmmodules/mail/throttle
+
 
 
 override_dh_strip:
