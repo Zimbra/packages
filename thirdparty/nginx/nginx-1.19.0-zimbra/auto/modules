@@ -938,6 +938,11 @@ if [ $MAIL != NO ]; then
 
     ngx_module_incs=
 
+    if [ $MAIL_SASL = YES ]; then
+        USE_SASL=YES
+        have=NGX_MAIL_SASL . auto/have
+    fi
+
     if [ $MAIL_SSL = YES ]; then
         USE_OPENSSL=YES
         have=NGX_MAIL_SSL . auto/have
