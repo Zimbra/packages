@@ -14,6 +14,93 @@
 #include <ngx_mail_smtp_module.h>
 
 
+static ngx_int_t ngx_mail_imap_parse_id_params(ngx_mail_session_t *s, u_char *p);
+
+typedef enum {
+        swi_start = 0,
+        swi_spaces_before_command,
+        swi_command,
+        swi_spaces_before_argument,
+        swi_argument,
+        swi_backslash,
+        swi_literal,
+        swi_no_sync_literal_argument,
+        swi_start_literal_argument,
+        swi_literal_argument,
+        swi_end_literal_argument,
+        swi_almost_done,
+        swi_begin_idparams = 15,
+        swi_end_idparams,
+        swi_done_idparams,
+        swi_almost_done_idparams,
+        swi_begin_idfield,
+        swi_id_n,
+        swi_id_ni,
+        swi_id_nil,
+        swi_idfield,
+        swi_idfield_len,
+        swi_idfield_len_plus,
+        swi_begin_idfield_l,
+        swi_idfield_l,
+        swi_SP_before_idvalue,
+        swi_X_before_idfield,
+        swi_begin_idvalue,
+        swi_idvalue,
+        swi_idvalue_n,
+        swi_idvalue_ni,
+        swi_idvalue_nil,
+        swi_idvalue_len,
+        swi_idvalue_len_plus,
+        swi_begin_idvalue_l,
+        swi_idvalue_l,
+} ngx_imap_parse_state_e;
+
+typedef enum {
+    swp_start = 0,
+    swp_spaces_before_argument,
+    swp_argument,
+    swp_almost_done
+} ngx_pop3_parse_state_e;
+
+typedef enum {
+    sws_start = 0,
+    sws_command,
+    sws_spaces_before_argument,
+    sws_argument,
+    sws_almost_done,
+    sws_invalid
+} ngx_smtp_parse_state_e;
+
+inline void ngx_mail_set_imap_parse_state_start(ngx_mail_session_t * s) {
+    s->state = swi_start;
+}
+
+inline void ngx_mail_set_pop3_parse_state_start(ngx_mail_session_t * s) {
+    s->state = swp_start;
+}
+
+inline void ngx_mail_set_smtp_parse_state_start(ngx_mail_session_t * s) {
+    s->state = sws_start;
+}
+
+inline void ngx_mail_set_imap_parse_state_argument(ngx_mail_session_t * s) {
+    s->state = swi_argument;
+}
+
+inline void ngx_mail_set_pop3_parse_state_argument(ngx_mail_session_t * s) {
+    s->state = swp_argument;
+}
+
+inline void ngx_mail_set_smtp_parse_state_argument(ngx_mail_session_t * s) {
+    s->state = sws_argument;
+}
+
+inline void ngx_mail_reset_parse_buffer(ngx_mail_session_t * s) {
+    s->buffer->pos = s->buffer->start;
+    s->buffer->last = s->buffer->start;
+}
+
+
 ngx_int_t
 ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
 {
@@ -26,10 +113,7 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
         sw_almost_done
     } state;
 
-    state = s->state;
-
     for (p = s->buffer->pos; p < s->buffer->last; p++) {
-        ch = *p;
 
         switch (state) {
 
@@ -619,21 +703,500 @@ invalid:
 }
 
 
+static ngx_int_t
+ngx_mail_imap_parse_id_params(ngx_mail_session_t *s, u_char *p)
+{
+    u_char ch;
+    ngx_imap_parse_state_e state;
+    ngx_str_t *arg;
+    state = s->state;
+
+    for (; p < s->buffer->last; p++) {
+        ch = *p;
+        switch(state) {
+        case swi_begin_idparams:
+            switch (ch) {
+                case '(':
+                    state = swi_begin_idfield;
+                    break;
+                case 'n':
+                case 'N':
+                    state = swi_id_n;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_begin_idparams: expected (/n/N, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_end_idparams:
+            switch (ch)
+            {
+                case ')':
+                    state = swi_done_idparams;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_end_idparams: expected ), got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+
+            break;
+
+        case swi_done_idparams:
+            switch (ch)
+            {
+                case CR:
+                    state = swi_almost_done;
+                    break;
+                case LF:
+                    return NGX_OK;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_done_idparams: expected CR/LF, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_id_n:
+            switch (ch) {
+                case 'i':
+                case 'I':
+                    state = swi_id_ni;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_id_n: expected i/I, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_id_ni:
+            switch (ch) {
+                case 'l':
+                case 'L':
+                    state = swi_id_nil;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_id_ni: expected l/L, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_id_nil:
+            switch (ch) {
+                case CR:
+                    state = swi_almost_done;
+                    break;
+                case LF:
+                    return NGX_OK;
+                default:
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_begin_idfield:
+            switch (ch) {
+                case '{':
+                    s->literal_len = 0;
+                    state = swi_idfield_len;
+                    break;
+                case '"':
+                    s->quoted = 1;
+                    s->backslash = 0;
+                    s->arg_start = p+1;
+                    state = swi_idfield;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_begin_idfield: expected \"/{, got '%c'", ch);
+                     return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_idfield_len:
+            if (ch >= '0' && ch <= '9') {
+                s->literal_len = s->literal_len * 10 + (ch - '0');
+                break;
+            }
+            if (ch == '+') {
+                state = swi_idfield_len_plus;   /* literalplus stuff */
+                break;
+            }
+            if (ch == '}') {
+                s->no_sync_literal = 0;
+                state = swi_begin_idfield_l;
+                break;
+            }
+            ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                "swi_idfield_len: expected 0-9/+/}, got '%c'", ch);
+            return NGX_MAIL_PARSE_INVALID_COMMAND;
+
+        case swi_idfield_len_plus:
+            if (ch == '}') {
+                s->no_sync_literal = 1;
+                state = swi_begin_idfield_l;
+                break;
+            }
+            ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                "swi_idfield_len_plus: expected }, got '%c'", ch);
+            return NGX_MAIL_PARSE_INVALID_COMMAND;
+
+        case swi_begin_idfield_l:
+            switch (ch)
+            {
+                case CR:
+                    break;
+                case LF:
+                    if (s->literal_len) {
+                        s->buffer->pos = p + 1;
+                        s->arg_start = p + 1;
+                        state = swi_idfield_l;
+                    } else {
+                        s->buffer->pos = p + 1;
+                        s->arg_start = NULL;
+                        arg = ngx_array_push (&s->args);
+                        if (arg == NULL) { return NGX_ERROR; }
+                        arg->data = (u_char *)"";
+                        arg->len = 0;
+                        state = swi_SP_before_idvalue;
+                    }
+                    if (s->no_sync_literal == 1) {
+                        s->no_sync_literal = 0;
+                        break;
+                    } else {
+                        s->state = state;
+                        return NGX_IMAP_NEXT;
+                    }
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_begin_idfield_l: expected CR/LF, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_idfield_l:
+            if (s->literal_len && --s->literal_len) {
+                break;
+            }
+
+            arg = ngx_array_push (&s->args);
+            if (arg == NULL) {
+                return NGX_ERROR;
+            }
+
+            arg->len = p + 1 - s->arg_start;
+            arg->data = s->arg_start;
+            s->arg_start = NULL;
+            state = swi_SP_before_idvalue;
+            break;
+
+        case swi_idfield:
+            switch (ch) {
+                case '\\':
+                    if (!s->backslash) {
+                        s->backslash = 1;
+                    } else {
+                        if (ch == '\\' && ch == '"')
+                            s->backslash = 0;
+                        else {
+                            ngx_log_debug1 (NGX_LOG_DEBUG_MAIL,
+                              s->connection->log, 0,
+                              "swi_idfield: \\ escapes non-quoted special '%c'",
+                              ch);
+                            return NGX_MAIL_PARSE_INVALID_COMMAND;
+                        }
+                    }
+                    break;
+
+                case '"':
+                    if (s->backslash) {
+                        s->backslash = 0;
+                        break;
+                    }
+                    s->quoted = 0;
+                    arg = ngx_array_push(&s->args);
+                    if (arg == NULL) {
+                        return NGX_ERROR;
+                    }
+
+                    arg->len = p - s->arg_start;
+                    arg->data = s->arg_start;
+                    s->arg_start = NULL;
+                    state = swi_SP_before_idvalue;
+                    break;
+
+                case CR:
+                case LF:
+                    ngx_log_debug0 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_idfield: CR/LF breaks id field");
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+                default:
+                    break;
+            }
+            break;
+
+        case swi_begin_idvalue:
+            switch (ch)
+            {
+                case '"':
+                    s->quoted = 1;
+                    s->backslash = 0;
+                    s->arg_start = p+1;
+                    state = swi_idvalue;
+                    break;
+                case 'n':
+                case 'N':
+                    state = swi_idvalue_n;
+                    break;
+                case '{':
+                    s->literal_len = 0;
+                    state = swi_idvalue_len;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_begin_idvalue: expected \"/n/N/{, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_idvalue_len:
+            if (ch >= '0' && ch <= '9') {
+                s->literal_len = s->literal_len + (ch - '0');
+                break;
+            }
+            if (ch == '+') {
+                state = swi_idvalue_len_plus;
+                break;
+            }
+            if (ch == '}') {
+                s->no_sync_literal = 0;
+                state = swi_begin_idvalue_l;
+                break;
+            }
+            ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                "swi_idvalue_len: expected 0-9/}, got '%c'", ch);
+            return NGX_MAIL_PARSE_INVALID_COMMAND;
+
+        case swi_idvalue_len_plus:
+            if (ch == '}') {
+                s->no_sync_literal = 1;
+                state = swi_begin_idvalue_l;
+                break;
+            }
+            ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                "swi_idvalue_len_plus: expected }, got '%c'", ch);
+            return NGX_MAIL_PARSE_INVALID_COMMAND;
+
+        case swi_begin_idvalue_l:
+            switch (ch)
+            {
+                case CR:
+                    break;
+                case LF:
+                    if (s->literal_len) {
+                        s->buffer->pos = p + 1;
+                        s->arg_start = p + 1;
+                        state = swi_idvalue_l;
+                    } else {
+                        s->buffer->pos = p + 1;
+                        s->arg_start = NULL;
+                        arg = ngx_array_push (&s->args);
+                        if (arg == NULL) { return NGX_ERROR; }
+                        arg->data = (u_char *)"";
+                        arg->len = 0;
+                        state = swi_X_before_idfield;
+                    }
+                    if (s->no_sync_literal == 1) {
+                        s->no_sync_literal = 0;
+                        break;
+                    } else {
+                        s->state = state;
+                        return NGX_IMAP_NEXT;
+                    }
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_begin_idvalue_l: expected CR/LF, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_idvalue_l:
+            if (s->literal_len && --s->literal_len) {
+                break;
+            }
+
+            arg = ngx_array_push (&s->args);
+            if (arg == NULL) {
+                return NGX_ERROR;
+            }
+
+            arg->len = p + 1 - s->arg_start;
+            arg->data = s->arg_start;
+            s->arg_start = NULL;
+            state = swi_X_before_idfield;
+            break;
+
+        case swi_idvalue_n:
+            switch (ch)
+            {
+                case 'i':
+                case 'I':
+                    state = swi_idvalue_ni;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_idvalue_n: expected i/I, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_idvalue_ni:
+            switch (ch)
+            {
+                case 'l':
+                case 'L':
+                    state = swi_idvalue_nil;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_idvalue_ni: expected l/L, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_idvalue_nil:
+            switch (ch)
+            {
+                case ' ':
+                    state = swi_begin_idfield;
+                    arg = ngx_array_push (&s->args);
+                    if (arg == NULL) {
+                        return NGX_ERROR;
+                    }
+                    arg->data = (u_char *)"";
+                    arg->len = 0;
+                    break;
+                case ')':
+                    state = swi_done_idparams;
+                    arg = ngx_array_push (&s->args);
+                    if (arg == NULL) {
+                        return NGX_ERROR;
+                    }
+                    arg->data = (u_char *)"";
+                    arg->len = 0;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_idvalue_nil: expected SP/), got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_SP_before_idvalue:
+            switch (ch)
+            {
+                case ' ':
+                    state = swi_begin_idvalue;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_SP_before_idvalue: expected SP, got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_X_before_idfield:
+            switch (ch)
+            {
+                case ' ':
+                    state = swi_begin_idfield;
+                    break;
+                case ')':
+                    state = swi_done_idparams;
+                    break;
+                default:
+                    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_X_before_idfield: expected SP/), got '%c'", ch);
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+            break;
+
+        case swi_idvalue:
+            switch (ch)
+            {
+                case '\\':
+                    if (!s->backslash) {
+                        s->backslash = 1;
+                    } else {
+                        if (ch == '\\' || ch == '"')
+                            s->backslash = 0;
+                        else {
+                            ngx_log_debug1 (NGX_LOG_DEBUG_MAIL,
+                              s->connection->log, 0,
+                              "swi_idvalue: \\ escapes non-quoted special '%c'",
+                              ch);
+                            return NGX_MAIL_PARSE_INVALID_COMMAND;
+                        }
+                    }
+                    break;
+
+                case '"':
+                    if (s->backslash)
+                    {
+                        s->backslash = 0;
+                        break;
+                    }
+                    s->quoted = 0;
+                    arg = ngx_array_push (&s->args);
+                    if (arg == NULL) {
+                        return NGX_ERROR;
+                    }
+
+                    arg->len = p - s->arg_start;
+                    arg->data = s->arg_start;
+                    s->arg_start = NULL;
+                    state = swi_X_before_idfield;
+                    break;
+
+                case CR:
+                case LF:
+                    ngx_log_debug0 (NGX_LOG_DEBUG_MAIL, s->connection->log, 0,
+                        "swi_idvalue: CR/LF breaks id value");
+                    return NGX_MAIL_PARSE_INVALID_COMMAND;
+                default:
+                    break;
+            }
+            break;
+        case swi_almost_done:
+            switch (ch) {
+            case LF:
+                return NGX_OK;
+            default:
+                return NGX_MAIL_PARSE_INVALID_COMMAND;
+            }
+
+        default:
+            break; /* for avoid warning only */
+        } /* switch (state) */
+    } /* for */
+
+    s->buffer->pos = p;
+    s->state = state;
+
+    return NGX_AGAIN;
+}
+
+
 ngx_int_t
 ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
 {
     u_char      ch, *p, *c, c0, c1, c2, c3;
     ngx_str_t  *arg;
-    enum {
-        sw_start = 0,
-        sw_command,
-        sw_invalid,
-        sw_spaces_before_argument,
-        sw_argument,
-        sw_almost_done
-    } state;
 
-    state = s->state;
+    ngx_smtp_parse_state_e state = s->state;
 
     for (p = s->buffer->pos; p < s->buffer->last; p++) {
         ch = *p;
@@ -641,13 +1204,13 @@ ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
         switch (state) {
 
         /* SMTP command */
-        case sw_start:
+        case sws_start:
             s->cmd_start = p;
-            state = sw_command;
+            state = sws_command;
 
             /* fall through */
 
-        case sw_command:
+        case sws_command:
             if (ch == ' ' || ch == CR || ch == LF) {
                 c = s->cmd_start;
 
@@ -732,10 +1295,10 @@ ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
 
                 switch (ch) {
                 case ' ':
-                    state = sw_spaces_before_argument;
+                    state = sws_spaces_before_argument;
                     break;
                 case CR:
-                    state = sw_almost_done;
+                    state = sws_almost_done;
                     break;
                 case LF:
                     goto done;
@@ -749,15 +1312,15 @@ ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
 
             break;
 
-        case sw_invalid:
+        case sws_invalid:
             goto invalid;
 
-        case sw_spaces_before_argument:
+        case sws_spaces_before_argument:
             switch (ch) {
             case ' ':
                 break;
             case CR:
-                state = sw_almost_done;
+                state = sws_almost_done;
                 s->arg_end = p;
                 break;
             case LF:
@@ -765,7 +1328,7 @@ ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
                 goto done;
             default:
                 if (s->args.nelts <= 10) {
-                    state = sw_argument;
+                    state = sws_argument;
                     s->arg_start = p;
                     break;
                 }
@@ -773,7 +1336,7 @@ ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
             }
             break;
 
-        case sw_argument:
+        case sws_argument:
             switch (ch) {
             case ' ':
             case CR:
@@ -788,10 +1351,10 @@ ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
 
                 switch (ch) {
                 case ' ':
-                    state = sw_spaces_before_argument;
+                    state = sws_spaces_before_argument;
                     break;
                 case CR:
-                    state = sw_almost_done;
+                    state = sws_almost_done;
                     break;
                 case LF:
                     goto done;
@@ -803,7 +1366,7 @@ ngx_mail_smtp_parse_command(ngx_mail_session_t *s)
             }
             break;
 
-        case sw_almost_done:
+        case sws_almost_done:
             switch (ch) {
             case LF:
                 goto done;
@@ -832,20 +1395,18 @@ done:
         s->arg_start = NULL;
     }
 
-    s->state = (s->command != NGX_SMTP_AUTH) ? sw_start : sw_argument;
-
     return NGX_OK;
 
 invalid:
 
-    s->state = sw_invalid;
+    s->state = sws_invalid;
     s->arg_start = NULL;
 
     /* skip invalid command till LF */
 
     for (p = s->buffer->pos; p < s->buffer->last; p++) {
         if (*p == LF) {
-            s->state = sw_start;
+            s->state = sws_start;
             p++;
             break;
         }
@@ -862,12 +1423,6 @@ ngx_mail_auth_parse(ngx_mail_session_t *s, ngx_connection_t *c)
 {
     ngx_str_t                 *arg;
 
-#if (NGX_MAIL_SSL)
-    if (ngx_mail_starttls_only(s, c)) {
-        return NGX_MAIL_PARSE_INVALID_COMMAND;
-    }
-#endif
-
     if (s->args.nelts == 0) {
         return NGX_MAIL_PARSE_INVALID_COMMAND;
     }
@@ -882,7 +1437,7 @@ ngx_mail_auth_parse(ngx_mail_session_t *s, ngx_connection_t *c)
                 return NGX_MAIL_AUTH_LOGIN;
             }
 
-            if (s->args.nelts == 2) {
+            if (s->args.nelts == 2) { //initial response
                 return NGX_MAIL_AUTH_LOGIN_USERNAME;
             }
 
@@ -895,11 +1450,25 @@ ngx_mail_auth_parse(ngx_mail_session_t *s, ngx_connection_t *c)
                 return NGX_MAIL_AUTH_PLAIN;
             }
 
-            if (s->args.nelts == 2) {
-                return ngx_mail_auth_plain(s, c, 1);
+            if (s->args.nelts == 2) { //initial response
+                return NGX_MAIL_AUTH_PLAIN_IR;
             }
         }
 
+        return NGX_MAIL_PARSE_INVALID_COMMAND;
+    }
+
+    if (arg[0].len == 6) {
+        if (ngx_strncasecmp(arg[0].data, (u_char *) "GSSAPI", 6) == 0 ) {
+            if (s->args.nelts == 1) {
+                return NGX_MAIL_AUTH_GSSAPI;
+            }
+
+            if (s->args.nelts == 2) { //initial response
+                return NGX_MAIL_AUTH_GSSAPI_IR;
+            }
+        } 
+       
         return NGX_MAIL_PARSE_INVALID_COMMAND;
     }
 
@@ -928,5 +1497,5 @@ ngx_mail_auth_parse(ngx_mail_session_t *s, ngx_connection_t *c)
         return NGX_MAIL_PARSE_INVALID_COMMAND;
     }
 
-    return NGX_MAIL_PARSE_INVALID_COMMAND;
+    return NGX_MAIL_PARSE_INVALID_AUTH_MECH;
 }
