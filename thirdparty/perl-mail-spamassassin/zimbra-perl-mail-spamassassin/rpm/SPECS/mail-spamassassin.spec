@@ -1,11 +1,9 @@
 Summary:            Mail::SpamAssassin - Spam detector and markup engine
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.8b1ZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
-Patch0:             spamassassin-net-dns.patch
-Patch1:             spamassassin-mail.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
@@ -25,6 +23,8 @@ including text analysis, internet-based realtime blacklists, statistical
 analysis, and internet-based hashing algorithms.
 
 %changelog
+* Mon Mar 16 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+-Upgraded to 3.4.4
 * Fri Jul 7 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 -Added patch for spamAssasin bug-5561.
 -Miscellaneous patch including bugs 7223,7265.
@@ -33,8 +33,6 @@ analysis, and internet-based hashing algorithms.
 
 %prep
 %setup -n MODNAME-%{version}
-%patch0 -p1
-%patch1 -p1
 
 %build
 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
