@@ -24,6 +24,9 @@ override_dh_strip:
 	dh_strip -pzimbra-clamav --dbg-package=zimbra-clamav-dbg
 	dh_strip -Nzimbra-clamav-lib -Nzimbra-clamav
 
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
 override_dh_auto_install:
 	make install DESTDIR=$$(pwd)/debian/tmp
 

@@ -54,6 +54,14 @@ struct ngx_zm_lookup_work_s;
 
 typedef void (*ngx_zm_lookup_callback)(struct ngx_zm_lookup_work_s *);
 
+/* zmauth type */
+typedef enum {
+    zmauth_web_client,
+    zmauth_admin_console,
+    zmauth_zx
+} ngx_http_zmauth_t;
+
+
 struct ngx_zm_lookup_work_s {
     ngx_pool_t    *pool;
     ngx_log_t     *log;
@@ -61,7 +69,9 @@ struct ngx_zm_lookup_work_s {
     /* input */
     ngx_str_t      username;        /* the original username given by user */
     ngx_str_t      auth_id;         /* GSSAPI auth id (principal) */
-    ngx_flag_t     isAdmin;         /* whether is admin       */
+
+    ngx_http_zmauth_t    type;     /* whether is web, admin or /zx/ */
+
     ngx_uint_t     protocol:3;      /* protocol               */
     ngx_uint_t     auth_method:4;   /* auth method            */
     ngx_uint_t     alias_check_stat:2; /* the alias-->account caching lookup status */
@@ -145,6 +155,8 @@ typedef struct ngx_zm_lookup_ctx_s ngx_zm_lookup_ctx_t;
 #define ZM_LOOKUP_INVALID_RESPONSE        9
 #define ZM_LOOKUP_CLIENT_CONNECTION_CLOSE 10
 #define ZM_LOOKUP_OTHER_ERROR             50
+#define ZM_LOOKUP_SSL_EVENT_SUCCESS       0
+#define ZM_LOOKUP_SSL_EVENT_FAILED        1
 
 /* the protocols nginx lookup can serve for */
 #define ZM_PROTO_UNKNOWN 0

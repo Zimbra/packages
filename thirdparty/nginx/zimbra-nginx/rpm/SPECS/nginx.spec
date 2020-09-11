@@ -1,7 +1,7 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra8.7b7ZAPPEND
+Release:            1zimbra8.8b1ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
@@ -17,6 +17,20 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Fri Mar 13 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+- Patch for nginx bug Bug 109101
+* Thu Feb 12 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b12ZAPPEND
+- Patch for nginx bug ZBUG-838
+- Patch for nginx for drive issue
+* Thu Feb 07 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b11ZAPPEND
+- Patch for nginx bug ZBUG-838
+- Tue Nov 06 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b10ZAPPEND
+- Patch for nginx bug ZESC-821
+- Patch for nginx bug ZBUG-172
+* Thu Aug 30 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b9ZAPPEND
+- ZCS-4021 for JWT support.
+* Fri Aug 24 2018  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b8ZAPPEND
+- Patch for nginx Bug 107566
 * Wed May 10 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
 - Patch for nginx Bug 107438 (and 106918, 106876)
 - Patch for nginx Bug 106948.

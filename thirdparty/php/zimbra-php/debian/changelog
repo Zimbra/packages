@@ -1,4 +1,16 @@
-zimbra-php (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+zimbra-php (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Updated PHP version.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 8 Feb 2019 13:12:55 +0000
+
+zimbra-php (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+
+  * Bug 106089: Updated PHP.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 28 Jul 2017 05:12:55 +0000
+
+zimbra-php (VERSION-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Initial Release.
 

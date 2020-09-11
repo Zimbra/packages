@@ -1873,7 +1873,7 @@ ngx_mail_proxy_ssl(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
     pcf->ssl->log = cf->log;
 
     // don't support SSLv2 anymore
-    if (ngx_ssl_create(pcf->ssl, NGX_SSL_SSLv3|NGX_SSL_TLSv1, NULL)
+    if (ngx_ssl_create(pcf->ssl, ~(NGX_SSL_SSLv2|NGX_SSL_SSLv3), NULL)
             != NGX_OK) {
         return NGX_CONF_ERROR;
     }

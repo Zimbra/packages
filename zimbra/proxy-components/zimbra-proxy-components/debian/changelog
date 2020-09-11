@@ -1,3 +1,23 @@
+zimbra-proxy-components (1.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 17 Mar 2020 00:00:00 +0000
+zimbra-proxy-components (1.0.3-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 12 Feb 2019 00:00:00 +0000
+zimbra-proxy-components (1.0.2-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 18 Jul 2017 00:00:00 +0000
+zimbra-proxy-components (1.0.1-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 18 Jul 2017 00:00:00 +0000
 zimbra-proxy-components (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.

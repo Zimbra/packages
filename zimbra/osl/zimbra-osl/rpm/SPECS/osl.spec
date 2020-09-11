@@ -1,7 +1,7 @@
 Summary:            Opensource Licenses
 Name:               zimbra-osl
-Version:            1.0.9
-Release:            ITERATIONZAPPEND
+Version:            2.0.0
+Release:            1zimbra9.0b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -15,6 +15,8 @@ This file contains the licenses for the open source 3rd party
 software used by Zimbra
 
 %changelog
+* Tue Mar 31 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.0-1zimbra9.0b1ZAPPEND
+- Update modern UI
 * Thu Jun 30 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.9-ITERATIONZAPPEND
 - Update Freetype to 2.6.3
 * Tue Jun 07 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.8-ITERATIONZAPPEND

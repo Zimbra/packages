@@ -22,7 +22,8 @@ typedef enum {
     zmroutetype_rest,
     zmroutetype_activesync,
     zmroutetype_caldav,
-    zmroutetype_ews
+    zmroutetype_ews,
+    zmroutetype_jwttoken,
 } zmroutetype_t;
 
 typedef struct {
@@ -66,6 +67,9 @@ ngx_int_t ngx_http_upstream_init_zmauth(ngx_conf_t *cf,
         ngx_http_upstream_srv_conf_t *us);
 
 ngx_int_t ngx_http_upstream_init_admin_zmauth(ngx_conf_t *cf,
+        ngx_http_upstream_srv_conf_t *us);
+
+ngx_int_t ngx_http_upstream_init_zx_zmauth(ngx_conf_t *cf,
         ngx_http_upstream_srv_conf_t *us);
 
 #endif

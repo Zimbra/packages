@@ -1,4 +1,10 @@
-zimbra-openssl (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+zimbra-openssl (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+
+  * Bug 106869: Updated openssl.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 28 Jul 2017 05:12:55 +0000
+
+zimbra-openssl (VERSION-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Initial Release.
 

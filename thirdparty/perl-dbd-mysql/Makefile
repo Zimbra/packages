@@ -8,7 +8,7 @@ pname_lc := dbd-mysql
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/C/CA/CAPTTOFU/$(pfile)
+purl := https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 

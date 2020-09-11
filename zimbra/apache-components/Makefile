@@ -24,7 +24,7 @@ build_rpm:
 
 build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
-	$(replace-pkginfo) debian/changelog && \
+	$(replace-pkginfo) debian/changelog debian/control && \
 	$(PKG_BUILD)
 
 clean:

@@ -1,7 +1,7 @@
 Summary:            Zimbra's Secure Socket Layer build
 Name:               zimbra-openssl
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            OpenSSL
 Source:             %{name}-%{version}.tar.gz
 Patch:              ipv6.patch
@@ -12,14 +12,19 @@ URL:                https://www.openssl.org/source
 %description
 The Zimbra OpenSSL build allows for secure communication between various processes.
 
+%changelog
+* Fri Jul 28 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Bug 106869: Updated openssl.
+* Fri May 01 2015 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Initial Release.
+
 %prep
 %setup -n openssl-%{version}
 %patch -p1
-
 %build
 ./Configure no-idea enable-ec_nistp_64_gcc_128 no-mdc2 no-rc5 no-ssl2 \
   no-hw --prefix=OZC --libdir=lib --openssldir=OZCE/ssl \
-  shared linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
+  shared fips --with-fipslibdir=/usr/local/ssl/fips-2.0/lib/ linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
 LD_RUN_PATH=OZCL make depend
 LD_RUN_PATH=OZCL make all
 

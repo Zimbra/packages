@@ -37,8 +37,9 @@ static void ngx_zm_lookup_delete_cache_handler(mc_work_t *work);
 static ngx_str_t
 ngx_zm_lookup_get_user_route_key(ngx_pool_t *pool, ngx_log_t *log,
         ngx_str_t proto, ngx_str_t account_name, ngx_str_t client_ip);
-static ngx_str_t ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool,
-        ngx_log_t *log, ngx_str_t proto, ngx_str_t id, ngx_flag_t isAdmin);
+static ngx_str_t
+ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool, ngx_log_t *log, ngx_str_t proto,
+        ngx_str_t id, ngx_http_zmauth_t type);
 
 /* lookup from route lookup servlet */
 static void ngx_zm_lookup_dummy_handler(ngx_event_t *ev);
@@ -252,7 +253,7 @@ ngx_zm_lookup_create_conf(ngx_cycle_t *cycle)
     zlcf->ssl->log = log;
 
     // don't support SSLv2 anymore
-    if (ngx_ssl_create(zlcf->ssl, NGX_SSL_SSLv3|NGX_SSL_TLSv1, NULL)
+    if (ngx_ssl_create(zlcf->ssl, ~(NGX_SSL_SSLv2|NGX_SSL_SSLv3), NULL)
             != NGX_OK) {
         return NGX_CONF_ERROR;
     }
@@ -598,8 +599,9 @@ ngx_zm_lookup_route_from_cache (ngx_zm_lookup_ctx_t *ctx)
     work = ctx->work;
 
     if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
-        key = ngx_zm_lookup_get_id_route_key(pool, log,
-                ZM_PROTO[work->protocol], work->username, work->isAdmin);
+        key = ngx_zm_lookup_get_id_route_key(
+                pool, log, ZM_PROTO[work->protocol], work->username,
+                work->type);
     } else {
         if (work->alias_check_stat == ZM_ALIAS_FOUND) {
             username = work->account_name;
@@ -733,10 +735,11 @@ ngx_zm_lookup_ssl_handshake(ngx_connection_t *c)
     }
 }
 
-static void
+static ngx_flag_t
 ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
 {
     ngx_int_t   rc;
+    ngx_int_t   marker = 20;
     ngx_zm_lookup_ctx_t *ctx = c->data;
 
     if (ngx_ssl_create_connection(ssl, c,
@@ -749,16 +752,35 @@ ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
 
     c->log->action = "SSL handshaking to lookup handler";
 
-    rc = ngx_ssl_handshake(c);
+    do {
+        rc = ngx_ssl_handshake(c);
+        if(rc == NGX_AGAIN)
+        {
+            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+                    "zm lookup: ngx_zm_lookup_ssl_init_connection ngx_ssl_handshake returned NGX_AGAIN");
+            ngx_msleep(5);
+        }
+        else if (rc == NGX_ERROR)
+        {
+            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+                    "zm lookup: ngx_zm_lookup_ssl_init_connection ssl event failed with NGX_ERROR");
+            ngx_zm_lookup_ssl_handshake(c);
+            return ZM_LOOKUP_SSL_EVENT_FAILED;
+        }
+    }while (rc == NGX_AGAIN && --marker > 0);
 
-    if (rc == NGX_AGAIN) {
-        c->ssl->handler = ngx_zm_lookup_ssl_handshake;
+    if( 0 == marker )
+    {
         ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
-                         "zm lookup: ngx_ssl_handshake returned NGX_AGAIN");
-        return;
+                "zm lookup: ngx_zm_lookup_ssl_init_connection marker reached");
+        ngx_zm_lookup_ssl_handshake(c);
+        return ZM_LOOKUP_SSL_EVENT_FAILED;
     }
 
+    ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
+            "zm lookup: ngx_zm_lookup_ssl_init_connection before call to ngx_zm_lookup_ssl_handshake");
     ngx_zm_lookup_ssl_handshake(c);
+    return ZM_LOOKUP_SSL_EVENT_SUCCESS;
 }
 
 #endif
@@ -816,7 +838,12 @@ ngx_zm_lookup_connect (ngx_zm_lookup_ctx_t * ctx)
 #if (NGX_SSL)
 
     if (ctx->handler->ssl && ctx->peer.connection->ssl == NULL) {
-        ngx_zm_lookup_ssl_init_connection(zlcf->ssl, ctx->peer.connection);
+        if(ngx_zm_lookup_ssl_init_connection(zlcf->ssl, ctx->peer.connection) == ZM_LOOKUP_SSL_EVENT_FAILED)
+        {
+            ngx_log_error(NGX_LOG_WARN, ctx->log, 0, "zm lookup: ngx_zm_lookup_connect "
+                    "connect lookup handle error for host:%V, uri:%V, fail over to the next one",ctx->peer.name, &handler->uri);
+            ngx_zm_lookup_connect(ctx);
+        }
         return;
     }
 
@@ -974,8 +1001,10 @@ ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx)
         + sizeof ("X-Proxy-IP: ") - 1 + proxy_ip.len + sizeof(CRLF) - 1
         + sizeof ("Client-IP: ") - 1 + work->connection->addr_text.len + sizeof(CRLF) - 1;
 
-    if (work->isAdmin) {
+    if (work->type == zmauth_admin_console) {
         len += sizeof ("Auth-Zimbra-Admin: True" CRLF) - 1;
+    } else if (work->type == zmauth_zx) {
+        len += sizeof ("Auth-Zimbra-Zx: True" CRLF) - 1;
     }
 
     if (IS_PROTO_WEB(work->protocol)) {
@@ -1012,9 +1041,11 @@ ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx)
     b->last = ngx_sprintf(b->last, "Auth-Login-Attempt: %d" CRLF, work->login_attempts);
     b->last = ngx_sprintf(b->last, "X-Proxy-IP: %V" CRLF, &proxy_ip);
     b->last = ngx_sprintf(b->last, "Client-IP: %V" CRLF, &work->connection->addr_text);
-    if (work->isAdmin) {
+    if (work->type == zmauth_admin_console) {
        b->last = ngx_cpymem(b->last, "Auth-Zimbra-Admin: True" CRLF, sizeof("Auth-Zimbra-Admin: True" CRLF) - 1);
-   }
+    } else if (work->type == zmauth_zx) {
+        b->last = ngx_cpymem(b->last, "Auth-Zimbra-Zx: True" CRLF, sizeof("Auth-Zimbra-Zx: True" CRLF) - 1);
+    }
 
     if (IS_PROTO_WEB(work->protocol)) {
         b->last = ngx_sprintf(b->last, "X-Proxy-Host: %V" CRLF, &work->virtual_host);
@@ -1965,8 +1996,9 @@ ngx_zm_lookup_cache_route(ngx_zm_lookup_ctx_t *ctx, ngx_str_t user, ngx_str_t ro
     work = ctx->work;
 
     if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
-            key = ngx_zm_lookup_get_id_route_key(ctx->pool, log,
-                    ZM_PROTO[work->protocol], user, work->isAdmin);
+            key = ngx_zm_lookup_get_id_route_key(
+                    ctx->pool, log,
+                    ZM_PROTO[work->protocol], user, work->type);
     } else {
         if (zlcf->allow_unqualified == 0 && !is_login_qualified(user)) {
             key = ngx_zm_lookup_get_user_route_key(ctx->pool, log,
@@ -2115,8 +2147,8 @@ ngx_zm_lookup_get_http_alias_key (ngx_pool_t *pool, ngx_log_t *log,
 }
 
 static ngx_str_t
-ngx_zm_lookup_get_id_route_key (ngx_pool_t *pool, ngx_log_t *log,
-    ngx_str_t proto, ngx_str_t id, ngx_flag_t isAdmin)
+ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool, ngx_log_t *log,
+        ngx_str_t proto, ngx_str_t id, ngx_http_zmauth_t type)
 {
     ngx_str_t       key;
     size_t          len;
@@ -2128,8 +2160,11 @@ ngx_zm_lookup_get_id_route_key (ngx_pool_t *pool, ngx_log_t *log,
         sizeof(";") - 1 +
         sizeof("id=") - 1 +
         id.len;
-    if (isAdmin) {
+
+    if (type == zmauth_admin_console) {
         len += sizeof("admin=1;") - 1;
+    } else if (type == zmauth_zx) {
+        len += sizeof("zx=1;") - 1;
     }
 
     key.data = ngx_palloc(pool, len);
@@ -2143,8 +2178,10 @@ ngx_zm_lookup_get_id_route_key (ngx_pool_t *pool, ngx_log_t *log,
     p = ngx_cpymem(p, "proto=", sizeof("proto=") - 1);
     p = ngx_cpymem(p, proto.data, proto.len);
     *p++ = ';';
-    if (isAdmin) {
+    if (type == zmauth_admin_console) {
         p = ngx_cpymem(p, "admin=1;", sizeof("admin=1;") - 1);
+    } else if (type == zmauth_zx) {
+        p = ngx_cpymem(p, "zx=1;", sizeof("zx=1;") - 1);
     }
     p = ngx_cpymem(p, "id=", sizeof("id=") - 1);
     p = ngx_cpymem(p, id.data, id.len);

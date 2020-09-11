@@ -1,5 +1,5 @@
-zimbra-spell-components (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-spell-components (2.0.0-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
-  * Initial Release.
+  * Php upgrade
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 9 Sep 2015 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 25 Mar 2019 00:00:00 +0000

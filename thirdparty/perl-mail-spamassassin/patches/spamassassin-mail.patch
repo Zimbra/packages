@@ -1,0 +1,12 @@
+Index: Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/HeaderEval.pm
+===================================================================
+--- Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/HeaderEval.pm  (revision 1797757)
++++ Mail-SpamAssassin-3.4.1/lib/Mail/SpamAssassin/Plugin/HeaderEval.pm  (working copy)
+@@ -528,6 +528,7 @@
+             { return 0; }
+ 
+   if ($rcvd =~ /by web\S+\.mail\S*\.yahoo\.com via HTTP/) { return 0; }
++  if ($rcvd =~ /by \S+\.mail\S*\.yahoo\.com with HTTP/) { return 0; }
+   if ($rcvd =~ /by smtp\S+\.yahoo\.com with SMTP/) { return 0; }
+   my $IP_ADDRESS = IP_ADDRESS;
+   if ($rcvd =~

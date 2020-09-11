@@ -1,16 +1,43 @@
-zimbra-mta-components (1.0.2-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-mta-components (1.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-clamav, zimbra-perl-mail-spamassassin, zimbra-spamassassin-rules packages
+
+ --  Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 14 Apr 2020 00:00:00 +0000
+
+zimbra-mta-components (1.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-clamav, zimbra-perl-mail-spamassassin, zimbra-spamassassin-rules packages
+
+ --  Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 1 Apr 2020 00:00:00 +0000
+
+zimbra-mta-components (1.0.5-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-clamav package
+
+ --  Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 28 May 2018 00:00:00 +0000
+zimbra-mta-components (1.0.4-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-mariadb package.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 24 Jul 2017 00:00:00 +0000
+zimbra-mta-components (1.0.3-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-perl-mail-spamassassin package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 18 Jul 2017 00:00:00 +0000
+zimbra-mta-components (1.0.2-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Add ClamAV initial databases
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 9 Mar 2016 00:00:00 +0000
 
-zimbra-mta-components (1.0.1-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-mta-components (1.0.1-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Add Spamassassin default ruleset
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 14 Dec 2015 00:00:00 +0000
 
-zimbra-mta-components (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
+zimbra-mta-components (1.0.0-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Initial Release.
 
