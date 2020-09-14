@@ -300,23 +300,22 @@ ngx_int_t
 ngx_mail_imap_parse_command(ngx_mail_session_t *s)
 {
     u_char      ch, *p, *c;
+    ngx_int_t   rc;
     ngx_str_t  *arg;
-    enum {
-        sw_start = 0,
-        sw_spaces_before_command,
-        sw_command,
-        sw_spaces_before_argument,
-        sw_argument,
-        sw_backslash,
-        sw_literal,
-        sw_no_sync_literal_argument,
-        sw_start_literal_argument,
-        sw_literal_argument,
-        sw_end_literal_argument,
-        sw_almost_done
-    } state;
+    p = NULL; /* for avoid warning */
+    ngx_imap_parse_state_e state = s->state;
 
-    state = s->state;
+    if(state >= swi_begin_idparams) { /* beyond the states handled in ID parse function */
+        rc = ngx_mail_imap_parse_id_params(s, s->buffer->pos);
+        switch (rc) {
+        case NGX_OK:
+             goto done;
+        case NGX_MAIL_PARSE_INVALID_COMMAND:
+             goto invalid;
+        default: /* NGX_ERROR, NGX_AGAIN or NGX_IMAP_NEXT */
+             return rc;
+        }
+    }
 
     for (p = s->buffer->pos; p < s->buffer->last; p++) {
         ch = *p;
@@ -324,45 +323,73 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
         switch (state) {
 
         /* IMAP tag */
-        case sw_start:
+        case swi_start:
             switch (ch) {
             case ' ':
-                s->tag.len = p - s->buffer->start + 1;
+                s->tag.len = p - s->buffer->start;
                 s->tag.data = s->buffer->start;
-                state = sw_spaces_before_command;
+                state = swi_spaces_before_command;
+                s->eargs = 0;
                 break;
-            case CR:
-                s->state = sw_start;
-                return NGX_MAIL_PARSE_INVALID_COMMAND;
-            case LF:
-                s->state = sw_start;
+            case CR: /* walk through */
+            case LF: /* walk through */
+            case '\x0':
+                s->tag.len = p - s->buffer->start;
+                s->tag.data = s->buffer->start;
+                s->state = swi_start;
                 return NGX_MAIL_PARSE_INVALID_COMMAND;
             }
             break;
 
-        case sw_spaces_before_command:
+        case swi_spaces_before_command:
             switch (ch) {
             case ' ':
                 break;
             case CR:
-                s->state = sw_start;
+                s->state = swi_start;
                 return NGX_MAIL_PARSE_INVALID_COMMAND;
             case LF:
-                s->state = sw_start;
+                s->state = swi_start;
+                return NGX_MAIL_PARSE_INVALID_COMMAND;
+            case '\x0':
+                s->state = swi_start;
                 return NGX_MAIL_PARSE_INVALID_COMMAND;
             default:
                 s->cmd_start = p;
-                state = sw_command;
+                state = swi_command;
                 break;
             }
             break;
 
-        case sw_command:
+        case swi_command:
             if (ch == ' ' || ch == CR || ch == LF) {
 
                 c = s->cmd_start;
 
                 switch (p - c) {
+
+                case 2:
+                    if ((c[0] == 'I' || c[0] == 'i')
+                        && (c[1] == 'D' || c[1] == 'd'))
+                    {
+                        s->command = NGX_IMAP_ID;
+                        /* RFC 2971 */
+                        ngx_int_t rc;
+                        s->state = swi_begin_idparams;
+                        p++; //move to the next character
+                        rc = ngx_mail_imap_parse_id_params(s, p);
+                        switch (rc) {
+                        case NGX_OK:
+                            goto done;
+                        case NGX_MAIL_PARSE_INVALID_COMMAND:
+                            goto invalid;
+                        default: /* NGX_ERROR or NGX_IMAP_NEXT */
+                            return rc;
+                        }
+                    } else {
+                        goto invalid;
+                    }
+                    break;
 
                 case 4:
                     if ((c[0] == 'N' || c[0] == 'n')
@@ -371,7 +398,7 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                         && (c[3] == 'P'|| c[3] == 'p'))
                     {
                         s->command = NGX_IMAP_NOOP;
-
+                        s->eargs = 0;
                     } else {
                         goto invalid;
                     }
@@ -385,7 +412,7 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                         && (c[4] == 'N'|| c[4] == 'n'))
                     {
                         s->command = NGX_IMAP_LOGIN;
-
+                        s->eargs = 2;
                     } else {
                         goto invalid;
                     }
@@ -400,7 +427,7 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                         && (c[5] == 'T'|| c[5] == 't'))
                     {
                         s->command = NGX_IMAP_LOGOUT;
-
+                        s->eargs = 0;
                     } else {
                         goto invalid;
                     }
@@ -418,7 +445,7 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                         && (c[7] == 'S'|| c[7] == 's'))
                     {
                         s->command = NGX_IMAP_STARTTLS;
-
+                        s->eargs = 0;
                     } else {
                         goto invalid;
                     }
@@ -438,7 +465,7 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                         && (c[9] == 'Y'|| c[9] == 'y'))
                     {
                         s->command = NGX_IMAP_CAPABILITY;
-
+                        s->eargs = 0;
                     } else {
                         goto invalid;
                     }
@@ -458,7 +485,12 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                         && (c[10] == 'T'|| c[10] == 't')
                         && (c[11] == 'E'|| c[11] == 'e'))
                     {
-                        s->command = NGX_IMAP_AUTHENTICATE;
+                        if (ch != ' ') {
+                            goto invalid;
+                        } else {
+                            s->command = NGX_IMAP_AUTHENTICATE;
+                            s->eargs = 1;
+                        }
 
                     } else {
                         goto invalid;
@@ -471,10 +503,13 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
 
                 switch (ch) {
                 case ' ':
-                    state = sw_spaces_before_argument;
+                    if (s->command == NGX_IMAP_CAPABILITY) {
+                        goto invalid;
+                    }
+                    state = swi_spaces_before_argument;
                     break;
                 case CR:
-                    state = sw_almost_done;
+                    state = swi_almost_done;
                     break;
                 case LF:
                     goto done;
@@ -488,42 +523,48 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
 
             break;
 
-        case sw_spaces_before_argument:
+        case swi_spaces_before_argument:
             switch (ch) {
             case ' ':
                 break;
             case CR:
-                state = sw_almost_done;
+                if (s->args.nelts == 0) {
+                    goto invalid; //no argument
+                }
+                state = swi_almost_done;
                 s->arg_end = p;
                 break;
             case LF:
+                if ( s->args.nelts == 0) {
+                    goto invalid; // no argument
+                }
                 s->arg_end = p;
                 goto done;
             case '"':
-                if (s->args.nelts <= 2) {
+                if (s->args.nelts <= s->eargs) {
                     s->quoted = 1;
                     s->arg_start = p + 1;
-                    state = sw_argument;
+                    state = swi_argument;
                     break;
                 }
                 goto invalid;
             case '{':
-                if (s->args.nelts <= 2) {
-                    state = sw_literal;
+                if (s->args.nelts <= s->eargs) {
+                    state = swi_literal;
                     break;
                 }
                 goto invalid;
             default:
-                if (s->args.nelts <= 2) {
+                if (s->args.nelts <= s->eargs) {
                     s->arg_start = p;
-                    state = sw_argument;
+                    state = swi_argument;
                     break;
                 }
                 goto invalid;
             }
             break;
 
-        case sw_argument:
+        case swi_argument:
             if (ch == ' ' && s->quoted) {
                 break;
             }
@@ -549,10 +590,10 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                 switch (ch) {
                 case '"':
                 case ' ':
-                    state = sw_spaces_before_argument;
+                    state = swi_spaces_before_argument;
                     break;
                 case CR:
-                    state = sw_almost_done;
+                    state = swi_almost_done;
                     break;
                 case LF:
                     goto done;
@@ -561,46 +602,52 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
             case '\\':
                 if (s->quoted) {
                     s->backslash = 1;
-                    state = sw_backslash;
+                    state = swi_backslash;
                 }
                 break;
             }
             break;
 
-        case sw_backslash:
+        case swi_backslash:
             switch (ch) {
             case CR:
             case LF:
                 goto invalid;
+            // (RFC3501)
+            // a backslash may only escape another backslash, or a double quote
+            case '\\':
+            case '"':
+                state = swi_argument;
+                break;
             default:
-                state = sw_argument;
+                goto invalid;
             }
             break;
 
-        case sw_literal:
+        case swi_literal:
             if (ch >= '0' && ch <= '9') {
                 s->literal_len = s->literal_len * 10 + (ch - '0');
                 break;
             }
             if (ch == '}') {
-                state = sw_start_literal_argument;
+                state = swi_start_literal_argument;
                 break;
             }
             if (ch == '+') {
-                state = sw_no_sync_literal_argument;
+                state = swi_no_sync_literal_argument;
                 break;
             }
             goto invalid;
 
-        case sw_no_sync_literal_argument:
+        case swi_no_sync_literal_argument:
             if (ch == '}') {
                 s->no_sync_literal = 1;
-                state = sw_start_literal_argument;
+                state = swi_start_literal_argument;
                 break;
             }
             goto invalid;
 
-        case sw_start_literal_argument:
+        case swi_start_literal_argument:
             switch (ch) {
             case CR:
                 break;
@@ -608,10 +655,10 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
                 s->buffer->pos = p + 1;
                 s->arg_start = p + 1;
                 if (s->no_sync_literal == 0) {
-                    s->state = sw_literal_argument;
+                    s->state = swi_literal_argument;
                     return NGX_IMAP_NEXT;
                 }
-                state = sw_literal_argument;
+                state = swi_literal_argument;
                 s->no_sync_literal = 0;
                 break;
             default:
@@ -619,7 +666,7 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
             }
             break;
 
-        case sw_literal_argument:
+        case swi_literal_argument:
             if (s->literal_len && --s->literal_len) {
                 break;
             }
@@ -631,36 +678,38 @@ ngx_mail_imap_parse_command(ngx_mail_session_t *s)
             arg->len = p + 1 - s->arg_start;
             arg->data = s->arg_start;
             s->arg_start = NULL;
-            state = sw_end_literal_argument;
+            state = swi_end_literal_argument;
 
             break;
 
-        case sw_end_literal_argument:
+        case swi_end_literal_argument:
             switch (ch) {
             case '{':
-                if (s->args.nelts <= 2) {
-                    state = sw_literal;
+                if (s->args.nelts <= s->eargs) {
+                    state = swi_literal;
                     break;
                 }
                 goto invalid;
             case CR:
-                state = sw_almost_done;
+                state = swi_almost_done;
                 break;
             case LF:
                 goto done;
             default:
-                state = sw_spaces_before_argument;
+                state = swi_spaces_before_argument;
                 break;
             }
             break;
 
-        case sw_almost_done:
+        case swi_almost_done:
             switch (ch) {
             case LF:
                 goto done;
             default:
                 goto invalid;
             }
+        default:
+            break; /* for avoid warning only */
         }
     }
 
@@ -688,13 +737,11 @@ done:
         s->literal_len = 0;
     }
 
-    s->state = (s->command != NGX_IMAP_AUTHENTICATE) ? sw_start : sw_argument;
-
     return NGX_OK;
 
 invalid:
 
-    s->state = sw_start;
+    s->state = swi_start;
     s->quoted = 0;
     s->no_sync_literal = 0;
     s->literal_len = 0;
