@@ -24,6 +24,10 @@ getsrc:
 	cd nviennot-nginx-tcp-keepalive && \
 	git reset --hard $(NGINX_HTTP_KEEPALIVE) >/dev/null 2>&1 && \
 	rm -rf .git
+	cd $(psrctmp)/$(pname)-$(pvers)-zimbra/modules && \
+	git clone https://github.com/synacor/nginx-module-txid120 >/dev/null 2>&1 && \
+	cd nginx-module-txid120 && \
+	rm -rf .git
 	cd $(psrctmp) && tar cfz $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra
 	mv $(psrctmp)/$(zname)-$(pvers).tar.gz $(SRC_DIR)
 	rm -rf $(psrctmp)

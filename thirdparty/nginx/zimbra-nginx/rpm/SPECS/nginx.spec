@@ -75,7 +75,8 @@ CFLAGS="-g -O0"; export CFLAGS; \
   --http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
   --without-http_scgi_module \
   --without-http_uwsgi_module \
-  --add-module=modules/nviennot-nginx-tcp-keepalive
+  --add-module=modules/nviennot-nginx-tcp-keepalive \
+  --add-module=modules/nginx-module-txid120
 make
 
 %install
