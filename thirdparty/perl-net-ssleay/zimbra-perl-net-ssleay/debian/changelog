@@ -1,3 +1,9 @@
+zimbra-perl-net-ssleay (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+
+  * Upgraded to 1.88 and updated dependency openssl to 1.1.1g
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-perl-net-ssleay (VERSION-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.
