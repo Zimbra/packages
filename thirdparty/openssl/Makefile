@@ -22,12 +22,7 @@ $(psrc_file):
 setup:
 	$(generic-setup)
 
-build_fips:
-	$(WGET) -O /tmp/openssl-fips-2.0.16.tar.gz https://www.openssl.org/source/openssl-fips-2.0.16.tar.gz && \
-	$(CD) /tmp && $(TAR) xfz openssl-fips-2.0.16.tar.gz && \
-	$(CD) /tmp/openssl-fips-2.0.16 && ./config && $(MAKE) && $(MAKE) install
-
-build: setup build_fips build_$(PKG_EXT)
+build: setup build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm: 
