@@ -5,13 +5,19 @@ Release:            ITERATIONZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.bz2
 BuildRequires:      zimbra-apr-devel, expat-devel
-BuildRequires:      zimbra-openssl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-apr-util-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                https://apr.apache.org/
 
 %description
 The Zimbra Apache Portable Runtime Utilities build
+
+%define debug_package %{nil}
+
+%changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded to 1.6.1 and updated dependency openssl to 1.1.1g
 
 %prep
 %setup -n apr-util-%{version}
