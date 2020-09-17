@@ -106,19 +106,16 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
 {
     u_char      ch, *p, *c, c0, c1, c2, c3;
     ngx_str_t  *arg;
-    enum {
-        sw_start = 0,
-        sw_spaces_before_argument,
-        sw_argument,
-        sw_almost_done
-    } state;
+
+    ngx_pop3_parse_state_e state = s->state;
 
     for (p = s->buffer->pos; p < s->buffer->last; p++) {
+        ch = *p;
 
         switch (state) {
 
         /* POP3 command */
-        case sw_start:
+        case swp_start:
             if (ch == ' ' || ch == CR || ch == LF) {
                 c = s->buffer->start;
 
@@ -171,10 +168,10 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
 
                 switch (ch) {
                 case ' ':
-                    state = sw_spaces_before_argument;
+                    state = swp_spaces_before_argument;
                     break;
                 case CR:
-                    state = sw_almost_done;
+                    state = swp_almost_done;
                     break;
                 case LF:
                     goto done;
@@ -188,12 +185,12 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
 
             break;
 
-        case sw_spaces_before_argument:
+        case swp_spaces_before_argument:
             switch (ch) {
             case ' ':
                 break;
             case CR:
-                state = sw_almost_done;
+                state = swp_almost_done;
                 s->arg_end = p;
                 break;
             case LF:
@@ -201,7 +198,7 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
                 goto done;
             default:
                 if (s->args.nelts <= 2) {
-                    state = sw_argument;
+                    state = swp_argument;
                     s->arg_start = p;
                     break;
                 }
@@ -209,7 +206,7 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
             }
             break;
 
-        case sw_argument:
+        case swp_argument:
             switch (ch) {
 
             case ' ':
@@ -239,10 +236,10 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
 
                 switch (ch) {
                 case ' ':
-                    state = sw_spaces_before_argument;
+                    state = swp_spaces_before_argument;
                     break;
                 case CR:
-                    state = sw_almost_done;
+                    state = swp_almost_done;
                     break;
                 case LF:
                     goto done;
@@ -254,7 +251,7 @@ ngx_mail_pop3_parse_command(ngx_mail_session_t *s)
             }
             break;
 
-        case sw_almost_done:
+        case swp_almost_done:
             switch (ch) {
             case LF:
                 goto done;
@@ -283,13 +280,11 @@ done:
         s->arg_start = NULL;
     }
 
-    s->state = (s->command != NGX_POP3_AUTH) ? sw_start : sw_argument;
-
     return NGX_OK;
 
 invalid:
 
-    s->state = sw_start;
+    s->state = swp_start;
     s->arg_start = NULL;
 
     return NGX_MAIL_PARSE_INVALID_COMMAND;
