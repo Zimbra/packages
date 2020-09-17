@@ -1,7 +1,7 @@
 Summary:            Zimbra's MariaDB build
 Name:               zimbra-mariadb
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPLv2
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      libaio-devel
@@ -18,11 +18,15 @@ The Zimbra MariaDB build for SQL database storage
 %prep
 %setup -n mariadb-%{version}
 
+%define debug_package %{nil}
+
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
 CFLAGS="-O3 -fno-omit-frame-pointer -pipe -Wall -Wno-uninitialized -DNDEBUG"; export CFLAGS; \
 /usr/bin/cmake . \
-  -DBUILD_CONFIG=mysql_release \
+  -DBUILD_TYPE=mysql_release \
+  -DPLUGIN_AUTH_PAM=NO \
+  -DPLUGIN_AUTH_PAM_V1=NO \
   -DCOMPILATION_COMMENT="Zimbra MariaDB binary distribution" \
   -DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE  \
   -DCMAKE_INSTALL_PREFIX="OZC" \
@@ -100,6 +104,8 @@ OZCS
 %defattr(-,root,root)
 OZCL/*.so.*
 OZCL/plugin
+OZCL/pkgconfig/libmariadb.pc
+OZCL/pkgconfig/mariadb.pc
 
 %files devel
 %defattr(-,root,root)
@@ -110,5 +116,7 @@ OZCI
 OZCS/man/man1/mysql_config.1
 
 %changelog
+* Thu Sep 17 2020 Zimbra Packaging Services <packaging-devel@zimbra.com>
+- Upgraded dependency openssl to 1.1.1g
 * Wed May 20 2015 Zimbra Packaging Services <packaging-devel@zimbra.com>
 - initial packaging
