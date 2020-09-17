@@ -17,6 +17,7 @@ override_dh_auto_configure:
 	--with-ipv6 \
 	--with-http_ssl_module \
 	--with-http_stub_status_module \
+	--with-http_v2_module \
 	--with-pcre \
 	--with-mail \
 	--with-mail_ssl_module \
