@@ -20,7 +20,7 @@ override_dh_auto_configure:
 	--enable-vbr \
 	--enable-default_sender \
 	--enable-rpath \
-	--with-openssl=OZC \
+	--with-openssl=OZCL \
 	--with-milter=OZC \
 	--with-openldap=OZC \
 	--with-sasl=OZC \
@@ -33,3 +33,6 @@ override_dh_strip:
 
 override_dh_auto_install:
 	make install DESTDIR=$$(pwd)/debian/tmp
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
