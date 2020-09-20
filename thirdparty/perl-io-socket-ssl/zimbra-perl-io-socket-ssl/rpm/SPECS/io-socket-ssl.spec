@@ -6,9 +6,9 @@ License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay
+BuildRequires:      zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay >= 1.88-1zimbra8.7b1ZAPPEND
 BuildRequires:      zimbra-perl-io-socket-ip
-Requires:           zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay
+Requires:           zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay >= 1.88-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-perl-io-socket-ip
 AutoReqProv:        no
 URL:                https://metacpan.org/release/IO-Socket-SSL
@@ -21,6 +21,10 @@ applications can be made SSL-aware without much effort, at least if
 you do blocking I/O and don't use select or poll.
 
 %define debug_package %{nil}
+
+%changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded IO-Socket-SSL to 2.068
 
 %prep
 %setup -n IO-Socket-SSL-%{version}
