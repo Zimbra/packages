@@ -1,4 +1,4 @@
-zimbra-apache-components (2.0.1-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-apache-components (2.0.2-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated dependency zimbra-httpd
 
