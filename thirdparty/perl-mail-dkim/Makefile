@@ -26,7 +26,7 @@ setup:
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-crypt-openssl-rsa \
-	zimbra-perl-digest-sha1 zimbra-perl-net-dns zimbra-perl-mailtools
+	zimbra-perl-digest-sha1 zimbra-perl-net-dns zimbra-perl-mailtools zimbra-openssl-lib
 
 pkgrm: pkgrm%
 pkgrm%:
@@ -42,6 +42,7 @@ build_rpm:
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
@@ -52,6 +53,7 @@ build_deb:
 	$(replace-pathinfo) debian/rules && \
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
