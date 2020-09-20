@@ -1,6 +1,6 @@
 Summary:            Zimbra components for MTA package
 Name:               zimbra-mta-components
-Version:            1.0.8
+Version:            1.0.9
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           sqlite, zimbra-mta-base, zimbra-altermime, zimbra-amavisd
@@ -20,7 +20,7 @@ Zimbra mta components pulls in all the packages used by
 zimbra-mta
 
 %changelog
-* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.8
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.9
 - Updated Updated perl-mail-spamassassin,spamassassin-rules,opendkim,clamav,postfix
 * Tue Apr 14 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7
 - Updated zimbra-clamav, zimbra-perl-mail-spamassassin, zimbra-spamassassin-rules packages
