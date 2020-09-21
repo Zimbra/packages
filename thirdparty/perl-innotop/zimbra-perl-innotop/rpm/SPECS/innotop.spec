@@ -1,14 +1,14 @@
 Summary:            innotop - mariadb monitor
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 Patch0:             inno.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-dbd-mysql >= 4.043-1zimbra8.7b2ZAPPEND, zimbra-perl-term-readkey
-Requires:           zimbra-perl-base, zimbra-perl-dbd-mysql >= 4.043-1zimbra8.7b2ZAPPEND, zimbra-perl-term-readkey
+BuildRequires:      zimbra-perl-base, zimbra-perl-dbd-mysql >= 4.050-1zimbra8.7b3ZAPPEND, zimbra-perl-term-readkey
+Requires:           zimbra-perl-base, zimbra-perl-dbd-mysql >= 4.050-1zimbra8.7b3ZAPPEND, zimbra-perl-term-readkey
 AutoReqProv:        no
 URL:                https://github.com/innotop/innotop
 
@@ -19,6 +19,8 @@ replication, one for queries, and one for transactions.  innotop refreshes its
 data periodically, so you see an updating view.
 
 %changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated dependency zimbra-perl-dbd-mysql
 * Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Updated dependency zimbra-perl-dbd-mysql
 
