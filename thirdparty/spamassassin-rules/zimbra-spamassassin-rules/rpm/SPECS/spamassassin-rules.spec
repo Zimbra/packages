@@ -24,6 +24,7 @@ Default ruleset for SpamAssassin
 %install
 mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/data/spamassassin/rules
 cp ../../../rules/updates_spamassassin_org/* ${RPM_BUILD_ROOT}/opt/zimbra/data/spamassassin/rules/
+rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/data/spamassassin/rules/user_prefs.template
 
 %files
 %defattr(-,zimbra,zimbra)
