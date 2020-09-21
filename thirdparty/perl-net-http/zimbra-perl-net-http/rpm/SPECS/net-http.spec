@@ -1,13 +1,13 @@
 Summary:            Net::HTTP - Low-level HTTP connection (client)
 Name:               zimbra-perl-net-http
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-uri, zimbra-perl-io-socket-ssl >= 2.068-1zimbra8.7b1ZAPPEND
-Requires:           zimbra-perl-base, zimbra-perl-uri, zimbra-perl-io-socket-ssl >= 2.068-1zimbra8.7b1ZAPPEND
+BuildRequires:      zimbra-perl-base, zimbra-perl-uri, zimbra-perl-io-socket-ssl >= 2.068-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-uri, zimbra-perl-io-socket-ssl >= 2.068-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/Net-HTTP
 
@@ -17,7 +17,10 @@ Net::HTTP class represents a connection to an HTTP server. The HTTP
 protocol is described in RFC 2616. The Net::HTTP class supports
 HTTP/1.0 and HTTP/1.1
 
+
 %changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated dependency perl-io-socket-ssl for perl-net-http
 * Tue Apr 21 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Updated dependency zimbra-perl-io-socket-ssl
 
