@@ -633,6 +633,7 @@ ngx_mail_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         ls[n].addr_text = u.addrs[n].name;
         ls[n].wildcard = ngx_inet_wildcard(ls[n].sockaddr);
 
+        /* Zimbra ports can be same
         for (i = 0; i < cmcf->listen.nelts - u.naddrs + n; i++) {
 
             if (ngx_cmp_sockaddr(als[i].sockaddr, als[i].socklen,
@@ -647,6 +648,7 @@ ngx_mail_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
                                &ls[n].addr_text);
             return NGX_CONF_ERROR;
         }
+        */
     }
 
     return NGX_CONF_OK;
