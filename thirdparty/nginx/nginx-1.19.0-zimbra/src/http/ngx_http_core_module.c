@@ -3529,6 +3529,7 @@ ngx_http_core_create_loc_conf(ngx_conf_t *cf)
     clcf->open_file_cache_min_uses = NGX_CONF_UNSET_UINT;
     clcf->open_file_cache_errors = NGX_CONF_UNSET;
     clcf->open_file_cache_events = NGX_CONF_UNSET;
+    clcf->exact_version_check = NGX_CONF_UNSET;
 
 #if (NGX_HTTP_GZIP)
     clcf->gzip_vary = NGX_CONF_UNSET;
