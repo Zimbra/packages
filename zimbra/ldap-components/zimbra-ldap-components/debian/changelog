@@ -1,3 +1,9 @@
+zimbra-ldap-components (1.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap with openssl 1.1.1g
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-ldap-components (1.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Fixed ZBUG-1441 in openldap
