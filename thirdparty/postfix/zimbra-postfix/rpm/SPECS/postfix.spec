@@ -10,7 +10,7 @@ BuildRequires:      zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-mariadb-devel
 BuildRequires:      zimbra-lmdb-devel >= 2.4.49-1zimbra8.8b3ZAPPEND
 BuildRequires:      pcre-devel
-Requires:           pcre
+Requires:           pcre, libicu
 Requires:           zimbra-openldap-libs >= 2.4.49-1zimbra8.8b3ZAPPEND, zimbra-mta-base
 Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b2ZAPPEND, zimbra-mariadb
 Requires:           zimbra-lmdb-libs >= 2.4.49-1zimbra8.8b3ZAPPEND, zimbra-openssl-libs >= 1.1.1g-1zimbra8.7b3ZAPPEND
@@ -98,5 +98,10 @@ OZC/lib
 /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/master.cf
 /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/main.cf
 if [ "$1" -ge "2" ]; then
- /opt/zimbra/libexec/configrewrite mta
+ USER=$(whoami)
+ if [ "$USER" = "zimbra" ]; then
+    /opt/zimbra/libexec/configrewrite mta
+ else
+   su - zimbra -c "/opt/zimbra/libexec/configrewrite mta"
+ fi
 fi
