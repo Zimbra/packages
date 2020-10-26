@@ -54,17 +54,14 @@ The Zimbra nginx build
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
 CFLAGS="-g -O0"; export CFLAGS; \
-./configure --prefix=OZC \
+./auto/configure --prefix=OZC \
   --with-cc-opt="-g -IOZCI" \
   --with-ld-opt="-Wl,-rpath,OZCL -LOZCL" \
   --with-debug \
-  --with-ipv6 \
   --with-http_ssl_module \
   --with-http_stub_status_module \
+  --with-http_v2_module \
   --with-pcre \
-  --with-http_upstream_zmauth_module \
-  --with-http_zm_sso_module \
-  --with-http_spdy_module \
   --with-mail \
   --with-mail-sasl \
   --with-mail_ssl_module \
@@ -75,7 +72,11 @@ CFLAGS="-g -O0"; export CFLAGS; \
   --http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
   --without-http_scgi_module \
   --without-http_uwsgi_module \
-  --add-module=modules/nviennot-nginx-tcp-keepalive
+  --add-module=modules/nviennot-nginx-tcp-keepalive \
+  --add-module=zmmodules/http/sso \
+  --add-module=zmmodules/http/upstreamzmauth \
+  --add-module=zmmodules/mail/throttle \
+  --add-module=zmmodules/mail/zmauth
 make
 
 %install
