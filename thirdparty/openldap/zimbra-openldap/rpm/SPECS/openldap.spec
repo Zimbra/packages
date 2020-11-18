@@ -11,9 +11,11 @@ Patch3:             ITS8054.patch
 Patch4:             liblmdb-soname.patch
 Patch5:             multival.patch
 Patch6:             liblmdb-keysize.patch
+Patch7:             pw-argon2.patch
 BuildRequires:      zimbra-openssl-devel
 BuildRequires:      zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-libltdl-devel
+BuildRequires:      zimbra-libsodium-devel
 AutoReqProv:        no
 URL:                http://www.openldap.org
 
@@ -33,6 +35,7 @@ The Zimbra openldap build
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
@@ -63,17 +66,21 @@ LD_RUN_PATH=/opt/zimbra/common/lib make DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOS
 make -C libraries/liblmdb prefix=/opt/zimbra/common
 make -C contrib/slapd-modules/noopsrch prefix=/opt/zimbra/common
 make -C contrib/slapd-modules/passwd/sha2 prefix=/opt/zimbra/common
+make -C contrib/slapd-modules/passwd/argon2 prefix=/opt/zimbra/common
 
 %install
 make install DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C libraries/liblmdb install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C contrib/slapd-modules/noopsrch install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C contrib/slapd-modules/passwd/sha2 install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
+make -C contrib/slapd-modules/passwd/argon2 install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/data
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.a
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.a
+rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-argon2.a
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/etc/openldap/DB_CONFIG.example
 chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.la ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.la
+chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-argon2.la
 chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/libldap* ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/liblber*
 
 %package libs
@@ -95,7 +102,7 @@ The zimbra-openldap-devel package contains the linking libraries and include fil
 %package server
 Summary:        openldap server binaries
 Requires: zimbra-openldap-libs = %{version}-%{release}, zimbra-cyrus-sasl-libs
-Requires: zimbra-libltdl-libs, zimbra-ldap-base
+Requires: zimbra-libltdl-libs, zimbra-ldap-base, zimbra-libsodium-libs
 AutoReqProv:        no
 
 %description server
