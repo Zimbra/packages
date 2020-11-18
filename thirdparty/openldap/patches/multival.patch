@@ -285,10 +285,10 @@
  
  /* The default search IDL stack cache depth */
  #define DEFAULT_SEARCH_STACK_DEPTH	16
-@@ -85,6 +86,7 @@
+@@ -84,6 +85,7 @@
  	int			mi_txn_cp;
- 	uint32_t	mi_txn_cp_min;
- 	uint32_t	mi_txn_cp_kbyte;
+ 	unsigned	mi_txn_cp_min;
+ 	unsigned	mi_txn_cp_kbyte;
 +
  	struct re_s		*mi_txn_cp_task;
  	struct re_s		*mi_index_task;
