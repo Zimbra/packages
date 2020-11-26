@@ -4248,6 +4248,9 @@ ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u,
         ft_type |= NGX_HTTP_UPSTREAM_FT_NON_IDEMPOTENT;
     }
 
+    zlcf = (ngx_zm_lookup_conf_t *)
+            ngx_get_conf (ngx_cycle->conf_ctx, ngx_zm_lookup_module);
+
     if (u->peer.tries == 0
         || ((u->conf->next_upstream & ft_type) != ft_type)
         || (u->request_sent && r->request_body_no_buffering)
