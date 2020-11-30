@@ -6,8 +6,8 @@ License:            Artistic 2.0
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-openssl-devel
-Requires:           zimbra-perl-base, zimbra-openssl-libs
+BuildRequires:      zimbra-perl-base, zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-perl-base, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/Net-SSLeay
 
@@ -20,6 +20,11 @@ The Net::SSLeay module basically comprises:
 - Convenience functions (related to low level API but with more perl friendly interface)
 
 %define debug_package %{nil}
+
+%changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded to 1.88 and updated dependency openssl to 1.1.1h
+
 
 %prep
 %setup -n Net-SSLeay-%{version}
