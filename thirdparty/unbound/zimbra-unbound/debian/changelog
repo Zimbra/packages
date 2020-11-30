@@ -1,5 +1,11 @@
 zimbra-unbound (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
+  * Upgraded to 1.110 and updated dependency openssl to 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
+zimbra-unbound (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+
   * Initial Release.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 1 May 2015 22:26:24 +0000
