@@ -1,11 +1,11 @@
 Summary:            Zimbra's PHP build
 Name:               zimbra-php
 Version:            VERSION
-Release:            1zimbra8.7b4ZAPPEND
+Release:            1zimbra8.7b5ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.bz2
 BuildRequires:      zlib-devel
-BuildRequires:      zimbra-httpd-devel
+BuildRequires:      zimbra-httpd-devel >= 2.4.38-1zimbra8.7b2ZAPPEND
 BuildRequires:      zimbra-aspell-devel >= 0.60.8-1zimbra8.7b1ZAPPEND
 BuildRequires:      zimbra-aspell  >= 0.60.8-1zimbra8.7b1ZAPPEND
 BuildRequires:      zimbra-libxml2-devel
@@ -19,6 +19,8 @@ URL:                http://php.net
 The Zimbra PHP build
 
 %changelog
+* Mon Nov 30 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
+- Updated zimbra-httpd.
 * Fri Apr 24 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 -Updated dependency zimbra-aspell-libs.
 * Wed Feb 08 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
