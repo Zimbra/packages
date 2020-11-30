@@ -1,13 +1,13 @@
 Summary:            DBD::mysql - MySQL driver for the Perl5 Database Interface (DBI)
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-dbi, zimbra-mariadb-devel
-BuildRequires:      zimbra-openssl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-perl-base, zimbra-perl-dbi, zimbra-mariadb-libs
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
@@ -20,6 +20,8 @@ database management system. Most functions provided by this programming API
 are supported.
 
 %changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Upgraded perl-dbd-mysql to 4.050
 * Thu Sep 7 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Bug-107311: Updated perl-dbd-mysql version.
 * Wed Sep 9 2015 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
