@@ -1,3 +1,9 @@
+zimbra-postfix (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+
+  * Upgraded postfix to 3.5.6
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 20 Jul 2020 22:26:24 +0000
+
 zimbra-postfix (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
   * Initial Release.
