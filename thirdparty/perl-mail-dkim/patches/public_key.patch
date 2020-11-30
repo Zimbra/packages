@@ -14,17 +14,17 @@ diff -ruN a/t/public_key.t b/t/public_key.t
 
  #
 -# this public key is "NXDOMAIN"
-+# this public key is "NODATA"
++# this public key is "NXDOMAIN"
  #
  $pubkey = Mail::DKIM::PublicKey->fetch(
  		Protocol => "dns",
  		Selector => "nonexistent",
 -		Domain => "messiah.edu",
-+		Domain => "test.authmilter.org",
++		Domain => "messiah.edu",
  		);
  ok(!$pubkey, "public key should not exist");
 -ok($@ =~ /^NXDOMAIN$/, "reason given is NXDOMAIN");
-+ok($@ =~ /^NODATA$/, "reason given is NODATA");
++ok($@ =~ /^NXDOMAIN$/, "reason given is NXDOMAIN");
 
  SKIP:
  {
