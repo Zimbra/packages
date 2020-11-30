@@ -1,13 +1,13 @@
 Summary:            Zimbra's Curl build
 Name:               zimbra-curl
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zlib-devel
-BuildRequires:      zimbra-openssl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-heimdal-devel
-Requires:           zlib, zimbra-curl-libs = %{version}-%{release}, zimbra-openssl-libs, zimbra-heimdal-libs
+Requires:           zlib, zimbra-curl-libs = %{version}-%{release}, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND, zimbra-heimdal-libs >= 1.5.3-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                http://curl.haxx.se/
 
@@ -15,6 +15,10 @@ URL:                http://curl.haxx.se/
 The Zimbra Curl build
 
 %define debug_package %{nil}
+
+%changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded dependency openssl to 1.1.1h and updated dependency heimdal
 
 %prep
 %setup -n curl-%{version}
@@ -73,4 +77,3 @@ OZCL/*.la
 OZCL/*.so
 OZCL/pkgconfig
 OZCI
-
