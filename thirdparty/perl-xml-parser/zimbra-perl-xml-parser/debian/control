@@ -2,13 +2,13 @@ Source: zimbra-perl-MODNORMNAME
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, libexpat1-dev, zimbra-perl-libwww (>= 6.13-1zimbra8.7b2ZAPPEND)
+Build-Depends: debhelper (>= 9), zimbra-perl-base, libexpat1-dev, zimbra-perl-libwww (>= 6.13-1zimbra8.7b3ZAPPEND)
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
 
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, libexpat1,
- zimbra-perl-libwww (>= 6.13-1zimbra8.7b2ZAPPEND)
+ zimbra-perl-libwww (>= 6.13-1zimbra8.7b3ZAPPEND)
 Description: XML::Parser - A perl module for parsing XML documents
  This is a Perl extension interface to James Clark's XML parser, expat
