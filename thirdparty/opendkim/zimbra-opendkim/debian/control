@@ -1,6 +1,6 @@
 Source: zimbra-opendkim
-Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev (>= 1.1.1g-1zimbra8.7b3ZAPPEND), zimbra-libbsd-dev,
- zimbra-openldap-dev (>= 2.4.49-1zimbra8.8b3ZAPPEND), zimbra-libmilter-dev, zimbra-cyrus-sasl-dev (>= 2.1.26-1zimbra8.7b2ZAPPEND)
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev (>= 1.1.1h-1zimbra8.7b3ZAPPEND), zimbra-libbsd-dev,
+ zimbra-openldap-dev (>= 2.4.49-1zimbra8.8b4ZAPPEND), zimbra-libmilter-dev, zimbra-cyrus-sasl-dev (>= 2.1.26-1zimbra8.7b3ZAPPEND)
 Section: utils
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
