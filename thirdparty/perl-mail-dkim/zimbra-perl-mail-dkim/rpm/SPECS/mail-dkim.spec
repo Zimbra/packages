@@ -1,15 +1,15 @@
 Summary:            Mail::DKIM - Signs/verifies Internet mail with DKIM/DomainKey signatures
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Patch0:             public_key.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-crypt-openssl-rsa >= 0.31-1zimbra8.7b1ZAPPEND, zimbra-perl-digest-sha1
+BuildRequires:      zimbra-perl-base, zimbra-perl-crypt-openssl-rsa >= 0.31-1zimbra8.7b2ZAPPEND, zimbra-perl-digest-sha1
 BuildRequires:      zimbra-perl-net-dns zimbra-perl-mailtools
-Requires:           zimbra-perl-base, zimbra-perl-crypt-openssl-rsa >= 0.31-1zimbra8.7b1ZAPPEND, zimbra-perl-digest-sha1
+Requires:           zimbra-perl-base, zimbra-perl-crypt-openssl-rsa >= 0.31-1zimbra8.7b2ZAPPEND, zimbra-perl-digest-sha1
 Requires:           zimbra-perl-net-dns zimbra-perl-mailtools
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
@@ -24,6 +24,8 @@ RFC4870, for DomainKeys
 %define debug_package %{nil}
 
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated dependency zimbra-perl-crypt-openssl-rsa
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Updated dependency zimbra-perl-crypt-openssl-rsa
 
