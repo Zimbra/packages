@@ -1,13 +1,13 @@
 Summary:            Perl extension for using OpenSSL
 Name:               zimbra-perl-net-ssleay
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            Artistic 2.0
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
-Requires:           zimbra-perl-base, zimbra-openssl-libs >= 1.1.1g-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-perl-base, zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-perl-base, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/Net-SSLeay
 
@@ -22,6 +22,8 @@ The Net::SSLeay module basically comprises:
 %define debug_package %{nil}
 
 %changelog
+* Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded dependency openssl to 1.1.1h
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
 - Upgraded to 1.88 and updated dependency openssl to 1.1.1g
 
