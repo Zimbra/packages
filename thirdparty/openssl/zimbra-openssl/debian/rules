@@ -27,3 +27,5 @@ override_dh_shlibdeps:
 
 override_dh_auto_install:
 	LD_RUN_PATH=OZCL $(MAKE) DESTDIR=$$(pwd)/debian/tmp MANDIR="OZCS/man" LIBS="" install
+	export LD_LIBRARY_PATH="$$(pwd)/debian/tmpOZCL" && crypto/fips/fips_standalone_hmac $$(pwd)/debian/tmpOZCL/libcrypto.so.1.1 >$$(pwd)/debian/tmpOZCL/.libcrypto.so.1.1.hmac
+	export LD_LIBRARY_PATH="$$(pwd)/debian/tmpOZCL" && crypto/fips/fips_standalone_hmac $$(pwd)/debian/tmpOZCL/libssl.so.1.1 >$$(pwd)/debian/tmpOZCL/.libssl.so.1.1.hmac
