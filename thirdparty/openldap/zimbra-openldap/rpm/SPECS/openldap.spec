@@ -1,7 +1,7 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.8b3ZAPPEND
+Release:            1zimbra8.8b4ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
@@ -11,8 +11,8 @@ Patch3:             ITS8054.patch
 Patch4:             liblmdb-soname.patch
 Patch5:             multival.patch
 Patch6:             liblmdb-keysize.patch
-BuildRequires:      zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
-BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b2ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libltdl-devel
 AutoReqProv:        no
 URL:                http://www.openldap.org
@@ -23,6 +23,8 @@ The Zimbra openldap build
 %define debug_package %{nil}
 
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- Upgraded openssl to 1.1.1h and updated cyrus-sasl
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Upgraded openssl to 1.1.1g and updated cyrus-sasl
 * Tue Jun 09 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
