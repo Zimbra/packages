@@ -26,7 +26,7 @@ setup:
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-crypt-openssl-rsa \
-	zimbra-perl-digest-sha1 zimbra-perl-net-dns zimbra-perl-mailtools zimbra-openssl-lib
+	zimbra-perl-digest-sha1 zimbra-perl-net-dns zimbra-perl-mailtools zimbra-openssl-$(PKG_DEV)
 
 pkgrm: pkgrm%
 pkgrm%:
