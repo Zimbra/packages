@@ -1,7 +1,7 @@
 Summary:            libwww - The World-Wide Web library for Perl
 Name:               zimbra-perl-libwww
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -9,11 +9,11 @@ Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-encode-locale, zimbra-perl-file-listing
 BuildRequires:      zimbra-perl-http-cookies, zimbra-perl-http-daemon, zimbra-perl-http-date
 BuildRequires:      zimbra-perl-http-negotiate, zimbra-perl-http-message, zimbra-perl-lwp-mediatypes
-BuildRequires:      zimbra-perl-uri, zimbra-perl-net-http >= 6.09-1zimbra8.7b2ZAPPEND, zimbra-perl-www-robotrules, zimbra-perl-html-parser
+BuildRequires:      zimbra-perl-uri, zimbra-perl-net-http >= 6.09-1zimbra8.7b3ZAPPEND, zimbra-perl-www-robotrules, zimbra-perl-html-parser
 Requires:           zimbra-perl-base, zimbra-perl-encode-locale, zimbra-perl-file-listing
 Requires:           zimbra-perl-http-cookies, zimbra-perl-http-daemon, zimbra-perl-http-date
 Requires:           zimbra-perl-http-negotiate, zimbra-perl-http-message, zimbra-perl-lwp-mediatypes
-Requires:           zimbra-perl-uri, zimbra-perl-net-http >= 6.09-1zimbra8.7b2ZAPPEND, zimbra-perl-www-robotrules, zimbra-perl-html-parser
+Requires:           zimbra-perl-uri, zimbra-perl-net-http >= 6.09-1zimbra8.7b3ZAPPEND, zimbra-perl-www-robotrules, zimbra-perl-html-parser
 AutoReqProv:        no
 URL:                https://metacpan.org/release/libwww-perl
 
@@ -28,6 +28,8 @@ help you implement simple HTTP servers.
 %define debug_package %{nil}
 
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated dependency zimbra-perl-net-http
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Updated dependency zimbra-perl-net-http
 
