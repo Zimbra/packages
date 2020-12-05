@@ -1,12 +1,12 @@
 Summary:            Zimbra's Unbound build
 Name:               zimbra-unbound
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
 Patch0:             log-facility.patch
-BuildRequires:      expat-devel, zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
-Requires:           expat, zimbra-openssl-libs >= 1.1.1g-1zimbra8.7b3ZAPPEND
+BuildRequires:      expat-devel, zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+Requires:           expat, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-unbound-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                https://www.unbound.net/
@@ -17,6 +17,8 @@ The Zimbra Unbound build
 %define debug_package %{nil}
 
 %changelog
+* Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded dependency openssl to 1.1.1h
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
 - Upgraded to 1.110 and updated dependency openssl to 1.1.1g
 
