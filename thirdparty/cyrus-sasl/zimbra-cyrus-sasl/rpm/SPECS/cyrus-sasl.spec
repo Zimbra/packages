@@ -1,7 +1,7 @@
 Summary:            Zimbra's Cyrus-SASL build
 Name:               zimbra-cyrus-sasl
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 Patch0:             sasl-auth-zimbra-2.1.26.patch
@@ -9,12 +9,12 @@ Patch1:             saslauthd-conf.patch
 Patch2:             auxprop.patch
 Patch3:             openssl-1.1.1g.patch
 BuildRequires:      zlib-devel
-BuildRequires:      zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
-BuildRequires:      zimbra-heimdal-devel >= 1.5.3-1zimbra8.7b2ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-heimdal-devel >= 1.5.3-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libxml2-devel
-BuildRequires:      zimbra-curl-devel >= 7.49.1-1zimbra8.7b2ZAPPEND
-Requires:           zlib, zimbra-cyrus-sasl-libs = %{version}-%{release}, zimbra-openssl-libs >= 1.1.1g-1zimbra8.7b3ZAPPEND, zimbra-heimdal-libs >= 1.5.3-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-libxml2-libs, zimbra-curl-libs >= 7.49.1-1zimbra8.7b2ZAPPEND
+BuildRequires:      zimbra-curl-devel >= 7.49.1-1zimbra8.7b3ZAPPEND
+Requires:           zlib, zimbra-cyrus-sasl-libs = %{version}-%{release}, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND, zimbra-heimdal-libs >= 1.5.3-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-libxml2-libs, zimbra-curl-libs >= 7.49.1-1zimbra8.7b3ZAPPEND
 AutoReqProv:        no
 URL:                https://cyrusimap.org/
 
@@ -24,6 +24,8 @@ The Zimbra Cyrus-SASL build
 %define debug_package %{nil}
 
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Upgraded dependency openssl to 1.1.1h
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Upgraded dependency openssl to 1.1.1g and updated heimdal,curl
 
