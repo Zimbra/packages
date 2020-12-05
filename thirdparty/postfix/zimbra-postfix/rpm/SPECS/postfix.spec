@@ -1,24 +1,23 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-openldap-devel >= 2.4.49-1zimbra8.8b3ZAPPEND
-BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b2ZAPPEND
-BuildRequires:      zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-openldap-devel >= 2.4.49-1zimbra8.8b4ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-mariadb-devel
-BuildRequires:      zimbra-lmdb-devel >= 2.4.49-1zimbra8.8b3ZAPPEND
+BuildRequires:      zimbra-lmdb-devel >= 2.4.49-1zimbra8.8b4ZAPPEND
 BuildRequires:      pcre-devel
-Requires:           pcre
-Requires:           zimbra-openldap-libs >= 2.4.49-1zimbra8.8b3ZAPPEND, zimbra-mta-base
-Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b2ZAPPEND, zimbra-mariadb
-Requires:           zimbra-lmdb-libs >= 2.4.49-1zimbra8.8b3ZAPPEND, zimbra-openssl-libs >= 1.1.1g-1zimbra8.7b3ZAPPEND
+Requires:           pcre, libicu
+Requires:           zimbra-openldap-libs >= 2.4.49-1zimbra8.8b4ZAPPEND, zimbra-mta-base
+Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b3ZAPPEND, zimbra-mariadb
+Requires:           zimbra-lmdb-libs >= 2.4.49-1zimbra8.8b4ZAPPEND, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
 Patch3:             lmdb-default.patch
-Patch4:             pass-ip-address.patch
 AutoReqProv:        no
 URL:                https://www.postfix.org/
 
@@ -28,6 +27,8 @@ The Zimbra Postfix build
 %define debug_package %{nil}
 
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated openldap, cyrus-sasl, openssl, lmdb
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Upgraded postfix to 3.5.6
 
@@ -98,5 +99,10 @@ OZC/lib
 /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/master.cf
 /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/main.cf
 if [ "$1" -ge "2" ]; then
- /opt/zimbra/libexec/configrewrite mta
+ USER=$(whoami)
+ if [ "$USER" = "zimbra" ]; then
+    /opt/zimbra/libexec/configrewrite mta
+ else
+   su - zimbra -c "/opt/zimbra/libexec/configrewrite mta"
+ fi
 fi
