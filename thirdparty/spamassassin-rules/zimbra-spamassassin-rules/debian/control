@@ -8,6 +8,6 @@ Standards-Version: 3.9.5
 Package: zimbra-spamassassin-rules
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-mta-base, zimbra-perl-mail-spamassassin (>= 3.4.4-1zimbra8.8b2ZAPPEND)
+ zimbra-mta-base, zimbra-perl-mail-spamassassin (>= 3.4.4-1zimbra8.8b3ZAPPEND)
 Description: Default ruleset for SpamAssassin
  Default ruleset for SpamAssassin
