@@ -24,7 +24,7 @@ $(psrc_file):
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-libwww zimbra-perl-net-http \
-	zimbra-perl-io-socket-ssl zimbra-perl-mozilla-ca zimbra-openssl-lib
+	zimbra-perl-io-socket-ssl zimbra-perl-mozilla-ca zimbra-openssl-$(PKG_DEV)
 
 pkgrm: pkgrm%
 pkgrm%:
