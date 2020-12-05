@@ -1,3 +1,15 @@
+zimbra-proxy-components (1.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package to 1.19.0
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 17:48:22 +0000
+
+zimbra-proxy-components (1.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 19 Oct 2020 17:48:22 +0000
+
 zimbra-proxy-components (1.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-nginx package
