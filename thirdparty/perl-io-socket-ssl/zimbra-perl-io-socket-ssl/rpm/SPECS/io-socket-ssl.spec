@@ -1,14 +1,14 @@
 Summary:            SSL sockets with IO::Socket interface
 Name:               zimbra-perl-io-socket-ssl
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay >= 1.88-1zimbra8.7b1ZAPPEND
+BuildRequires:      zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay >= 1.88-1zimbra8.7b2ZAPPEND
 BuildRequires:      zimbra-perl-io-socket-ip
-Requires:           zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay >= 1.88-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-mozilla-ca, zimbra-perl-net-ssleay >= 1.88-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-perl-io-socket-ip
 AutoReqProv:        no
 URL:                https://metacpan.org/release/IO-Socket-SSL
@@ -23,6 +23,8 @@ you do blocking I/O and don't use select or poll.
 %define debug_package %{nil}
 
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-net-ssleay
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
 - Upgraded IO-Socket-SSL to 2.068
 
