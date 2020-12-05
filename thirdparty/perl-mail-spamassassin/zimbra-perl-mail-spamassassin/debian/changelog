@@ -1,3 +1,8 @@
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Updated dependency zimbra-perl-mail-dkim
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
 zimbra-perl-MODNORMNAME (VERSION-1zimbra8.8b2ZAPPEND) unstable; urgency=medium
 
   * Updated dependency zimbra-perl-mail-dkim
