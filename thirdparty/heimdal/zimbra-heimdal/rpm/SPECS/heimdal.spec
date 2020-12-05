@@ -1,12 +1,12 @@
 Summary:            Zimbra's Heimdal Kerberos build
 Name:               zimbra-heimdal
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      ncurses-devel
-Requires:           zimbra-openssl-libs >= 1.1.1g-1zimbra8.7b3ZAPPEND, zimbra-heimdal-libs = %{version}-%{release}, ncurses-libs
+Requires:           zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND, zimbra-heimdal-libs = %{version}-%{release}, ncurses-libs
 AutoReqProv:        no
 URL:                http://www.h5l.org/
 
@@ -102,6 +102,8 @@ OZCL/*.so
 OZCI
 
 %changelog
+* Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Upgraded dependency openssl to 1.1.1h
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Upgraded dependency openssl to 1.1.1g
 * Wed May 20 2015 Zimbra Packaging Services <packaging-devel@zimbra.com>
