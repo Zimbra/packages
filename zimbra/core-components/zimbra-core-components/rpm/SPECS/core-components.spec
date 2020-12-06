@@ -1,6 +1,6 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            3.0.1
+Version:            3.0.2
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements, zimbra-perl >= 1.0.6-1zimbra8.7b1ZAPPEND
@@ -20,7 +20,7 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
-* Sun Dec 06 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.1
+* Sun Dec 06 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.2
 - Updated openssl,curl,perl,perl-innotop,cyrus-sasl,mariadb,openldap
 * Sun Dec 06 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
 - Updated openssl,curl,perl,perl-innotop,cyrus-sasl,mariadb,openldap
