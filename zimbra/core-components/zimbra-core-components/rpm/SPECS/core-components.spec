@@ -1,6 +1,6 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            2.0.6
+Version:            3.0.1
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements, zimbra-perl >= 1.0.6-1zimbra8.7b1ZAPPEND
@@ -8,7 +8,7 @@ Requires:           zimbra-pflogsumm >= 1.1.5-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-openssl >= 1.1.1h-1zimbra8.7b3ZAPPEND, zimbra-curl >= 7.49.1-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b3ZAPPEND, zimbra-rsync
 Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND
-Requires:           zimbra-openldap-client >= 2.4.49-1zimbra8.8b4ZAPPEND, zimbra-osl >= 1.0.9-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-openldap-client >= 2.4.49-1zimbra8.8b4ZAPPEND, zimbra-osl >= 2.0.0-1zimbra9.0b1ZAPPEND
 Requires:           zimbra-prepflog >= 0.4.1-1zimbra8.7b2ZAPPEND, zimbra-tcmalloc-libs
 Requires:           zimbra-perl-innotop >= 1.9.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-openjdk >= 13.0.1-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts, zimbra-amavis-logwatch
@@ -20,6 +20,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Sun Dec 06 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.1
+- Updated openssl,curl,perl,perl-innotop,cyrus-sasl,mariadb,openldap
 * Sun Dec 06 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
 - Updated openssl,curl,perl,perl-innotop,cyrus-sasl,mariadb,openldap
 * Thu Sep 10 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.5
