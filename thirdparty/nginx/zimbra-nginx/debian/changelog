@@ -1,5 +1,11 @@
 zimbra-nginx (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
+  * Upgraded nginx to 1.19.0
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sun, 06 Dec 2020 17:48:22 +0000
+
+zimbra-nginx (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
   * Patch for nginx bug Bug 109101
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 13 Mar 2020 17:48:22 +0000
