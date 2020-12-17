@@ -1500,14 +1500,6 @@
   */
 --- openldap-2.4.46/servers/slapd/back-mdb/search.c.orig	2018-08-31 21:34:04.503604782 +0000
 +++ openldap-2.4.46/servers/slapd/back-mdb/search.c	2018-08-31 21:20:08.589093362 +0000
-@@ -708,6 +708,7 @@
- 	}
- 
- 	wwctx.flag = 0;
-+	wwctx.nentries = 0;
- 	/* If we're running in our own read txn */
- 	if (  moi == &opinfo ) {
- 		cb.sc_writewait = mdb_writewait;
 @@ -921,7 +922,7 @@
  				goto done;
  			}
@@ -1528,14 +1520,3 @@
  	e->e_id = id;
  	if ( !BER_BVISNULL( &dn )) {
  		e->e_name = dn;
---- a/servers/slapd/back-mdb/search.c
-+++ b/servers/slapd/back-mdb/search.c
-@@ -933,7 +933,7 @@
- 				goto done;
- 			}
- 
--			rs->sr_err = mdb_entry_decode( op, ltid, &edata, &e );
-+			rs->sr_err = mdb_entry_decode( op, ltid, &edata, id, &e );
- 			if ( rs->sr_err ) {
- 				rs->sr_err = LDAP_OTHER;
- 				rs->sr_text = "internal error in mdb_entry_decode";
