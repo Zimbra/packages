@@ -1,3 +1,12 @@
+zimbra-perl (1.0.4-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * Updated archive-zip,bit-vector,carp-clan,compress-raw-bzip2,compress-raw-zlib,config-inifiles,date-calc
+  * Updated dbd-mysql,http-cookies,http-daemon,http-message,http-negotiate,innotop
+  * Updated io-compress,io-socket-ssl,libwww,list-moreutils,lwp-protocol-https
+  * Updated net-http,net-server,soap-lite,swatchdog,xml-parser,xml-sax-expat,xml-simple
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 27 Apr 2020 00:00:00 +0000
+
 zimbra-perl (1.0.3-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * Updated perl-dbd-mysql.

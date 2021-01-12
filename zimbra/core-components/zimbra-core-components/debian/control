@@ -8,10 +8,10 @@ Standards-Version: 3.9.5
 Package: zimbra-core-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-base, zimbra-os-requirements, zimbra-perl, zimbra-pflogsumm,
+ zimbra-base, zimbra-os-requirements, zimbra-perl (>= 1.0.4-1zimbra8.7b1ZAPPEND), zimbra-pflogsumm (>= 1.1.5-1zimbra8.7b2ZAPPEND),
  zimbra-openssl (>= 1.0.2t-1zimbra8.7b2ZAPPEND), zimbra-curl, zimbra-cyrus-sasl, zimbra-rsync,
- zimbra-mariadb-lib (>= 10.1.25-1zimbra8.7b1ZAPPEND), zimbra-openldap-client, zimbra-prepflog,
- zimbra-tcmalloc-lib, zimbra-perl-innotop, zimbra-openjdk (>= 13.0.1-1zimbra8.8b1ZAPPEND),
+ zimbra-mariadb-lib (>= 10.1.25-1zimbra8.7b1ZAPPEND), zimbra-openldap-client, zimbra-prepflog (>= 0.4.1-1zimbra8.7b2ZAPPEND),
+ zimbra-tcmalloc-lib, zimbra-perl-innotop (>= 1.9.1-1zimbra8.7b2ZAPPEND), zimbra-openjdk (>= 13.0.1-1zimbra8.8b1ZAPPEND),
  zimbra-openjdk-cacerts, zimbra-osl (>= 2.0.0-1zimbra9.0b1ZAPPEND), zimbra-amavis-logwatch,
  zimbra-postfix-logwatch, zimbra-rrdtool
 Description: Zimbra components for core package

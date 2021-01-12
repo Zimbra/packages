@@ -12,6 +12,10 @@ URL:                http://aspell.net/
 %description
 The Zimbra Aspell build
 
+%changelog
+* Tue Apr 24 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded aspell to 0.60.8
+
 %prep
 %setup -n aspell-%{version}
 

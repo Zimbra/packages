@@ -1,3 +1,8 @@
+zimbra-spamassassin-rules (1.0.0-1zimbra8.8b2ZAPPEND) unstable; urgency=low
+
+  * Updated dependency zimbra-perl-mail-spamassassin
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com> Mon, 27 Apr 2020 00:00:00 +0000
 zimbra-spamassassin-rules (1.0.0-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Upgraded spamAssasin to 3.4.4

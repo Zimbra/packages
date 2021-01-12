@@ -1,9 +1,9 @@
 Summary:            Zimbra components for snmp package
 Name:               zimbra-snmp-components
-Version:            1.0.0
+Version:            1.0.3
 Release:            ITERATIONZAPPEND
 License:            GPL-2
-Requires:           zimbra-snmp-base, zimbra-net-snmp
+Requires:           zimbra-snmp-base, zimbra-net-snmp >= 5.8-1zimbra8.7b3ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
@@ -13,5 +13,13 @@ AutoReqProv:        no
 %description
 Zimbra snmp components pulls in all the packages used by
 zimbra-snmp
+
+%changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.3
+- Updated zimbra-net-snmp to 5.8-1zimbra8.7b3
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.2
+- Updated zimbra-net-snmp
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1
+- Updated zimbra-net-snmp
 
 %files

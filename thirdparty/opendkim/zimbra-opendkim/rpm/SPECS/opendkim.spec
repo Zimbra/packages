@@ -1,27 +1,33 @@
 Summary:            Zimbra's OpenDKIM build
 Name:               zimbra-opendkim
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b4ZAPPEND
 License:            OpenDKIM
 Source:             %{name}-%{version}.tar.gz
 Patch0:             ticket226.patch
 BuildRequires:      zlib-devel
-BuildRequires:      zimbra-openssl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libbsd-devel
-BuildRequires:      zimbra-openldap-devel
+BuildRequires:      zimbra-openldap-devel >= 2.4.49-1zimbra8.8b4ZAPPEND 
 BuildRequires:      zimbra-libmilter-devel
-BuildRequires:      zimbra-cyrus-sasl-devel
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 Requires:           zlib, zimbra-opendkim-libs = %{version}-%{release}
-Requires:           zimbra-openssl-libs
+Requires:           zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-libbsd-libs
-Requires:           zimbra-openldap-libs
+Requires:           zimbra-openldap-libs >= 2.4.49-1zimbra8.8b4ZAPPEND
 AutoReqProv:        no
 URL:                http://www.opendkim.org/
 
 %description
 The Zimbra OpenDKIM build
 
+%define debug_package %{nil}
+
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+- Upgraded openssl to 1.1.1h and updated cyrus-sasl, openldap
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Upgraded openssl to 1.1.1g and updated cyrus-sasl, openldap
 * Mon May 02 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Add patch for ticket 226
 
@@ -44,7 +50,7 @@ CPPFLAGS="-IOZCI"; export CPPFLAGS;
   --enable-vbr \
   --enable-default_sender \
   --enable-rpath \
-  --with-openssl=OZC \
+  --with-openssl=OZCL \
   --with-milter=OZC \
   --with-openldap=OZC \
   --with-sasl=OZC \

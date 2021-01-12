@@ -4,6 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            Artistic 2.0
 Source:             %{name}-%{version}.tar.gz
+Patch0:             libzmq3.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-zeromq-devel, zimbra-perl-zmq-constants
@@ -23,6 +24,7 @@ use this module.
 
 %prep
 %setup -n ZMQ-LibZMQ3-%{version}
+%patch0 -p1
 
 %build
 # Notes/Workarounds:

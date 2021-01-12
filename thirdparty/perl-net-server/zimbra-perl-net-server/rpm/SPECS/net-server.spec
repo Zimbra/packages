@@ -21,6 +21,10 @@ number of preforked children (Net::Server::PreForkSimple), or as a
 managed preforking server which maintains the number of children
 based on server load (Net::Server::PreFork).
 
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded Net-Server to 2.009
+
 %define debug_package %{nil}
 
 %prep

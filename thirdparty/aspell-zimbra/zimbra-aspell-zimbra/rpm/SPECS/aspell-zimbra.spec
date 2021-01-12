@@ -1,10 +1,10 @@
 Summary:            Zimbra custom dictionary
 Name:               zimbra-aspell-zimbra
 Version:            1.0.0
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-2
-BuildRequires:      zimbra-aspell-en
-Requires:           zimbra-aspell-en
+BuildRequires:      zimbra-aspell-en >= 7.1.0-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-aspell-en >= 7.1.0-1zimbra8.7b2ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
@@ -15,6 +15,10 @@ AutoReqProv:        no
 This is a dictionary for aspell defining specific words
 that Zimbra does not want viewed as a typo. The word Zimbra
 is one example.
+
+%changelog
+* Tue Apr 24 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-aspell-en
 
 %install
 mkdir -p ${RPM_BUILD_ROOT}/OZCL/aspell-0.60

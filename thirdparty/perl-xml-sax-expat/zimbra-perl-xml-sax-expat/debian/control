@@ -3,14 +3,14 @@ Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
 Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-xml-sax,
- zimbra-perl-xml-parser
+ zimbra-perl-xml-parser (>= 2.44-1zimbra8.7b2ZAPPEND)
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
 
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
- zimbra-perl-xml-sax, zimbra-perl-xml-parser
+ zimbra-perl-xml-sax, zimbra-perl-xml-parser (>= 2.44-1zimbra8.7b2ZAPPEND)
 Description: XML::SAX::Expat - SAX2 Driver for Expat (XML::Parser)
  This is an implementation of a SAX2 driver sitting on top of
  Expat (XML::Parser)

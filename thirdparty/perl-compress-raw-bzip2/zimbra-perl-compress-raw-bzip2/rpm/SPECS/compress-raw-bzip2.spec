@@ -15,6 +15,10 @@ URL:                https://metacpan.org/release/Compress-Raw-Bzip2
 Compress-Raw-Bzip2 provides the interface to the bzip2 library for the modules
 IO::Compress::Bzip2 and IO::Compress::Bunzip2
 
+%changelog
+* Sat Apr 25 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded Compress-Raw-Bzip2 to 2.093
+
 %define debug_package %{nil}
 
 %prep

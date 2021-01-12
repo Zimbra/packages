@@ -1,3 +1,9 @@
+zimbra-aspell-zimbra (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+
+  * Updated dependency zimbra-aspell-en
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 24 Apr 2020 22:26:24 +0000
+
 zimbra-aspell-zimbra (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.

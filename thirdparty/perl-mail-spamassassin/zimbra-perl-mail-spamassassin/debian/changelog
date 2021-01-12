@@ -1,3 +1,9 @@
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.8b2ZAPPEND) unstable; urgency=low
+
+  * Updated dependency zimbra-perl-io-compress
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 25 Apr 2020 00:00:00 +0000
+
 zimbra-perl-MODNORMNAME (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Upgraded spamAssasin to 3.4.4

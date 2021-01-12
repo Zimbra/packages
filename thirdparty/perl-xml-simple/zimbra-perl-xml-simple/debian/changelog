@@ -1,3 +1,9 @@
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=low
+
+  * Updated dependency zimbra-perl-xml-sax-expat
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 25 Apr 2020 00:00:00 +0000
+
 zimbra-perl-MODNORMNAME (VERSION-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.
