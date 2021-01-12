@@ -17,6 +17,8 @@ URL:                http://httpd.apache.org/
 The Zimbra Apache HTTPD build
 
 %changelog
+* Fri Feb 08 2019  Zimbra Packaging Services <packaging-devel@zimbra.com>
+-Upgraded to 2.4.46
 * Fri Feb 08 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> 
 -Updated the version.
 * Fri May 01 2015  Zimbra Packaging Services <packaging-devel@zimbra.com>
