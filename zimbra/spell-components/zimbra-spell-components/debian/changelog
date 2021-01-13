@@ -1,3 +1,9 @@
+zimbra-spell-components (2.0.1-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated PHP to 7.3.25, Updated HTTPD to 2.4.46
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 08 Jan 2021 00:00:00 +0000
+
 zimbra-spell-components (2.0.0-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Php upgrade
