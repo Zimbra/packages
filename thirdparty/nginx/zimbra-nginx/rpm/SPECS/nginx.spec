@@ -5,11 +5,11 @@ Release:            1zimbra8.8b1ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
-BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
-BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1g-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b2ZAPPEND
 Requires:           pcre, zlib
-Requires:           zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
-Requires:           zimbra-cyrus-sasl-libs >= 2.1.26-1zimbra8.7b3ZAPPEND, zimbra-proxy-base
+Requires:           zimbra-openssl-libs >= 1.1.1g-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-cyrus-sasl-libs >= 2.1.26-1zimbra8.7b2ZAPPEND, zimbra-proxy-base
 AutoReqProv:        no
 URL:                http://nginx.org
 
