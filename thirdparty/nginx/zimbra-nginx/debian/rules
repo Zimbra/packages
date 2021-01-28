@@ -45,3 +45,6 @@ override_dh_auto_install:
 	make install DESTDIR=$$(pwd)/debian/tmp
 	mkdir -p  $(CURDIR)/debian/tmp/opt/zimbra/data/nginx
 	mv $(CURDIR)/debian/tmpOZC/html $(CURDIR)/debian/tmp/opt/zimbra/data/nginx/
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

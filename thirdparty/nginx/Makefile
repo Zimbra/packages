@@ -25,6 +25,7 @@ getsrc:
 	cd nviennot-nginx-tcp-keepalive && \
 	git reset --hard $(NGINX_HTTP_KEEPALIVE) >/dev/null 2>&1 && \
 	rm -rf .git
+	cp -rp $(zmodules) $(psrctmp)/$(pname)-$(pvers)-zimbra/
 	cd $(psrctmp) && tar cfz $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra
 	mv $(psrctmp)/$(zname)-$(pvers).tar.gz $(SRC_DIR)
 	rm -rf $(psrctmp)
