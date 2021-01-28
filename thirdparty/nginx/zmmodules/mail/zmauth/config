@@ -1,0 +1,4 @@
+ngx_addon_name=ngx_mail_zmauth_module
+MAIL_MODULES="$MAIL_MODULES ngx_mail_zmauth_module"
+MAIL_INCS="$MAIL_INCS zmmodules/mail/zmauth/"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS zmmodules/mail/zmauth/ngx_mail_zmauth_module.c"

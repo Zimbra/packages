@@ -9,6 +9,7 @@ zname := zimbra-$(pname)
 pfile := $(zname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 zspec := $(pname).spec
+zmodules := zmmodules
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
@@ -27,6 +28,8 @@ getsrc:
 	cd $(psrctmp) && tar cfz $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra
 	mv $(psrctmp)/$(zname)-$(pvers).tar.gz $(SRC_DIR)
 	rm -rf $(psrctmp)
+	mkdir -p $(PLATFORM_DIR)/$(zname)/$(zmodules)
+	cp -rp $(zmodules) $(PLATFORM_DIR)/$(zname)/
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV)
