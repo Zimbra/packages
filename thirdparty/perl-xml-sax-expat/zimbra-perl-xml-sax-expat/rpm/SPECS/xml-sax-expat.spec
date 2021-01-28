@@ -1,13 +1,13 @@
 Summary:            XML::SAX::Expat - SAX2 Driver for Expat (XML::Parser)
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-xml-sax, zimbra-perl-xml-parser
-Requires:           zimbra-perl-base, zimbra-perl-xml-sax, zimbra-perl-xml-parser
+BuildRequires:      zimbra-perl-base, zimbra-perl-xml-sax, zimbra-perl-xml-parser >= 2.44-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-xml-sax, zimbra-perl-xml-parser >= 2.44-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -16,6 +16,10 @@ This is an implementation of a SAX2 driver sitting on top of
 Expat (XML::Parser)
 
 %define debug_package %{nil}
+
+%changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-xml-parser
 
 %prep
 %setup -n MODNAME-%{version}

@@ -1,3 +1,9 @@
+zimbra-core-components (2.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl,curl,perl,perl-innotop,cyrus-sasl,mariadb
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-core-components (2.0.3-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-osl package.

@@ -6,8 +6,8 @@ License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-xml-sax-expat
-Requires:           zimbra-perl-base, zimbra-perl-xml-sax-expat
+BuildRequires:      zimbra-perl-base, zimbra-perl-xml-sax-expat >= 0.51-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-xml-sax-expat >= 0.51-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -15,6 +15,10 @@ URL:                https://metacpan.org/release/MODNAME
 Easily read/write XML (esp config files)
 
 %define debug_package %{nil}
+
+%changelog
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded perl-xml-simple to 2.25
 
 %prep
 %setup -n MODNAME-%{version}
