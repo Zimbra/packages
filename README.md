@@ -22,13 +22,13 @@ Example:
     cd packages/thirdparty/nginx
     make build
 
-    ls build/UBUNTU16_64/
+    ls -ltr build/UBUNTU16_64/
 
     src
+    zimbra-nginx_1.19.0.orig.tar.gz
+    zimbra-nginx_1.19.0-1zimbra8.8b1.16.04.tar.xz
+    zimbra-nginx_1.19.0-1zimbra8.8b1.16.04.dsc
     zimbra-nginx
-    zimbra-nginx-dbg_1.7.1-1zimbra8.7b11.16.04_amd64.deb
-    zimbra-nginx_1.7.1-1zimbra8.7b11.16.04.dsc
-    zimbra-nginx_1.7.1-1zimbra8.7b11.16.04.tar.xz
-    zimbra-nginx_1.7.1-1zimbra8.7b11.16.04_amd64.changes
-    zimbra-nginx_1.7.1-1zimbra8.7b11.16.04_amd64.deb
-    zimbra-nginx_1.7.1.orig.tar.gz
+    zimbra-nginx_1.19.0-1zimbra8.8b1.16.04_amd64.deb
+    zimbra-nginx-dbg_1.19.0-1zimbra8.8b1.16.04_amd64.deb
+    zimbra-nginx_1.19.0-1zimbra8.8b1.16.04_amd64.changes
