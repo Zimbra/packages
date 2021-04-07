@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated opendkim
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
 zimbra-mta-components (1.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated perl-mail-spamassassin,spamassassin-rules,opendkim,clamav,postfix,mariadb
