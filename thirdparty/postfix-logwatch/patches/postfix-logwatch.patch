@@ -1,0 +1,12 @@
+diff -ruN a/postfix-logwatch b/postfix-logwatch
+--- a/postfix-logwatch	2021-03-16 12:26:52.674328002 +0000
++++ b/postfix-logwatch	2021-03-16 12:27:16.014328661 +0000
+@@ -1847,7 +1847,7 @@
+         # KeyboardInterrupt 
+         $line =~ /^Read line: "/ or
+         $line =~ /^Found the end of entry$/ or
+-        $line =~ /^Config: {/ or
++        $line =~ /^Config: / or
+         $line =~ /^spfcheck: pyspf result/ or
+         $line =~ /^Starting$/ or
+         $line =~ /^Normal exit$/ or
