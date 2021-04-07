@@ -1,3 +1,9 @@
+zimbra-mariadb (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded dependency openssl to 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 02 Dec 2020 22:26:24 +0000
+
 zimbra-mariadb (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
   * Upgraded openssl to 1.1.1g
