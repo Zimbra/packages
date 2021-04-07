@@ -9,6 +9,7 @@ export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
 %:
 	dh $@
 override_dh_auto_configure:
+	autoreconf -i configure.ac
 	./configure --prefix=OZC \
 	--enable-poll \
 	--enable-adsp_lists \
@@ -20,7 +21,7 @@ override_dh_auto_configure:
 	--enable-vbr \
 	--enable-default_sender \
 	--enable-rpath \
-	--with-openssl=OZCL \
+	--with-openssl=OZC \
 	--with-milter=OZC \
 	--with-openldap=OZC \
 	--with-sasl=OZC \
