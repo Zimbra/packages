@@ -10,7 +10,7 @@ export DEB_LDFLAGS_MAINT_APPEND="-LOZCL -ROZCL -Wl,-rpath,OZCL"
 	dh $@
 override_dh_auto_configure:
 	./Configure no-idea enable-ec_nistp_64_gcc_128 no-mdc2 no-rc5 no-ssl2 \
-  no-hw --prefix=OZC --libdir=lib --openssldir=OZCE/ssl \
+  no-hw --prefix=OZC --with-rand-seed=devrandom,rdcpu,os,getrandom --libdir=lib --openssldir=OZCE/ssl \
   shared linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
 
 override_dh_auto_build:
