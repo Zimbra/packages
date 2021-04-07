@@ -1,0 +1,323 @@
+diff -ruN a/configure.ac b/configure.ac
+--- a/configure.ac	2021-03-12 06:42:39.131993049 +0000
++++ b/configure.ac	2021-03-12 10:16:18.340354782 +0000
+@@ -1,7 +1,8 @@
+ #                                               -*- Autoconf -*-
+ # Process this file with autoconf to produce a configure script.
+ #
+-# Copyright (c) 2009-2015, The Trusted Domain Project.  All rights reserved.
++# Copyright (c) 2009-2015, 2018, The Trusted Domain Project.
++#   All rights reserved.
+ # 
+ 
+ #
+@@ -108,10 +109,23 @@
+ AC_SEARCH_LIBS(getaddrinfo, resolv,
+                AC_DEFINE(HAVE_GETADDRINFO, 1,
+                          [Define to 1 if you have the `getaddrinfo()' function.]))
++# You might find res_ninit() in system libraries or in libresolv or not
++# at all. The way AC_LANG_CALL finds out is it declares res_ninit() so
++# it can call it, then it sees if linking fails because of unresolved
++# symbols. Great, except glibc doesn't export res_ninit() -- it exports
++# __res_ninit() -- res_ninit() is a macro in resolv.h. So unless we
++# include resolv.h, we won't find res_ninit(), but when we do include
++# it, it conflicts with AC_LANG_CALL's redeclaration. Hmm. I guess the
++# only thing for it is to include resolv.h, don't redeclare res_ninit(),
++# and use the proper type signature when calling it.
++m4_rename([AC_LANG_CALL], [saved_AC_LANG_CALL])
++m4_define([AC_LANG_CALL], [AC_LANG_PROGRAM([#include <resolv.h>],
++                                           [return res_ninit(NULL);])])
+ AC_SEARCH_LIBS(res_ninit, resolv,
+                AC_DEFINE(HAVE_RES_NINIT, 1,
+                          [Define to 1 if you have the `res_ninit()' function.]))
+-AC_SEARCH_LIBS(res_sertservers, resolv bind,
++m4_rename_force([saved_AC_LANG_CALL], [AC_LANG_CALL])
++AC_SEARCH_LIBS(res_setservers, resolv bind,
+                AC_DEFINE(HAVE_RES_SETSERVERS, 1,
+                          [Define to 1 if you have the `res_setservers()' function.]))
+ AC_SEARCH_LIBS(getopt_long, iberty,
+@@ -233,23 +247,23 @@
+ AC_CHECK_HEADERS([strl.h], [strl_h_found="yes"])
+ if test x"$strl_h_found" != x"yes"
+ then
+-	strldirs="/usr/local/include /usr/include"
++	strldirs="/usr/local/include/strl /usr/local/include /usr/include/strl"
+ 
+ 	for d in $strldirs
+ 	do
+-		AC_MSG_CHECKING([for strl.h in $d/strl])
+-		if test -f $d/strl/strl.h
++		AC_MSG_CHECKING([for strl.h in $d])
++		if test -f $d/strl.h
+ 		then
+ 			unset ac_cv_header_strl_h
+ 			saved_CPPFLAGS="$CPPFLAGS"
+-			CPPFLAGS="$CPPFLAGS -I$d/strl"
++			CPPFLAGS="$CPPFLAGS -I$d"
+ 			AC_CHECK_HEADERS([strl.h], [strl_h_found="yes"])
+ 			CPPFLAGS="$saved_CPPFLAGS"
+ 		fi
+ 
+ 		if test x"$strl_h_found" = x"yes"
+ 		then
+-			CPPFLAGS="$CPPFLAGS -I$d/strl"
++			CPPFLAGS="$CPPFLAGS -I$d"
+ 			break
+ 		fi
+ 	done
+@@ -353,12 +367,14 @@
+ #
+ FEATURE([popauth], [enable POP-before-SMTP support])
+ 
+-FEATURE([poll], [use poll() instead of select()])
+-
+ FFR_FEATURE([atps], [experimental Authorized Third Party Signers checks])
+ LIB_FFR_FEATURE([atps], [experimental Authorized Third Party Signers checks])
+ AM_CONDITIONAL([ATPS], [test x"$enable_atps" = x"yes"])
+ 
++FFR_FEATURE([conditional], [experimental conditional signatures])
++LIB_FFR_FEATURE([conditional], [experimental conditional signatures])
++AM_CONDITIONAL([CONDITIONAL], [test x"$enable_conditional" = x"yes"])
++
+ FFR_FEATURE([db_handle_pools], [experimental database handle pools])
+ 
+ FFR_FEATURE([diffheaders], [compare signed and verified headers when possible])
+@@ -860,26 +876,35 @@
+ 	AC_SEARCH_LIBS([ERR_peek_error], [crypto], ,
+ 	               AC_MSG_ERROR([libcrypto not found]))
+ 
+-	AC_SEARCH_LIBS([SSL_library_init], [ssl], ,
+-		[
+-			if test x"$enable_shared" = x"yes"
+-			then
+-				AC_MSG_ERROR([Cannot build shared opendkim
+-				              against static openssl libraries.
+-				              Configure with --disable-shared
+-				              to get this working or obtain a
+-				              shared libssl library for
+-				              opendkim to use.])
+-			fi
+ 
+-			# avoid caching issue - last result of SSL_library_init
+-			# shouldn't be cached for this next check
+-			unset ac_cv_search_SSL_library_init
+-			LIBCRYPTO_LIBS="$LIBCRYPTO_LIBS -ldl"
+-			AC_SEARCH_LIBS([SSL_library_init], [ssl], ,
+-			               AC_MSG_ERROR([libssl not found]), [-ldl])
+-		]
+-	)
++	AC_LINK_IFELSE(
++		       [AC_LANG_PROGRAM([[#include <openssl/ssl.h>]],
++					[[SSL_library_init();]])],
++					[od_have_ossl="yes";],
++					[od_have_ossl="no";])
++	if test x"$od_have_ossl" = x"no"
++	then
++		if test x"$enable_shared" = x"yes"
++		then
++			AC_MSG_ERROR([Cannot build shared opendkim
++			              against static openssl libraries.
++			              Configure with --disable-shared
++			              to get this working or obtain a
++			              shared libssl library for
++			              opendkim to use.])
++		fi
++
++		LIBCRYPTO_LIBS="$LIBCRYPTO_LIBS -ldl"
++		AC_SEARCH_LIBS([SSL_library_init], [ssl], ,
++		               AC_MSG_ERROR([libssl not found]), [-ldl])
++	fi
++
++	AC_CHECK_DECL([EVP_PKEY_ED25519],
++                      AC_DEFINE([HAVE_ED25519], 1,
++ 	                        [Define to 1 if your crypto library has ED25519 support]), ,
++	              [
++#include <sys/types.h>
++#include <openssl/evp.h>])
+ 
+ 	AC_CHECK_DECL([SHA256_DIGEST_LENGTH],
+                       AC_DEFINE([HAVE_SHA256], 1,
+diff -ruN a/libopendkim/dkim-canon.c b/libopendkim/dkim-canon.c
+--- a/libopendkim/dkim-canon.c	2021-03-12 07:08:01.820036016 +0000
++++ b/libopendkim/dkim-canon.c	2021-03-12 07:10:32.392040265 +0000
+@@ -123,7 +123,7 @@
+ 
+ 			if (sha1->sha1_tmpbio != NULL)
+ 			{
+-				BIO_free(sha1->sha1_tmpbio);
++					BIO_free(sha1->sha1_tmpbio);
+ 				sha1->sha1_tmpfd = -1;
+ 				sha1->sha1_tmpbio = NULL;
+ 			}
+@@ -2146,3 +2146,4 @@
+ 
+ 	return DKIM_STAT_OK;
+ }
++
+diff -ruN a/libopendkim/tests/Makefile.in b/libopendkim/tests/Makefile.in
+--- a/libopendkim/tests/Makefile.in	2021-03-12 06:59:48.792022104 +0000
++++ b/libopendkim/tests/Makefile.in	2021-03-12 07:08:59.672037648 +0000
+@@ -1108,8 +1108,10 @@
+       { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+     END { for (dir in files) print dir, files[dir] }'
+ am__base_list = \
+-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
++  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\
++  / /g' | \
++  sed '$$!N;$$!N;$$!N;$$!N;s/\
++  / /g'
+ am__uninstall_files_from_dir = { \
+   test -z "$$files" \
+     || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+@@ -1150,13 +1152,13 @@
+     am__color_tests=yes; \
+   fi; \
+   if test $$am__color_tests = yes; then \
+-    red='[0;31m'; \
+-    grn='[0;32m'; \
+-    lgn='[1;32m'; \
+-    blu='[1;34m'; \
+-    mgn='[0;35m'; \
+-    brg='[1m'; \
+-    std='[m'; \
++    red=''; \
++    grn=''; \
++    lgn=''; \
++    blu=''; \
++    mgn=''; \
++    brg=''; \
++    std=''; \
+   fi; \
+ }
+ am__recheck_rx = ^[ 	]*:recheck:[ 	]*
+@@ -4131,16 +4133,19 @@
+ @LCOV_TRUE@description.txt: $(check_PROGRAMS) $(check_SCRIPTS)
+ @LCOV_TRUE@	rm -f $@
+ @LCOV_TRUE@	for i in $(check_PROGRAMS); do \
+-@LCOV_TRUE@		testname=$${i/t-}; \
+-@LCOV_TRUE@		testname=$${testname//-/_}; \
++@LCOV_TRUE@		testname=$${i#t-}; \
++@LCOV_TRUE@		testname=$$(echo $${testname} | sed -e 's/-/_/g'); \
+ @LCOV_TRUE@		fgrep '***' $$i.c | tail -n 1 | \
+-@LCOV_TRUE@		(echo $${testname} ; sed -e 's/[^*]*\*\*\*\(.*\)\\n.*/\t\1\n/g' ) >> $@; \
++@LCOV_TRUE@		(echo $${testname} ; sed -e 's/[^*]*\*\*\*\(.*\)\\
++@LCOV_TRUE@.*/	\1\
++@LCOV_TRUE@/g' ) >> $@; \
+ @LCOV_TRUE@	done
+ @LCOV_TRUE@	for i in $(check_SCRIPTS); do \
+-@LCOV_TRUE@		testname=$${i/t-}; \
+-@LCOV_TRUE@		testname=$${testname//-/_}; \
++@LCOV_TRUE@		testname=$${i#t-}; \
++@LCOV_TRUE@		testname=$$(echo $${testname} | sed -e 's/-/_/g'); \
+ @LCOV_TRUE@		grep '^#' $$i | tail -n 1 | \
+-@LCOV_TRUE@		(echo $${testname} ; sed -e 's/^# \(.*\)/\t\1\n/g' ) >> $@; \
++@LCOV_TRUE@		(echo $${testname} ; sed -e 's/^# \(.*\)/	\1\
++@LCOV_TRUE@/g' ) >> $@; \
+ @LCOV_TRUE@	done
+ 
+ @LCOV_TRUE@description.html: description.txt
+diff -ruN a/opendkim/opendkim-crypto.c b/opendkim/opendkim-crypto.c
+--- a/opendkim/opendkim-crypto.c	2021-03-12 07:17:06.720051392 +0000
++++ b/opendkim/opendkim-crypto.c	2021-03-12 07:19:22.760055231 +0000
+@@ -221,6 +221,11 @@
+ 	if (ptr != NULL)
+ 	{
+ 		assert(pthread_setspecific(id_key, ptr) == 0);
++		#if OPENSSL_VERSION_NUMBER >= 0x10100000
++		    OPENSSL_thread_stop();
++		#else
++			ERR_remove_state(0);
++		#endif
+ 
+ 		ERR_remove_state(0);
+ 
+@@ -392,11 +397,15 @@
+ {
+ 	if (crypto_init_done)
+ 	{
+-		CRYPTO_cleanup_all_ex_data();
+-		CONF_modules_free();
+-		EVP_cleanup();
+-		ERR_free_strings();
+-		ERR_remove_state(0);
++		#if OPENSSL_VERSION_NUMBER >= 0x10100000
++		    OPENSSL_thread_stop();
++		#else	
++		   CRYPTO_cleanup_all_ex_data();
++		   CONF_modules_free();
++		   EVP_cleanup();
++		   ERR_free_strings();
++		   ERR_remove_state(0);
++		#endif
+ 
+ 		if (nmutexes > 0)
+ 		{
+@@ -415,3 +424,4 @@
+ }
+ 
+ #endif /* USE_GNUTLS */
++
+diff -ruN a/opendkim/tests/Makefile.in b/opendkim/tests/Makefile.in
+--- a/opendkim/tests/Makefile.in	2021-03-12 07:13:08.164044660 +0000
++++ b/opendkim/tests/Makefile.in	2021-03-12 07:15:58.884049478 +0000
+@@ -139,8 +139,10 @@
+       { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+     END { for (dir in files) print dir, files[dir] }'
+ am__base_list = \
+-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
++  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\
++  / /g' | \
++  sed '$$!N;$$!N;$$!N;$$!N;s/\
++  / /g'
+ am__uninstall_files_from_dir = { \
+   test -z "$$files" \
+     || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+@@ -163,13 +165,13 @@
+     am__color_tests=yes; \
+   fi; \
+   if test $$am__color_tests = yes; then \
+-    red='[0;31m'; \
+-    grn='[0;32m'; \
+-    lgn='[1;32m'; \
+-    blu='[1;34m'; \
+-    mgn='[0;35m'; \
+-    brg='[1m'; \
+-    std='[m'; \
++    red=''; \
++    grn=''; \
++    lgn=''; \
++    blu=''; \
++    mgn=''; \
++    brg=''; \
++    std=''; \
+   fi; \
+ }
+ am__recheck_rx = ^[ 	]*:recheck:[ 	]*
+@@ -1298,14 +1300,16 @@
+ @LCOV_TRUE@description.txt: $(check_SCRIPTS)
+ @LCOV_TRUE@	rm -f $@
+ @LCOV_TRUE@	for test in $? ; do \
+-@LCOV_TRUE@		testname=$${test/t-}; \
+-@LCOV_TRUE@		testname=$${testname//-/_}; \
++@LCOV_TRUE@		testname=$${test#t-}; \
++@LCOV_TRUE@		testname=$$(echo $${testname} | sed -e 's/-/_/g'); \
+ @LCOV_TRUE@		grep ^# $$test | tail -n 1 | \
+-@LCOV_TRUE@			sed -e "s/^#\(.*\)/$${testname}\n\t\1\n/g" >> $@; \
++@LCOV_TRUE@			sed -e "s/^#\(.*\)/$${testname}\
++@LCOV_TRUE@	\1\
++@LCOV_TRUE@/g" >> $@; \
+ @LCOV_TRUE@	done
+ 
+ @LCOV_TRUE@description.html: description.txt
+-@LCOV_TRUE@	gendesc --output $@ $<
++@LCOV_TRUE@	gendesc --output $@ $?
+ 
+ @LCOV_TRUE@maintainer-clean-local:
+ @LCOV_TRUE@	-rm -rf lcov/[^C]*
+@@ -1321,3 +1325,4 @@
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.
+ .NOEXPORT:
++
