@@ -1,3 +1,9 @@
+zimbra-ldap-components (1.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap with openssl 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
 zimbra-ldap-components (1.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openldap with openssl 1.1.1h
