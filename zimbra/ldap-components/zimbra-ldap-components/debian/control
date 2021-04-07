@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-ldap-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-ldap-base, zimbra-lmdb (>= 2.4.49-1zimbra8.8b4ZAPPEND), zimbra-openldap-server (>= 2.4.49-1zimbra8.8b4ZAPPEND), zimbra-openssl (>= 1.1.1h-1zimbra8.7b3ZAPPEND), zimbra-openssl-lib (>= 1.1.1h-1zimbra8.7b3ZAPPEND)
+ zimbra-ldap-base, zimbra-lmdb (>= 2.4.49-1zimbra8.8b4ZAPPEND), zimbra-openldap-server (>= 2.4.49-1zimbra8.8b4ZAPPEND), zimbra-openssl (>= 1.1.1h-1zimbra8.7b4ZAPPEND), zimbra-openssl-lib (>= 1.1.1h-1zimbra8.7b4ZAPPEND)
 Description: Zimbra components for ldap package
  Zimbra ldap components pulls in all the packages used by
  zimbra-ldap
