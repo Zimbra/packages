@@ -1,12 +1,12 @@
-zimbra-core-components (2.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-core-components (3.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openssl
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
 
-zimbra-core-components (3.0.3-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-core-components (2.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
-  * Updated zimbra-postfix-logwatch to 1.40.03
+  * Updated openssl
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
 
