@@ -1,10 +1,10 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            3.0.4
+Version:            3.0.5
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements, zimbra-perl >= 1.0.5-1zimbra8.7b1ZAPPEND, zimbra-pflogsumm
-Requires:           zimbra-openssl >= 1.1.1h-1zimbra8.7b4ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-openssl >= 1.1.1k-1zimbra8.7b4ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-rsync
 Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.4.49-1zimbra8.8b4ZAPPEND
@@ -19,6 +19,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Thu Apr 15 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.5
+- Updated openssl to 1.1.1k
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.4
 - Updated openssl
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.8
