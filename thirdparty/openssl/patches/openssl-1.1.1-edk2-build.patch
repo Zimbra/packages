@@ -20,11 +20,11 @@ diff -up openssl-1.1.1g/crypto/kdf/hkdf.c.edk2-build openssl-1.1.1g/crypto/kdf/h
  #include "internal/cryptlib.h"
  #include "crypto/evp.h"
  #include "kdf_local.h"
-diff -up openssl-1.1.1g/crypto/rand/rand_unix.c.edk2-build openssl-1.1.1g/crypto/rand/rand_unix.c
---- openssl-1.1.1g/crypto/rand/rand_unix.c.edk2-build	2020-05-18 12:56:05.646655554 +0200
-+++ openssl-1.1.1g/crypto/rand/rand_unix.c	2020-05-18 12:58:51.088090896 +0200
+diff -up openssl-1.1.1k/crypto/rand/rand_unix.c.edk2-build openssl-1.1.1k/crypto/rand/rand_unix.c
+--- openssl-1.1.1k/crypto/rand/rand_unix.c.edk2-build	2021-04-14 05:15:40.292301031 +0000
++++ openssl-1.1.1k/crypto/rand/rand_unix.c	2021-04-14 05:16:53.136303086 +0000
 @@ -20,7 +20,7 @@
- #include "crypto/fips.h"
+ #include "crypto/rand.h"
  #include <stdio.h>
  #include "internal/dso.h"
 -#ifdef __linux
