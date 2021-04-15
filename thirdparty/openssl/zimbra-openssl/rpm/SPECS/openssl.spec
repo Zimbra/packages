@@ -29,7 +29,10 @@ The Zimbra OpenSSL build allows for secure communication between various process
 
 %define debug_package %{nil}
 
+
 %changelog
+* Wed Apr 14 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+- Fix for ZBUG-2198, Upgraded OpenSSL to 1.1.1k
 * Fri Apr 02 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - Fix for ZBUG-2184
 * Fri Dec 04 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
