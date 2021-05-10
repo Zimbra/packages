@@ -274,6 +274,7 @@ ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c)
         {
             ngx_log_debug0 (NGX_LOG_DEBUG_MAIL, c->log, 0,
                             "ngx_mail_ssl_init_connection - ssl event failed with NGX_ERROR");
+            ngx_mail_close_connection(c);
             return;
         }
     }while (rc == NGX_AGAIN && --edge > 0);
@@ -282,6 +283,7 @@ ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c)
     {
         ngx_log_debug0 (NGX_LOG_DEBUG_MAIL, c->log, 0,
                         "ngx_mail_ssl_init_connection - marker reached");
+        ngx_mail_close_connection(c);
         return;
     }
 
