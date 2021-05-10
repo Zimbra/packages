@@ -247,26 +247,46 @@ ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c)
 {
     ngx_mail_session_t        *s;
     ngx_mail_core_srv_conf_t  *cscf;
+    ngx_int_t   rc;
+    ngx_int_t   edge = 50;
 
     if (ngx_ssl_create_connection(ssl, c, 0) != NGX_OK) {
         ngx_mail_close_connection(c);
         return;
     }
 
-    if (ngx_ssl_handshake(c) == NGX_AGAIN) {
+    do {
+        rc = ngx_ssl_handshake(c);
+        if(rc == NGX_AGAIN)
+        {
+            s = c->data;
 
-        s = c->data;
+            cscf = ngx_mail_get_module_srv_conf(s, ngx_mail_core_module);
 
-        cscf = ngx_mail_get_module_srv_conf(s, ngx_mail_core_module);
+            ngx_add_timer(c->read, cscf->timeout);
 
-        ngx_add_timer(c->read, cscf->timeout);
+            c->ssl->handler = ngx_mail_ssl_handshake_handler;
 
-        c->ssl->handler = ngx_mail_ssl_handshake_handler;
+            ngx_msleep(5);
 
+        }
+        else if (rc == NGX_ERROR)
+        {
+            ngx_log_debug0 (NGX_LOG_DEBUG_MAIL, c->log, 0,
+                            "ngx_mail_ssl_init_connection - ssl event failed with NGX_ERROR");
+            return;
+        }
+    }while (rc == NGX_AGAIN && --edge > 0);
+
+    if( 0 == edge )
+    {
+        ngx_log_debug0 (NGX_LOG_DEBUG_MAIL, c->log, 0,
+                        "ngx_mail_ssl_init_connection - marker reached");
         return;
     }
 
     ngx_mail_ssl_handshake_handler(c);
+    ngx_mail_init_session(c);
 }
 
 
@@ -297,7 +317,6 @@ ngx_mail_ssl_handshake_handler(ngx_connection_t *c)
 
         c->read->ready = 0;
 
-        ngx_mail_init_session(c);
         return;
     }
 
