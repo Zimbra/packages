@@ -248,7 +248,7 @@ ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c)
     ngx_mail_session_t        *s;
     ngx_mail_core_srv_conf_t  *cscf;
     ngx_int_t   rc;
-    ngx_int_t   edge = 50;
+    ngx_int_t   edge = 200;
 
     if (ngx_ssl_create_connection(ssl, c, 0) != NGX_OK) {
         ngx_mail_close_connection(c);
@@ -267,7 +267,7 @@ ngx_mail_ssl_init_connection(ngx_ssl_t *ssl, ngx_connection_t *c)
 
             c->ssl->handler = ngx_mail_ssl_handshake_handler;
 
-            ngx_msleep(5);
+            ngx_msleep(100);
 
         }
         else if (rc == NGX_ERROR)
