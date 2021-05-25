@@ -1,0 +1,4 @@
+[submodule "thirdparty/nginx/nginx"]
+	path = thirdparty/nginx/nginx
+	url = git@github.com:Zimbra/nginx.git
+	branch = release/zimbra-1.19.0
