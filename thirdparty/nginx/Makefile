@@ -18,7 +18,8 @@ all: clean getsrc build pkgrm1
 getsrc:
 	mkdir -p $(SRC_DIR)
 	mkdir -p $(psrctmp)
-	cp -pr $(pname)-$(pvers)-zimbra $(psrctmp)
+	mkdir -p $(psrctmp)/$(pname)-$(pvers)-zimbra/
+	cp -pr $(pname)/* $(psrctmp)/$(pname)-$(pvers)-zimbra/
 	mkdir -p $(psrctmp)/$(pname)-$(pvers)-zimbra/modules
 	cd $(psrctmp)/$(pname)-$(pvers)-zimbra/modules && \
 	git clone https://github.com/nviennot/nginx-tcp-keepalive.git nviennot-nginx-tcp-keepalive >/dev/null 2>&1 && \
