@@ -15,12 +15,12 @@ Install the build pre-requisites:
 
     sudo apt install m4 libpcre3-dev
 
-Structural changes in packages repo with respect to nginx code:
+## Structural changes in packages repo with respect to nginx code:
 - Following to the upgraded Zimbra nginx 1.20.0, packages repo no more contains nginx specific code.
 - To do same forked repo from upstream nginx is maintained as [Zimbra/nginx](https://github.com/Zimbra/nginx/tree/zimbra/develop)
 - Packages repo references Zimbra/nginx repo as submodule.
 
-Steps to add submodule [Zimbra/nginx](https://github.com/Zimbra/nginx/tree/zimbra/develop) for nginx compilation:
+## Steps to add submodule [Zimbra/nginx](https://github.com/Zimbra/nginx/tree/zimbra/develop) for nginx compilation:
 - Clone packages repo as usual.
 - cd packages.
 - pull nginx submodule using 
@@ -29,7 +29,10 @@ Steps to add submodule [Zimbra/nginx](https://github.com/Zimbra/nginx/tree/zimbr
 
 Once those are checked out at the same level you can enter a sub-directory to build that package.
 
-Example:
+## Guide: Compilation for nginx
+    Clone the repos
+    cd packages
+    git submodule update --init --recursive --remote
 
     cd packages/thirdparty/nginx
     make build
