@@ -1,8 +1,8 @@
-zimbra-nginx (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-nginx (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
 
-  * Upgraded nginx to 1.20.0
+  * Fix ZBUG-2295
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 08 Jun 2021 12:28:22 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Jun 2021 12:28:22 +0000
 
 zimbra-nginx (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
 
