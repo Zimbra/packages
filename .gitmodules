@@ -1,4 +1,4 @@
 [submodule "thirdparty/nginx/nginx"]
 	path = thirdparty/nginx/nginx
 	url = https://github.com/Zimbra/nginx
-	branch = zimbra/develop
+	branch = zimbra/bugfix/ZBUG-2299
