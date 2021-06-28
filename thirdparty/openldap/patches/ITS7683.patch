@@ -174,17 +174,17 @@
  .SH ERRORS
  On success, the functions return
  .BR LDAP_OPT_SUCCESS ,
---- openldap-2.4.56/include/ldap.h.orig 2021-06-28 15:08:53.008158222 +0000
-+++ openldap-2.4.56/include/ldap.h      2021-06-28 15:09:42.692159624 +0000
+--- openldap-2.4.56/include/ldap.h.orig	2021-06-28 16:10:41.164262859 +0000
++++ openldap-2.4.56/include/ldap.h	2021-06-28 16:11:59.068265058 +0000
 @@ -160,6 +160,8 @@
- #define LDAP_OPT_X_TLS_PACKAGE         0x6011
- #define LDAP_OPT_X_TLS_ECNAME          0x6012
- #define LDAP_OPT_X_TLS_REQUIRE_SAN     0x601a
-+#define LDAP_OPT_X_TLS_VERSION         0x6013  /* read-only */
-+#define LDAP_OPT_X_TLS_CIPHER          0x6014  /* read-only */
-
- #define LDAP_OPT_X_TLS_NEVER   0
- #define LDAP_OPT_X_TLS_HARD            1
+ #define LDAP_OPT_X_TLS_PACKAGE		0x6011
+ #define LDAP_OPT_X_TLS_ECNAME		0x6012
+ #define LDAP_OPT_X_TLS_REQUIRE_SAN	0x601a
+++#define LDAP_OPT_X_TLS_VERSION         0x6013  /* read-only */
+++#define LDAP_OPT_X_TLS_CIPHER          0x6014  /* read-only */
+ 
+ #define LDAP_OPT_X_TLS_NEVER	0
+ #define LDAP_OPT_X_TLS_HARD		1
 --- openldap-2.4.40/include/ldap_pvt.h.orig	2014-11-13 16:55:18.919584275 -0600
 +++ openldap-2.4.40/include/ldap_pvt.h	2014-11-13 16:55:43.983583440 -0600
 @@ -420,6 +420,9 @@
