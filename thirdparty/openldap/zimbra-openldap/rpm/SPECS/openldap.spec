@@ -1,7 +1,7 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.8b1ZAPPEND
+Release:            1zimbra8.8b4ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             ITS5037.patch
@@ -12,8 +12,8 @@ Patch4:             liblmdb-soname.patch
 Patch5:             multival.patch
 Patch6:             liblmdb-keysize.patch
 Patch7:             pw-argon2.patch
-BuildRequires:      zimbra-openssl-devel
-BuildRequires:      zimbra-cyrus-sasl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libltdl-devel
 BuildRequires:      zimbra-libsodium-devel
 AutoReqProv:        no
@@ -22,7 +22,15 @@ URL:                http://www.openldap.org
 %description
 The Zimbra openldap build
 
+%define debug_package %{nil}
+
 %changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- Upgraded openssl to 1.1.1h and updated cyrus-sasl
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Upgraded openssl to 1.1.1g and updated cyrus-sasl
+* Tue Jun 09 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+- Fix for ZBUG-1441
 * Mon Feb 10 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - Update for OpenLDAP 2.4.49
 
@@ -162,6 +170,10 @@ The zimbra-lmdb-devel package contains the linking libraries and include files
 /opt/zimbra/common/etc
 /opt/zimbra/common/libexec
 /opt/zimbra/common/share/man
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.conf
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.conf.default
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.ldif
+%attr(644, root, root) /opt/zimbra/common/etc/openldap/slapd.ldif.default
 %exclude /opt/zimbra/common/etc/openldap/ldap.conf
 %exclude /opt/zimbra/common/etc/openldap/ldap.conf.default
 %exclude /opt/zimbra/common/share/man/man1

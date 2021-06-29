@@ -1,15 +1,15 @@
 Summary:            LWP::Protocol::https - Provide https support for LWP::UserAgent 
 Name:               zimbra-perl-lwp-protocol-https
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-libwww, zimbra-perl-net-http
-BuildRequires:      zimbra-perl-io-socket-ssl, zimbra-perl-mozilla-ca
-Requires:           zimbra-perl-base, zimbra-perl-libwww, zimbra-perl-net-http
-Requires:           zimbra-perl-io-socket-ssl, zimbra-perl-mozilla-ca
+BuildRequires:      zimbra-perl-base, zimbra-perl-libwww >= 6.13-1zimbra8.7b3ZAPPEND, zimbra-perl-net-http >= 6.09-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-perl-io-socket-ssl >= 2.068-1zimbra8.7b2ZAPPEND, zimbra-perl-mozilla-ca
+Requires:           zimbra-perl-base, zimbra-perl-libwww >= 6.13-1zimbra8.7b3ZAPPEND, zimbra-perl-net-http >= 6.09-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-perl-io-socket-ssl >= 2.068-1zimbra8.7b2ZAPPEND, zimbra-perl-mozilla-ca
 AutoReqProv:        no
 URL:                https://metacpan.org/release/LWP-Protocol-https
 
@@ -20,6 +20,13 @@ you don't use it directly. Once the module is installed LWP is able to
 access sites using HTTP over SSL/TLS.
 
 %define debug_package %{nil}
+
+%changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated dependencies zimbra-perl-libwww,zimbra-perl-net-http,zimbra-perl-io-socket-ssl
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependencies zimbra-perl-libwww,zimbra-perl-net-http,zimbra-perl-io-socket-ssl
+
 
 %prep
 %setup -n LWP-Protocol-https-%{version}

@@ -1,3 +1,21 @@
+zimbra-openssl (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
+
+  * Fix for ZBUG-2184
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 02 Apr 2021 05:12:55 +0000
+
+zimbra-openssl (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded openssl to 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 04 Dec 2020 05:12:55 +0000
+
+zimbra-openssl (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded openssl to 1.1.1g
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 28 Aug 2020 05:12:55 +0000
+
 zimbra-openssl (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
   * Bug 106869: Updated openssl.

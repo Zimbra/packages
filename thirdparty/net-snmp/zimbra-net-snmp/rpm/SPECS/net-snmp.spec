@@ -1,10 +1,10 @@
 Summary:            Zimbra's NetSNMP build
 Name:               zimbra-net-snmp
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-openssl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      perl-devel
 Requires:           perl, perl-core
 Requires:           zimbra-net-snmp-libs = %{version}-%{release}
@@ -13,6 +13,14 @@ URL:                http://www.net-snmp.org/
 
 %description
 The Zimbra NetSNMP build
+
+%define debug_package %{nil}
+
+%changelog
+* Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded dependency openssl to 1.1.1h
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded net-snmp to 5.8
 
 %prep
 %setup -n net-snmp-%{version}

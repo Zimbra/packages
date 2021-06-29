@@ -2,7 +2,7 @@ Source: zimbra-perl-MODNORMNAME
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-dbd-mysql,
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-dbd-mysql (>= 4.050-1zimbra8.7b4ZAPPEND),
  zimbra-perl-term-readkey
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
@@ -10,7 +10,7 @@ Homepage: https://metacpan.org/release/MODNAME
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
- zimbra-perl-dbd-mysql, zimbra-perl-term-readkey
+ zimbra-perl-dbd-mysql (>= 4.050-1zimbra8.7b4ZAPPEND), zimbra-perl-term-readkey
 Description: innotop - mariadb monitor
  innotop monitors MySQL/MariaDB servers.  Each of its modes shows you a different
  aspect of what's happening in the server.  For example, there's a mode for monitoring

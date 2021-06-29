@@ -19,6 +19,8 @@ URL:                http://php.net
 The Zimbra PHP build
 
 %changelog
+* Sun Dec 06 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Upgraded PHP to 7.3.25
 * Wed Feb 08 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 -Updated PHP version.
 * Wed Jul 28 2017  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND

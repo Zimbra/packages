@@ -2,7 +2,7 @@ Source: zimbra-perl-MODNORMNAME
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-openssl-dev,
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-openssl-dev (>= 1.1.1h-1zimbra8.7b3ZAPPEND),
  zimbra-mariadb-dev, zimbra-perl-dbi
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
@@ -10,7 +10,7 @@ Homepage: https://metacpan.org/release/MODNAME
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
- zimbra-perl-dbi, zimbra-mariadb-lib
+ zimbra-perl-dbi, zimbra-mariadb-lib (>= 10.1.25-1zimbra8.7b3ZAPPEND)
 Description: DBD::mysql - MySQL driver for the Perl5 Database Interface (DBI)
  DBD::mysql is the Perl5 Database Interface driver for the MySQL database.
  In other words: DBD::mysql is an interface between the Perl programming

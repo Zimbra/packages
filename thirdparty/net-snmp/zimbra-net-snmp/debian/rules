@@ -27,3 +27,6 @@ override_dh_auto_install:
 	make install DESTDIR=$$(pwd)/debian/tmp
 	rm -f $(CURDIR)/debian/tmp/OZCL/perl5/$(PERL_ARCHNAME)/perllocal.pod
 	rm -f $(CURDIR)/debian/tmp/OZCL/perl5/$(PERL_ARCHNAME)/auto/*/*/.packlist
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

@@ -1,3 +1,33 @@
+zimbra-core-components (3.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-core-components (2.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-core-components (2.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated zimbra-postfix-logwatch to 1.40.03
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-core-components (2.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl,curl,perl,perl-innotop,cyrus-sasl,mariadb,openldap
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-core-components (2.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl,curl,perl,perl-innotop,cyrus-sasl,mariadb
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-core-components (2.0.3-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-osl package.

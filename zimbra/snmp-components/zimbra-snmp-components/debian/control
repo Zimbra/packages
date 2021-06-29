@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-snmp-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-snmp-base, zimbra-net-snmp
+ zimbra-snmp-base, zimbra-net-snmp (>= 5.8-1zimbra8.7b2ZAPPEND)
 Description: Zimbra components for snmp package
  Zimbra snmp components pulls in all the packages used by
  zimbra-snmp
