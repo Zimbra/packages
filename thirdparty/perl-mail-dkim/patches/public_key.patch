@@ -1,0 +1,30 @@
+diff -ruN a/t/public_key.t b/t/public_key.t
+--- a/t/public_key.t	2020-04-24 13:54:58.331676829 +0000
++++ b/t/public_key.t	2020-04-24 14:02:29.659689565 +0000
+@@ -12,21 +12,21 @@
+ #
+ my $pubkey = Mail::DKIM::PublicKey->fetch(
+ 		Protocol => "dns",
+-		Selector => "test1",
+-		Domain => "messiah.edu",
++		Selector => "key1",
++		Domain => "test.authmilter.org",
+ 		);
+ ok($pubkey, "public key exists");
+
+ #
+-# this public key is "NXDOMAIN"
++# this public key is "NXDOMAIN"
+ #
+ $pubkey = Mail::DKIM::PublicKey->fetch(
+ 		Protocol => "dns",
+ 		Selector => "nonexistent",
+-		Domain => "messiah.edu",
++		Domain => "messiah.edu",
+ 		);
+ ok(!$pubkey, "public key should not exist");
+-ok($@ =~ /^NXDOMAIN$/, "reason given is NXDOMAIN");
++ok($@ =~ /^NXDOMAIN$/, "reason given is NXDOMAIN");
+
+ SKIP:
+ {

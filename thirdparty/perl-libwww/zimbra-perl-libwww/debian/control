@@ -5,7 +5,7 @@ Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
 Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-encode-locale, zimbra-perl-file-listing,
  zimbra-perl-http-cookies, zimbra-perl-http-daemon, zimbra-perl-http-date,
  zimbra-perl-http-negotiate, zimbra-perl-http-message, zimbra-perl-lwp-mediatypes,
- zimbra-perl-uri, zimbra-perl-net-http, zimbra-perl-www-robotrules, zimbra-perl-html-parser
+ zimbra-perl-uri, zimbra-perl-net-http (>= 6.09-1zimbra8.7b3ZAPPEND), zimbra-perl-www-robotrules, zimbra-perl-html-parser
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/libwww-perl
 
@@ -14,7 +14,7 @@ Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-encode-locale,
  zimbra-perl-file-listing, zimbra-perl-http-cookies, zimbra-perl-http-daemon,
  zimbra-perl-http-date, zimbra-perl-http-negotiate, zimbra-perl-http-message,
- zimbra-perl-lwp-mediatypes, zimbra-perl-uri, zimbra-perl-net-http,
+ zimbra-perl-lwp-mediatypes, zimbra-perl-uri, zimbra-perl-net-http (>= 6.09-1zimbra8.7b3ZAPPEND),
  zimbra-perl-www-robotrules, zimbra-perl-html-parser
 Description: libwww - The World-Wide Web library for Perl
  The libwww-perl collection is a set of Perl modules which provides a

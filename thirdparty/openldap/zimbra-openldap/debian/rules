@@ -79,3 +79,6 @@ override_dh_install:
 	rm -f $(CURDIR)/debian/zimbra-openldap-clientOZCS/man/man1/mdb_stat.1
 	rm -f $(CURDIR)/debian/zimbra-openldap-libOZCL/liblmdb.so.0.0.0
 	rm -f $(CURDIR)/debian/zimbra-openldap-libOZCL/liblmdb.so.0
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

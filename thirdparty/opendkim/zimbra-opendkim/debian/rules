@@ -9,6 +9,7 @@ export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
 %:
 	dh $@
 override_dh_auto_configure:
+	autoreconf -i configure.ac
 	./configure --prefix=OZC \
 	--enable-poll \
 	--enable-adsp_lists \
@@ -33,3 +34,6 @@ override_dh_strip:
 
 override_dh_auto_install:
 	make install DESTDIR=$$(pwd)/debian/tmp
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info

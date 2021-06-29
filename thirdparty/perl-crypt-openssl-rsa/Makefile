@@ -7,7 +7,7 @@ pname := Crypt-OpenSSL-RSA
 pname_lc := crypt-openssl-rsa
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/P/PE/PERLER/$(pfile)
+purl := https://cpan.metacpan.org/authors/id/T/TO/TODDR/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 

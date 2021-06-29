@@ -1,2 +1,3 @@
 opt/zimbra/common/lib/*.so.*
 opt/zimbra/common/lib/plugin
+opt/zimbra/common/lib/mysql

@@ -2,7 +2,7 @@
 export DEB_BUILD_OPTIONS=nocheck
 export DEB_CFLAGS_MAINT_STRIP=-O2
 export DEB_CFLAGS_MAINT_APPEND=-O3 -fno-omit-frame-pointer -pipe -Wall -Wno-uninitialized -DNDEBUG
-export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL:OZCL/mysql
 
 %:
 	dh $@
@@ -55,8 +55,14 @@ override_dh_auto_install:
 	cd $$(pwd)/debian/tmpOZCL && \
 	ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
 	ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
+	mkdir -p $$(pwd)/debian/tmpOZCL/mysql && sudo chmod 755 -R $$(pwd)/debian/tmpOZCL/mysql
+	cp -r /opt/zimbra/common/lib/libssl.so.1.0.0 /opt/zimbra/common/lib/libcrypto.so.1.0.0 $$(pwd)/debian/tmpOZCL/mysql/
+	sudo chmod 755 -R $$(pwd)/debian/tmpOZCL/mysql/
 
 override_dh_install:
 	dh_install
 	rm -f $(CURDIR)/debian/zimbra-mariadbOZCB/mysql_config
 	rm -f $(CURDIR)/debian/zimbra-mariadbOZCS/man/man1/mysql_config.1
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
