@@ -1,2 +1,2 @@
 version=3
-ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-(\d+\.\d+\.\d+)\.tgz
+https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-(\d+\.\d+\.\d+)\.tgz
