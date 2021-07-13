@@ -1,0 +1,26 @@
+From db23304b186f55acd7eb313d30fd8508d7a46283 Mon Sep 17 00:00:00 2001
+From: Howard Chu <hyc@openldap.org>
+Date: Tue, 13 Jul 2021 12:10:28 +0100
+Subject: [PATCH] ITS#9608 fix delete of nonexistent sessionlog
+
+---
+ servers/slapd/overlays/syncprov.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/servers/slapd/overlays/syncprov.c b/servers/slapd/overlays/syncprov.c
+index 60d196ec1..a224cde35 100644
+--- a/servers/slapd/overlays/syncprov.c
++++ b/servers/slapd/overlays/syncprov.c
+@@ -3161,7 +3161,8 @@ sp_cf_gen(ConfigArgs *c)
+ 			si->si_chktime = 0;
+ 			break;
+ 		case SP_SESSL:
+-			si->si_logs->sl_size = 0;
++			if ( si->si_logs )
++				si->si_logs->sl_size = 0;
+ 			break;
+ 		case SP_NOPRES:
+ 			si->si_nopres = 0;
+-- 
+2.32.0
+
