@@ -11,6 +11,7 @@ Patch3:             ITS8054.patch
 Patch4:             liblmdb-soname.patch
 Patch5:             multival.patch
 Patch6:             liblmdb-keysize.patch
+Patch7:				ITS9608.patch
 BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libltdl-devel
@@ -23,6 +24,8 @@ The Zimbra openldap build
 %define debug_package %{nil}
 
 %changelog
+* Tue Jul 07 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- Add fix for OpenLDAP ITS#9608
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
 - Upgraded openssl to 1.1.1h and updated cyrus-sasl
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
@@ -41,6 +44,7 @@ The Zimbra openldap build
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
