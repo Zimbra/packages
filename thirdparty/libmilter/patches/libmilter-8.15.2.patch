@@ -1,0 +1,50 @@
+diff -ur a/libmilter/sm_gethost.c b/libmilter/sm_gethost.c
+--- a/libmilter/sm_gethost.c	2021-08-04 04:36:27.157501116 +0000
++++ b/libmilter/sm_gethost.c	2021-08-04 04:39:42.929020966 +0000
+@@ -51,17 +51,20 @@
+ {
+ 	bool resv6 = true;
+ 	struct hostent *h;
+-
++#ifdef RES_USE_INET6
+ 	if (family == AF_INET6)
+ 	{
+ 		/* From RFC2133, section 6.1 */
+ 		resv6 = bitset(RES_USE_INET6, _res.options);
+ 		_res.options |= RES_USE_INET6;
+ 	}
++#endif
+ 	SM_SET_H_ERRNO(0);
+ 	h = gethostbyname(name);
++#ifdef RES_USE_INET6
+ 	if (family == AF_INET6 && !resv6)
+ 		_res.options &= ~RES_USE_INET6;
++#endif
+ 
+ 	/* the function is supposed to return only the requested family */
+ 	if (h != NULL && h->h_addrtype != family)
+diff -ur a/sendmail/conf.c b/sendmail/conf.c
+--- a/sendmail/conf.c	2021-08-04 04:38:13.435411576 +0000
++++ b/sendmail/conf.c	2021-08-04 04:40:38.054012547 +0000
+@@ -4242,17 +4242,20 @@
+ 
+ # else /* HAS_GETHOSTBYNAME2 */
+ 	bool resv6 = true;
+-
++#ifdef RES_USE_INET6
+ 	if (family == AF_INET6)
+ 	{
+ 		/* From RFC2133, section 6.1 */
+ 		resv6 = bitset(RES_USE_INET6, _res.options);
+ 		_res.options |= RES_USE_INET6;
+ 	}
++#endif
+ 	SM_SET_H_ERRNO(0);
+ 	h = gethostbyname(name);
++#ifdef RES_USE_INET6
+ 	if (!resv6)
+ 		_res.options &= ~RES_USE_INET6;
++#endif
+ 
+ 	/* the function is supposed to return only the requested family */
+ 	if (h != NULL && h->h_addrtype != family)
