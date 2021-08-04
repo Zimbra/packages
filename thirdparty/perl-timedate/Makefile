@@ -50,6 +50,7 @@ build_deb:
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(PKG_BUILD)
 
 clean: pkgrm
