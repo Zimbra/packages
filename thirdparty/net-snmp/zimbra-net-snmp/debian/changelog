@@ -1,3 +1,9 @@
+zimbra-net-snmp (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded dependency openssl to 1.1.1k
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 10 Aug 2021 00:00:00 +0000
+
 zimbra-net-snmp (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
   * Upgraded dependency openssl to 1.1.1h
