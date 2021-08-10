@@ -11,7 +11,7 @@ Package: zimbra-prepflog
 Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base,
- zimbra-perl-base, zimbra-perl-date-calc
+ zimbra-perl-base, zimbra-perl-date-calc (>= 6.4-1zimbra8.7b2ZAPPEND)
 Description: prepflog.pl - Pre-processor for pflogsumm
  The script sanitizes mail log files that are to be passed to pflogsumm or awstats
  disregarding the lines relating to the re-injection of messages into postfix. I
