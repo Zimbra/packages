@@ -1,13 +1,13 @@
 Summary:            XML::Parser - A perl module for parsing XML documents
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.7b4ZAPPEND
+Release:            1zimbra8.7b5ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, expat-devel, zimbra-perl-libwww >= 6.13-1zimbra8.7b4ZAPPEND
-Requires:           zimbra-perl-base, expat, zimbra-perl-libwww >= 6.13-1zimbra8.7b4ZAPPEND
+BuildRequires:      zimbra-perl-base, expat-devel, zimbra-perl-libwww >= 6.13-1zimbra8.7b5ZAPPEND
+Requires:           zimbra-perl-base, expat, zimbra-perl-libwww >= 6.13-1zimbra8.7b5ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -17,8 +17,10 @@ This is a Perl extension interface to James Clark's XML parser, expat
 %define debug_package %{nil}
 
 %changelog
-* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
-- Updated zimbra-perl-libwww
+* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
+- Updated dependency zimbra-perl-libwww
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+- Updated dependency zimbra-perl-libwww
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Updated zimbra-perl-libwww
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
