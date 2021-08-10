@@ -1,3 +1,9 @@
+zimbra-memcached (VERSION-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Upgrade to memcached 1.6.5 .
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 10 Aug 2021 00:00:00 +0000
+
 zimbra-memcached (1:VERSION-2.PKG_OS_TAG) unstable; urgency=medium
 
   * Upgrade to memcached 1.4.37 for Bug 107246.
