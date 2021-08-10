@@ -1,11 +1,11 @@
 Summary:            prepflog.pl - Pre-processor for pflogsumm
 Name:               zimbra-prepflog
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
-Requires:           zimbra-base, zimbra-perl-base, zimbra-perl-date-calc
+Requires:           zimbra-base, zimbra-perl-base, zimbra-perl-date-calc >= 6.4-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                http://www.voipsupport.it/pmwiki/pmwiki.php?n=Linux.PrePflog
 
@@ -17,6 +17,10 @@ does anti spam checks through spamassassin and antivirus checks through a third
 party virus checker. If your postfix setup requires additional content filters
 resulting in 3 or more passages of the same message through postfix, this script
 will not work for you.
+
+%changelog
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-date-calc
 
 %define debug_package %{nil}
 
