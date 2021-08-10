@@ -2,13 +2,13 @@ Source: zimbra-aspell-zimbra
 Section: mail
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-aspell-en
+Build-Depends: debhelper (>= 9), zimbra-aspell-en (>= 7.1.0-1zimbra8.7b2ZAPPEND)
 Standards-Version: 3.9.5
 
 Package: zimbra-aspell-zimbra
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-aspell-en
+ zimbra-aspell-en (>= 7.1.0-1zimbra8.7b2ZAPPEND)
 Description: Zimbra custom dictionary
  This is a dictionary for aspell defining specific words
  that Zimbra does not want viewed as a typo. The word Zimbra
