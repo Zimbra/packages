@@ -8,7 +8,7 @@ pname_lc := mail-spamassassin
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl :=  https://cpan.metacpan.org/authors/id/K/KM/KMCGRAIL/SpamAssassin/$(pfile)
+purl :=  https://cpan.metacpan.org/authors/id/S/SI/SIDNEY/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
