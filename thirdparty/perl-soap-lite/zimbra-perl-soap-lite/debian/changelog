@@ -1,3 +1,10 @@
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=low
+
+  * Updated dependencies zimbra-perl-io-compress,zimbra-perl-io-socket-ssl
+  * Updated dependencies zimbra-perl-lwp-protocol-https,zimbra-perl-libwww,zimbra-perl-xml-parser
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 10 Aug 2021 00:00:00 +0000
+
 zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
 
   * Updated dependencies perl-io-socket-ssl, perl-lwp-protocol-https, perl-libwww, perl-xml-parser
