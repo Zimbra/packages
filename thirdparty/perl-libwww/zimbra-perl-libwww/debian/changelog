@@ -1,8 +1,14 @@
-zimbra-perl-libwww (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
+zimbra-perl-libwww (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=low
 
   * Updated dependency perl-net-http
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
+
+zimbra-perl-libwww (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=low
+
+  * Updated dependencies zimbra-perl-http-cookies,zimbra-perl-http-daemon,zimbra-perl-http-negotiate,zimbra-perl-http-message,zimbra-perl-net-http
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 10 Aug 2021 00:00:00 +0000
 
 zimbra-perl-libwww (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
 
@@ -14,10 +20,10 @@ zimbra-perl-libwww (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
  * Updated dependency perl-net-http
 
--- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
 
 zimbra-perl-libwww (VERSION-ITERATIONZAPPEND) unstable; urgency=low
 
  * Initial Release.
 
--- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 9 Sep 2015 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 9 Sep 2015 00:00:00 +0000
