@@ -1,13 +1,13 @@
 Summary:            Bit::Vector - Efficient bit vector, set of integers and "big int" math library
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-carp-clan
-Requires:           zimbra-perl-base, zimbra-perl-carp-clan
+BuildRequires:      zimbra-perl-base, zimbra-perl-carp-clan >= 6.08-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-carp-clan >= 6.08-1zimbra8.7b1ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -15,6 +15,10 @@ URL:                https://metacpan.org/release/MODNAME
 Efficient base class implementing bit vectors
 
 %define debug_package %{nil}
+
+%changelog
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded dependency carp-clan to 6.08
 
 %prep
 %setup -n MODNAME-%{version}
