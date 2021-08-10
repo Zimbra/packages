@@ -1,17 +1,17 @@
 Summary:            Mail::SpamAssassin - Spam detector and markup engine
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.8b3ZAPPEND
+Release:            1zimbra8.8b4ZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
-BuildRequires:      zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
+BuildRequires:      zimbra-perl-html-parser, zimbra-perl-io-compress >= 2.093-1zimbra8.7b1ZAPPEND, zimbra-perl-mail-spf
 BuildRequires:      zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b3ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 BuildRequires:      zimbra-perl-encode-detect
 Requires:           zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
-Requires:           zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
+Requires:           zimbra-perl-html-parser, zimbra-perl-io-compress >= 2.093-1zimbra8.7b1ZAPPEND, zimbra-perl-mail-spf
 Requires:           zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b3ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 Requires:           zimbra-perl-encode-detect, zimbra-mta-base
 AutoReqProv:        no
@@ -23,6 +23,8 @@ including text analysis, internet-based realtime blacklists, statistical
 analysis, and internet-based hashing algorithms.
 
 %changelog
+* Tue Aug 10 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- Updated dependency zimbra-perl-io-compress
 * Thu Apr 08 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Updated spamassassin to 3.4.5, ZBUG-2173
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
