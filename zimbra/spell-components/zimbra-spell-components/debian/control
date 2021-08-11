@@ -8,11 +8,15 @@ Standards-Version: 3.9.5
 Package: zimbra-spell-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-spell-base, zimbra-aspell-ar, zimbra-aspell-da, zimbra-aspell-de,
- zimbra-aspell-en, zimbra-aspell-es, zimbra-aspell-fr, zimbra-aspell-hi,
- zimbra-aspell-hu, zimbra-aspell-it, zimbra-aspell-nl, zimbra-aspell-pl,
- zimbra-aspell-pt-br, zimbra-aspell-ru, zimbra-aspell-sv, zimbra-httpd (>= 2.4.46-1zimbra8.7b3ZAPPEND),
- zimbra-php (>= 7.3.25-1zimbra8.7b3ZAPPEND), zimbra-aspell-zimbra
+ zimbra-spell-base, zimbra-aspell-ar (>= 1.2.0-1zimbra8.7b2ZAPPEND),
+ zimbra-aspell-da (>= 1.4.42.1-1zimbra8.7b2ZAPPEND), zimbra-aspell-de (>= 20030222.1-1zimbra8.7b2ZAPPEND),
+ zimbra-aspell-en (>= 7.1.0-1zimbra8.7b2ZAPPEND), zimbra-aspell-es (>= 1.11.2-1zimbra8.7b2ZAPPEND),
+ zimbra-aspell-fr (>= 0.50.3-1zimbra8.7b2ZAPPEND), zimbra-aspell-hi (>= 0.02.0-1zimbra8.7b2ZAPPEND),
+ zimbra-aspell-hu (>= 0.99.4.2.0-1zimbra8.7b2ZAPPEND), zimbra-aspell-it (>= 2.2.20050523.0-1zimbra8.7b2ZAPPEND),
+ zimbra-aspell-nl (>= 0.50.2-1zimbra8.7b2ZAPPEND), zimbra-aspell-pl (>= 6.0.20061121.0-1zimbra8.7b2ZAPPEND),
+ zimbra-aspell-pt-br (>= 20090702.0-1zimbra8.7b2ZAPPEND), zimbra-aspell-ru (>= 0.99f7.1-1zimbra8.7b2ZAPPEND),
+ zimbra-aspell-sv (>= 0.51.0-1zimbra8.7b2ZAPPEND), zimbra-httpd (>= 2.4.46-1zimbra8.7b3ZAPPEND),
+ zimbra-php (>= 7.3.25-1zimbra8.7b3ZAPPEND), zimbra-aspell-zimbra (>= 1.0.0-1zimbra8.7b2ZAPPEND)
 Description: Zimbra components for spell package
  Zimbra spell components pulls in all the packages used by
  zimbra-spell
