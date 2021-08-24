@@ -1,3 +1,9 @@
+zimbra-core-components (2.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openjdk-cacerts
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 00:00:00 +0000
+
 zimbra-core-components (2.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openldap to 2.4.59
