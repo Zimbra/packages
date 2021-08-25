@@ -1,6 +1,6 @@
 Summary:            CA Certs keystore for OpenJDK
 Name:               zimbra-openjdk-cacerts
-Version:            1.0.5
+Version:            1.0.6
 Release:            ITERATIONZAPPEND
 License:            MPL-2
 Requires:           zimbra-base, zimbra-openjdk
@@ -14,6 +14,8 @@ AutoReqProv:        no
 CA certs keystore for use with OpenJDK
 
 %changelog
+* Tue Aug 24 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.6-ITERATIONZAPPEND
+- Update openjdk-cacerts from latest Mozilla certdata.txt
 * Thu Feb 11 2016  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.5-ITERATIONZAPPEND
 - Relocate cacerts to OZCE/java to avoid conflicts with the OpenJDK package
 * Fri Dec 14 2015  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4-ITERATIONZAPPEND
