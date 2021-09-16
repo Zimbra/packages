@@ -58,7 +58,7 @@ if [ "$1" -ge "2" ]; then
         if [ -d "$dir" ]; then
         /bin/chown zimbra:zimbra $dir/cacerts.*
         /bin/chmod 644 $dir/cacerts.*
-        for cert in `/opt/zimbra/common/bin/keytool -list -keystore $dir/cacerts.*  -storepass changeit | grep trustedCertEntry | grep -v 'openjdk-cacerts/build/ubuntu'| grep -v 'tmp/rhel' | grep -Eo "^[^,]*"`;do
+        for cert in `/opt/zimbra/common/bin/keytool -list -keystore $dir/cacerts.*  -storepass changeit | grep trustedCertEntry | grep -v 'openjdk-cacerts/build/ubuntu'| grep -v 'tmp/rhel'| grep -v 'openjdk-cacerts/build/rhel'|  grep -Eo "^[^,]*"`;do
             /opt/zimbra/common/bin/keytool -exportcert -keystore $dir/cacerts.* -storepass changeit -alias $cert -file $dir/${cert}.crt
             /bin/chown zimbra:zimbra $dir/${cert}.crt
             /bin/su - zimbra -c "/opt/zimbra/bin/zmcertmgr addcacert $dir/${cert}.crt"
