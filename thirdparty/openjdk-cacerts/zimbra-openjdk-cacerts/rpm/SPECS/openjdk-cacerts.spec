@@ -46,6 +46,11 @@ if [ "$1" -ge "2" ]; then
 fi
 
 %post -p /bin/bash
+mailboxd_truststore_password=$(/bin/su - zimbra -c "zmlocalconfig -s -m nokey mailboxd_truststore_password")
+if [ -z "$mailboxd_truststore_password" ]
+then
+	  mailboxd_truststore_password=changeit
+fi
 /bin/chown zimbra:zimbra OZCE/java/cacerts
 /bin/chmod 644 OZCE/java/cacerts
 if [ "$1" -ge "2" ]; then
@@ -58,8 +63,8 @@ if [ "$1" -ge "2" ]; then
         if [ -d "$dir" ]; then
         /bin/chown zimbra:zimbra $dir/cacerts.*
         /bin/chmod 644 $dir/cacerts.*
-        for cert in `/opt/zimbra/common/bin/keytool -list -keystore $dir/cacerts.*  -storepass changeit | grep trustedCertEntry | grep -v 'openjdk-cacerts/build/ubuntu'| grep -v 'tmp/rhel'| grep -v 'openjdk-cacerts/build/rhel'|  grep -Eo "^[^,]*"`;do
-            /opt/zimbra/common/bin/keytool -exportcert -keystore $dir/cacerts.* -storepass changeit -alias $cert -file $dir/${cert}.crt
+        for cert in `/opt/zimbra/common/bin/keytool -list -keystore $dir/cacerts.*  -storepass $mailboxd_truststore_password | grep trustedCertEntry | grep -v 'openjdk-cacerts/build/ubuntu'| grep -v 'tmp/rhel'| grep -v 'openjdk-cacerts/build/rhel'|  grep -Eo "^[^,]*"`;do
+            /opt/zimbra/common/bin/keytool -exportcert -keystore $dir/cacerts.* -storepass $mailboxd_truststore_password -alias $cert -file $dir/${cert}.crt
             /bin/chown zimbra:zimbra $dir/${cert}.crt
             /bin/su - zimbra -c "/opt/zimbra/bin/zmcertmgr addcacert $dir/${cert}.crt"
             done
