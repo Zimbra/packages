@@ -2,6 +2,7 @@
 if [ "$1" = configure ]; then
   /bin/chown zimbra:zimbra /opt/zimbra/common/etc/java/cacerts
   /bin/chmod 644 /opt/zimbra/common/etc/java/cacerts
+  mailboxd_truststore_password=$(/bin/su - zimbra -c "zmlocalconfig -s -m nokey mailboxd_truststore_password")
   if [ -z "$mailboxd_truststore_password" ]
   then
 	  mailboxd_truststore_password=changeit
