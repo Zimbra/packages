@@ -47,10 +47,6 @@ fi
 
 %post -p /bin/bash
 mailboxd_truststore_password=$(/bin/su - zimbra -c "zmlocalconfig -s -m nokey mailboxd_truststore_password")
-if [ -z "$mailboxd_truststore_password" ]
-then
-	  mailboxd_truststore_password=changeit
-fi
 /bin/chown zimbra:zimbra OZCE/java/cacerts
 /bin/chmod 644 OZCE/java/cacerts
 if [ "$1" -ge "2" ]; then
@@ -59,6 +55,9 @@ if [ "$1" -ge "2" ]; then
     /bin/su - zimbra -c '/opt/zimbra/bin/zmcertmgr createca'
     # Run as zimbra, update OpenJDK cacerts file with the CA stored in LDAP
     /bin/su - zimbra -c '/opt/zimbra/bin/zmcertmgr deployca --localonly'
+    if [ $mailboxd_truststore_password != "changeit" ]; then
+       /bin/su - zimbra -c "/opt/zimbra/common/bin/keytool -storepasswd -keystore /opt/zimbra/common/etc/java/cacerts -storepass changeit -new $mailboxd_truststore_password"
+    fi
     for dir in /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-1.0.[5-6]*; do
         if [ -d "$dir" ]; then
         /bin/chown zimbra:zimbra $dir/cacerts.*
