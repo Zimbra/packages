@@ -1,3 +1,21 @@
+zimbra-ldap-components (2.0.3-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap and core-components to 3.0.9
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 02 Sep 2021 22:26:24 +0000
+
+zimbra-ldap-components (2.0.2-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated core-components to 3.0.8
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 02 Sep 2021 22:26:24 +0000
+
+zimbra-ldap-components (2.0.1-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Added dependency core-components
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 22:26:24 +0000
+
 zimbra-ldap-components (1.0.13-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openldap and core-components to 2.0.13
