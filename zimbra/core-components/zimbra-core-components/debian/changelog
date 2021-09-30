@@ -1,34 +1,40 @@
-zimbra-core-components (3.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-core-components (2.0.14-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix for ZBUG-2389, Upgraded OpenSSL to 1.1.1l
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 30 Sep 2021 00:00:00 +0000
+
+zimbra-core-components (2.0.13-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openjdk-cacerts to 1.0.8 and updated openldap
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 02 Sep 2021 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 00:00:00 +0000
 
-zimbra-core-components (3.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-core-components (2.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
-  * Updated openjdk-cacerts, fix ZBUG-2400
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 02 Sep 2021 00:00:00 +0000
-
-zimbra-core-components (3.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
-
-  * Updated openjdk-cacerts
+  * Updated openjdk-cacerts to 1.0.7
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 00:00:00 +0000
 
-zimbra-core-components (3.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-core-components (2.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openjdk-cacerts to 1.0.6
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 00:00:00 +0000
+
+zimbra-core-components (2.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openldap to 2.4.59
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 17 Aug 2021 22:26:24 +0000
 
-zimbra-core-components (3.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-core-components (2.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openssl to 1.1.1k
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 15 Apr 2021 22:26:24 +0000
 
-zimbra-core-components (3.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+zimbra-core-components (2.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openssl
 
