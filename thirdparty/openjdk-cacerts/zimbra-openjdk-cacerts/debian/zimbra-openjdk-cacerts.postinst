@@ -2,18 +2,22 @@
 if [ "$1" = configure ]; then
   /bin/chown zimbra:zimbra /opt/zimbra/common/etc/java/cacerts
   /bin/chmod 644 /opt/zimbra/common/etc/java/cacerts
+  mailboxd_truststore_password=$(/bin/su - zimbra -c "zmlocalconfig -s -m nokey mailboxd_truststore_password")
   if [ "$2" != "" ]; then
     if [ -x /opt/zimbra/bin/zmcertmgr ]; then
       # Run as zimbra, extract CA to /opt/zimbra/conf/ca
       /bin/su - zimbra -c '/opt/zimbra/bin/zmcertmgr createca'
       # Run as zimbra, update OpenJDK cacerts file with the CA stored in LDAP
       /bin/su - zimbra -c '/opt/zimbra/bin/zmcertmgr deployca --localonly'
-      for dir in /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-1.0.[5-6]*; do
+      if [ $mailboxd_truststore_password != "changeit" ]; then
+	      /bin/su - zimbra -c "/opt/zimbra/common/bin/keytool -storepasswd -keystore /opt/zimbra/common/etc/java/cacerts -storepass changeit -new $mailboxd_truststore_password"
+      fi
+      for dir in /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-1.0.[5-7]*; do
           if [ -d "$dir" ]; then
              /bin/chown zimbra:zimbra $dir/cacerts.*
              /bin/chmod 644 $dir/cacerts.*
-             for cert in `/opt/zimbra/common/bin/keytool -list -keystore $dir/cacerts.*  -storepass changeit | grep trustedCertEntry | grep -v 'openjdk-cacerts/build/ubuntu'| grep -v 'tmp/rhel'| grep -Eo "^[^,]*"`;do
-                 /opt/zimbra/common/bin/keytool -exportcert -keystore $dir/cacerts.* -storepass changeit -alias $cert -file $dir/${cert}.crt
+             for cert in `/opt/zimbra/common/bin/keytool -list -keystore $dir/cacerts.*  -storepass $mailboxd_truststore_password | grep trustedCertEntry | grep -v 'openjdk-cacerts/build/ubuntu'| grep -v 'tmp/rhel'| grep -Eo "^[^,]*"`;do
+                 /opt/zimbra/common/bin/keytool -exportcert -keystore $dir/cacerts.* -storepass $mailboxd_truststore_password -alias $cert -file $dir/${cert}.crt
                 /bin/chown zimbra:zimbra $dir/${cert}.crt
                 /bin/su - zimbra -c "/opt/zimbra/bin/zmcertmgr addcacert $dir/${cert}.crt"
              done
