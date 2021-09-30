@@ -9,10 +9,10 @@ Package: zimbra-mta-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
  sqlite3, zimbra-mta-base, zimbra-altermime, zimbra-amavisd,
- zimbra-clamav (>= 0.102.2-1zimbra8.8b3ZAPPEND),
+ zimbra-clamav (>= 0.103.2-1zimbra8.8b3ZAPPEND),
  zimbra-clamav-db, zimbra-cluebringer, zimbra-mariadb (>= 10.1.25-1zimbra8.7b3ZAPPEND),
  zimbra-opendkim (>= 2.10.3-1zimbra8.7b5ZAPPEND), zimbra-perl-mail-spamassassin (>= 3.4.5-1zimbra8.8b3ZAPPEND),
- zimbra-postfix (>= 3.5.6-1zimbra8.7b3ZAPPEND),
+ zimbra-postfix (>= 3.6.1-1zimbra8.7b3ZAPPEND),
  zimbra-spamassassin-rules (>= 1.0.0-1zimbra8.8b4ZAPPEND)
 Description: Zimbra components for MTA package
  Zimbra mta components pulls in all the packages used by

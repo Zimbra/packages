@@ -2075,19 +2075,19 @@ diff -up openssl-1.1.1g/crypto/dh/dh_gen.c.fips-dh openssl-1.1.1g/crypto/dh/dh_g
      ctx = BN_CTX_new();
      if (ctx == NULL)
          goto err;
-diff -up openssl-1.1.1g/crypto/dh/dh_key.c.fips-dh openssl-1.1.1g/crypto/dh/dh_key.c
---- openssl-1.1.1g/crypto/dh/dh_key.c.fips-dh	2020-07-17 10:36:29.182787923 +0200
-+++ openssl-1.1.1g/crypto/dh/dh_key.c	2020-07-17 11:00:07.783777846 +0200
-@@ -100,10 +100,18 @@ static int generate_key(DH *dh)
+diff -up openssl-1.1.1k/crypto/dh/dh_key.c.fips-dh openssl-1.1.1k/crypto/dh/dh_key.c
+--- openssl-1.1.1k/crypto/dh/dh_key.c.fips-dh	2021-04-14 05:22:27.568312523 +0000
++++ openssl-1.1.1k/crypto/dh/dh_key.c	2021-04-14 05:42:37.852346675 +0000
+@@ -126,10 +126,18 @@
+     BN_MONT_CTX *mont = NULL;
      BIGNUM *pub_key = NULL, *priv_key = NULL;
- 
- #ifdef OPENSSL_FIPS
+     #ifdef OPENSSL_FIPS
 -    if (FIPS_mode()
 -        && (BN_num_bits(dh->p) < OPENSSL_DH_FIPS_MIN_MODULUS_BITS)) {
 -        DHerr(DH_F_GENERATE_KEY, DH_R_KEY_SIZE_TOO_SMALL);
 -        return 0;
 +    if (FIPS_mode()) {
-+        if (BN_num_bits(dh->p) < OPENSSL_DH_FIPS_MIN_MODULUS_BITS) {
++       if (BN_num_bits(dh->p) < OPENSSL_DH_FIPS_MIN_MODULUS_BITS) {
 +            DHerr(DH_F_GENERATE_KEY, DH_R_KEY_SIZE_TOO_SMALL);
 +            return 0;
 +        }
@@ -2099,14 +2099,14 @@ diff -up openssl-1.1.1g/crypto/dh/dh_key.c.fips-dh openssl-1.1.1g/crypto/dh/dh_k
 +            return 0;
 +        }
      }
- #endif
+     #endif
  
-@@ -139,7 +147,15 @@ static int generate_key(DH *dh)
+@@ -165,7 +173,15 @@
      }
  
      if (generate_new_key) {
 -        if (dh->q) {
-+        if (FIPS_mode()) {
++            if (FIPS_mode()) {
 +            do {
 +                if (!BN_priv_rand(priv_key, dh->length, BN_RAND_TOP_ANY, BN_RAND_BOTTOM_ANY))
 +                    goto err;
@@ -2118,14 +2118,12 @@ diff -up openssl-1.1.1g/crypto/dh/dh_key.c.fips-dh openssl-1.1.1g/crypto/dh/dh_k
              do {
                  if (!BN_priv_rand_range(priv_key, dh->q))
                      goto err;
-@@ -175,6 +191,15 @@ static int generate_key(DH *dh)
+@@ -201,6 +217,13 @@
          }
          /* We MUST free prk before any further use of priv_key */
          BN_clear_free(prk);
-+
 +        if (FIPS_mode()) {
 +            int check_result;
-+
 +            if (!dh_check_pub_key_full(dh, pub_key, &check_result) || check_result) {
 +                DHerr(DH_F_GENERATE_KEY, DH_R_INVALID_PUBKEY);
 +                goto err;
@@ -2134,7 +2132,7 @@ diff -up openssl-1.1.1g/crypto/dh/dh_key.c.fips-dh openssl-1.1.1g/crypto/dh/dh_k
      }
  
      dh->pub_key = pub_key;
-@@ -197,6 +222,7 @@ static int compute_key(unsigned char *ke
+@@ -223,6 +246,7 @@
      BN_CTX *ctx = NULL;
      BN_MONT_CTX *mont = NULL;
      BIGNUM *tmp;
@@ -2142,12 +2140,12 @@ diff -up openssl-1.1.1g/crypto/dh/dh_key.c.fips-dh openssl-1.1.1g/crypto/dh/dh_k
      int ret = -1;
      int check_result;
  
-@@ -243,6 +269,18 @@ static int compute_key(unsigned char *ke
+@@ -269,6 +293,18 @@
          DHerr(DH_F_COMPUTE_KEY, ERR_R_BN_LIB);
          goto err;
      }
-+
-+    if (BN_is_zero(tmp) || BN_is_one(tmp) || BN_is_negative(tmp)) {
++    
++   if (BN_is_zero(tmp) || BN_is_one(tmp) || BN_is_negative(tmp)) {
 +        DHerr(DH_F_COMPUTE_KEY, ERR_R_BN_LIB);
 +        goto err;
 +    }
@@ -2159,7 +2157,7 @@ diff -up openssl-1.1.1g/crypto/dh/dh_key.c.fips-dh openssl-1.1.1g/crypto/dh/dh_k
 +        goto err;
 +    }
  
-     ret = BN_bn2bin(tmp, key);
+     ret = BN_bn2binpad(tmp, key, BN_num_bytes(dh->p));
   err:
 diff -up openssl-1.1.1g/crypto/dh/dh_lib.c.fips-dh openssl-1.1.1g/crypto/dh/dh_lib.c
 --- openssl-1.1.1g/crypto/dh/dh_lib.c.fips-dh	2020-04-21 14:22:39.000000000 +0200
