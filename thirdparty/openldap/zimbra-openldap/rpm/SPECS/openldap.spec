@@ -16,7 +16,7 @@ Patch8:             pw-argon2.patch
 BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libltdl-devel
-BuildRequires:      zimbra-libsodium-devel
+BuildRequires:      zimbra-libsodium-devel >= 1.0.18-1zimbra8.7b1
 AutoReqProv:        no
 URL:                http://www.openldap.org
 
@@ -114,7 +114,7 @@ The zimbra-openldap-devel package contains the linking libraries and include fil
 %package server
 Summary:        openldap server binaries
 Requires: zimbra-openldap-libs = %{version}-%{release}, zimbra-cyrus-sasl-libs
-Requires: zimbra-libltdl-libs, zimbra-ldap-base, zimbra-libsodium-libs
+Requires: zimbra-libltdl-libs, zimbra-ldap-base, zimbra-libsodium-libs >= 1.0.18-1zimbra8.7b1
 AutoReqProv:        no
 
 %description server
