@@ -1,11 +1,11 @@
 Summary:            Zimbra's Crypt::OpenSSL::RSA build
 Name:               zimbra-perl-crypt-openssl-rsa
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-perl-base, zimbra-openssl-devel
-Requires:           zimbra-perl-base, zimbra-openssl-libs
+BuildRequires:      zimbra-perl-base, zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-perl-base, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 AutoReqProv:        no
 URL:                http://search.cpan.org/dist/Crypt-OpenSSL-RSA/
 
@@ -15,6 +15,12 @@ URL:                http://search.cpan.org/dist/Crypt-OpenSSL-RSA/
 The Zimbra Crypt::OpenSSL::RSA build
 
 %define debug_package %{nil}
+
+%changelog
+* Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded dependency openssl to 1.1.1h
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded perl-crypt-openssl-rsa to 0.31
 
 %prep
 %setup -n Crypt-OpenSSL-RSA-%{version}

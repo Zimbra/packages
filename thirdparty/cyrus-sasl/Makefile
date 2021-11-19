@@ -6,7 +6,7 @@ pvers := $(CYRUS_VERSION)
 pname := cyrus-sasl
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := ftp://ftp.cyrusimap.org/cyrus-sasl//$(pfile)
+purl := https://ftp.osuosl.org/pub/blfs/conglomeration/cyrus-sasl/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

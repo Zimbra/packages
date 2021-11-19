@@ -1,29 +1,38 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-openldap-devel
-BuildRequires:      zimbra-cyrus-sasl-devel
-BuildRequires:      zimbra-openssl-devel
+BuildRequires:      zimbra-openldap-devel >= 2.4.59-1zimbra8.8b4ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-mariadb-devel
-BuildRequires:      zimbra-lmdb-devel
+BuildRequires:      zimbra-lmdb-devel >= 2.4.59-1zimbra8.8b4ZAPPEND
 BuildRequires:      pcre-devel
-Requires:           pcre
-Requires:           zimbra-openldap-libs, zimbra-mta-base
-Requires:           zimbra-cyrus-sasl, zimbra-mariadb
-Requires:           zimbra-lmdb-libs, zimbra-openssl-libs
+Requires:           pcre, libicu
+Requires:           zimbra-openldap-libs >= 2.4.59-1zimbra8.8b4ZAPPEND, zimbra-mta-base
+Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b3ZAPPEND, zimbra-mariadb
+Requires:           zimbra-lmdb-libs >= 2.4.59-1zimbra8.8b4ZAPPEND, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
 Patch3:             lmdb-default.patch
-Patch4:             pass-ip-address.patch
 AutoReqProv:        no
 URL:                https://www.postfix.org/
 
 %description
 The Zimbra Postfix build
+
+%define debug_package %{nil}
+
+%changelog
+* Wed Jun 30 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Upgraded postfix to 3.6.1
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated openldap, cyrus-sasl, openssl, lmdb
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded postfix to 3.5.6
 
 %prep
 %setup -n postfix-%{version}
@@ -31,7 +40,7 @@ The Zimbra Postfix build
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
+#%patch4 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
@@ -73,6 +82,8 @@ rm -f newaliases
 rm -f mailq
 ln -s sendmail mailq
 ln -s sendmail newaliases
+mkdir -p ${RPM_BUILD_ROOT}OZC/lib
+cp -r /opt/zimbra/common/lib/libmariadb.so.3 ${RPM_BUILD_ROOT}OZC/lib/
 
 %files
 %defattr(-,root,root)
@@ -80,6 +91,7 @@ ln -s sendmail newaliases
 OZCLE
 OZC/sbin
 OZCS
+OZC/lib
 
 %post -p /bin/bash
 /bin/chgrp postdrop /opt/zimbra/common/sbin/postdrop
@@ -89,5 +101,10 @@ OZCS
 /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/master.cf
 /bin/chown -f zimbra:zimbra /opt/zimbra/common/conf/main.cf
 if [ "$1" -ge "2" ]; then
- /opt/zimbra/libexec/configrewrite mta
+ USER=$(whoami)
+ if [ "$USER" = "zimbra" ]; then
+    /opt/zimbra/libexec/configrewrite mta
+ else
+   su - zimbra -c "/opt/zimbra/libexec/configrewrite mta"
+ fi
 fi

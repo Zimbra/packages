@@ -26,7 +26,7 @@ setup:
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
-	./import-cacerts -f certdata.txt.20151201 -o $(PLATFORM_DIR)
+	./import-cacerts -f certdata.txt -o $(PLATFORM_DIR)
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
@@ -34,7 +34,7 @@ build_rpm:
 	$(PKG_BUILD) $(specfile)
 
 build_deb:
-	./import-cacerts -f certdata.txt.20151201 -o $(PLATFORM_DIR)
+	./import-cacerts -f certdata.txt -o $(PLATFORM_DIR)
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog && \
 	$(replace-pathinfo) debian/rules && \

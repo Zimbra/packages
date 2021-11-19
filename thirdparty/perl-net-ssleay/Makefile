@@ -8,7 +8,7 @@ pname_lc := net-ssleay
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/M/MI/MIKEM/$(pfile)
+purl := https://cpan.metacpan.org/authors/id/C/CH/CHRISN//$(pfile)
 
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec

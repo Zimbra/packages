@@ -1,3 +1,38 @@
+zimbra-proxy-components (1.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx to 1.20.0
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sun, 25 Jul 2021 17:48:22 +0000
+
+zimbra-proxy-components (1.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 21 Jan 2021 17:48:22 +0000
+
+zimbra-proxy-components (1.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 21 Jan 2021 17:48:22 +0000
+
+zimbra-proxy-components (1.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package to 1.19.0
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 17:48:22 +0000
+
+zimbra-proxy-components (1.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 19 Oct 2020 17:48:22 +0000
+
+zimbra-proxy-components (1.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx package
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 17 Mar 2020 00:00:00 +0000
 zimbra-proxy-components (1.0.3-ITERATIONZAPPEND) unstable; urgency=low
 
   * Updated zimbra-nginx package

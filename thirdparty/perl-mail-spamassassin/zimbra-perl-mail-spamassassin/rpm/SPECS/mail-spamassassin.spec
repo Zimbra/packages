@@ -1,20 +1,18 @@
 Summary:            Mail::SpamAssassin - Spam detector and markup engine
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.8b3ZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
-Patch0:             spamassassin-net-dns.patch
-Patch1:             spamassassin-mail.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
 BuildRequires:      zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
-BuildRequires:      zimbra-perl-mail-dkim, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
+BuildRequires:      zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b3ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 BuildRequires:      zimbra-perl-encode-detect
 Requires:           zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
 Requires:           zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
-Requires:           zimbra-perl-mail-dkim, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
+Requires:           zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b3ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 Requires:           zimbra-perl-encode-detect, zimbra-mta-base
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
@@ -25,6 +23,14 @@ including text analysis, internet-based realtime blacklists, statistical
 analysis, and internet-based hashing algorithms.
 
 %changelog
+* Thu Apr 08 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Updated spamassassin to 3.4.5, ZBUG-2173
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Updated dependency zimbra-perl-mail-dkim
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+- Updated dependency zimbra-perl-mail-dkim
+* Mon Mar 16 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+-Upgraded to 3.4.4
 * Fri Jul 7 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 -Added patch for spamAssasin bug-5561.
 -Miscellaneous patch including bugs 7223,7265.
@@ -33,8 +39,6 @@ analysis, and internet-based hashing algorithms.
 
 %prep
 %setup -n MODNAME-%{version}
-%patch0 -p1
-%patch1 -p1
 
 %build
 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \

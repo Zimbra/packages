@@ -1,3 +1,21 @@
+zimbra-openjdk-cacerts (1.0.8-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Fix for ZBUG-2425
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 02 Sep 2021 00:00:00 +0000
+
+zimbra-openjdk-cacerts (1.0.7-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Fix for ZBUG-2400
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 02 Sep 2021 00:00:00 +0000
+
+zimbra-openjdk-cacerts (1.0.6-ITERATIONZAPPEND) unstable; urgency=low
+
+  * Update openjdk-cacerts from latest Mozilla certdata.txt
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 00:00:00 +0000
+
 zimbra-openjdk-cacerts (1.0.5-ITERATIONZAPPEND) unstable; urgency=low
 
   * Relocate cacerts to /opt/zimbra/common/etc/java to avoid conflicts with the OpenJDK package

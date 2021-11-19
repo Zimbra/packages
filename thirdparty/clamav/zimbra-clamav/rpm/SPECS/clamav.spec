@@ -1,21 +1,33 @@
 Summary:            Zimbra's ClamAV build
 Name:               zimbra-clamav
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.8b3ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zlib-devel
 BuildRequires:      ncurses-devel
-BuildRequires:      zimbra-openssl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b4ZAPPEND
 BuildRequires:      zimbra-libxml2-devel
 BuildRequires:      zimbra-libmilter-devel
-Requires:           zlib, ncurses-libs, zimbra-clamav-libs = %{version}-%{release}, zimbra-openssl-libs
+Requires:           zlib, ncurses-libs, zimbra-clamav-libs = %{version}-%{release}, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-libxml2-libs
 AutoReqProv:        no
 URL:                http://www.clamav.net/
 
 %description
 The Zimbra ClamAV build
+
+%define debug_package %{nil}
+
+%changelog
+* Thu Apr 15 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Upgraded clamav to 0.103.2
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Upgraded dependency openssl to 1.1.1h
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+- Upgraded dependency openssl to 1.1.1g
+* Sun Mar 15 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+- Upgraded clamav to 0.102.2
 
 %prep
 %setup -n clamav-%{version}

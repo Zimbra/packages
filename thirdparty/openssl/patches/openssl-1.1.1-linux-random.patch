@@ -1,0 +1,12 @@
+diff -ruN a/crypto/rand/rand_unix.c b/crypto/rand/rand_unix.c
+--- a/crypto/rand/rand_unix.c	2021-04-14 05:54:21.508366531 +0000
++++ b/crypto/rand/rand_unix.c	2021-04-14 05:54:56.044367506 +0000
+@@ -22,7 +22,7 @@
+ #include "internal/dso.h"
+ #if defined(__linux) && !defined(OPENSSL_SYS_UEFI)
+ # include <sys/syscall.h>
+-# include <sys/random.h>
++#include </usr/include/linux/random.h>
+ # ifdef DEVRANDOM_WAIT
+ #  include <sys/shm.h>
+ #  include <sys/utsname.h>

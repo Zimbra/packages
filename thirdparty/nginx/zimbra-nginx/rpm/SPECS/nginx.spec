@@ -1,15 +1,15 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra8.8b1ZAPPEND
+Release:            1zimbra8.8b2ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
-BuildRequires:      zimbra-openssl-devel
-BuildRequires:      zimbra-cyrus-sasl-devel
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 Requires:           pcre, zlib
-Requires:           zimbra-openssl-libs
-Requires:           zimbra-cyrus-sasl-libs, zimbra-proxy-base
+Requires:           zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-cyrus-sasl-libs >= 2.1.26-1zimbra8.7b3ZAPPEND, zimbra-proxy-base
 AutoReqProv:        no
 URL:                http://nginx.org
 
@@ -17,6 +17,14 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Wed Jul 07 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+- Fix ZBUG-2299
+* Tue Jun 08 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+- Upgraded nginx to 1.20.0
+* Wed Dec 02 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Fix ZBUG-2098
+* Wed Dec 02 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+- Upgraded nginx to 1.19.0
 * Fri Mar 13 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - Patch for nginx bug Bug 109101
 * Thu Feb 12 2019  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b12ZAPPEND
@@ -54,17 +62,15 @@ The Zimbra nginx build
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
 CFLAGS="-g -O0"; export CFLAGS; \
-./configure --prefix=OZC \
+./auto/configure --prefix=OZC \
   --with-cc-opt="-g -IOZCI" \
   --with-ld-opt="-Wl,-rpath,OZCL -LOZCL" \
   --with-debug \
   --with-ipv6 \
   --with-http_ssl_module \
   --with-http_stub_status_module \
+  --with-http_v2_module \
   --with-pcre \
-  --with-http_upstream_zmauth_module \
-  --with-http_zm_sso_module \
-  --with-http_spdy_module \
   --with-mail \
   --with-mail-sasl \
   --with-mail_ssl_module \
@@ -75,7 +81,11 @@ CFLAGS="-g -O0"; export CFLAGS; \
   --http-fastcgi-temp-path=/opt/zimbra/data/tmp/nginx/fastcgi \
   --without-http_scgi_module \
   --without-http_uwsgi_module \
-  --add-module=modules/nviennot-nginx-tcp-keepalive
+  --add-module=modules/nviennot-nginx-tcp-keepalive \
+  --add-module=zmmodules/http/sso \
+  --add-module=zmmodules/http/upstreamzmauth \
+  --add-module=zmmodules/mail/zmauth \
+  --add-module=zmmodules/mail/throttle
 make
 
 %install

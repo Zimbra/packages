@@ -1,9 +1,10 @@
 Summary:            Zimbra's postfix-logwatch build
 Name:               zimbra-postfix-logwatch
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b1ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tgz
+Patch0:             postfix-logwatch.patch
 Requires:           zimbra-base
 AutoReqProv:        no
 URL:                http://www.logwatch.org/
@@ -13,8 +14,13 @@ The Zimbra postfix-logwatch build
 
 %define debug_package %{nil}
 
+%changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Upgraded postfix-logwatch to 1.40.03
+
 %prep
 %setup -n postfix-logwatch-%{version}
+%patch0 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
