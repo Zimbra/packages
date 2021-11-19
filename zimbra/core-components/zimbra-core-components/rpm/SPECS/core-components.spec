@@ -1,10 +1,10 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            3.0.9
+Version:            3.0.10
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements, zimbra-perl >= 1.0.5-1zimbra8.7b1ZAPPEND, zimbra-pflogsumm
-Requires:           zimbra-openssl >= 1.1.1k-1zimbra8.7b4ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-openssl >= 1.1.1l-1zimbra8.7b4ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-rsync
 Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.4.59-1zimbra8.8b5ZAPPEND
@@ -20,6 +20,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Thu Sep 30 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.10
+- Fix for ZBUG-2389, Upgraded OpenSSL to 1.1.1l
 * Thu Sep 02 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.9
 - Updated openjdk-cacerts to 1.0.8 and updated openldap
 * Thu Sep 02 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.8
@@ -31,6 +33,8 @@ AutoReqProv:        no
 * Thu Apr 15 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.5
 - Updated openssl to 1.1.1k
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.4
+- Updated openssl
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.8
 - Updated openssl
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.7
 - Updated zimbra-postfix-logwatch to 1.40.03
