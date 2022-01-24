@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-spell-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-spell-base, zimbra-aspell-ar, zimbra-aspell-da, zimbra-aspell-de,
+ zimbra-spell-base, zimbra-aspell-ar, zimbra-aspell-ca, zimbra-aspell-da, zimbra-aspell-de,
  zimbra-aspell-en, zimbra-aspell-es, zimbra-aspell-fr, zimbra-aspell-hi,
  zimbra-aspell-hu, zimbra-aspell-it, zimbra-aspell-nl, zimbra-aspell-pl,
  zimbra-aspell-pt-br, zimbra-aspell-ru, zimbra-aspell-sv, zimbra-httpd (>= 2.4.51-1zimbra8.7b3ZAPPEND),

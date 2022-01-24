@@ -1,3 +1,9 @@
+zimbra-spell-components (2.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-2145, Added Catalan dictionary
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 24 Jan 2022 22:26:24 +0000
+
 zimbra-spell-components (2.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Fix ZBUG-2362, Upgraded Apache to 2.4.51
