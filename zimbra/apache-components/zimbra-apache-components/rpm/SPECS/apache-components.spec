@@ -1,6 +1,6 @@
 Summary:            Zimbra components for apache package
 Name:               zimbra-apache-components
-Version:            2.0.5
+Version:            2.0.6
 Release:            1zimbra8.8b1ZAPPEND 
 License:            GPL-2
 Requires:           zimbra-apache-base, zimbra-httpd >= 2.4.51-1zimbra8.7b3ZAPPEND, zimbra-php >= 7.3.25-1zimbra8.7b3ZAPPEND
@@ -15,6 +15,8 @@ Zimbra apache components pulls in all the packages used by
 zimbra-apache
 
 %changelog
+* Mon 14 Feb 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
+- Fix ZBUG-2498, Upgraded PHP to 7.4.27
 * Tue Oct 19 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.5
 - Fix ZBUG-2362, Upgraded Apache to 2.4.51
 * Tue Mar 16 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.4

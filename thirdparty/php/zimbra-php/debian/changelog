@@ -1,5 +1,11 @@
 zimbra-php (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
 
+  * Upgraded PHP to 7.4.27 (ZBUG-2498)
+
+   -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 14 Feb 2022 21:56:52 +0000
+
+zimbra-php (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
   * Upgraded PHP to 7.3.25
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sun, 6 Dec 2020 13:12:55 +0000

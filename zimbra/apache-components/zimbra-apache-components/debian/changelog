@@ -1,3 +1,9 @@
+zimbra-apache-components (2.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded PHP to 7.4.27 (ZBUG-2498)
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 14 Feb 2022 21:56:52 +0000
+
 zimbra-apache-components (2.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Fix ZBUG-2362, Upgraded Apache to 2.4.51
