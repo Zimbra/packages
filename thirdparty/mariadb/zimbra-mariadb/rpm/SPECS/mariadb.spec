@@ -1,13 +1,13 @@
 Summary:            Zimbra's MariaDB build
 Name:               zimbra-mariadb
 Version:            VERSION
-Release:            1zimbra8.7b3ZAPPEND
+Release:            1zimbra8.8b1ZAPPEND
 License:            GPLv2
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      libaio-devel
 BuildRequires:      ncurses-devel
-BuildRequires:      zimbra-openssl-devel = 1.0.2t-1zimbra8.7b2ZAPPEND
-Requires:           libaio, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND, zimbra-base
+BuildRequires:      zimbra-openssl-devel >= 1.1.1l-1zimbra8.7b4ZAPPEND
+Requires:           libaio, zimbra-openssl-libs >= 1.1.1l-1zimbra8.7b4ZAPPEND, zimbra-base
 Requires:           zimbra-mariadb-libs = %{version}-%{release}, ncurses-libs, perl
 AutoReqProv:        no
 URL:                https://www.mariadb.org/
@@ -21,10 +21,12 @@ The Zimbra MariaDB build for SQL database storage
 %define debug_package %{nil}
 
 %build
-LDFLAGS="-Wl,-rpath,OZCL:OZCL/mysql"; export LDFLAGS; \
+LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
 CFLAGS="-O3 -fno-omit-frame-pointer -pipe -Wall -Wno-uninitialized -DNDEBUG"; export CFLAGS; \
 /usr/bin/cmake . \
-  -DBUILD_CONFIG=mysql_release \
+  -DBUILD_TYPE=mysql_release \
+  -DPLUGIN_AUTH_PAM=NO \
+  -DPLUGIN_AUTH_PAM_V1=NO \
   -DCOMPILATION_COMMENT="Zimbra MariaDB binary distribution" \
   -DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE  \
   -DCMAKE_INSTALL_PREFIX="OZC" \
@@ -73,13 +75,10 @@ rm -f ${RPM_BUILD_ROOT}OZCL/libmysqlclient_r.so.18.0.0
 cd ${RPM_BUILD_ROOT}OZCL && \
 ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
 ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
-mkdir -p ${RPM_BUILD_ROOT}OZCL/mysql && sudo chmod 755 -R ${RPM_BUILD_ROOT}OZCL/mysql
-cp -r /opt/zimbra/common/lib/libssl.so.1.0.0 /opt/zimbra/common/lib/libcrypto.so.1.0.0 ${RPM_BUILD_ROOT}OZCL/mysql/
-sudo chmod 755 -R ${RPM_BUILD_ROOT}OZCL/mysql
 
 %package libs
 Summary:        MariaDB Libaries
-Requires: libaio, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND, zimbra-base
+Requires: libaio, zimbra-openssl-libs >= 1.1.1l-1zimbra8.7b4ZAPPEND, zimbra-base
 AutoReqProv:        no
 
 %description libs
@@ -105,7 +104,8 @@ OZCS
 %defattr(-,root,root)
 OZCL/*.so.*
 OZCL/plugin
-OZCL/mysql
+OZCL/pkgconfig/libmariadb.pc
+OZCL/pkgconfig/mariadb.pc
 
 %files devel
 %defattr(-,root,root)
@@ -116,6 +116,8 @@ OZCI
 OZCS/man/man1/mysql_config.1
 
 %changelog
+* Wed Feb 02 2022 Zimbra Packaging Services <packaging-devel@zimbra.com>
+- Upgraded mariadb to 10.6.5
 * Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded dependency openssl to 1.1.1h
 * Thu Sep 17 2020 Zimbra Packaging Services <packaging-devel@zimbra.com>
