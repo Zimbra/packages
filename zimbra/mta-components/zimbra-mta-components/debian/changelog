@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated postfix
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 15 Feb 2022 22:26:24 +0000
+
 zimbra-mta-components (1.0.14-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded postfix to 3.6.1
