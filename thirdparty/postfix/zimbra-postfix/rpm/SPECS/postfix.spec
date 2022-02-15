@@ -1,7 +1,7 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            1zimbra8.7b3ZAPPEND
+Release:            1zimbra8.7b4ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-openldap-devel >= 2.4.59-1zimbra8.8b4ZAPPEND
@@ -27,6 +27,8 @@ The Zimbra Postfix build
 %define debug_package %{nil}
 
 %changelog
+* Tue Feb 08 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+- Updated postfix (removed libmariadb.so.3 from postfix package)
 * Wed Jun 30 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded postfix to 3.6.1
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
@@ -82,8 +84,6 @@ rm -f newaliases
 rm -f mailq
 ln -s sendmail mailq
 ln -s sendmail newaliases
-mkdir -p ${RPM_BUILD_ROOT}OZC/lib
-cp -r /opt/zimbra/common/lib/libmariadb.so.3 ${RPM_BUILD_ROOT}OZC/lib/
 
 %files
 %defattr(-,root,root)
@@ -91,7 +91,6 @@ cp -r /opt/zimbra/common/lib/libmariadb.so.3 ${RPM_BUILD_ROOT}OZC/lib/
 OZCLE
 OZC/sbin
 OZCS
-OZC/lib
 
 %post -p /bin/bash
 /bin/chgrp postdrop /opt/zimbra/common/sbin/postdrop
