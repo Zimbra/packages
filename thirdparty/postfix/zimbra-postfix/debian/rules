@@ -53,8 +53,6 @@ override_dh_auto_install:
 	rm -f mailq
 	ln -s sendmail mailq
 	ln -s sendmail newaliases
-	mkdir -p $$(pwd)/debian/tmpOZC/lib
-	cp -r /opt/zimbra/common/lib/libmariadb.so.3 $$(pwd)/debian/tmpOZC/lib/
 
 override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
