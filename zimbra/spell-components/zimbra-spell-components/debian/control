@@ -12,7 +12,7 @@ Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
  zimbra-aspell-en, zimbra-aspell-es, zimbra-aspell-fr, zimbra-aspell-hi,
  zimbra-aspell-hu, zimbra-aspell-it, zimbra-aspell-nl, zimbra-aspell-pl,
  zimbra-aspell-pt-br, zimbra-aspell-ru, zimbra-aspell-sv, zimbra-httpd (>= 2.4.51-1zimbra8.7b3ZAPPEND),
- zimbra-php (>= 7.3.25-1zimbra8.7b3ZAPPEND), zimbra-aspell-zimbra
+ zimbra-php (>= 7.4.27-1zimbra8.7b3ZAPPEND), zimbra-aspell-zimbra
 Description: Zimbra components for spell package
  Zimbra spell components pulls in all the packages used by
  zimbra-spell

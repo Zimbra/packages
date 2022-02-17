@@ -7,7 +7,7 @@ Requires:           zimbra-spell-base, zimbra-aspell-ar, zimbra-aspell-ca, zimbr
 Requires:           zimbra-aspell-en, zimbra-aspell-es, zimbra-aspell-fr, zimbra-aspell-hi
 Requires:           zimbra-aspell-hu, zimbra-aspell-it, zimbra-aspell-nl, zimbra-aspell-pl
 Requires:           zimbra-aspell-pt-br, zimbra-aspell-ru, zimbra-aspell-sv, zimbra-httpd >= 2.4.51-1zimbra8.7b3ZAPPEND
-Requires:           zimbra-php >= 7.3.25-1zimbra8.7b3ZAPPEND, zimbra-aspell-zimbra
+Requires:           zimbra-php >= 7.4.27-1zimbra8.7b3ZAPPEND, zimbra-aspell-zimbra
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
