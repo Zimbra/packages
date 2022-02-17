@@ -1,6 +1,6 @@
 Summary:            Zimbra components for spell package
 Name:               zimbra-spell-components
-Version:            2.0.6
+Version:            2.0.7
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-spell-base, zimbra-aspell-ar, zimbra-aspell-ca, zimbra-aspell-da, zimbra-aspell-de
@@ -19,6 +19,8 @@ Zimbra spell components pulls in all the packages used by
 zimbra-spell
 
 %changelog
+* Mon Feb 14 Feb 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.7
+- Fix ZESC-2120, Update PHP to 7.4.27
 * Tue Jan 24 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
 - Fix ZBUG-2145, Added Catalan dictionary
 * Tue Oct 19 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.5
