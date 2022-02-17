@@ -2,7 +2,7 @@ zimbra-spell-components (2.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Fix ZESC-2120, Update PHP to 7.4.27
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon Feb 14 Feb 2022 22:26:24 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 14 Feb 2022 22:26:24 +0000
 
 zimbra-spell-components (2.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
