@@ -19,7 +19,7 @@ Zimbra spell components pulls in all the packages used by
 zimbra-spell
 
 %changelog
-* Mon Feb 14 Feb 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.7
+* Mon Feb 14 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.7
 - Fix ZESC-2120, Update PHP to 7.4.27
 * Tue Jan 24 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
 - Fix ZBUG-2145, Added Catalan dictionary
