@@ -20,7 +20,7 @@ zimbra-spell
 
 %changelog
 * Mon Feb 14 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.7
-- Fix ZESC-2120, Update PHP to 7.4.27
+- Fix ZBUG-2498, Update PHP to 7.4.27
 * Tue Jan 24 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
 - Fix ZBUG-2145, Added Catalan dictionary
 * Tue Oct 19 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.5
