@@ -70,11 +70,8 @@ rm -rf ${RPM_BUILD_ROOT}OZC/mysql-test
 rm -rf ${RPM_BUILD_ROOT}OZC/sql-bench
 rm -rf ${RPM_BUILD_ROOT}OZC/support-files
 rm -f ${RPM_BUILD_ROOT}OZC/sbin/rcmysql
-rm -f ${RPM_BUILD_ROOT}OZCL/libmysqlclient_r.so.18
-rm -f ${RPM_BUILD_ROOT}OZCL/libmysqlclient_r.so.18.0.0
 cd ${RPM_BUILD_ROOT}OZCL && \
-ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
-ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
+mv libmariadb.so.3 libmariadb_r.so.3
 
 %package libs
 Summary:        MariaDB Libaries

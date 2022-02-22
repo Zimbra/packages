@@ -52,11 +52,8 @@ override_dh_strip:
 override_dh_auto_install:
 	$(MAKE) install DESTDIR=$$(pwd)/debian/tmp
 	rm -f $$(pwd)/debian/tmpOZC/sbin/rcmysql
-	rm -f $$(pwd)/debian/tmpOZCL/libmysqlclient_r.so.18
-	rm -f $$(pwd)/debian/tmpOZCL/libmysqlclient_r.so.18.0.0
 	cd $$(pwd)/debian/tmpOZCL && \
-	ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
-	ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
+	mv libmariadb.so.3 libmariadb_r.so.3
 
 override_dh_install:
 	dh_install
