@@ -15,7 +15,7 @@ Zimbra apache components pulls in all the packages used by
 zimbra-apache
 
 %changelog
-* Mon 14 Feb 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
+* Mon Feb 18 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.6
 - Fix ZBUG-2498, Upgraded PHP to 7.4.27
 * Tue Oct 19 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.5
 - Fix ZBUG-2362, Upgraded Apache to 2.4.51
