@@ -25,7 +25,7 @@ cd build && \
   -DCMAKE_INSTALL_RPATH="OZCL" \
   -DCMAKE_PREFIX_PATH="OZC" \
   -DINIT_FLAVOR=none \
-  -DGENERATE_SRS_SECRET=OFF \
+  -DGENERATE_SRS_SECRET="/opt/zimbra/common/etc/postsrsd.secret" \
   -DSYSCONF_DIR=OZCE
 make all
 
