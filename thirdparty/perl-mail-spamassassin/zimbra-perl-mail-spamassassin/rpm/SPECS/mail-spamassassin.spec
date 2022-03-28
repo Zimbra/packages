@@ -23,6 +23,8 @@ including text analysis, internet-based realtime blacklists, statistical
 analysis, and internet-based hashing algorithms.
 
 %changelog
+* Mon Mar 28 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Fix ZCS-11117, Upgraded spamassassin to 3.4.6
 * Thu Apr 08 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Updated spamassassin to 3.4.5, ZBUG-2173
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
