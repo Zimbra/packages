@@ -143,18 +143,19 @@ diff -up openssl-1.1.1g/crypto/fips/fips_post.c.kdf-selftest openssl-1.1.1g/cryp
      return rv;
  }
  
-diff -up openssl-1.1.1g/include/crypto/fips.h.kdf-selftest openssl-1.1.1g/include/crypto/fips.h
---- openssl-1.1.1g/include/crypto/fips.h.kdf-selftest	2020-06-03 16:08:36.330849519 +0200
-+++ openssl-1.1.1g/include/crypto/fips.h	2020-06-03 16:08:36.338849585 +0200
-@@ -72,6 +72,9 @@ void FIPS_drbg_stick(int onoff);
+--- a/include/crypto/fips.h	2022-04-19 09:55:58.190884984 +0000
++++ b/include/crypto/fips.h	2022-04-19 09:56:53.636189877 +0000
+@@ -72,6 +72,9 @@
  int FIPS_selftest_hmac(void);
  int FIPS_selftest_drbg(void);
  int FIPS_selftest_cmac(void);
 +int FIPS_selftest_kbkdf(void);
 +int FIPS_selftest_pbkdf2(void);
 +int FIPS_selftest_kdf(void);
- 
  int fips_in_post(void);
+ 
+ int fips_pkey_signature_test(EVP_PKEY *pkey,
+
  
 diff -up openssl-1.1.1g/include/openssl/fips.h.kdf-selftest openssl-1.1.1g/include/openssl/fips.h
 --- openssl-1.1.1g/include/openssl/fips.h.kdf-selftest	2020-06-03 16:08:36.282849124 +0200
@@ -168,3 +169,4 @@ diff -up openssl-1.1.1g/include/openssl/fips.h.kdf-selftest openssl-1.1.1g/inclu
  # define FIPS_F_FIPS_SELFTEST_SHA1                        115
  # define FIPS_F_FIPS_SELFTEST_SHA2                        105
  # define FIPS_F_OSSL_ECDSA_SIGN_SIG                       143
+

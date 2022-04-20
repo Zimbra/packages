@@ -1,11 +1,12 @@
---- a/include/openssl/opensslv.h	2021-09-30 12:46:09.269544129 +0000
-+++ b/include/openssl/opensslv.h	2021-09-30 12:47:05.918640059 +0000
+diff -ruN a/include/openssl/opensslv.h b/include/openssl/opensslv.h
+--- a/include/openssl/opensslv.h	2022-04-19 06:23:42.149619433 +0000
++++ b/include/openssl/opensslv.h	2022-04-19 06:25:13.419792775 +0000
 @@ -40,7 +40,7 @@
   *  major minor fix final patch/beta)
   */
- # define OPENSSL_VERSION_NUMBER  0x101010cfL
--# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1l  24 Aug 2021"
-+# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1l FIPS 24 Aug 2021"
+ # define OPENSSL_VERSION_NUMBER  0x101010efL
+-# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1n  15 Mar 2022"
++# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1n FIPS 15 Mar 2022"
  
  /*-
   * The macros below are to be used for shared library (.so, .dll, ...)
