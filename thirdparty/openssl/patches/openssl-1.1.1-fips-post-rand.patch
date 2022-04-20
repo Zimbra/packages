@@ -1,6 +1,6 @@
-diff -up openssl-1.1.1e/crypto/fips/fips.c.fips-post-rand openssl-1.1.1e/crypto/fips/fips.c
---- openssl-1.1.1e/crypto/fips/fips.c.fips-post-rand	2020-03-17 18:06:16.822418854 +0100
-+++ openssl-1.1.1e/crypto/fips/fips.c	2020-03-17 18:06:16.861418172 +0100
+diff -ruN a/crypto/fips/fips.c b/crypto/fips/fips.c
+--- a/crypto/fips/fips.c	2022-04-19 06:41:41.439286918 +0000
++++ b/crypto/fips/fips.c	2022-04-19 06:49:20.870146540 +0000
 @@ -68,6 +68,7 @@
  
  # include <openssl/fips.h>
@@ -17,7 +17,7 @@ diff -up openssl-1.1.1e/crypto/fips/fips.c.fips-post-rand openssl-1.1.1e/crypto/
  
  static int fips_is_owning_thread(void);
  static int fips_set_owning_thread(void);
-@@ -158,6 +160,11 @@ void fips_set_selftest_fail(void)
+@@ -158,6 +160,11 @@
      fips_selftest_fail = 1;
  }
  
@@ -29,32 +29,31 @@ diff -up openssl-1.1.1e/crypto/fips/fips.c.fips-post-rand openssl-1.1.1e/crypto/
  /* we implement what libfipscheck does ourselves */
  
  static int
-@@ -445,6 +452,8 @@ int FIPS_module_mode_set(int onoff)
+@@ -444,6 +451,7 @@
+             }
          }
  # endif
- 
 +        fips_post = 1;
-+
+ 
          if (!FIPS_selftest()) {
              fips_selftest_fail = 1;
+@@ -458,8 +466,11 @@
              ret = 0;
-@@ -459,7 +468,12 @@ int FIPS_module_mode_set(int onoff)
              goto end;
          }
- 
+-
++         
 +        fips_post = 0;
-+
          fips_set_mode(onoff);
 +        /* force RNG reseed with entropy from getrandom() on next call */
 +        rand_force_reseed();
-+
          ret = 1;
          goto end;
      }
-diff -up openssl-1.1.1e/crypto/rand/drbg_lib.c.fips-post-rand openssl-1.1.1e/crypto/rand/drbg_lib.c
---- openssl-1.1.1e/crypto/rand/drbg_lib.c.fips-post-rand	2020-03-17 15:31:17.000000000 +0100
-+++ openssl-1.1.1e/crypto/rand/drbg_lib.c	2020-03-17 18:07:35.305045521 +0100
-@@ -1009,6 +1009,20 @@ size_t rand_drbg_seedlen(RAND_DRBG *drbg
+diff -ruN a/crypto/rand/drbg_lib.c b/crypto/rand/drbg_lib.c
+--- a/crypto/rand/drbg_lib.c	2022-04-19 06:49:51.642879210 +0000
++++ b/crypto/rand/drbg_lib.c	2022-04-19 06:51:39.661451646 +0000
+@@ -1005,6 +1005,20 @@
      return min_entropy > min_entropylen ? min_entropy : min_entropylen;
  }
  
@@ -75,9 +74,9 @@ diff -up openssl-1.1.1e/crypto/rand/drbg_lib.c.fips-post-rand openssl-1.1.1e/cry
  /* Implements the default OpenSSL RAND_add() method */
  static int drbg_add(const void *buf, int num, double randomness)
  {
-diff -up openssl-1.1.1k/crypto/rand/rand_unix.c.fips-post-rand openssl-1.1.1k/crypto/rand/rand_unix.c
---- openssl-1.1.1k/crypto/rand/rand_unix.c.fips-post-rand	2021-04-14 03:50:53.100157480 +0000
-+++ openssl-1.1.1k/crypto/rand/rand_unix.c	2021-04-14 04:04:58.984181350 +0000
+diff -ruN a/crypto/rand/rand_unix.c b/crypto/rand/rand_unix.c
+--- a/crypto/rand/rand_unix.c	2022-04-19 06:52:35.962791633 +0000
++++ b/crypto/rand/rand_unix.c	2022-04-19 07:01:17.739208906 +0000
 @@ -14,6 +14,7 @@
  #include <stdio.h>
  #include "internal/cryptlib.h"
@@ -111,21 +110,21 @@ diff -up openssl-1.1.1k/crypto/rand/rand_unix.c.fips-post-rand openssl-1.1.1k/cr
  #  if defined(__GNUC__) && __GNUC__>=2 && defined(__ELF__) && !defined(__hpux)
      extern int getentropy(void *buffer, size_t length) __attribute__((weak));
  
-@@ -395,9 +398,11 @@
+@@ -399,10 +402,11 @@
+     if (p_getentropy.p != NULL)
          return p_getentropy.f(buf, buflen) == 0 ? (ssize_t)buflen : -1;
  #  endif
- 
 +#  endif
-+
+ 
      /* Linux supports this since version 3.17 */
 -#  if defined(__linux) && defined(__NR_getrandom)
 -    return syscall(__NR_getrandom, buf, buflen, 0);
-+#  if defined(__linux) && defined(SYS_getrandom)
++#if defined(__linux) && defined(SYS_getrandom)
 +    return syscall(SYS_getrandom, buf, buflen, nonblock?GRND_NONBLOCK:0);
  #  elif (defined(__FreeBSD__) || defined(__NetBSD__)) && defined(KERN_ARND)
      return sysctl_random(buf, buflen);
  #  else
-@@ -633,6 +638,8 @@
+@@ -638,6 +642,8 @@
      size_t entropy_available;
  
  #   if defined(OPENSSL_RAND_SEED_GETRANDOM)
@@ -134,16 +133,16 @@ diff -up openssl-1.1.1k/crypto/rand/rand_unix.c.fips-post-rand openssl-1.1.1k/cr
      {
          size_t bytes_needed;
          unsigned char *buffer;
-@@ -643,7 +650,7 @@
+@@ -648,7 +654,7 @@
          bytes_needed = rand_pool_bytes_needed(pool, 1 /*entropy_factor*/);
          while (bytes_needed != 0 && attempts-- > 0) {
              buffer = rand_pool_add_begin(pool, bytes_needed);
 -            bytes = syscall_random(buffer, bytes_needed);
-+             bytes = syscall_random(buffer, bytes_needed, in_post);
++            bytes = syscall_random(buffer, bytes_needed, in_post);
              if (bytes > 0) {
                  rand_pool_add_end(pool, bytes, 8 * bytes);
                  bytes_needed -= bytes;
-@@ -678,9 +685,10 @@
+@@ -683,8 +689,10 @@
              int attempts = 3;
              const int fd = get_random_device(i);
  
@@ -151,38 +150,36 @@ diff -up openssl-1.1.1k/crypto/rand/rand_unix.c.fips-post-rand openssl-1.1.1k/cr
 +            if (fd == -1) {
 +                OPENSSL_showfatal("Random device %s cannot be opened.\n", random_device_paths[i]);
                  continue;
--
-+           }
++            }
+ 
              while (bytes_needed != 0 && attempts-- > 0) {
                  buffer = rand_pool_add_begin(pool, bytes_needed);
-                 bytes = read(fd, buffer, bytes_needed);
-@@ -742,7 +750,9 @@
+@@ -747,7 +755,9 @@
              return entropy_available;
      }
  #   endif
 -
-+#   ifdef OPENSSL_RAND_SEED_GETRANDOM
-+    }
-+#   endif
++    #   ifdef OPENSSL_RAND_SEED_GETRANDOM
++        }
++    #    endif
      return rand_pool_entropy_available(pool);
  #  endif
  }
-diff -up openssl-1.1.1e/include/crypto/fips.h.fips-post-rand openssl-1.1.1e/include/crypto/fips.h
---- openssl-1.1.1e/include/crypto/fips.h.fips-post-rand	2020-03-17 18:06:16.831418696 +0100
-+++ openssl-1.1.1e/include/crypto/fips.h	2020-03-17 18:06:16.861418172 +0100
-@@ -77,6 +77,8 @@ int FIPS_selftest_hmac(void);
+diff -ruN a/include/crypto/fips.h b/include/crypto/fips.h
+--- a/include/crypto/fips.h	2022-04-19 07:02:07.032380851 +0000
++++ b/include/crypto/fips.h	2022-04-19 07:02:47.569346433 +0000
+@@ -76,6 +76,7 @@
+ int FIPS_selftest_hmac(void);
  int FIPS_selftest_drbg(void);
  int FIPS_selftest_cmac(void);
- 
 +int fips_in_post(void);
-+
+ 
  int fips_pkey_signature_test(EVP_PKEY *pkey,
                                   const unsigned char *tbs, int tbslen,
-                                  const unsigned char *kat,
-diff -up openssl-1.1.1e/include/crypto/rand.h.fips-post-rand openssl-1.1.1e/include/crypto/rand.h
---- openssl-1.1.1e/include/crypto/rand.h.fips-post-rand	2020-03-17 15:31:17.000000000 +0100
-+++ openssl-1.1.1e/include/crypto/rand.h	2020-03-17 18:07:35.303045555 +0100
-@@ -24,6 +24,7 @@
+diff -ruN a/include/crypto/rand.h b/include/crypto/rand.h
+--- a/include/crypto/rand.h	2022-04-19 07:03:41.970639388 +0000
++++ b/include/crypto/rand.h	2022-04-19 07:04:16.479459544 +0000
+@@ -34,6 +34,7 @@
  typedef struct rand_pool_st RAND_POOL;
  
  void rand_cleanup_int(void);

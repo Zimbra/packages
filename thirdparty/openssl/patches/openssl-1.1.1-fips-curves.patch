@@ -1,15 +1,14 @@
-diff -up openssl-1.1.1g/crypto/ec/ec_curve.c.fips-curves openssl-1.1.1g/crypto/ec/ec_curve.c
---- openssl-1.1.1g/crypto/ec/ec_curve.c.fips-curves	2020-05-18 12:59:54.839643980 +0200
-+++ openssl-1.1.1g/crypto/ec/ec_curve.c	2020-05-18 12:59:54.852644093 +0200
-@@ -13,6 +13,7 @@
- #include <openssl/err.h>
+--- a/crypto/ec/ec_curve.c	2022-04-19 09:43:19.876973668 +0000
++++ b/crypto/ec/ec_curve.c	2022-04-19 09:51:30.136574329 +0000
+@@ -14,6 +14,7 @@
  #include <openssl/obj_mac.h>
+ #include <openssl/objects.h>
  #include <openssl/opensslconf.h>
 +#include <openssl/crypto.h>
  #include "internal/nelem.h"
  
  typedef struct {
-@@ -237,6 +238,7 @@
+@@ -238,6 +239,7 @@
  
  typedef struct _ec_list_element_st {
      int nid;
@@ -17,7 +16,7 @@ diff -up openssl-1.1.1g/crypto/ec/ec_curve.c.fips-curves openssl-1.1.1g/crypto/e
      const EC_CURVE_DATA *data;
      const EC_METHOD *(*meth) (void);
      const char *comment;
-@@ -246,26 +248,26 @@
+@@ -247,26 +249,26 @@
      /* prime field curves */
      /* secg curves */
  #ifndef OPENSSL_NO_EC_NISTP_64_GCC_128
@@ -51,7 +50,7 @@ diff -up openssl-1.1.1g/crypto/ec/ec_curve.c.fips-curves openssl-1.1.1g/crypto/e
  #if defined(ECP_NISTZ256_ASM)
       EC_GFp_nistz256_method,
  #elif !defined(OPENSSL_NO_EC_NISTP_64_GCC_128)
-@@ -404,6 +406,10 @@ EC_GROUP *EC_GROUP_new_by_curve_name(int
+@@ -422,6 +424,10 @@
  
      for (i = 0; i < curve_list_length; i++)
          if (curve_list[i].nid == nid) {
@@ -62,7 +61,7 @@ diff -up openssl-1.1.1g/crypto/ec/ec_curve.c.fips-curves openssl-1.1.1g/crypto/e
              ret = ec_group_new_from_data(curve_list[i]);
              break;
          }
-@@ -418,19 +424,31 @@ EC_GROUP *EC_GROUP_new_by_curve_name(int
+@@ -436,19 +442,29 @@
  
  size_t EC_get_builtin_curves(EC_builtin_curve *r, size_t nitems)
  {
@@ -72,21 +71,21 @@ diff -up openssl-1.1.1g/crypto/ec/ec_curve.c.fips-curves openssl-1.1.1g/crypto/e
  
 -    if (r == NULL || nitems == 0)
 -        return curve_list_length;
+-
+-    min = nitems < curve_list_length ? nitems : curve_list_length;
+-
+-    for (i = 0; i < min; i++) {
+-        r[i].nid = curve_list[i].nid;
+-        r[i].comment = curve_list[i].comment;
 +    num = curve_list_length;
 +    if (fips_mode)
 +        for (i = 0; i < curve_list_length; i++) {
 +            if (!curve_list[i].fips_allowed)
 +                --num;
 +        }
- 
--    min = nitems < curve_list_length ? nitems : curve_list_length;
 +    if (r == NULL || nitems == 0) {
 +        return num;
 +    }
- 
--    for (i = 0; i < min; i++) {
--        r[i].nid = curve_list[i].nid;
--        r[i].comment = curve_list[i].comment;
 +    for (i = 0, j = 0; i < curve_list_length; i++) {
 +        if (j >= nitems)
 +            break;
@@ -102,6 +101,7 @@ diff -up openssl-1.1.1g/crypto/ec/ec_curve.c.fips-curves openssl-1.1.1g/crypto/e
  }
  
  /* Functions to translate between common NIST curve names and NIDs */
+
 diff -up openssl-1.1.1g/ssl/t1_lib.c.fips-curves openssl-1.1.1g/ssl/t1_lib.c
 --- openssl-1.1.1g/ssl/t1_lib.c.fips-curves	2020-05-18 12:59:54.797643616 +0200
 +++ openssl-1.1.1g/ssl/t1_lib.c	2020-05-18 13:03:54.748725463 +0200
@@ -194,3 +194,4 @@ diff -up openssl-1.1.1g/ssl/t1_lib.c.fips-curves openssl-1.1.1g/ssl/t1_lib.c
                  if ((lu = tls1_get_legacy_sigalg(s, -1)) == NULL) {
                      if (!fatalerrs)
                          return 1;
+

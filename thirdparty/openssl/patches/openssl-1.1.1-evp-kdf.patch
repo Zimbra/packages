@@ -4471,16 +4471,8 @@ diff -up openssl-1.1.1e/test/pkey_meth_kdf_test.c.evp-kdf openssl-1.1.1e/test/pk
  }
  #endif
  
-diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt
---- openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf	2020-03-17 15:31:17.000000000 +0100
-+++ openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt	2020-03-19 16:04:32.388698484 +0100
-@@ -1,5 +1,5 @@
- #
--# Copyright 2001-2017 The OpenSSL Project Authors. All Rights Reserved.
-+# Copyright 2001-2018 The OpenSSL Project Authors. All Rights Reserved.
- #
- # Licensed under the OpenSSL license (the "License").  You may not use
- # this file except in compliance with the License.  You can obtain a copy
+--- a/test/recipes/30-test_evp_data/evpkdf.txt	2022-04-19 08:04:15.208480977 +0000
++++ b/test/recipes/30-test_evp_data/evpkdf.txt	2022-04-19 08:46:25.412334730 +0000
 @@ -15,7 +15,7 @@
  Title = TLS1 PRF tests (from NIST test vectors)
  
@@ -4490,7 +4482,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.Secret = hexsecret:bded7fa5c1699c010be23dd06ada3a48349f21e5f86263d512c0c5cc379f0e780ec55d9844b2f1db02a96453513568d0
  Ctrl.label = seed:master secret
  Ctrl.client_random = hexseed:e5acaf549cd25c22d964c0d930fa4b5261d2507fad84c33715b7b9a864020693
-@@ -23,7 +23,7 @@ Ctrl.server_random = hexseed:135e4d557fd
+@@ -23,7 +23,7 @@
  Output = 2f6962dfbc744c4b2138bb6b3d33054c5ecc14f24851d9896395a44ab3964efc2090c5bf51a0891209f46c1e1e998f62
  
  KDF=TLS1-PRF
@@ -4499,7 +4491,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.Secret = hexsecret:2f6962dfbc744c4b2138bb6b3d33054c5ecc14f24851d9896395a44ab3964efc2090c5bf51a0891209f46c1e1e998f62
  Ctrl.label = seed:key expansion
  Ctrl.server_random = hexseed:67267e650eb32444119d222a368c191af3082888dc35afe8368e638c828874be
-@@ -31,7 +31,7 @@ Ctrl.client_random = hexseed:d58a7b1cd4f
+@@ -31,7 +31,7 @@
  Output = 3088825988e77fce68d19f756e18e43eb7fe672433504feaf99b3c503d9091b164f166db301d70c9fc0870b4a94563907bee1a61fb786cb717576890bcc51cb9ead97e01d0a2fea99c953377b195205ff07b369589178796edc963fd80fdbe518a2fc1c35c18ae8d
  
  KDF=TLS1-PRF
@@ -4508,7 +4500,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.Secret = hexsecret:f8938ecc9edebc5030c0c6a441e213cd24e6f770a50dda07876f8d55da062bcadb386b411fd4fe4313a604fce6c17fbc
  Ctrl.label = seed:master secret
  Ctrl.client_random = hexseed:36c129d01a3200894b9179faac589d9835d58775f9b5ea3587cb8fd0364cae8c
-@@ -39,7 +39,7 @@ Ctrl.server_random = hexseed:f6c9575ed7d
+@@ -39,7 +39,7 @@
  Output = 202c88c00f84a17a20027079604787461176455539e705be730890602c289a5001e34eeb3a043e5d52a65e66125188bf
  
  KDF=TLS1-PRF
@@ -4517,7 +4509,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.Secret = hexsecret:202c88c00f84a17a20027079604787461176455539e705be730890602c289a5001e34eeb3a043e5d52a65e66125188bf
  Ctrl.label = seed:key expansion
  Ctrl.server_random = hexseed:ae6c806f8ad4d80784549dff28a4b58fd837681a51d928c3e30ee5ff14f39868
-@@ -48,7 +48,7 @@ Output = d06139889fffac1e3a71865f504aa5d
+@@ -48,7 +48,7 @@
  
  # As above but use long name for KDF
  KDF=tls1-prf
@@ -4526,7 +4518,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.Secret = hexsecret:202c88c00f84a17a20027079604787461176455539e705be730890602c289a5001e34eeb3a043e5d52a65e66125188bf
  Ctrl.label = seed:key expansion
  Ctrl.server_random = hexseed:ae6c806f8ad4d80784549dff28a4b58fd837681a51d928c3e30ee5ff14f39868
-@@ -64,7 +64,7 @@ Result = KDF_DERIVE_ERROR
+@@ -64,7 +64,7 @@
  
  # Missing secret.
  KDF=TLS1-PRF
@@ -4535,7 +4527,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.Seed = hexseed:02
  Output = 03
  Result = KDF_DERIVE_ERROR
-@@ -72,7 +72,7 @@ Result = KDF_DERIVE_ERROR
+@@ -72,7 +72,7 @@
  Title = HKDF tests (from RFC5869 test vectors)
  
  KDF = HKDF
@@ -4544,7 +4536,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b
  Ctrl.salt = hexsalt:000102030405060708090a0b0c
  Ctrl.info = hexinfo:f0f1f2f3f4f5f6f7f8f9
-@@ -80,20 +80,20 @@ Output = 3cb25f25faacd57a90434f64d0362f2
+@@ -80,20 +80,20 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXTRACT_ONLY
@@ -4568,12 +4560,12 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f
  Ctrl.salt = hexsalt:606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeaf
  Ctrl.info = hexinfo:b0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff
-@@ -101,20 +101,20 @@ Output = b11e398dc80327a1c8e7f78c596a493
+@@ -101,20 +101,20 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXTRACT_ONLY
 -Ctrl.md = md:SHA256
-+Ctrl.digest = digest:SHA256
++Ctrl.digest = digest:SHA25
  Ctrl.IKM = hexkey:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f
  Ctrl.salt = hexsalt:606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeaf
  Output = 06a6b88c5853361a06104c9ceb35b45cef760014904671014a193f40c15fc244
@@ -4592,7 +4584,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b
  Ctrl.salt = salt:
  Ctrl.info = info:
-@@ -122,7 +122,7 @@ Output = 8da4e775a563c18f715f802a063c5a3
+@@ -122,7 +122,7 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXTRACT_ONLY
@@ -4601,7 +4593,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b
  Ctrl.salt = salt:
  Ctrl.info = info:
-@@ -130,13 +130,13 @@ Output = 19ef24a32c717b167f33a91d6f648bd
+@@ -130,13 +130,13 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXPAND_ONLY
@@ -4617,7 +4609,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:0b0b0b0b0b0b0b0b0b0b0b
  Ctrl.salt = hexsalt:000102030405060708090a0b0c
  Ctrl.info = hexinfo:f0f1f2f3f4f5f6f7f8f9
-@@ -144,20 +144,20 @@ Output = 085a01ea1b10f36933068b56efa5ad8
+@@ -144,20 +144,20 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXTRACT_ONLY
@@ -4641,7 +4633,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f
  Ctrl.salt = hexsalt:606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeaf
  Ctrl.info = hexinfo:b0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff
-@@ -165,20 +165,20 @@ Output = 0bd770a74d1160f7c9f12cd5912a06e
+@@ -165,20 +165,20 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXTRACT_ONLY
@@ -4665,7 +4657,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b
  Ctrl.salt = salt:
  Ctrl.info = info:
-@@ -186,20 +186,20 @@ Output = 0ac1af7002b3d761d1e55298da9d050
+@@ -186,20 +186,20 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXTRACT_ONLY
@@ -4689,7 +4681,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c
  Ctrl.salt = salt:
  Ctrl.info = info:
-@@ -207,14 +207,14 @@ Output = 2c91117204d745f3500d636a62f64f0
+@@ -207,14 +207,14 @@
  
  KDF = HKDF
  Ctrl.mode = mode:EXTRACT_ONLY
@@ -4706,7 +4698,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:2adccada18779e7c2077ad2eb19d3f3e731385dd
  Ctrl.info = info:
  Output = 2c91117204d745f3500d636a62f64f0ab3bae548aa53d423b0d1f27ebba6f5e5673a081d70cce7acfc48
-@@ -227,27 +227,27 @@ Output = 00
+@@ -227,27 +227,27 @@
  Result = KDF_DERIVE_ERROR
  
  KDF = HKDF
@@ -4738,9 +4730,9 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
  Ctrl.IKM = hexkey:0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c
  Ctrl.salt = salt:
  Output = 2c91117204d745f3500d636a62f64f0ab3bae548aa53d423b0d1f27ebba6f5e5673a081d70cce7acfc48
-@@ -303,3 +303,133 @@ Ctrl.r = r:8
+@@ -303,3 +303,132 @@
  Ctrl.p = p:1
- Result = INTERNAL_ERROR
+ Result = KDF_DERIVE_ERROR
  
 +Title = PBKDF2 tests
 +
@@ -4871,7 +4863,7 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpkdf.txt.evp-kdf openssl
 +Ctrl.iter = iter:1
 +Ctrl.digest = digest:sha512
 +Output = 00ef42cdbfc98d29db20976608e455567fdddf14
-+
+
 diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evppkey_kdf.txt.evp-kdf openssl-1.1.1e/test/recipes/30-test_evp_data/evppkey_kdf.txt
 --- openssl-1.1.1e/test/recipes/30-test_evp_data/evppkey_kdf.txt.evp-kdf	2020-03-19 16:04:32.389698467 +0100
 +++ openssl-1.1.1e/test/recipes/30-test_evp_data/evppkey_kdf.txt	2020-03-19 16:04:32.389698467 +0100
@@ -5236,3 +5228,4 @@ diff -up openssl-1.1.1e/util/private.num.evp-kdf openssl-1.1.1e/util/private.num
  EVP_PKEY_gen_cb                         datatype
  EVP_PKEY_METHOD                         datatype
  EVP_PKEY_ASN1_METHOD                    datatype
+

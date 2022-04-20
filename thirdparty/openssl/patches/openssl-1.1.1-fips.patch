@@ -881,9 +881,8 @@ diff -up openssl-1.1.1e/crypto/ec/ec_pmeth.c.fips openssl-1.1.1e/crypto/ec/ec_pm
      pkey_ec_init,
      pkey_ec_copy,
      pkey_ec_cleanup,
-diff -up openssl-1.1.1e/crypto/evp/digest.c.fips openssl-1.1.1e/crypto/evp/digest.c
---- openssl-1.1.1e/crypto/evp/digest.c.fips	2020-03-17 15:31:17.000000000 +0100
-+++ openssl-1.1.1e/crypto/evp/digest.c	2020-03-17 17:38:57.528093469 +0100
+--- a/crypto/evp/digest.c	2022-04-19 07:30:56.521341791 +0000
++++ b/crypto/evp/digest.c	2022-04-19 07:52:12.907482129 +0000
 @@ -14,6 +14,9 @@
  #include <openssl/engine.h>
  #include "crypto/evp.h"
@@ -892,9 +891,9 @@ diff -up openssl-1.1.1e/crypto/evp/digest.c.fips openssl-1.1.1e/crypto/evp/diges
 +# include <openssl/fips.h>
 +#endif
  
- /* This call frees resources associated with the context */
- int EVP_MD_CTX_reset(EVP_MD_CTX *ctx)
-@@ -66,6 +69,12 @@ int EVP_DigestInit(EVP_MD_CTX *ctx, cons
+ 
+ static void cleanup_old_md_data(EVP_MD_CTX *ctx, int force)
+@@ -77,6 +80,12 @@
  int EVP_DigestInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *impl)
  {
      EVP_MD_CTX_clear_flags(ctx, EVP_MD_CTX_FLAG_CLEANED);
@@ -907,11 +906,11 @@ diff -up openssl-1.1.1e/crypto/evp/digest.c.fips openssl-1.1.1e/crypto/evp/diges
  #ifndef OPENSSL_NO_ENGINE
      /*
       * Whether it's nice or not, "Inits" can be used on "Final"'d contexts so
-@@ -119,6 +128,15 @@ int EVP_DigestInit_ex(EVP_MD_CTX *ctx, c
+@@ -131,6 +140,15 @@
      }
  #endif
      if (ctx->digest != type) {
-+#ifdef OPENSSL_FIPS
++        #ifdef OPENSSL_FIPS
 +        if (FIPS_mode()) {
 +            if (!(type->flags & EVP_MD_FLAG_FIPS)
 +                && !(ctx->flags & EVP_MD_CTX_FLAG_NON_FIPS_ALLOW)) {
@@ -919,31 +918,31 @@ diff -up openssl-1.1.1e/crypto/evp/digest.c.fips openssl-1.1.1e/crypto/evp/diges
 +                return 0;
 +            }
 +        }
-+#endif
-         if (ctx->digest && ctx->digest->ctx_size) {
-             OPENSSL_clear_free(ctx->md_data, ctx->digest->ctx_size);
-             ctx->md_data = NULL;
-@@ -150,6 +168,10 @@ int EVP_DigestInit_ex(EVP_MD_CTX *ctx, c
++        #endif
+         cleanup_old_md_data(ctx, 1);
+ 
+         ctx->digest = type;
+@@ -160,6 +178,9 @@
  
  int EVP_DigestUpdate(EVP_MD_CTX *ctx, const void *data, size_t count)
  {
-+#ifdef OPENSSL_FIPS
-+    FIPS_selftest_check();
-+#endif
-+
++    #ifdef OPENSSL_FIPS
++        FIPS_selftest_check();
++    #endif
      if (count == 0)
          return 1;
  
-@@ -170,6 +192,9 @@ int EVP_DigestFinal_ex(EVP_MD_CTX *ctx,
+@@ -180,6 +201,9 @@
  {
      int ret;
  
-+#ifdef OPENSSL_FIPS
-+    FIPS_selftest_check();
-+#endif
++    #ifdef OPENSSL_FIPS
++        FIPS_selftest_check();
++    #endif
      OPENSSL_assert(ctx->digest->md_size <= EVP_MAX_MD_SIZE);
      ret = ctx->digest->final(ctx, md);
      if (size != NULL)
+
 diff -up openssl-1.1.1e/crypto/evp/e_aes.c.fips openssl-1.1.1e/crypto/evp/e_aes.c
 --- openssl-1.1.1e/crypto/evp/e_aes.c.fips	2020-03-17 15:31:17.000000000 +0100
 +++ openssl-1.1.1e/crypto/evp/e_aes.c	2020-03-17 17:30:52.028567357 +0100
@@ -11613,10 +11612,10 @@ diff -up openssl-1.1.1e/test/recipes/30-test_evp_data/evpciph.txt.fips openssl-1
  
  Cipher = aes-128-xts
  Key = 1111111111111111111111111111111122222222222222222222222222222222
-diff -up openssl-1.1.1e/util/libcrypto.num.fips openssl-1.1.1e/util/libcrypto.num
---- openssl-1.1.1e/util/libcrypto.num.fips	2020-03-17 17:31:10.744241038 +0100
-+++ openssl-1.1.1e/util/libcrypto.num	2020-03-17 17:32:37.851722261 +0100
-@@ -4590,3 +4590,38 @@ X509_ALGOR_copy
+diff -ruN a/util/libcrypto.num b/util/libcrypto.num
+--- a/util/libcrypto.num	2022-04-19 06:17:34.360922744 +0000
++++ b/util/libcrypto.num	2022-04-19 06:19:14.207279867 +0000
+@@ -4591,3 +4591,38 @@
  X509_REQ_set0_signature                 4545	1_1_1h	EXIST::FUNCTION:
  X509_REQ_set1_signature_algo            4546	1_1_1h	EXIST::FUNCTION:
  EC_KEY_decoded_from_explicit_params     4547	1_1_1h	EXIST::FUNCTION:EC
