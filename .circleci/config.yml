@@ -1,0 +1,58 @@
+version: 2.1
+
+################# Jobs #########################
+
+jobs:
+  build-updated-packages:
+    executor: default-executor
+
+    steps:
+      - checkout
+
+      - run:
+          name: Checkout dependencies
+          command: |
+            git clone git@github.com:Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
+            git clone git@github.com:Zimbra/zimbra-build.git ~/zimbra-build
+
+      - run:
+          name: Install Pre-requisites
+          command: sudo apt-get install -y m4 libpcre3-dev zlib1g-dev libbz2-dev
+
+      - run:
+          name: Compile packages
+          command: ./scripts/build-packages.sh false
+
+      - store_artifacts:
+          path: dist-packages
+
+
+################################################
+
+################# Executors ####################
+
+executors:
+  default-executor:
+    working_directory: ~/packages
+    docker:
+      - image: zimbra/zm-base-os:devcore-ubuntu-18.04
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASS
+
+################################################
+
+
+################# Workflows ####################
+
+workflows:
+  version: 2
+
+  commit-workflow:
+    jobs:
+      - build-updated-packages:
+          context:
+            - dockerhub
+            - docker-dev-registry
+
+################################################
