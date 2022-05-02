@@ -1,4 +1,5 @@
 libmagic.UBUNTU := libmagic-dev
+libmagic.UBUNTU18_64 := $(libmagic.UBUNTU)
 libmagic.UBUNTU16_64 := $(libmagic.UBUNTU)
 libmagic.UBUNTU14_64 := $(libmagic.UBUNTU)
 libmagic.UBUNTU12_64 := $(libmagic.UBUNTU)

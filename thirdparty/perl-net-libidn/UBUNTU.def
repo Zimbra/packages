@@ -1,0 +1,2 @@
+date-manip.UBUNTU := libidn11-dev
+date-manip.UBUNTU18_64 := $(date-manip.UBUNTU)

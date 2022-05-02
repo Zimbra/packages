@@ -21,12 +21,14 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+idn-modules = $(idn-modules.$(BUILD_PLATFORM))
+
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base
+	$(PKG_EXTRACT) zimbra-perl-base $(idn-modules)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(idn-modules)
 
 setup:
 	$(generic-setup)

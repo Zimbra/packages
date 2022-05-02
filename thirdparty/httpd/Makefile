@@ -19,12 +19,15 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+httpd = $(httpd.$(BUILD_PLATFORM))
+
 pkgadd:
-	$(PKG_EXTRACT) zimbra-base zimbra-apr-$(PKG_DEV) zimbra-apr-util-$(PKG_DEV) zimbra-openssl-$(PKG_DEV)
+	$(PKG_EXTRACT) zimbra-base zimbra-apr-$(PKG_DEV) zimbra-apr-util-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) \
+	${httpd}
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base ${httpd}
 
 setup:
 	$(generic-setup)

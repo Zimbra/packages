@@ -19,13 +19,15 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+rrd = $(rrd.$(BUILD_PLATFORM))
+
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-libart-$(PKG_DEV) zimbra-libpng-$(PKG_DEV) \
-	zimbra-freetype-$(PKG_DEV)
+	zimbra-freetype-$(PKG_DEV) $(rrd)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(rrd)
 
 setup:
 	$(generic-setup)

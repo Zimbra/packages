@@ -1,1 +1,2 @@
-osdeps.UBUNTU18_64 := zlib1g-dev
+openssl.UBUNTU := zlib1g-dev
+openssl.UBUNTU18_64 := $(openssl.UBUNTU)

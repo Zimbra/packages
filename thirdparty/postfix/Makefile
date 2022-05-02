@@ -19,13 +19,16 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+postfix = $(postfix.$(BUILD_PLATFORM))
+
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-mariadb-$(PKG_DEV) \
-	zimbra-cyrus-sasl-$(PKG_DEV) zimbra-openldap-$(PKG_DEV) zimbra-lmdb-$(PKG_DEV)
+	zimbra-cyrus-sasl-$(PKG_DEV) zimbra-openldap-$(PKG_DEV) zimbra-lmdb-$(PKG_DEV) \
+	${postfix}
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base ${postfix}
 
 setup:
 	$(generic-setup)

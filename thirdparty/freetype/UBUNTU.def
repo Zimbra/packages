@@ -1,1 +1,2 @@
-osdeps.UBUNTU18_64 := libbz2-dev
+freetype.UBUNTU := libbz2-dev
+freetype.UBUNTU18_64 := $(freetype.UBUNTU)

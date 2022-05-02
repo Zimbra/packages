@@ -1,0 +1,2 @@
+mariadb.UBUNTU := libaio-dev, libncurses5-dev
+mariadb.UBUNTU18_64 := $(mariadb.UBUNTU)

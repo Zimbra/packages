@@ -1,0 +1,2 @@
+httpd.UBUNTU := libpcre3-dev
+httpd.UBUNTU18_64 := $(httpd.UBUNTU)

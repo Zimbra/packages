@@ -6,7 +6,7 @@ pvers := $(MARIADB_VERSION)
 pname := mariadb
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://ftp.hosteurope.de/mirror/archive.mariadb.org/$(pname)-$(pvers)/source/$(pfile)
+purl := http://archive.mariadb.org//$(pname)-$(pvers)/source/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
@@ -19,12 +19,14 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+mariadb = $(mariadb.$(BUILD_PLATFORM))
+
 pkgadd:
-	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV)
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) $(mariadb)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(mariadb)
 
 setup:
 	$(generic-setup)

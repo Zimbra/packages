@@ -39,7 +39,7 @@ function main() {
         # @TODO check if package has modifications
         echo -e "################## Compiling \"${pkg}\" ..."
         compile "${pkg}"
-    done < "build-order"
+    done < "scripts/build-packages"
 }
 
 main "$@"

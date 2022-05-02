@@ -1,0 +1,2 @@
+clamav.UBUNTU := libncurses5-dev
+clamav.UBUNTU18_64 := $(clamav.UBUNTU)

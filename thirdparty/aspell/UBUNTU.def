@@ -1,0 +1,2 @@
+aspell.UBUNTU := libncurses5-dev
+aspell.UBUNTU18_64 := $(aspell.UBUNTU)

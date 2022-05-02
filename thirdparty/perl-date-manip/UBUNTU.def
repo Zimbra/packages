@@ -1,0 +1,2 @@
+date-manip.UBUNTU := libtest-inter-perl
+date-manip.UBUNTU18_64 := $(date-manip.UBUNTU)

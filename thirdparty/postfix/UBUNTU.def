@@ -1,0 +1,2 @@
+postfix.UBUNTU := libpcre3-dev
+postfix.UBUNTU18_64 := $(postfix.UBUNTU)

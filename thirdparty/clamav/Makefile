@@ -19,13 +19,15 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+clamav = $(clamav.$(BUILD_PLATFORM))
+
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
-	zimbra-libmilter-$(PKG_DEV)
+	zimbra-libmilter-$(PKG_DEV) ${clamav}
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base ${clamav}
 
 setup:
 	$(generic-setup)

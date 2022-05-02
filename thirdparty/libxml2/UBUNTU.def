@@ -1,1 +1,2 @@
-osdeps.UBUNTU18_64 := zlib1g-dev
+xml2.UBUNTU := zlib1g-dev
+xml2.UBUNTU18_64 := $(xml2.UBUNTU)

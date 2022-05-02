@@ -17,7 +17,11 @@ jobs:
 
       - run:
           name: Install Pre-requisites
-          command: sudo apt-get install -y m4 libpcre3-dev zlib1g-dev libbz2-dev
+          command: sudo apt-get install -y m4
+
+      - run:
+          name: Add Zimbra package repository
+          command: ./scripts/add-pkg-repo.sh
 
       - run:
           name: Compile packages

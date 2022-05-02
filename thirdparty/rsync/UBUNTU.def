@@ -1,0 +1,2 @@
+rsync.UBUNTU := libpopt-dev
+rsync.UBUNTU18_64 := $(rsync.UBUNTU)

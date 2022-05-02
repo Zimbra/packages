@@ -21,15 +21,17 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+date-manip = $(date-manip.$(BUILD_PLATFORM))
+
 setup:
 	$(generic-setup)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base
+	$(PKG_EXTRACT) zimbra-perl-base $(date-manip)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(date-manip)
 
 build: setup pkgadd build_$(PKG_EXT)
 

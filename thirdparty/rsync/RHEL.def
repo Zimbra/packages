@@ -1,0 +1,2 @@
+rsync.RHEL := popt-devel
+rsync.RHEL8_64 := $(rsync.RHEL)

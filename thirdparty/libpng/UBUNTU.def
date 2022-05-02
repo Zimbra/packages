@@ -1,0 +1,2 @@
+png.UBUNTU := zlib1g-dev
+png.UBUNTU18_64 := $(png.UBUNTU)

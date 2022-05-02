@@ -1,0 +1,2 @@
+rrd.UBUNTU := libbz2-dev
+rrd.UBUNTU18_64 := $(rrd.UBUNTU)

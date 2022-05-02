@@ -10,19 +10,28 @@ purl := ftp://xmlsoft.org/libxml2//$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean
+.PHONY: all getsrc setup build clean pkgadd pkgrm
 
-all: clean getsrc build
+all: clean getsrc build pkgrm1
 
 # $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+xml2 = $(xml2.$(BUILD_PLATFORM))
+
+pkgadd:
+	$(PKG_EXTRACT) $(xml2)
+
+pkgrm: pkgrm%
+pkgrm%:
+	$(PKG_PURGE) $(xml2)
+
 setup:
 	$(generic-setup)
 
-build: setup build_$(PKG_EXT)
+build: pkgadd setup build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
