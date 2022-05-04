@@ -1,2 +1,2 @@
-httpd.UBUNTU := libpcre3-dev
+httpd.UBUNTU := libpcre3-dev zlib1g-dev libexpat-dev
 httpd.UBUNTU18_64 := $(httpd.UBUNTU)

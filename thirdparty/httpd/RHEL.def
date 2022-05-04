@@ -1,0 +1,2 @@
+httpd.RHEL := expat-devel
+httpd.RHEL8_64 := $(httpd.RHEL)

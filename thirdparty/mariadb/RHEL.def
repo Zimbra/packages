@@ -1,2 +1,2 @@
-mariadb.RHEL := libaio-devel, ncurses-devel
+mariadb.RHEL := libaio-devel ncurses-devel
 mariadb.RHEL8_64 := $(mariadb.RHEL)

@@ -1,0 +1,2 @@
+apr.UBUNTU := libexpat1-dev gawk
+apr.UBUNTU18_64 := $(apr.UBUNTU)
