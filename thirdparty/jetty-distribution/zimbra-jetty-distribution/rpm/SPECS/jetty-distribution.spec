@@ -14,6 +14,8 @@ URL:                https://www.eclipse.org/jetty/
 The Zimbra jetty-distribution build
 
 %changelog
+* Mon May 09 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
+- Fix ZBUG-2633, Upgraded jetty to 9.4.46.v20220331
 * Thu Aug 31 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
 - Minor dependency fix.
 * Fri Jul 7 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1.PKG_OS_TAG
