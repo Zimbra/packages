@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
 Build-Depends: debhelper (>= 9), zimbra-perl-base
 Standards-Version: 3.9.5
-Homepage: https://metacpan.org/release/Compress-Raw-Bzip2
+Homepage: https://metacpan.org/release/Compress-Raw-Zlib
 
 Package: zimbra-perl-compress-raw-zlib
 Architecture: all
