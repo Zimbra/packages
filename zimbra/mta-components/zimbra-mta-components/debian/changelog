@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated zimbra-clamav,zimbra-spamassassin-rules,zimbra-perl-mail-spamassassin
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 20 May 2022 00:00:00 +0000
+
 zimbra-mta-components (1.0.14-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded postfix to 3.6.1
