@@ -1,4 +1,3 @@
 opt/zimbra/common/lib/*.so.*
 opt/zimbra/common/lib/plugin
-opt/zimbra/common/lib/pkgconfig/libmariadb.pc
-opt/zimbra/common/lib/pkgconfig/mariadb.pc
+opt/zimbra/common/lib/mysql
