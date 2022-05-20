@@ -1,3 +1,9 @@
+zimbra-ldap-components (2.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl to 1.1.1n and core-components to 3.0.11
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 20 May 2022 00:00:00 +0000
+
 zimbra-ldap-components (2.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated openssl to 1.1.1l and core-components to 3.0.10
