@@ -71,10 +71,6 @@ rm -rf ${RPM_BUILD_ROOT}OZC/sql-bench
 rm -rf ${RPM_BUILD_ROOT}OZC/support-files
 rm -f ${RPM_BUILD_ROOT}OZC/sbin/rcmysql
 cd ${RPM_BUILD_ROOT}OZCL && \
-cp libmysqlclient.so libmysqlclient.so.18 && \
-cp libmysqlclient.so libmysqlclient.so.18.0.0 && \
-ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
-ln -s libmysqlclient.so.18 libmysqlclient_r.so.18 && \
 mv libmariadb.so.3 libmariadb_r.so.3
 
 %package libs
