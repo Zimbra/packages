@@ -1,3 +1,9 @@
+zimbra-openjdk (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Update version to 17.0.2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Feb 2022 00:00:00 +0000
+
 zimbra-openjdk (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=medium
 
   * Update version to 1.8 update 172 build 01

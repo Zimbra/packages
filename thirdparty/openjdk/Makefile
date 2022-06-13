@@ -4,7 +4,7 @@ include $(PKG_ROOT)/../../package.def
 
 pvers := $(JDK_VERSION)
 pname := openjdk
-pfile := openjdk-13.0.1_linux-x64_bin.tar.gz
+pfile := $(pname)-$(pvers)_linux-x64_bin.tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
@@ -27,7 +27,7 @@ getsrc:
 	mkdir -p $(SRC_DIR)
 	(echo "Downloading openjdk binaries.  This may take some time." && \
 	cd $(SRC_DIR) && \
-	wget https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz  && \
+	wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/$(pfile)  && \
 	tar xvzf $(pfile) && \
 	mv jdk-$(pvers) openjdk-$(pvers)-zimbra && \
 	tar -czf ../openjdk-$(pvers)-zimbra.tgz  openjdk-$(pvers)-zimbra )

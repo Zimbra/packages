@@ -6,19 +6,13 @@ export DEB_BUILD_OPTIONS=nocheck
 
 override_dh_auto_clean:
 
-override_dh_auto_configure:
-	./configure --prefix=OZC \
-	--enable-unlimited-crypto \
-	--with-update-version=JDK_UPDATE \
-	--with-build-number=JDK_BUILD \
-	--with-milestone=zimbra
-
 override_dh_strip:
 	dh_strip -pzimbra-openjdk --dbg-package=zimbra-openjdk-dbg
 	dh_strip -Nzimbra-openjdk
 
 override_dh_auto_install:
-	$(MAKE) INSTALL_PREFIX=$(CURDIR)/debian/tmp install
+	mkdir -p $(CURDIR)/debian/tmp/jvm
+	tar -xvzf $(CURDIR)/../openjdk*.tgz -C $(CURDIR)/debian/tmp/jvm
 	rm -rf $(CURDIR)/debian/tmp/bin
 	mkdir -p $(CURDIR)/debian/tmp/OZCB
 	mkdir -p $(CURDIR)/debian/tmp/OZCL
@@ -26,8 +20,9 @@ override_dh_auto_install:
 	cd $(CURDIR)/debian/tmpOZCL/jvm && ln -s openjdk* java
 	rm -rf $(CURDIR)/debian/tmp/OZCL/jvm/java/demo
 	rm -rf $(CURDIR)/debian/tmp/OZCL/jvm/java/sample
-	rm -f $(CURDIR)/debian/tmp/OZCL/jvm/java/jre/lib/security/cacerts
-	cd $(CURDIR)/debian/tmp/OZCL/jvm/java/jre/lib/security && \
+	rm -f $(CURDIR)/debian/tmp/OZCL/jvm/java/lib/security/cacerts
+	chmod 644 $(CURDIR)/debian/tmp/OZCL/jvm/java/lib/ct.sym
+	cd $(CURDIR)/debian/tmp/OZCL/jvm/java/lib/security && \
 	ln -s OZCE/java/cacerts cacerts
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/jar
 	cd $(CURDIR)/debian/tmpOZCB && ln -s ../lib/jvm/java/bin/java
