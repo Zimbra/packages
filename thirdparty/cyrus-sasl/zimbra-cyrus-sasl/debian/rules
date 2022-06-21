@@ -11,15 +11,9 @@ export PATH=OZCB:/usr/sbin:/usr/bin:/sbin:/bin:/usr/bin/X11
 override_dh_auto_configure:
 	rm -f config/ltconfig config/libtool.m4
 	libtoolize -f -c
-	aclocal -I config -I cmulocal
+	aclocal -I config -I m4
 	automake -a -c -f
 	autoheader
-	autoconf -f
-	rm -f saslauthd/config/ltconfig
-	cd saslauthd && libtoolize -f -c && \
-	aclocal -I config -I ../cmulocal -I ../config && \
-	automake -a -c -f && \
-	autoheader && \
 	autoconf -f
 	sed -i.bak 's/-lRSAglue //' configure
 	./configure --prefix=OZC \
