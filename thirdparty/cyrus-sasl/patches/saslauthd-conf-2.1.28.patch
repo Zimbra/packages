@@ -1,0 +1,24 @@
+diff -ruN a/saslauthd/Makefile.am b/saslauthd/Makefile.am
+--- a/saslauthd/Makefile.am	2022-06-06 02:52:31.050891347 +0000
++++ b/saslauthd/Makefile.am	2022-06-06 02:53:47.828381951 +0000
+@@ -35,7 +35,7 @@
+ EXTRA_DIST	= testsaslauthd.8 saslauthd.mdoc include \
+ 		  getnameinfo.c getaddrinfo.c LDAP_SASLAUTHD
+ AM_CPPFLAGS	= -I$(top_srcdir)/include -I$(top_builddir)/include -I$(top_builddir)/common -I$(top_srcdir)/common
+-DEFS            = @DEFS@ -DSASLAUTHD_CONF_FILE_DEFAULT=\"@sysconfdir@/saslauthd.conf\" -I. -I$(srcdir) -I..
++DEFS            = @DEFS@ -DSASLAUTHD_CONF_FILE_DEFAULT=\"/opt/zimbra/conf/saslauthd.conf\" -I. -I$(srcdir) -I..
+ 
+ 
+ dist-hook: saslauthd.mdoc testsaslauthd.8
+diff -ruN a/saslauthd/Makefile.in b/saslauthd/Makefile.in
+--- a/saslauthd/Makefile.in	2022-06-06 02:52:16.394606694 +0000
++++ b/saslauthd/Makefile.in	2022-06-06 02:53:13.539714869 +0000
+@@ -232,7 +232,7 @@
+ CPPFLAGS_FOR_BUILD = @CPPFLAGS_FOR_BUILD@
+ CPP_FOR_BUILD = @CPP_FOR_BUILD@
+ CYGPATH_W = @CYGPATH_W@
+-DEFS = @DEFS@ -DSASLAUTHD_CONF_FILE_DEFAULT=\"@sysconfdir@/saslauthd.conf\" -I. -I$(srcdir) -I..
++DEFS = @DEFS@ -DSASLAUTHD_CONF_FILE_DEFAULT=\"/opt/zimbra/conf/saslauthd.conf\" -I. -I$(srcdir) -I..
+ DEPDIR = @DEPDIR@
+ DIRS = @DIRS@
+ DLLTOOL = @DLLTOOL@
