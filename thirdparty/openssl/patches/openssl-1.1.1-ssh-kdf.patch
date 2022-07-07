@@ -719,14 +719,14 @@ index 31fad4640f..baf2bd8db4 100644
  #define SN_id_pkinit            "id-pkinit"
  #define NID_id_pkinit           1031
  #define OBJ_id_pkinit           1L,3L,6L,1L,5L,2L,3L
-diff --git a/test/recipes/30-test_evp_data/evpkdf.txt b/test/recipes/30-test_evp_data/evpkdf.txt
-index 285c4311a6..7f2dcd2291 100644
---- a/test/recipes/30-test_evp_data/evpkdf.txt
-+++ b/test/recipes/30-test_evp_data/evpkdf.txt
-@@ -433,3 +433,4856 @@ Ctrl.iter = iter:1
+
+--- a/test/recipes/30-test_evp_data/evpkdf.txt	2022-04-19 09:01:45.006008748 +0000
++++ b/test/recipes/30-test_evp_data/evpkdf.txt	2022-04-19 09:32:45.537960186 +0000
+@@ -432,3 +432,4858 @@
+ Ctrl.iter = iter:1
  Ctrl.digest = digest:sha512
  Output = 00ef42cdbfc98d29db20976608e455567fdddf14
- 
++
 +Title = SSHKDF tests (from NIST CAVS 14.1 test vectors)
 +
 +KDF = SSHKDF
@@ -5580,21 +5580,7 @@ index 285c4311a6..7f2dcd2291 100644
 +Ctrl.type = type:A
 +Output = FF
 +Result = KDF_MISMATCH
-From 148cc5ee246e108b1e7332035037bab53574b0a9 Mon Sep 17 00:00:00 2001
-From: Simo Sorce <simo@redhat.com>
-Date: Thu, 18 Apr 2019 08:26:29 -0400
-Subject: [PATCH] Change the digest string from "md" to "digest"
-
-Conform to other modules which were changed at the last minute and this
-discrepancy was not noticed.
-Retain "md" as an alias so not to break 3rd party backports/tests scripts.
-
-Signed-off-by: Simo Sorce <simo@redhat.com>
----
- crypto/kdf/sshkdf.c        | 3 +++
- test/recipes/20-test_kdf.t | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
- mode change 100644 => 100755 test/recipes/20-test_kdf.t
++
 
 diff --git a/crypto/kdf/sshkdf.c b/crypto/kdf/sshkdf.c
 index 300e1adbb23..f585e8a0d6d 100644
@@ -5609,4 +5595,3 @@ index 300e1adbb23..f585e8a0d6d 100644
 +    /* alias, for historical reasons */
      if (strcmp(type, "md") == 0)
          return kdf_md2ctrl(impl, kdf_sshkdf_ctrl, EVP_KDF_CTRL_SET_MD, value);
- 

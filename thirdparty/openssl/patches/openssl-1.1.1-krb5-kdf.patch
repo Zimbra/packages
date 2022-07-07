@@ -2465,13 +2465,13 @@ diff -up openssl-1.1.1d/test/evp_kdf_test.c.krb5-kdf openssl-1.1.1d/test/evp_kdf
 +    ADD_TEST(test_kdf_ss_hash);
      return 1;
  }
-diff -up openssl-1.1.1d/test/recipes/30-test_evp_data/evpkdf.txt.krb5-kdf openssl-1.1.1d/test/recipes/30-test_evp_data/evpkdf.txt
---- openssl-1.1.1d/test/recipes/30-test_evp_data/evpkdf.txt.krb5-kdf	2019-11-14 15:07:05.327094396 +0100
-+++ openssl-1.1.1d/test/recipes/30-test_evp_data/evpkdf.txt	2019-11-14 15:07:05.349094005 +0100
-@@ -5286,3 +5286,559 @@ Ctrl.hexsession_id = hexsession_id:a4ebd
- Ctrl.type = type:A
+
+--- a/test/recipes/30-test_evp_data/evpkdf.txt	2022-04-19 09:36:01.394596922 +0000
++++ b/test/recipes/30-test_evp_data/evpkdf.txt	2022-04-19 09:36:58.939958680 +0000
+@@ -5287,3 +5287,559 @@
  Output = FF
  Result = KDF_MISMATCH
+ 
 +
 +Title = KRB5KDF tests (from RFC 3961 test vectors and krb5 sources)
 +

@@ -20,6 +20,8 @@ The Zimbra ClamAV build
 %define debug_package %{nil}
 
 %changelog
+* Mon Mar 28 2022  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
+- Fix ZCS-11150,Upgraded clamav to 0.103.3
 * Thu Apr 15 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Upgraded clamav to 0.103.2
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
