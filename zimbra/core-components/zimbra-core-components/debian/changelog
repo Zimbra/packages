@@ -1,3 +1,9 @@
+zimbra-core-components (2.0.17-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-2676, Upgraded Cyrus SASL to 2.1.28
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 07 Jul 2022 00:00:00 +0000
+
 zimbra-core-components (2.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * ZCS-11116, Upgraded JDK to 17.0.2
