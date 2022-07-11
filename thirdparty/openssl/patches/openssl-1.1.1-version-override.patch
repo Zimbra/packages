@@ -1,12 +1,12 @@
 diff -ruN a/include/openssl/opensslv.h b/include/openssl/opensslv.h
---- a/include/openssl/opensslv.h	2022-04-19 06:23:42.149619433 +0000
-+++ b/include/openssl/opensslv.h	2022-04-19 06:25:13.419792775 +0000
+--- a/include/openssl/opensslv.h	2022-07-11 10:59:00.019567184 +0000
++++ b/include/openssl/opensslv.h	2022-07-11 11:00:34.276685383 +0000
 @@ -40,7 +40,7 @@
   *  major minor fix final patch/beta)
   */
- # define OPENSSL_VERSION_NUMBER  0x101010efL
--# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1n  15 Mar 2022"
-+# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1n FIPS 15 Mar 2022"
+ # define OPENSSL_VERSION_NUMBER  0x1010111fL
+-# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1q  5 Jul 2022"
++# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1q FIPS 5 Jul 2022"
  
  /*-
   * The macros below are to be used for shared library (.so, .dll, ...)
