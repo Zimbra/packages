@@ -9,15 +9,17 @@ export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
 	dh $@
 
 override_dh_auto_configure:
-	./configure --prefix=OZC \
-	--libdir=OZCL \
-	--with-openssl=OZC \
-	--with-xml=OZC \
-	--with-user=zimbra \
-	--with-group=zimbra \
-	--with-included-ltdl \
-	--disable-clamav \
-	--enable-milter
+	cd cmake && cmake .. \
+	-DCMAKE_BUILD_TYPE="Release" \
+	-DCLAMAV_USER=zimbra \
+	-DCLAMAV_GROUP=zimbra \
+	-DOPENSSL_INCLUDE_DIR="OZCI" \
+	-DOPENSSL_CRYPTO_LIBRARY="OZCL/libcrypto.so" \
+	-DOPENSSL_SSL_LIBRARY="OZCL/libssl.so" \
+	-DLIBXML2_INCLUDE_DIR="OZCI/libxml2" \
+	-DLIBXML2_LIBRARY="OZCL/libxml2.so.2" \
+	-DCMAKE_INSTALL_PREFIX="OZC" \
+	-DCMAKE_INSTALL_LIBDIR="OZCL"
 
 override_dh_strip:
 	dh_strip -pzimbra-clamav-lib --dbg-package=zimbra-clamav-lib-dbg
@@ -28,8 +30,9 @@ override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
 
 override_dh_auto_install:
-	make install DESTDIR=$$(pwd)/debian/tmp
+	cd cmake && make install DESTDIR=$$(pwd)/../debian/tmp
 
 override_dh_install:
 	dh_install
 	rm -f $(CURDIR)/debian/zimbra-clamavOZCB/clamav-config
+	rm -rf $(CURDIR)/debian/zimbra-clamavOZCS/doc
