@@ -12,9 +12,12 @@ zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
-all: clean getsrc build pkgrm1
+all: clean install_rust getsrc build pkgrm1
 
 # $(@D) == directory part of the target
+install_rust:
+	./install_rust_toolchain.sh
+
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
