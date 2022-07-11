@@ -1,5 +1,11 @@
 zimbra-openssl (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
 
+  * Fix for ZCS-11689, Upgraded OpenSSL to 1.1.1q
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 11 Jul 2022 05:12:55 +0000
+
+zimbra-openssl (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
+
   * Fix for ZBUG-2713, Upgraded OpenSSL to 1.1.1n
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 11 Apr 2022 05:12:55 +0000
