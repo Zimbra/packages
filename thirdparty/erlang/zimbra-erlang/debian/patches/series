@@ -1,0 +1,3 @@
+otp-0001-Do-not-format-man-pages-and-do-not-install-miscellan.patch
+otp-0002-Do-not-install-C-sources.patch
+otp-0003-Do-not-install-erlang-sources.patch

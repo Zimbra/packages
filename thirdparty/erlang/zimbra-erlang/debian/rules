@@ -1,0 +1,72 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
+
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	chmod 644 lib/kernel/examples/uds_dist/c_src/Makefile
+	chmod 644 lib/kernel/examples/uds_dist/src/Makefile
+	chmod 644 lib/ssl/examples/certs/Makefile
+	chmod 644 lib/ssl/examples/src/Makefile
+	./configure --prefix=OZC \
+	--without-javac \
+	--with-ssl=/opt/zimbra/common \
+	--with-ssl-incl=OZC \
+	--enable-m64-build \
+	--with-ssl-rpath=OZCL \
+	--with-ssl-lib-subdir=OZCL
+	make clean
+	touch lib/common_test/SKIP
+	touch lib/debugger/SKIP
+	touch lib/dialyzer/SKIP
+	touch lib/diameter/SKIP
+	touch lib/edoc/SKIP
+	touch lib/et/SKIP
+	touch lib/erl_docgen/SKIP
+	touch lib/ftp/SKIP
+	touch lib/jinterface/SKIP
+	touch lib/megaco/SKIP
+	touch lib/observer/SKIP
+	touch lib/odbc/SKIP
+	touch lib/ssh/SKIP
+	touch lib/tftp/SKIP
+	touch lib/wx/SKIP
+	make
+
+override_dh_strip:
+	dh_strip -pzimbra-erlang
+	dh_strip -Nzimbra-erlang
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
+override_dh_auto_install:
+	rm -rf $$(pwd)/debian/tmp
+	make install DESTDIR=$$(pwd)/debian/tmp
+	find $$(pwd)/debian/tmpOZCL/erlang -type f -name info -exec rm -f {} \;
+	chmod 0755 $$(pwd)/debian/tmpOZCL/erlang/bin
+	rm -f $$(pwd)/debian/tmpOZCL/erlang/man/man1/erlsrv.*
+	rm -f $$(pwd)/debian/tmpOZCL/erlang/man/man1/werl.*
+	rm -f $$(pwd)/debian/tmpOZCL/erlang/man/man3/win32reg.*
+	rm -r $$(pwd)/debian/tmpOZCL/erlang/erts-*/man
+	rm -f $$(pwd)/debian/tmpOZCL/erlang/Install
+	rm -rf $$(pwd)/debian/tmpOZCB/ct_run
+	rm -rf $$(pwd)/debian/tmpOZCB/dialyzer
+	rm -rf $$(pwd)/debian/tmpOZCB/run_test
+	rm -rf $$(pwd)/debian/tmpOZCB/typer
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/bin/ct_run
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/bin/erl_call
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/bin/dialyzer
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/bin/run_test
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/bin/typer
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/erts-*/bin/ct_run
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/erts-*/bin/erl_call
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/erts-*/bin/dialyzer
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/erts-*/bin/typer
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/erts-*/bin/yielding_c_fun
+	rm -rf $$(pwd)/debian/tmpOZCL/erlang/lib/*/examples

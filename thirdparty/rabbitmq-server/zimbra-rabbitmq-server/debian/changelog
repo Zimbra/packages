@@ -1,0 +1,5 @@
+zimbra-rabbitmq-server (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+  
+  * Initial Release.
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 08 Aug 2022 08:19:11 +0000
