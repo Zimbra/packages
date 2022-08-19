@@ -1,9 +1,10 @@
 #!/bin/bash
 if [ "$1" = configure ]; then
-	mkdir -p /opt/zimbra/log/rabbitmq
 	mkdir -p /opt/zimbra/data/rabbitmq/mnesia
 	/bin/chown -R zimbra:zimbra /opt/zimbra/common/lib/rabbitmq
-	/bin/chown -R zimbra:zimbra /opt/zimbra/log/rabbitmq
 	/bin/chown -R zimbra:zimbra /opt/zimbra/data/rabbitmq
+	if [ -f /opt/zimbra/conf/rabbitmq-env.conf ]; then
+		/bin/chown zimbra:zimbra /opt/zimbra/conf/rabbitmq-env.conf
+	fi
 fi
 exit 0

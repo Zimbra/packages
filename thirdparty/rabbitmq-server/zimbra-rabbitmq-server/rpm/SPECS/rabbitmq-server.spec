@@ -39,23 +39,26 @@ rm -rf %{buildroot}%{_rabbit_erllibdir}/LICENSE*
 rm -rf %{buildroot}%{_rabbit_erllibdir}/INSTALL
 rm -rf %{buildroot}%{_rabbit_erllibdir}/plugins/README
 mkdir -p %{buildroot}/opt/zimbra/common/sbin/
+mkdir -p %{buildroot}/opt/zimbra/conf
 cp -a scripts/rabbitmq-script-wrapper %{buildroot}/opt/zimbra/common/sbin/rabbitmqctl
 chmod 0755 %{buildroot}/opt/zimbra/common/sbin/rabbitmqctl
 for script in rabbitmq-server rabbitmq-plugins rabbitmq-diagnostics rabbitmq-queues rabbitmq-upgrade rabbitmq-streams; do \
 	cp -a %{buildroot}/opt/zimbra/common/sbin/rabbitmqctl \
 	 %{buildroot}/opt/zimbra/common/sbin/$script; \
 done
-cp -a %{SOURCE1} %{buildroot}/opt/zimbra/common/lib/rabbitmq/rabbitmq-env.conf
+cp -a %{SOURCE1} %{buildroot}/opt/zimbra/conf/rabbitmq-env.conf
 
 %files
 %defattr(-,root,root)
 OZCL/rabbitmq
 OZC/sbin
 OZCS
+/opt/zimbra/conf/rabbitmq-env.conf
 
 %post -p /bin/bash
-mkdir -p /opt/zimbra/log/rabbitmq
 mkdir -p /opt/zimbra/data/rabbitmq/mnesia
 /bin/chown -R zimbra:zimbra /opt/zimbra/common/lib/rabbitmq
-/bin/chown -R zimbra:zimbra /opt/zimbra/log/rabbitmq
 /bin/chown -R zimbra:zimbra /opt/zimbra/data/rabbitmq
+if [ -f /opt/zimbra/conf/rabbitmq-env.conf ]; then
+   /bin/chown zimbra:zimbra /opt/zimbra/conf/rabbitmq-env.conf
+fi
