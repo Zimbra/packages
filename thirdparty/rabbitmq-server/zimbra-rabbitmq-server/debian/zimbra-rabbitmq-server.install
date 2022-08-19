@@ -1,3 +1,4 @@
 opt/zimbra/common/lib/rabbitmq
 opt/zimbra/common/sbin
 opt/zimbra/common/share
+opt/zimbra/conf/rabbitmq-env.conf

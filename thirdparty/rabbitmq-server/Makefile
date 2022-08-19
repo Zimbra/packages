@@ -20,7 +20,7 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-base zimbra-erlang zimbra-openssl-$(PKG_DEV)
+	$(PKG_EXTRACT) zimbra-base zimbra-erlang zimbra-openssl-$(PKG_DEV) zip rsync gzip sed
 
 pkgrm: pkgrm%
 
