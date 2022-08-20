@@ -1,8 +1,0 @@
-#!/bin/bash
-USER=$(whoami)
-if [ "$USER" = "zimbra" ]; then
-    /opt/zimbra/common/sbin/unbound-anchor -a "/opt/zimbra/conf/root.key"
-else
-   su - zimbra -c "/opt/zimbra/common/sbin/unbound-anchor -a "/opt/zimbra/conf/root.key""
-fi
-exit 0
