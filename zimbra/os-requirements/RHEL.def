@@ -1,2 +1,3 @@
-osdeps.RHEL7_64 := nmap-ncat
+osdeps.RHEL8_64 := nmap-ncat, spax
+osdeps.RHEL7_64 := nmap-ncat, pax
 osdeps.RHEL6_64 := nc
