@@ -1,7 +1,14 @@
+zimbra-mta-components (1.0.17-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-2817,Upgraded ClamAV to 0.105.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 14 Oct 2022 16:05:22 +0000
+
 zimbra-mta-components (1.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
-<<<<<<< 252cae92c90b5f29bf9bf3938c0fc1c0e92f5c00
   * Fix ZBUG-1457, updated zimbra-amavisd
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com> Mon, 22 Aug 2022 22:26:24 +0000
 
 zimbra-mta-components (1.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
