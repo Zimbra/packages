@@ -19,6 +19,8 @@ The Zimbra Apache HTTPD build
 %define debug_package %{nil}
 
 %changelog
+* Tue Oct 18 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Fix ZBUG-2819, Upgraded Apache to 2.4.54
 * Tue Mar 15 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Fix ZCS-11149, Upgraded Apache to 2.4.53
 * Tue Oct 19 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
