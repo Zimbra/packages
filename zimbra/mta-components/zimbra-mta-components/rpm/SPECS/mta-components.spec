@@ -4,7 +4,7 @@ Version:            1.0.16
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           sqlite, zimbra-mta-base, zimbra-altermime, zimbra-amavisd >= 2.10.1-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-clamav >= 0.105.1-1zimbra8.8b3ZAPPEND, zimbra-clamav-db
+Requires:           zimbra-clamav >= 0.105.1.2-1zimbra8.8b3ZAPPEND, zimbra-clamav-db
 Requires:           zimbra-cluebringer, zimbra-mariadb >= 10.1.25-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-opendkim >= 2.10.3-1zimbra8.7b5ZAPPEND, zimbra-perl-mail-spamassassin >= 3.4.6-1zimbra8.8b3ZAPPEND
 Requires:           zimbra-postfix >= 3.6.1-1zimbra8.7b3ZAPPEND
@@ -20,6 +20,8 @@ Zimbra mta components pulls in all the packages used by
 zimbra-mta
 
 %changelog
+* Wed Nov 02 2022  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.18
+- Upgraded ClamAV to 0.105.1-2
 * Fri Oct 14 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.17
 - Fix ZBUG-2817,Upgraded ClamAV to 0.105.1
 * Mon Aug 22 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.16
