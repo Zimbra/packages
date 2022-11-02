@@ -1,5 +1,11 @@
 zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
 
+  * Upgraded ClamAV to 0.105.1-2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 02 Nov 2022 16:05:22 +0000
+
+zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
   * Fix ZBUG-2817,Upgraded ClamAV to 105.1
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 14 Oct 2022 16:05:22 +0000
