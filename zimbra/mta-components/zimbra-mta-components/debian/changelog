@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.19-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated opendkim, postfix
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 20 Dec 2022 16:05:22 +0000
+
 zimbra-mta-components (1.0.18-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded ClamAV to 0.105.1-2
