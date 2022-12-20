@@ -1,3 +1,9 @@
+zimbra-core-components (3.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap, perl
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 20 Dec 2022 00:00:00 +0000
+
 zimbra-core-components (3.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Fix ZBUG-3017, Updated core-components to 3.0.15
