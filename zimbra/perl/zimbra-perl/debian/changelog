@@ -1,3 +1,9 @@
+zimbra-perl (1.0.8-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Updated perl-net-ldapapi
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 07 Mar 2023 22:26:24 +0000
+
 zimbra-perl (1.0.7-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded Date-Manip to 6.90

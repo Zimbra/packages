@@ -1,6 +1,6 @@
 Summary:        Zimbra Perl
 Name:           zimbra-perl
-Version:        1.0.7
+Version:        1.0.8
 Release:        1zimbra8.7b1ZAPPEND
 License:        GPL-2
 Packager:       Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -30,7 +30,8 @@ Requires:       zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b3ZAPPEND, zimbra-perl-m
 Requires:       zimbra-perl-mime-lite
 Requires:       zimbra-perl-mime-tools, zimbra-perl-mime-types, zimbra-perl-mozilla-ca, zimbra-perl-netaddr-ip
 Requires:       zimbra-perl-net-cidr, zimbra-perl-net-cidr-lite, zimbra-perl-net-dns, zimbra-perl-net-dns-resolver-programmable
-Requires:       zimbra-perl-net-http >= 6.09-1zimbra8.7b3ZAPPEND, zimbra-perl-net-ldap, zimbra-perl-net-ldapapi, zimbra-perl-net-libidn
+Requires:       zimbra-perl-net-http >= 6.09-1zimbra8.7b3ZAPPEND, zimbra-perl-net-ldap, zimbra-perl-net-ldapapi >= 3.0.3-1zimbra8.7b2ZAPPEND
+Requires:       zimbra-perl-net-libidn
 Requires:       zimbra-perl-net-server
 Requires:       zimbra-perl-net-ssleay >= 1.88-1zimbra8.7b2ZAPPEND, zimbra-perl-parent, zimbra-perl-proc-processtable
 Requires:       zimbra-perl-soap-lite >= 1.19-1zimbra8.7b3ZAPPEND, zimbra-perl-socket
@@ -49,6 +50,8 @@ of the Zimbra required perl modules.  The current sole exception is
 the Mail::SpamAssassin module, as that is for MTA nodes only
 
 %changelog
+* Tue Mar 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.8
+- Updated perl-net-ldapapi
 * Tue Feb 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7
 - Upgraded Date-Manip to 6.90
 * Thu Jan 19 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.6
