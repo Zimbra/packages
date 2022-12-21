@@ -6,7 +6,6 @@ License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             liblmdb-soname.patch
 Patch1:             liblmdb-keysize.patch
-Patch2:             pw-argon2.patch
 BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libltdl-devel, zimbra-curl-devel, zimbra-heimdal-devel, zimbra-libxml2-devel
@@ -37,7 +36,6 @@ The Zimbra openldap build
 %setup -n openldap-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
@@ -59,6 +57,7 @@ PATH=/opt/zimbra/common/bin:$PATH; export PATH;
   --enable-overlays=mod \
   --enable-debug \
   --enable-spasswd \
+  --enable-argon2 \
   --localstatedir=/opt/zimbra/data/ldap/state \
   --enable-crypt
 LD_RUN_PATH=/opt/zimbra/common/lib make depend
@@ -66,23 +65,19 @@ LD_RUN_PATH=/opt/zimbra/common/lib make DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOS
 make -C libraries/liblmdb prefix=/opt/zimbra/common
 make -C contrib/slapd-modules/noopsrch prefix=/opt/zimbra/common
 make -C contrib/slapd-modules/passwd/sha2 prefix=/opt/zimbra/common
-make -C contrib/slapd-modules/passwd/argon2 prefix=/opt/zimbra/common
 
 %install
 make install DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C libraries/liblmdb install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C contrib/slapd-modules/noopsrch install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 make -C contrib/slapd-modules/passwd/sha2 install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
-make -C contrib/slapd-modules/passwd/argon2 install prefix=/opt/zimbra/common DESTDIR=${RPM_BUILD_ROOT} STRIP=""
 rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/data
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.a
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.a
-rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-argon2.a
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/etc/openldap/DB_CONFIG.example
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/pkgconfig/lber.pc
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/pkgconfig/ldap.pc
 chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.la ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.la
-chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-argon2.la
 chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/libldap* ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/liblber*
 
 %package libs
