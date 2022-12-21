@@ -22,7 +22,9 @@ $(psrc_file):
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV) \
-	zimbra-libltdl-$(PKG_DEV) zimbra-libsodium-$(PKG_DEV)
+	zimbra-libltdl-$(PKG_DEV) zimbra-curl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
+  zimbra-libsodium-$(PKG_DEV)
+
 
 pkgrm: pkgrm%
 pkgrm%:

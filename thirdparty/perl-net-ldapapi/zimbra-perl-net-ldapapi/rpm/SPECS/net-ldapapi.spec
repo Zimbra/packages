@@ -1,14 +1,14 @@
 Summary:            Net::LDAPapi - Perl5 Module Supporting LDAP API
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-openldap-devel, zimbra-cyrus-sasl-devel
+BuildRequires:      zimbra-perl-base, zimbra-openldap-devel >= 2.5.13-1zimbra8.8b1ZAPPEND, zimbra-cyrus-sasl-devel
 BuildRequires:      zimbra-perl-convert-asn1
-Requires:           zimbra-perl-base, zimbra-openldap-libs, zimbra-perl-convert-asn1
+Requires:           zimbra-perl-base, zimbra-openldap-libs >= 2.5.13-1zimbra8.8b1ZAPPEND, zimbra-perl-convert-asn1
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -17,6 +17,10 @@ This module allows Perl programmers to access and manipulate an LDAP
 based Directory.
 
 %define debug_package %{nil}
+
+%changelog
+* Mon Dec 12 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated perl-net-ldapapi, Upgraded openldap to 2.5.13
 
 %prep
 %setup -n MODNAME-%{version}
