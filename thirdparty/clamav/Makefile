@@ -2,9 +2,10 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-pvers := $(CLAMAV_VERSION)
+pvers := $(CLAMAV_NORM)
+dictver := $(CLAMAV_VERSION)
 pname := clamav
-pfile := $(pname)-$(pvers).tar.gz
+pfile := $(pname)-$(dictver).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := http://www.clamav.net/downloads/production/$(pfile)
 zname := zimbra-$(pname)
@@ -12,9 +13,12 @@ zspec := $(pname).spec
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
-all: clean getsrc build pkgrm1
+all: clean install_rust getsrc build pkgrm1
 
 # $(@D) == directory part of the target
+install_rust:
+	./install_rust_toolchain.sh
+
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)

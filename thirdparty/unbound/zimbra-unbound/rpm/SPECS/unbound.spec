@@ -1,7 +1,7 @@
 Summary:            Zimbra's Unbound build
 Name:               zimbra-unbound
 Version:            VERSION
-Release:            1zimbra8.7b3ZAPPEND
+Release:            1zimbra8.7b4ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
 Patch0:             log-facility.patch
@@ -17,6 +17,8 @@ The Zimbra Unbound build
 %define debug_package %{nil}
 
 %changelog
+* Sat Aug 20 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+- Fix ZCS-11941, remove anchor key generation
 * Tue Apr 12 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Fix ZBUG-2723, Generate anchor key required for DNSSEC
 * Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
@@ -75,12 +77,3 @@ OZCI
 OZCL/*.a
 OZCL/*.la
 OZCL/*.so
-
-%post -p /bin/bash
-USER=$(whoami)
-if [ "$USER" = "zimbra" ]; then
-    /opt/zimbra/common/sbin/unbound-anchor -a "/opt/zimbra/conf/root.key"
-else
-   su - zimbra -c "/opt/zimbra/common/sbin/unbound-anchor -a "/opt/zimbra/conf/root.key""
-fi
-exit 0

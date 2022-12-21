@@ -1,3 +1,15 @@
+zimbra-spell-components (2.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-3126
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 23 Nov 2022 22:26:24 +0000
+
+zimbra-spell-components (2.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-2819, Upgraded Apache to 2.4.54
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 18 Oct 2022 22:26:24 +0000
+
 zimbra-spell-components (2.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Fix ZCS-11149, Upgraded Apache to 2.4.53

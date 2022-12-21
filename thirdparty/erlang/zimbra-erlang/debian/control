@@ -1,0 +1,14 @@
+Source: zimbra-erlang
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev (>= 1.1.1q-1zimbra8.7b4ZAPPEND), libncurses5-dev, libz-dev
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 2.9.0
+Homepage: https://github.com/erlang/otp
+
+Package: zimbra-erlang
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-openssl (>= 1.1.1q-1zimbra8.7b4ZAPPEND)
+Description: The Zimbra erlang build

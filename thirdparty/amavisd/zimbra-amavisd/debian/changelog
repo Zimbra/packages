@@ -1,3 +1,9 @@
+zimbra-amavisd (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-1457
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 22 Aug 2022 22:26:24 +0000
+
 zimbra-amavisd (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
   * Initial Release.

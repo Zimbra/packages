@@ -1,3 +1,21 @@
+zimbra-ldap-components (2.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-3017, Updated core-components to 3.0.15
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 22 Sep 2022 00:00:00 +0000
+
+zimbra-ldap-components (2.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix for ZCS-11689, Upgraded OpenSSL to 1.1.1q and core-components to 3.0.14
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 11 Jul 2022 05:12:55 +0000
+
+zimbra-ldap-components (2.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-2676, Upgraded Cyrus SASL to 2.1.28 and core-components to 3.0.13
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 07 Jul 2022 00:00:00 +0000
+
 zimbra-ldap-components (2.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * ZCS-11116, Upgraded JDK to 17.0.2 and core-components to 3.0.12
