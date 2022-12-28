@@ -1,10 +1,10 @@
 Summary:            Zimbra's 0MQ build
 Name:               zimbra-zeromq
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            LGPL-3
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-libsodium-devel
+BuildRequires:      zimbra-libsodium-devel >= 1.0.18-1zimbra8.7b1ZAPPEND
 BuildRequires:      pkgconfig
 Requires:           zimbra-zeromq-libs = %{version}-%{release}
 AutoReqProv:        no
@@ -12,6 +12,10 @@ URL:                http://zeromq.org/
 
 %description
 The Zimbra 0MQ build
+
+%changelog
+* Wed Dec 28 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded libsodium to 1.0.18
 
 %prep
 %setup -n zeromq-%{version}
@@ -30,7 +34,7 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 
 %package libs
 Summary:        0MQ Libaries
-Requires:       zimbra-libsodium-libs, zimbra-base
+Requires:       zimbra-libsodium-libs >= 1.0.18-1zimbra8.7b1ZAPPEND, zimbra-base
 AutoReqProv:        no
 
 %description libs
