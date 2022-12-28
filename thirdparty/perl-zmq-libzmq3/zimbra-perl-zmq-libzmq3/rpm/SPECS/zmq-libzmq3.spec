@@ -1,13 +1,14 @@
 Summary:            a libzmq 3.x wrapper for Perl
 Name:               zimbra-perl-zmq-libzmq3
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            Artistic 2.0
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-zeromq-devel, zimbra-perl-zmq-constants
-Requires:           zimbra-perl-base, zimbra-zeromq-libs, zimbra-perl-zmq-constants
+Patch0:             libzmq3.patch
+BuildRequires:      zimbra-perl-base, zimbra-zeromq-devel >= 4.1.4-1zimbra8.7b2ZAPPEND, zimbra-perl-zmq-constants
+Requires:           zimbra-perl-base, zimbra-zeromq-libs >= 4.1.4-1zimbra8.7b2ZAPPEND, zimbra-perl-zmq-constants
 AutoReqProv:        no
 URL:                https://metacpan.org/release/ZMQ-LibZMQ3
 
@@ -21,8 +22,14 @@ use this module.
 
 %define debug_package %{nil}
 
+%changelog
+* Wed Dec 28 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated zeromq and Upgraded libsodium to 1.0.18
+
+
 %prep
 %setup -n ZMQ-LibZMQ3-%{version}
+%patch0 -p1
 
 %build
 # Notes/Workarounds:
