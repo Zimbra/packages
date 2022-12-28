@@ -38,7 +38,7 @@ perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
 #  $(DESTINSTALLSITEARCH)/perllocal.pod
 %define perl_archname %(perl -MConfig -e 'print $Config{archname}')
 %install
-make install DESTDIR=${RPM_BUILD_ROOT}
+LD_RUN_PATH=OZCL make DESTDIR=${RPM_BUILD_ROOT} install
 rm -f %{buildroot}OZCL/perl5/%{perl_archname}/perllocal.pod
 rm -f %{buildroot}OZCL/perl5/%{perl_archname}/auto/*/*/.packlist
 
