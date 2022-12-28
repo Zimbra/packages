@@ -16,7 +16,7 @@ Requires:       zimbra-perl-data-uuid, zimbra-perl-date-calc, zimbra-perl-date-m
 Requires:       zimbra-perl-dbd-mysql >= 4.050-1zimbra8.7b4ZAPPEND
 Requires:       zimbra-perl-dbd-sqlite, zimbra-perl-db-file, zimbra-perl-dbi, zimbra-perl-digest-hmac
 Requires:       zimbra-perl-digest-sha1, zimbra-perl-email-date-format, zimbra-perl-encode-detect
-Requires:       zimbra-perl-encode-locale, zimbra-perl-error, zimbra-perl-exporter-tiny, zimbra-perl-zmq-libzmq3
+Requires:       zimbra-perl-encode-locale, zimbra-perl-error, zimbra-perl-exporter-tiny, zimbra-perl-zmq-libzmq3 >= 1.19-1zimbra8.7b2ZAPPEND
 Requires:       zimbra-perl-file-grep, zimbra-perl-file-libmagic, zimbra-perl-file-listing, zimbra-perl-filesys-df
 Requires:       zimbra-perl-file-tail, zimbra-perl-geography-countries, zimbra-perl-html-parser, zimbra-perl-http-cookies
 Requires:       zimbra-perl-http-daemon, zimbra-perl-http-date, zimbra-perl-http-message, zimbra-perl-http-negotiate
@@ -51,7 +51,7 @@ the Mail::SpamAssassin module, as that is for MTA nodes only
 
 %changelog
 * Tue Mar 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.8
-- Updated perl-net-ldapapi
+- Updated perl-net-ldapapi, perl-zmq-libzmq3
 * Tue Feb 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7
 - Upgraded Date-Manip to 6.90
 * Thu Jan 19 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.6

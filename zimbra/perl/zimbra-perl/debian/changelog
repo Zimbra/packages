@@ -1,6 +1,6 @@
 zimbra-perl (1.0.8-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
-  * Updated perl-net-ldapapi
+  * Updated perl-net-ldapapi, perl-zmq-libzmq3
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 07 Mar 2023 22:26:24 +0000
 
