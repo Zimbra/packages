@@ -204,3 +204,8 @@ The zimbra-lmdb-devel package contains the linking libraries and include files
 /opt/zimbra/common/include/lmdb.h
 /opt/zimbra/common/lib/liblmdb.a
 /opt/zimbra/common/lib/liblmdb.so
+
+%post -p /bin/bash -n zimbra-openldap-server
+if [ -x /opt/zimbra/common/libexec/slapd ]; then
+  setcap CAP_NET_BIND_SERVICE=+ep /opt/zimbra/common/libexec/slapd
+fi
