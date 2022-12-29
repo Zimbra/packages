@@ -1,1 +1,1 @@
-libzmq 5 zimbra-zeromq-lib (>= VERSION-ITERATION)
+libzmq 5 zimbra-zeromq-lib (>= VERSION-1zimbra8.7b2ZAPPEND)
