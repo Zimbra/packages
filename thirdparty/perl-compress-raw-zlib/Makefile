@@ -2,7 +2,7 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-pvers := $(COMPRESS_RAW_BZIP2)
+pvers := $(COMPRESS_RAW_ZLIB)
 pname := Compress-Raw-Zlib
 pname_lc := compress-raw-zlib
 

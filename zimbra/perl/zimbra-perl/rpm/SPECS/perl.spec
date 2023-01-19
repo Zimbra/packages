@@ -1,6 +1,6 @@
 Summary:        Zimbra Perl
 Name:           zimbra-perl
-Version:        1.0.5
+Version:        1.0.6
 Release:        1zimbra8.7b1ZAPPEND
 License:        GPL-2
 Packager:       Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -8,7 +8,7 @@ Group:          Development/Languages
 Requires:       zimbra-perl-base, zimbra-perl-archive-zip, zimbra-perl-berkeleydb
 Requires:       zimbra-perl-bit-vector, zimbra-perl-cache-fastmmap, zimbra-perl-canary-stability
 Requires:       zimbra-perl-carp-clan, zimbra-perl-class-inspector, zimbra-perl-compress-raw-bzip2
-Requires:       zimbra-perl-compress-raw-zlib, zimbra-perl-config-inifiles, zimbra-perl-convert-asn1
+Requires:       zimbra-perl-compress-raw-zlib >= 2.103-1zimbra8.7b1ZAPPEND, zimbra-perl-config-inifiles, zimbra-perl-convert-asn1
 Requires:       zimbra-perl-convert-binhex, zimbra-perl-convert-tnef, zimbra-perl-convert-uulib
 Requires:       zimbra-perl-crypt-openssl-random >= 0.11-1zimbra8.7b3ZAPPEND, zimbra-perl-crypt-openssl-rsa >= 0.31-1zimbra8.7b2ZAPPEND
 Requires:       zimbra-perl-crypt-saltedhash
@@ -48,6 +48,8 @@ of the Zimbra required perl modules.  The current sole exception is
 the Mail::SpamAssassin module, as that is for MTA nodes only
 
 %changelog
+* Thu Jan 19 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.6
+- Upgraded Compress::Raw::Zlib to 2.103
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.5
 - Updated perl-net-ssleay, perl-dbd-mysql, perl-crypt-openssl-random, perl-crypt-openssl-rsa, perl-io-socket-ssl
 - Updated perl-net-http, perl-libwww, perl-lwp-protocol-https, perl-xml-parser, perl-soap-lite, perl-xml-sax-expat
