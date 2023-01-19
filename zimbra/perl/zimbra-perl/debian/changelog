@@ -1,3 +1,9 @@
+zimbra-perl (1.0.6-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded Compress::Raw::Zlib to 2.103
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 19 Jan 2023 00:00:00 +0000
+
 zimbra-perl (1.0.5-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Updated perl-net-ssleay, perl-dbd-mysql, perl-crypt-openssl-random
