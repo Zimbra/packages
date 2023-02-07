@@ -1,3 +1,9 @@
+zimbra-core-components (2.0.20-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded Compress::Raw::Zlib to 2.103, Updated core-components to 2.0.20
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 19 Jan 2023 00:00:00 +0000
+
 zimbra-core-components (2.0.19-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Fix ZBUG-3017, Updated core-components to 2.0.19
