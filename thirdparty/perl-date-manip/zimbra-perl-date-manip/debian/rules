@@ -13,7 +13,7 @@ override_dh_perl:
 	dh_perl OZCL/perl5
 
 override_dh_auto_test:
-	PERL5LIB=OZCL/perl5 dh_auto_test
+	PERL5LIB=OZCL/perl5:$$(pwd)/t dh_auto_test
 
 # remove .packlist and perllocal.pod
 #  $(DESTINSTALLSITEARCH)/auto/$(FULLEXT)/.packlist
