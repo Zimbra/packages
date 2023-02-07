@@ -1,9 +1,9 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            2.0.20
+Version:            2.0.21
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-base, zimbra-os-requirements >= 1.0.2-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.6-1zimbra8.7b1ZAPPEND, zimbra-pflogsumm
+Requires:           zimbra-base, zimbra-os-requirements >= 1.0.2-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.7-1zimbra8.7b1ZAPPEND, zimbra-pflogsumm
 Requires:           zimbra-openssl >= 1.1.1q-1zimbra8.7b4ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-rsync
@@ -20,6 +20,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Tue Feb 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.21
+- Upgraded Date-Manip to 6.90, Updated core-components to 2.0.21
 * Thu Jan 19 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.20
 - Upgraded Compress::Raw::Zlib to 2.103, Updated core-components to 2.0.20
 * Mon Sep 12 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.19
