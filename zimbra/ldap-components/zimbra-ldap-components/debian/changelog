@@ -1,3 +1,9 @@
+zimbra-ldap-components (1.0.21-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded Date-Manip to 6.90, Updated core-components to 2.0.21
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 7 Feb 2023 00:00:00 +000
+
 zimbra-ldap-components (1.0.20-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded Compress::Raw::Zlib to 2.103, Updated core-components to 2.0.20
