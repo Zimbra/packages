@@ -1,6 +1,6 @@
 Summary:        Zimbra Perl
 Name:           zimbra-perl
-Version:        1.0.6
+Version:        1.0.7
 Release:        1zimbra8.7b1ZAPPEND
 License:        GPL-2
 Packager:       Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -12,7 +12,8 @@ Requires:       zimbra-perl-compress-raw-zlib >= 2.103-1zimbra8.7b1ZAPPEND, zimb
 Requires:       zimbra-perl-convert-binhex, zimbra-perl-convert-tnef, zimbra-perl-convert-uulib
 Requires:       zimbra-perl-crypt-openssl-random >= 0.11-1zimbra8.7b3ZAPPEND, zimbra-perl-crypt-openssl-rsa >= 0.31-1zimbra8.7b2ZAPPEND
 Requires:       zimbra-perl-crypt-saltedhash
-Requires:       zimbra-perl-data-uuid, zimbra-perl-date-calc, zimbra-perl-date-manip, zimbra-perl-dbd-mysql >= 4.050-1zimbra8.7b4ZAPPEND
+Requires:       zimbra-perl-data-uuid, zimbra-perl-date-calc, zimbra-perl-date-manip >= 6.90-1zimbra8.7b1ZAPPEND
+Requires:       zimbra-perl-dbd-mysql >= 4.050-1zimbra8.7b4ZAPPEND
 Requires:       zimbra-perl-dbd-sqlite, zimbra-perl-db-file, zimbra-perl-dbi, zimbra-perl-digest-hmac
 Requires:       zimbra-perl-digest-sha1, zimbra-perl-email-date-format, zimbra-perl-encode-detect
 Requires:       zimbra-perl-encode-locale, zimbra-perl-error, zimbra-perl-exporter-tiny, zimbra-perl-zmq-libzmq3
@@ -48,6 +49,8 @@ of the Zimbra required perl modules.  The current sole exception is
 the Mail::SpamAssassin module, as that is for MTA nodes only
 
 %changelog
+* Tue Feb 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.7
+- Upgraded Date-Manip to 6.90
 * Thu Jan 19 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.6
 - Upgraded Compress::Raw::Zlib to 2.103
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.5
