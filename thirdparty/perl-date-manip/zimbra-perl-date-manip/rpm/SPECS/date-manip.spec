@@ -19,6 +19,10 @@ international times are all easily done. It deals with time as it is
 used in the Gregorian calendar (the one currently in use) with full
 support for time changes due to daylight saving time
 
+%changelog
+* Tue Feb 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Upgraded Date-Manip to 6.90
+
 %define debug_package %{nil}
 
 %prep
@@ -30,7 +34,7 @@ perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
  INSTALLMAN3DIR=OZCS/man/man1 INSTALLVENDORMAN3DIR=OZCS/man/man1 \
  INSTALLMAN3DIR=OZCS/man/man3 INSTALLVENDORMAN3DIR=OZCS/man/man3 \
  LIB=OZCL/perl5
-PERL5LIB=OZCL/perl5 make test
+PERL5LIB=OZCL/perl5:`pwd`/t make test
 
 # remove .packlist and perllocal.pod
 #  $(DESTINSTALLSITEARCH)/auto/$(FULLEXT)/.packlist
