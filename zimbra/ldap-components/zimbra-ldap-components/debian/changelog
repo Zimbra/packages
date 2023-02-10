@@ -1,3 +1,9 @@
+zimbra-ldap-components (2.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-3278, upgraded OpenSSL to 1.1.1t and updated core-components to 3.0.18
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 10 Feb 2023 05:12:55 +0000
+
 zimbra-ldap-components (2.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded Date-Manip to 6.90, Updated core-components to 3.0.17
