@@ -2,10 +2,9 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
-pvers := $(CLAMAV_NORM)
-dictver := $(CLAMAV_VERSION)
+pvers := $(CLAMAV_VERSION)
 pname := clamav
-pfile := $(pname)-$(dictver).tar.gz
+pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 purl := http://www.clamav.net/downloads/production/$(pfile)
 zname := zimbra-$(pname)
