@@ -1,6 +1,4 @@
 opt/zimbra/common/lib/*.so.*
-opt/zimbra/common/lib/engines-1.1
+opt/zimbra/common/lib/engines-3
 opt/zimbra/common/lib/libcrypto.a
 opt/zimbra/common/lib/libssl.a
-opt/zimbra/common/lib/.libcrypto.so.*.hmac
-opt/zimbra/common/lib/.libssl.so.*.hmac
