@@ -14,6 +14,10 @@ PostSRSd provides the Sender Rewriting Scheme (SRS) via TCP-based
 lookup tables for Postfix. SRS is needed if your mail server acts
 as forwarder.
 
+%changelog
+- Upgraded postsrsd from 1.3 to 1.11
+* Wed Mar 02 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+
 %prep
 %setup -n postsrsd-%{version}
 
@@ -25,7 +29,7 @@ cd build && \
   -DCMAKE_INSTALL_RPATH="OZCL" \
   -DCMAKE_PREFIX_PATH="OZC" \
   -DINIT_FLAVOR=none \
-  -DGENERATE_SRS_SECRET=OFF \
+  -DGENERATE_SRS_SECRET="/opt/zimbra/common/etc/postsrsd.secret" \
   -DSYSCONF_DIR=OZCE
 make all
 

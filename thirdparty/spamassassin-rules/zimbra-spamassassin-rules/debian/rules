@@ -10,3 +10,5 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	mkdir -p $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/data/spamassassin/rules
 	cp rules/updates_spamassassin_org/* $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/data/spamassassin/rules
+	rm -rf $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/data/spamassassin/rules/user_prefs.template
+	rm -rf $(CURDIR)/debian/$(shell dh_listpackages)/opt/zimbra/data/spamassassin/rules/languages

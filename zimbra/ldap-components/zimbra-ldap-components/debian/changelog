@@ -1,3 +1,141 @@
+zimbra-ldap-components (2.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-3278, upgraded OpenSSL to 1.1.1t and updated core-components to 3.0.18
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 10 Feb 2023 05:12:55 +0000
+
+zimbra-ldap-components (2.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded Date-Manip to 6.90, Updated core-components to 3.0.17
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 7 Feb 2023 00:00:00 +0000
+
+zimbra-ldap-components (2.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded Compress::Raw::Zlib to 2.103, Updated core-components to 3.0.16
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 19 Jan 2023 00:00:00 +0000
+
+zimbra-ldap-components (2.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-3017, Updated core-components to 3.0.15
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 22 Sep 2022 00:00:00 +0000
+
+zimbra-ldap-components (2.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix for ZCS-11689, Upgraded OpenSSL to 1.1.1q and core-components to 3.0.14
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 11 Jul 2022 05:12:55 +0000
+
+zimbra-ldap-components (2.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-2676, Upgraded Cyrus SASL to 2.1.28 and core-components to 3.0.13
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 07 Jul 2022 00:00:00 +0000
+
+zimbra-ldap-components (2.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * ZCS-11116, Upgraded JDK to 17.0.2 and core-components to 3.0.12
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 03 Jun 2022 00:00:00 +0000
+
+zimbra-ldap-components (2.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl to 1.1.1n and core-components to 3.0.11
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 20 May 2022 00:00:00 +0000
+
+zimbra-ldap-components (2.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl to 1.1.1l and core-components to 3.0.10
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 30 Sep 2021 22:26:24 +0000
+
+zimbra-ldap-components (2.0.3-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap and core-components to 3.0.9
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 02 Sep 2021 22:26:24 +0000
+
+zimbra-ldap-components (2.0.2-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated core-components to 3.0.8
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 02 Sep 2021 22:26:24 +0000
+
+zimbra-ldap-components (2.0.1-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Added dependency core-components
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.14-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl to 1.1.1l and core-components to 2.0.14
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 30 Sep 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.13-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap and core-components to 2.0.13
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated core-components to 2.0.12
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Added dependency core-components
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 24 Aug 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded openldap to 2.4.59
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 17 Aug 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl to 1.1.1k
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 15 Apr 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.8-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openssl
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 02 Apr 2021 22:26:24 +0000
+
+zimbra-ldap-components (1.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap with openssl 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-ldap-components (1.0.6-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap with openssl 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-ldap-components (1.0.5-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated openldap with openssl 1.1.1g
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
+zimbra-ldap-components (1.0.4-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Fixed ZBUG-1441 in openldap
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 09 Jun 2020 00:00:00 +0000
+
 zimbra-ldap-components (1.0.3-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated openldap 2.4.49

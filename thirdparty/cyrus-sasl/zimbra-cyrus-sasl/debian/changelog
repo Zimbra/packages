@@ -1,3 +1,21 @@
+zimbra-cyrus-sasl (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded cyrus-sasl to 2.1.28
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 21 Jun 2022 22:26:24 +0000
+
+zimbra-cyrus-sasl (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded dependency openssl to 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-cyrus-sasl (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
+
+  * Upgraded dependency openssl to 1.1.1g and updated dependency heimdal,curl
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-cyrus-sasl (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
   * Initial Release.

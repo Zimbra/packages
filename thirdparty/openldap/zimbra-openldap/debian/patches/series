@@ -5,3 +5,4 @@ ITS8054.patch
 liblmdb-soname.patch
 multival.patch
 liblmdb-keysize.patch
+ITS9608.patch

@@ -1,0 +1,23 @@
+diff -ruN a/plugins/otp.c b/plugins/otp.c
+--- a/plugins/otp.c	2020-09-17 18:57:39.740142828 +0000
++++ b/plugins/otp.c	2020-09-17 18:58:34.440144371 +0000
+@@ -118,7 +118,8 @@
+ static void otp_hash(const EVP_MD *md, char *in, size_t inlen,
+ 		     unsigned char *out, int swab)
+ {
+-    EVP_MD_CTX mdctx;
++    EVP_MD_CTX *mdctx;
++    mdctx = EVP_MD_CTX_new();
+     char hash[EVP_MAX_MD_SIZE];
+     unsigned int i;
+     int j;
+@@ -752,7 +753,8 @@
+ 	
+ 	/* alternate dictionary */
+ 	if (alt_dict) {
+-	    EVP_MD_CTX mdctx;
++	    EVP_MD_CTX *mdctx;
++	    mdctx = EVP_MD_CTX_new();
+ 	    char hash[EVP_MAX_MD_SIZE];
+ 	    int hashlen;
+ 	    

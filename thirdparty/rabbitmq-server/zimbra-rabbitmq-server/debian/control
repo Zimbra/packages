@@ -1,0 +1,14 @@
+Source: zimbra-rabbitmq-server
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-erlang (>= 25.0.3-1zimbra8.8b1ZAPPEND), zimbra-openssl-dev (>= 1.1.1q-1zimbra8.7b4ZAPPEND), zip, rsync, gzip, sed
+Section: utils
+Priority: optional
+Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Uploaders: Zimbra Packaging Services <packaging-devel@zimbra.com>
+Standards-Version: 2.9.0
+Homepage:  https://www.rabbitmq.com/
+
+Package: zimbra-rabbitmq-server
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-erlang (>= 25.0.3-1zimbra8.8b1ZAPPEND)
+Description: The Zimbra's RabbitMQ server

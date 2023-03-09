@@ -1,3 +1,70 @@
+zimbra-mta-components (1.0.19-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded ClamAV to 0.105.2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 22 Feb 2023 16:05:22 +0000
+
+zimbra-mta-components (1.0.18-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded ClamAV to 0.105.1-2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 02 Nov 2022 16:05:22 +0000
+
+zimbra-mta-components (1.0.17-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-2817,Upgraded ClamAV to 0.105.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 14 Oct 2022 16:05:22 +0000
+
+zimbra-mta-components (1.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-1457, updated zimbra-amavisd
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com> Mon, 22 Aug 2022 22:26:24 +0000
+
+zimbra-mta-components (1.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated zimbra-clamav,zimbra-spamassassin-rules,zimbra-perl-mail-spamassassin
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 20 May 2022 00:00:00 +0000
+
+zimbra-mta-components (1.0.14-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded postfix to 3.6.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 17 Aug 2021 22:26:24 +0000
+
+zimbra-mta-components (1.0.13-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated clamav to 0.103.2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 15 Apr 2021 22:26:24 +0000
+
+zimbra-mta-components (1.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated perl-mail-spamassassin,spamassassin-rules
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 08 Apr 2021 22:26:24 +0000
+
+zimbra-mta-components (1.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated opendkim
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-mta-components (1.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated perl-mail-spamassassin,spamassassin-rules,opendkim,clamav,postfix,mariadb
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-mta-components (1.0.9-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated
+    perl-mail-spamassassin,spamassassin-rules,opendkim,clamav,postfix,mariadb
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-mta-components (1.0.7-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-clamav, zimbra-perl-mail-spamassassin, zimbra-spamassassin-rules packages

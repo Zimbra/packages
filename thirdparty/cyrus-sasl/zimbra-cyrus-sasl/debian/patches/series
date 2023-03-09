@@ -1,3 +1,4 @@
-sasl-auth-zimbra-2.1.26.patch
-saslauthd-conf.patch
+sasl-auth-zimbra-2.1.28.patch
+saslauthd-conf-2.1.28.patch
 auxprop.patch
+testsaslauthd.c.patch

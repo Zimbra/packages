@@ -1,0 +1,4 @@
+ngx_addon_name=ngx_mail_throttle_module
+MAIL_MODULES="$MAIL_MODULES ngx_mail_throttle_module"
+MAIL_INCS="$MAIL_INCS zmmodules/mail/throttle/"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS zmmodules/mail/throttle/ngx_mail_throttle_module.c"

@@ -1,0 +1,39 @@
+#!/usr/bin/make -f
+export DEB_BUILD_OPTIONS=nocheck
+
+DEB_UPSTREAM_VERSION?= $(shell dpkg-parsechangelog | sed -rne 's/^Version: ([0-9.]+)[-+].*$$/\1/p')
+
+unexport DEPS_DIR
+
+# Ensure rpath is set correctly
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZ
+
+%:
+	dh $@
+
+
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
+override_dh_auto_build:
+	make dist manpages
+
+override_dh_strip:
+	dh_strip -pzimbra-rabbitmq-server
+	dh_strip -Nzimbra-rabbitmq-server
+
+
+override_dh_auto_install:
+	make install install-bin install-man DESTDIR=$$(pwd)/debian/tmp PREFIX=/opt/zimbra RMQ_ROOTDIR="/opt/zimbra/common/lib/rabbitmq" RMQ_ERLAPP_DIR=/opt/zimbra/common/lib/rabbitmq/lib/rabbitmq_server-$(DEB_UPSTREAM_VERSION) MANDIR="/opt/zimbra/common/share/man"
+	rm -rf $$(pwd)/debian/tmp/opt/zimbra/common/lib/rabbitmq/lib/rabbitmq_server-$(DEB_UPSTREAM_VERSION)/LICENSE*
+	rm -rf $$(pwd)/debian/tmp/opt/zimbra/common/lib/rabbitmq/lib/rabbitmq_server-$(DEB_UPSTREAM_VERSION)/INSTALL
+	rm -rf $$(pwd)/debian/tmp/opt/zimbra/common/lib/rabbitmq/lib/rabbitmq_server-$(DEB_UPSTREAM_VERSION)/plugins/README
+	mkdir -p $$(pwd)/debian/tmp/opt/zimbra/common/sbin/
+	mkdir -p $$(pwd)/debian/tmp/opt/zimbra/conf
+	cp -a scripts/rabbitmq-script-wrapper $$(pwd)/debian/tmp/opt/zimbra/common/sbin/rabbitmqctl
+	chmod 0755 $$(pwd)/debian/tmp/opt/zimbra/common/sbin/rabbitmqctl
+	rm -rf $$(pwd)/debian/tmp/usr/share/doc
+	cp -a debian/rabbitmq-env.conf $$(pwd)/debian/tmp/opt/zimbra/conf/rabbitmq-env.conf
+	for script in rabbitmq-server rabbitmq-plugins rabbitmq-diagnostics rabbitmq-queues rabbitmq-upgrade rabbitmq-streams; do \
+		cp -a $$(pwd)/debian/tmp/opt/zimbra/common/sbin/rabbitmqctl  $$(pwd)/debian/tmp/opt/zimbra/common/sbin/$$script; \
+	done

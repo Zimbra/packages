@@ -1,13 +1,13 @@
 Summary:            XML::Parser - A perl module for parsing XML documents
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, expat-devel, zimbra-perl-libwww
-Requires:           zimbra-perl-base, expat, zimbra-perl-libwww
+BuildRequires:      zimbra-perl-base, expat-devel, zimbra-perl-libwww >= 6.13-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-perl-base, expat, zimbra-perl-libwww >= 6.13-1zimbra8.7b3ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -15,6 +15,12 @@ URL:                https://metacpan.org/release/MODNAME
 This is a Perl extension interface to James Clark's XML parser, expat
 
 %define debug_package %{nil}
+
+%changelog
+* Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated zimbra-perl-libwww
+* Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated zimbra-perl-libwww
 
 %prep
 %setup -n MODNAME-%{version}

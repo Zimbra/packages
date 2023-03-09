@@ -1,3 +1,45 @@
+zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded ClamAV to 0.105.2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 22 Feb 2023 16:05:22 +0000
+
+zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded ClamAV to 0.105.1-2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 02 Nov 2022 16:05:22 +0000
+
+zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-2817,Upgraded ClamAV to 105.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 14 Oct 2022 16:05:22 +0000
+
+zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Fix ZCS-11150,Upgraded clamav to 0.103.3
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 28 Mar 2022 16:05:22 +0000
+
+zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded clamav to 0.103.2
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 15 Apr 2021 16:05:22 +0000
+
+zimbra-clamav (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded dependency openssl to 1.1.1h
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-clamav (VERSION-1zimbra8.8b2ZAPPEND) unstable; urgency=medium
+
+  * Upgraded dependency openssl to 1.1.1g
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-clamav (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded clamav to 0.102.2

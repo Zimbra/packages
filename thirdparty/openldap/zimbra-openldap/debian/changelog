@@ -1,3 +1,27 @@
+zimbra-openldap (VERSION-1zimbra8.8b5ZAPPEND) unstable; urgency=medium
+
+  * Add fix for OpenLDAP ITS#9608
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 07 Jul 2021 22:26:24 +0000
+
+zimbra-openldap (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
+
+  * Updated dependencies openssl to 1.1.1h and cyrus-sasl
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-openldap (VERSION-1zimbra8.8b3ZAPPEND) unstable; urgency=medium
+
+  * Upgraded openssl to 1.1.1g and updated cyrus-sasl
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
+zimbra-openldap (VERSION-1zimbra8.8b2ZAPPEND) unstable; urgency=medium
+
+  * Fix for ZBUG-1441
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 09 Jun 2020 11:25:24 +0000
+
 zimbra-openldap (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Update for OpenLDAP 2.4.49

@@ -1,3 +1,27 @@
+zimbra-dnscache-components (1.0.4-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Fix ZCS-11941, Updated zimbra-unbound
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 20 Aug 2022 00:00:00 +0000
+
+zimbra-dnscache-components (1.0.3-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Fix for ZBUG-2723,Updated zimbra-unbound
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 20 May 2022 00:00:00 +0000
+
+zimbra-dnscache-components (1.0.2-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Updated dependency zimbra-unbound
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
+
+zimbra-dnscache-components (1.0.1-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Updated dependency zimbra-unbound
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 17 Sep 2020 22:26:24 +0000
+
 zimbra-dnscache-components (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.

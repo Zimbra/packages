@@ -9,6 +9,7 @@ zname := zimbra-$(pname)
 pfile := $(zname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
 zspec := $(pname).spec
+zmodules := zmmodules
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
@@ -17,16 +18,20 @@ all: clean getsrc build pkgrm1
 getsrc:
 	mkdir -p $(SRC_DIR)
 	mkdir -p $(psrctmp)
-	cp -pr $(pname)-$(pvers)-zimbra $(psrctmp)
+	mkdir -p $(psrctmp)/$(pname)-$(pvers)-zimbra/
+	cp -pr $(pname)/* $(psrctmp)/$(pname)-$(pvers)-zimbra/
 	mkdir -p $(psrctmp)/$(pname)-$(pvers)-zimbra/modules
 	cd $(psrctmp)/$(pname)-$(pvers)-zimbra/modules && \
 	git clone https://github.com/nviennot/nginx-tcp-keepalive.git nviennot-nginx-tcp-keepalive >/dev/null 2>&1 && \
 	cd nviennot-nginx-tcp-keepalive && \
 	git reset --hard $(NGINX_HTTP_KEEPALIVE) >/dev/null 2>&1 && \
 	rm -rf .git
+	cp -rp $(zmodules) $(psrctmp)/$(pname)-$(pvers)-zimbra/
 	cd $(psrctmp) && tar cfz $(zname)-$(pvers).tar.gz $(pname)-$(pvers)-zimbra
 	mv $(psrctmp)/$(zname)-$(pvers).tar.gz $(SRC_DIR)
 	rm -rf $(psrctmp)
+	mkdir -p $(PLATFORM_DIR)/$(zname)/$(zmodules)
+	cp -rp $(zmodules) $(PLATFORM_DIR)/$(zname)/
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV)
