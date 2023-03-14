@@ -1,6 +1,7 @@
---- amavisd-new-2.9.0/amavis-mc.orig	2015-03-05 16:30:36.918020099 -0600
-+++ amavisd-new-2.9.0/amavis-mc	2015-03-05 16:30:36.914018098 -0600
-@@ -47,6 +47,7 @@
+diff -ruN a/bin/amavis-mc b/bin/amavis-mc
+--- a/bin/amavis-mc	2023-03-10 13:45:07.198404133 +0000
++++ b/bin/amavis-mc	2023-03-10 13:47:17.553885205 +0000
+@@ -48,6 +48,7 @@
  use warnings;
  use warnings FATAL => qw(utf8 void);
  no warnings 'uninitialized';
@@ -8,14 +9,14 @@
  
  use vars qw($VERSION);  $VERSION = 2.008002;
  
-@@ -70,16 +71,16 @@
+@@ -73,16 +74,16 @@
  
  ### USER CONFIGURABLE:
  
--$daemon_user  = 'vscan';
--$daemon_group = 'vscan';
-+$daemon_user  = 'zimbra';
-+$daemon_group = 'zimbra';
+-$daemon_user   = 'vscan';
+-@daemon_groups = 'vscan';
++$daemon_user   = 'zimbra';
++@daemon_groups = 'zimbra';
  
 -$pid_file = '/var/amavis/amavis-mc.pid';
 +$pid_file = '/opt/zimbra/log/amavis-mc.pid';

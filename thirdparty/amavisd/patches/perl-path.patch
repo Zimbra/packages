@@ -1,16 +1,7 @@
---- amavisd-new-2.9.0/amavisd-status.orig	2015-03-05 16:30:36.966044097 -0600
-+++ amavisd-new-2.9.0/amavisd-status	2015-03-05 16:30:36.966044097 -0600
-@@ -47,6 +47,7 @@
- use warnings;
- use warnings FATAL => qw(utf8 void);
- no warnings 'uninitialized';
-+use lib "/opt/zimbra/common/lib/perl5";
- 
- use Errno qw(ESRCH ENOENT);
- use POSIX qw(strftime);
---- amavisd-new-2.10.1/amavisd-snmp-subagent-zmq.orig	2015-12-05 14:25:04.199464973 -0600
-+++ amavisd-new-2.10.1/amavisd-snmp-subagent-zmq	2015-12-05 14:25:32.159464041 -0600
-@@ -48,6 +48,7 @@
+diff -ruN a/bin/amavisd-snmp-subagent-zmq b/bin/amavisd-snmp-subagent-zmq
+--- a/bin/amavisd-snmp-subagent-zmq	2023-03-10 13:51:30.337037837 +0000
++++ b/bin/amavisd-snmp-subagent-zmq	2023-03-10 13:51:57.692958783 +0000
+@@ -49,6 +49,7 @@
  use warnings;
  use warnings FATAL => qw(utf8 void);
  no warnings 'uninitialized';
@@ -18,3 +9,14 @@
  
  use Errno qw(ESRCH ENOENT EACCES EEXIST);
  use POSIX ();
+diff -ruN a/bin/amavisd-status b/bin/amavisd-status
+--- a/bin/amavisd-status	2023-03-10 13:50:40.969190598 +0000
++++ b/bin/amavisd-status	2023-03-10 13:51:13.905083999 +0000
+@@ -48,6 +48,7 @@
+ use warnings;
+ use warnings FATAL => qw(utf8 void);
+ no warnings 'uninitialized';
++use lib "/opt/zimbra/common/lib/perl5";
+ 
+ use Errno qw(ESRCH ENOENT);
+ use POSIX qw(strftime);

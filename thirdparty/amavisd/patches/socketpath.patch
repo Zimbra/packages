@@ -1,12 +1,13 @@
---- amavisd-new-2.9.0/amavisd-release.orig	2015-03-05 16:30:36.962042097 -0600
-+++ amavisd-new-2.9.0/amavisd-release	2015-03-05 16:30:36.962042097 -0600
-@@ -86,7 +86,8 @@
- 
+diff -ruN a/bin/amavisd-release b/bin/amavisd-release
+--- a/bin/amavisd-release	2023-03-10 13:55:46.148381284 +0000
++++ b/bin/amavisd-release	2023-03-10 13:57:32.404164852 +0000
+@@ -88,7 +88,8 @@
    $log_level = 1;
  # $socketname = '127.0.0.1:9998';
+ # $socketname = '[::1]:9998';
 -  $socketname = '/var/amavis/amavisd.sock';
-+#  $socketname = '/var/amavis/amavisd.sock';
-+$socketname = '/opt/zimbra/data/amavisd/amavisd.sock';
++# $socketname = '/var/amavis/amavisd.sock';
++  $socketname = '/opt/zimbra/data/amavisd/amavisd.sock';
  
  ### END OF USER CONFIGURABLE
  }

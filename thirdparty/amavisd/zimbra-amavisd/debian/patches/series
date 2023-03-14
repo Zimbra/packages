@@ -3,4 +3,3 @@ amavis-mc.patch
 perl-path.patch
 socketpath.patch
 zmq-sock.patch
-zbug-1457.patch
