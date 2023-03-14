@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-mta-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- sqlite3, zimbra-mta-base, zimbra-altermime, zimbra-amavisd (>= 2.10.1-1zimbra8.7b2ZAPPEND),
+ sqlite3, zimbra-mta-base, zimbra-altermime, zimbra-amavisd (>= 2.13.0-1zimbra8.7b2ZAPPEND),
  zimbra-clamav (>= 0.105.2-1zimbra8.8b3ZAPPEND),
  zimbra-clamav-db, zimbra-cluebringer, zimbra-mariadb (>= 10.1.25-1zimbra8.7b3ZAPPEND),
  zimbra-opendkim (>= 2.10.3-1zimbra8.7b5ZAPPEND), zimbra-perl-mail-spamassassin (>= 3.4.6-1zimbra8.8b3ZAPPEND),
