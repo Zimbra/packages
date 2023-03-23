@@ -9,6 +9,7 @@ Patch1:             amavis-mc.patch
 Patch2:             perl-path.patch
 Patch3:             socketpath.patch
 Patch4:             zmq-sock.patch
+Patch5:             amavis-pm.patch
 Requires:           perl, zimbra-mta-base
 AutoReqProv:        no
 URL:                https://gitlab.com/amavis/amavis
@@ -25,6 +26,7 @@ The Zimbra amavisd build
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 

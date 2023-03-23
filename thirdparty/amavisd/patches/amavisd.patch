@@ -71,15 +71,3 @@ diff -ruN a/lib/Amavis.pm b/lib/Amavis.pm
  }
  
  # deal with debugging early, based on a command line arg
-diff -ruN a/lib/Amavis.pm b/lib/Amavis.pm
---- a/lib/Amavis.pm	2023-03-14 07:29:46.335201033 +0000
-+++ b/lib/Amavis.pm	2023-03-14 07:30:20.535855943 +0000
-@@ -443,7 +443,7 @@
-     P => sub {$MSGINFO->partition_tag}, # SQL partition tag
-     partition_tag => sub {$MSGINFO->partition_tag},  # synonym for %P
-     q => sub { my $q = $MSGINFO->quarantined_to;
--               $q && [map { my $m=$_; $m=~s{^\Q$QUARANTINEDIR\E/}{}; $m } @$q];
-+               $q && [map { my($m)=$_; $m=~s{^\Q$QUARANTINEDIR\E/}{}; $m=~s/^march.*\.archive$//; $m } @$q];
-              },  # list of quarantine mailboxes
-     v => sub { !defined $av_output ? undef     # anti-virus scanner output
-                  : [split(/[ \t]*\r?\n/, $av_output)]},
