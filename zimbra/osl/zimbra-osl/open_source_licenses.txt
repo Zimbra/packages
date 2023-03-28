@@ -1,6 +1,6 @@
 open_source_license.txt
 
-Zimbra Collaboration Suite 9.0.0 GA
+Zimbra Collaboration Suite 10.0.0 GA
 
 
 ===========================================================================
@@ -34,19 +34,18 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
 
    >>> altermime-0.3-20100505
    >>> amavis-logwatch-1.51.03
-   >>> ant-contrib-1.0b1
+   >>> ant-contrib-1.0b2
    >>> asm-3.3.1
    >>> babbler-0.4.0 (xmpp-core)
    >>> bdb-5.2.42
-   >>> bouncycastle-1.46
+   >>> bouncycastle-1.64
    >>> bouncycastle-zimbra-20110708
    >>> clipboard.js-0.2.0
-   >>> curl-7.49.0
-   >>> cyrus-sasl-zimbra-2.1.26
-   >>> dom4j-1.5.2
+   >>> curl-7.49.1
+   >>> cyrus-sasl-zimbra-2.1.28
+   >>> dom4j-2.1.1
    >>> ext.ux.touchcalendar-0.1
-   >>> ganymed-ssh2-build210-none
-   >>> gifencoder-none
+   >>> gifencoder-0.9
    >>> gperftools-2.4
    >>> heimdal-1.5.3
    >>> ical4j-0.9.16
@@ -55,41 +54,40 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> javamail-1.4.5
    >>> jaxen-1.1.3
    >>> jdom-1.1
-   >>> jquery-1.11.0
+   >>> jquery-3.5.1
    >>> jsch-0.1.53
    >>> json-1.0
    >>> jython-2.5.2
    >>> jzlib-1.0.7
-   >>> keyview-10.13.0.0
    >>> libbsd-0.7.0
    >>> libevent-2.0.22
-   >>> libpng-1.6.19
+   >>> libpng-1.6.23
    >>> libsodium-1.0.6
    >>> libxml2-2.9.4
    >>> md5.js-2.1
-   >>> memcached-1.4.25
-   >>> modernizr-2.6.2
-   >>> net-snmp-5.7.3
-   >>> nginx-1.7.1-zimbra
+   >>> memcached-1.4.37
+   >>> modernizr-2.8.3
+   >>> net-snmp-5.8
+   >>> nginx-1.20.0-zimbra
    >>> nist-sip-1.2
    >>> nviennot-nginx-tcp-keepalive-4d7186d
    >>> opendkim-2.10.3
-   >>> openldap-2.4.49
-   >>> openssl-1.0.2h
-   >>> owasp-java-html-sanitizer.jar-r239
+   >>> openldap-2.4.59
+   >>> openssl-1.1.1t
+   >>> owasp-java-html-sanitizer.jar-20190610.5z
    >>> perl-data-uuid-1.221
    >>> perl-geography-countries-2009041301
    >>> perl-mail-spf-2.9.0
    >>> perl-net-dns-1.04
    >>> perl-term-readkey-2.33
-   >>> php-5.6.23
-   >>> postfix-logwatch-1.40.01
+   >>> php-7.4.27
+   >>> postfix-logwatch-1.40.03
    >>> sendmail-8.15.2
-   >>> slf4j-1.6.4
-   >>> spymemcached-2.6
+   >>> slf4j-1.7.36
+   >>> spymemcached-2.12.1
    >>> sqlitejdbc-3.7.5-1
    >>> tnef-1.8.0
-   >>> unbound-1.5.9
+   >>> unbound-1.11.0
    >>> yui-compressor-2.4.2
    >>> zeroclipboard-1.0.7
    >>> 7zip-bin@5.0.3
@@ -5372,27 +5370,28 @@ SECTION 2: Apache License, V2.0
    >>> apache-ant-1.6.5
    >>> apache-ant-ziputil-1.7.0
    >>> apache-apr-1.5.2
-   >>> apache-apr-util-1.5.4
+   >>> apache-apr-util-1.6.1
    >>> apache-cxf-2.7.18
    >>> apache-commons-beanutils-1.7.0
    >>> apache-commons-cli-1.2
-   >>> apache-commons-codec-1.7
+   >>> apache-commons-codec-1.14
    >>> apache-commons-collection-3.2.2
-   >>> apache-commons-compress-1.10
+   >>> apache-commons-compress-1.20
    >>> apache-commons-csv-1.2
    >>> apache-commons-dbcp-1.4
-   >>> apache-commons-fileupload-1.2.2
-   >>> apache-commons-httpclient-3.1
-   >>> apache-commons-io-1.4
+   >>> apache-commons-fileupload-1.4
+   >>> apache-commons-httpclient-4.5.8
+   >>> apache-commons-io-2.6
    >>> apache-commons-logging-1.1.1
    >>> apache-commons-net-3.3
    >>> apache-commons-pool-1.6
    >>> apache-helix-0.6.1
-   >>> apache-httpasyncclient-4.0-beta3
-   >>> apache-httpcomponents-core-4.2.2 (httpcore, httpcore-nio)
-   >>> apache-httpd-2.4.20
+   >>> apache-httpasyncclient-4.1.4
+   >>> apache-httpcomponents-core-4.4.11 (httpcore, httpcore-nio)
+   >>> apache-httpd-2.4.54
    >>> apache-jcs-1.3
-   >>> apache-log4j-1.2.16
+   >>> apache-log4j-core-2.17.1
+   >>> apache-log4j-api-2.17.1
    >>> apache-log4j-extras-1.0
    >>> apache-neethi-3.0.2
    >>> commons-lang-2.6
@@ -5401,13 +5400,13 @@ SECTION 2: Apache License, V2.0
    >>> ehcache-core-2.5.1
    >>> google-caja-r4817
    >>> google-guice-2.0
-   >>> guava-13.0.1
-   >>> jackson-1.9.2
-   >>> jetty-9.3.5
+   >>> guava-28.1-jre
+   >>> jackson-2.9.2
+   >>> jetty-9.4.46.v20220331
    >>> jsieve-0.5
-   >>> juh-4.0.2
+   >>> juh-6.2.3
    >>> junixsocket-1.3
-   >>> jurt-4.0.2
+   >>> jurt-6.2.3
    >>> lucene-3.5.0
    >>> nekohtml-1.9.13
    >>> noggit-0.7
@@ -5415,20 +5414,20 @@ SECTION 2: Apache License, V2.0
    >>> objenesis-2.1
    >>> opencsv-1.8
    >>> openfire-3.10.2
-   >>> org.apache.mina-2.0.4
+   >>> org.apache.mina-2.1.6
    >>> org.openid4java-1.0.0
-   >>> ridl-4.0.2
+   >>> ridl-6.2.3
    >>> selenium-2.51.0
    >>> smack-3.2.1
-   >>> spamassassin-3.4.4
-   >>> spring-framework-3.0.7
+   >>> spamassassin-3.4.6
+   >>> spring-framework-5.3.18
    >>> stax2-api-3.1.1
    >>> testng-5.12.1
-   >>> unoil-4.0.2
+   >>> unoil-6.2.3
    >>> woodstox-core-4.2.0
    >>> xerces-j-2.9.1
    >>> xmlschema-core-2.0.3
-   >>> zkclient-0.1
+   >>> zkclient-0.1.0
    >>> zookeeper-3.4.5
    >>> @sinonjs/text-encoding@0.7.1
    >>> @xtuc/long@4.2.2
@@ -5594,7 +5593,7 @@ SECTION 2: Apache License, V2.0
 
 SECTION 3: Artistic License, V2.0
 
-   >>> perl-net-ssleay-1.72
+   >>> perl-net-ssleay-1.88
    >>> perl-unix-syslog-1.1
 
 
@@ -5618,7 +5617,7 @@ SECTION 6: GNU General Public License, V1.0
 
    >>> perl-canary-stability-2006
    >>> perl-convert-asn1-0.27
-   >>> perl-crypt-openssl-rsa-0.28
+   >>> perl-crypt-openssl-rsa-0.31
    >>> perl-dbd-sqlite-1.48
    >>> perl-digest-hmac-1.03
    >>> perl-email-date-format-1.005
@@ -5641,14 +5640,14 @@ SECTION 6: GNU General Public License, V1.0
    >>> perl-xml-parser-lite-0.721
    >>> perl-xml-sax-0.99
    >>> perl-xml-sax-base-1.08
-   >>> perl-xml-simple-2.20
+   >>> perl-xml-simple-2.25
 
 
 
 SECTION 7: GNU General Public License, V2.0
 
    >>> amavisd-2.10.1
-   >>> clamav-0.102.2
+   >>> clamav-0.105.2
    >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
    >>> freetype-2.6.3
    >>> innotop-1.9.1
@@ -5656,8 +5655,8 @@ SECTION 7: GNU General Public License, V2.0
    >>> juniversalchardet-1.0.3
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
-   >>> mariadb-10.1.14
-   >>> openjdk-1.8.0u172b1
+   >>> mariadb-10.1.25
+   >>> openjdk-17.0.2
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
    >>> perl-bit-vector-7.4
@@ -5665,7 +5664,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> perl-carp-clan-6.04
    >>> perl-class-inspector-1.28
    >>> perl-compress-raw-bzip2-2.069
-   >>> perl-compress-raw-zlib-2.069
+   >>> perl-compress-raw-zlib-2.103
    >>> perl-config-inifiles-2.86
    >>> perl-convert-binhex-1.124
    >>> perl-convert-uulib-1.5
@@ -5673,9 +5672,9 @@ SECTION 7: GNU General Public License, V2.0
    >>> perl-crypt-openssl-random-0.11
    >>> perl-crypt-saltedhash-0.09
    >>> perl-date-calc-6.4
-   >>> perl-date-manip-6.51
+   >>> perl-date-manip-6.90
    >>> perl-db_file-1.835
-   >>> perl-dbd-mysql-4.033
+   >>> perl-dbd-mysql-4.050
    >>> perl-dbi-1.634
    >>> perl-digest-sha1-2.13
    >>> perl-encode-detect-1.01
@@ -5692,7 +5691,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> perl-http-negotiate-6.01
    >>> perl-io-compress-2.069
    >>> perl-io-socket-inet6-2.72
-   >>> perl-io-socket-ssl-2.020
+   >>> perl-io-socket-ssl-2.068
    >>> perl-io-stringy-2.111
    >>> perl-ip-country-2.28
    >>> perl-ldap-0.65
@@ -5745,11 +5744,11 @@ SECTION 8: GNU General Public License, V3.0
 
 SECTION 9: GNU Lesser General Public License, V2.1
 
-   >>> aspell-0.60.6.1
+   >>> aspell-0.60.7-rc1
    >>> jcommon-1.0.20
    >>> jfreechart-1.0.16
    >>> jna-3.4.0
-   >>> mariadb-java-client-1.1.8
+   >>> mariadb-java-client-2.4.3
    >>> syslog4j-0.9.46
    >>> tinymce-4.2.6
    >>> unbound-ldap-sdk-2.3.5
@@ -5772,7 +5771,7 @@ SECTION 11: GNU Library General Public License, V2.0
 
 SECTION 12: IBM Public License, V1.0
 
-   >>> postfix-3.1.1
+   >>> postfix-3.6.1
 
 
 
@@ -5786,7 +5785,7 @@ SECTION 14: Mozilla Public License, V2.0
 
    >>> firefox-nss-22-zimbra
    >>> firefox-nspr-22-zimbra
-   >>> openjdk-cacerts-1.0.4
+   >>> openjdk-cacerts-1.0.8
    >>> perl-mozilla-ca-20150826
 
 
@@ -6511,7 +6510,7 @@ each of the following conditions is met:
 ##########################################################################
 
 
->>> ant-contrib-1.0b1
+>>> ant-contrib-1.0b2
 
 /* ====================================================================
  * The Apache Software License, Version 1.1
@@ -6759,7 +6758,7 @@ please contact Oracle at berkeleydb-info_us@oracle.com.
   THE POSSIBILITY OF SUCH DAMAGE.
 
 
->>> bouncycastle-1.46
+>>> bouncycastle-1.64
 
 License
 
@@ -6796,7 +6795,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
->>> curl-7.49.0
+>>> curl-7.49.1
 
 COPYRIGHT AND PERMISSION NOTICE
 
@@ -6891,7 +6890,7 @@ There's ABSOLUTELY NO WARRANTY, express or implied.
 (This is a heavily cut-down "BSD license".)
 
 
->>> cyrus-sasl-zimbra-2.1.26
+>>> cyrus-sasl-zimbra-2.1.28
 
 Copyright (c) 1998-2003 Carnegie Mellon University.  All rights reserved.
 
@@ -6977,7 +6976,7 @@ These notices must be retained in any copies of any part of this
 documentation and/or software.
 
 
->>> dom4j-1.5.2
+>>> dom4j-2.1.1
 
 Copyright 2001-2004 (C) MetaStuff, Ltd. All Rights Reserved.
 
@@ -7097,7 +7096,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
->>> gifencoder-none
+>>> gifencoder-0.9
 
 Copyright (C)1996,1998 by Jef Poskanzer <jef@mail.acme.com>. All rights reserved.
 
@@ -8064,7 +8063,7 @@ Copyright (C) 2000-2004 Jason Hunter & Brett McLaughlin.
  on the JDOM Project, please see <http://www.jdom.org/>.
 
 
->>> jquery-1.11.0
+>>> jquery-3.5.1
 
 Copyright 2005, 2014 jQuery Foundation, Inc and other contributors
 http://jquery.com/
@@ -9888,7 +9887,7 @@ Neither the name of the author nor the names of its contributors may be used to 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
->>> memcached-1.4.25
+>>> memcached-1.4.37
 
 Copyright (c) 2003, Danga Interactive, Inc.
 All rights reserved.
@@ -9922,7 +9921,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
->>> modernizr-2.6.2
+>>> modernizr-2.8.3
 
 Copyright (c) 2009-2013
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -9944,7 +9943,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
->>> net-snmp-5.7.3
+>>> net-snmp-5.8
 
 Various copyrights apply to this package, listed in various separate
 parts below.  Please make sure that you read all the parts.
@@ -10637,7 +10636,7 @@ Portions Copyright (c) 2010-2012, The Trusted Domain Project.
 All rights reserved.
 
 
->>> openldap-2.4.49
+>>> openldap-2.4.59
 
 The OpenLDAP Public License
 Version 2.8, 17 August 2003
@@ -10688,7 +10687,7 @@ California, USA.  All Rights Reserved.  Permission to copy and
 distribute verbatim copies of this document is granted.
 
 
->>> openssl-1.0.2h
+>>> openssl-1.1.1t
 
 LICENSE ISSUES
   ==============
@@ -10817,7 +10816,7 @@ LICENSE ISSUES
  */
 
 
->>> owasp-java-html-sanitizer.jar-r239
+>>> owasp-java-html-sanitizer.jar-20190610.5z
 
 Copyright (c) 2011, Mike Samuel
 All rights reserved.
@@ -10977,7 +10976,7 @@ Unlimited distribution and/or modification is allowed as long as this
 copyright notice remains intact.
 
 
->>> php-5.6.23
+>>> php-7.4.27
 
 The PHP License, version 3.01
 
@@ -11200,7 +11199,7 @@ May you find forgiveness for yourself and forgive others.
 May you share freely, never taking more than you give.
 
 
->>> postfix-logwatch-1.40.01
+>>> postfix-logwatch-1.40.03
 
 #######################################################
 ### All work since Dec 12, 2006 (logwatch CVS revision 1.28)
@@ -11296,7 +11295,7 @@ each of the following conditions is met:
 $Revision: 8.23 $, Last updated $Date: 2014-01-26 20:10:01 $, Document 139848.1
 
 
->>> slf4j-1.6.4
+>>> slf4j-1.7.36
 
 Copyright (c) 2004-2008 QOS.ch
 All rights reserved.
@@ -11346,7 +11345,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> spymemcached-2.6
+>>> spymemcached-2.12.1
 
 Copyright (c) 2006-2009 Dustin Sallings
 Copyright (c) 2009-2011 Couchbase, Inc.
@@ -11474,7 +11473,7 @@ in courts and fora located in the State of New York, and you consent to such
 jurisdiction and venue.
 
 
->>> unbound-1.5.9
+>>> unbound-1.11.0
 
 Copyright (c) 2007, NLnet Labs. All rights reserved.
 
@@ -12051,7 +12050,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
 
->>> apache-apr-util-1.5.4
+>>> apache-apr-util-1.6.1
 
 Apache Portable Runtime Utility Library
 Copyright (c) 2011 The Apache Software Foundation.
@@ -12450,7 +12449,7 @@ This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
 
->>> apache-commons-compress-1.10
+>>> apache-commons-compress-1.20
 
 Apache Commons Compress
 Copyright 2002-2015 The Apache Software Foundation
@@ -12492,7 +12491,7 @@ This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
 
->>> apache-commons-fileupload-1.2.2
+>>> apache-commons-fileupload-1.4
 
 Copyright 2002-2010 The Apache Software Foundation
 
@@ -12500,7 +12499,7 @@ This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
 
->>> apache-commons-httpclient-3.1
+>>> apache-commons-httpclient-4.5.8
 
 Apache Jakarta HttpClient
 Copyright 1999-2007 The Apache Software Foundation
@@ -12509,7 +12508,7 @@ This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
 
->>> apache-commons-io-1.4
+>>> apache-commons-io-2.6
 
 Apache Commons IO
 Copyright 2001-2008 The Apache Software Foundation
@@ -12549,7 +12548,7 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 
->>> apache-httpasyncclient-4.0-beta3
+>>> apache-httpasyncclient-4.1.4
 
 Apache HttpComponents AsyncClient
 Copyright 2010-2012 The Apache Software Foundation
@@ -12558,7 +12557,7 @@ This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
 
->>> apache-httpcomponents-core-4.2.2
+>>> apache-httpcomponents-core-4.4.11
 
 Apache HttpComponents Core
 Copyright 2005-2012 The Apache Software Foundation
@@ -12570,7 +12569,7 @@ This project contains annotations derived from JCIP-ANNOTATIONS
 Copyright (c) 2005 Brian Goetz and Tim Peierls. See http://www.jcip.net
 
 
->>> apache-httpd-2.4.20
+>>> apache-httpd-2.4.54
 
 copyright 2013 The Apache Software Foundation.
 
@@ -12607,7 +12606,7 @@ specific language governing permissions and limitations
 under the License.
 
 
->>> apache-log4j-1.2.16
+>>> apache-log4j-2.17.1
 
 Apache log4j
 Copyright 2007 The Apache Software Foundation
@@ -13353,7 +13352,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> guava-13.0.1
+>>> guava-28.1-jre
 
 Copyright (C) 2010 The Guava Authors
 
@@ -13370,7 +13369,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> jackson-1.9.2
+>>> jackson-2.9.2
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE APACHE LICENSE 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF APACHE LICENSE 2.0 THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -18276,7 +18275,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> juh-4.0.2
+>>> juh-6.2.3
 
 License: Apache License 2.0
 
@@ -18286,7 +18285,7 @@ License: Apache License 2.0
 License: Apache License 2.0
 
 
->>> jurt-4.0.2
+>>> jurt-6.2.3
 
 License: Apache License 2.0
 
@@ -18586,7 +18585,7 @@ unenforceable, this License Agreement will remain in effect with the provision
 omitted.
 
 
->>> org.apache.mina-2.0.4
+>>> org.apache.mina-2.1.6
 
 Apache MINA
 Copyright 2007 The Apache Software Foundation.
@@ -18723,7 +18722,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 License : Apache 2.0
 
 
->>> ridl-4.0.2
+>>> ridl-6.2.3
 
 License : Apache 2.0
 
@@ -18759,12 +18758,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> spamassassin-3.4.4
+>>> spamassassin-3.4.6
 
 License: Apache 2.0
 
 
->>> spring-framework-3.0.7
+>>> spring-framework-5.3.18
 
 /*
  * Copyright 2002-2009 the original author or authors.
@@ -18805,7 +18804,7 @@ the location should be "release-notes/asl"; and in jar "META-INF/"
 LICENSE = Apache License 2.0
 
 
->>> unoil-4.0.2
+>>> unoil-6.2.3
 
 License: Apache 2.0
 
@@ -18897,7 +18896,7 @@ times remain with copyright holders.
 License: Apache 2.0
 
 
->>> zkclient-0.1
+>>> zkclient-0.1.0
 
 /**
  * Copyright 2010 the original author or authors.
@@ -18931,7 +18930,7 @@ The Apache Software Foundation (http://www.apache.org/).
 Artistic License, V2.0 is applicable to the following component(s).
 
 
->>> perl-net-ssleay-1.72
+>>> perl-net-ssleay-1.88
 
 Copyright (c) 1996-2003 Sampo Kellomaki <sampo@iki.fi>
 Copyright (C) 2005 Florian Ragwitz <rafl@debian.org>
@@ -20445,7 +20444,7 @@ a) the GNU General Public License as published by the Free
 b) the "Artistic License"
 
 
->>> perl-crypt-openssl-rsa-0.28
+>>> perl-crypt-openssl-rsa-0.31
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 1.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 1.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -20802,7 +20801,7 @@ a) the GNU General Public License as published by the Free Software Foundation; 
 b) the "Artistic License".
 
 
->>> perl-xml-simple-2.20
+>>> perl-xml-simple-2.25
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 1.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 1.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -20884,7 +20883,7 @@ A copy of the license is included in the section entitled "GNU
 Free Documentation License".
 
 
->>> clamav-0.102.2
+>>> clamav-0.105.2
 
 Copyright (C) 2015 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
 Copyright (C) 2007-2009 Sourcefire, Inc.
@@ -21051,11 +21050,11 @@ not be used to develop a RAR (WinRAR) compatible archiver.
 Original UnRAR licence:
 
 UnRAR - free utility for RAR archives
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 License for use and distribution of
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 FREE portable version
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 The source code of UnRAR utility is freeware. This means:
 
@@ -21394,7 +21393,7 @@ COPYRIGHT
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 
->>> mariadb-10.1.14
+>>> mariadb-10.1.25
 
 
 This is a release of MariaDB.
@@ -27284,7 +27283,7 @@ This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 
->>> perl-compress-raw-zlib-2.069
+>>> perl-compress-raw-zlib-2.103
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -27414,7 +27413,7 @@ Please refer to the files "Artistic.txt", "GNU_GPL.txt" and
 for any details!
 
 
->>> perl-date-manip-6.51
+>>> perl-date-manip-6.90
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -27433,7 +27432,7 @@ Copyright (c) 1995-2014 Paul Marquess. All rights reserved.
      modify it under the same terms as Perl itself.
 
 
->>> perl-dbd-mysql-4.033
+>>> perl-dbd-mysql-4.050
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -27668,7 +27667,7 @@ This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 
->>> perl-io-socket-ssl-2.020
+>>> perl-io-socket-ssl-2.068
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -28398,7 +28397,7 @@ Comments) 1950 to 1952 in the files http://www.ietf.org/rfc/rfc1950.txt
 GNU Lesser General Public License, V2.1 is applicable to the following component(s).
 
 
->>> aspell-0.60.6.1
+>>> aspell-0.60.7-rc1
 
 This file is part of The New Aspell
 Copyright (C) 2001-2002 by Kevin Atkinson under the GNU LGPL
@@ -28512,7 +28511,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 
->>> mariadb-java-client-1.1.8
+>>> mariadb-java-client-2.4.3
 
 MariaDB Client for Java
 
@@ -28676,7 +28675,7 @@ Boston, MA 02111-1307, USA.
 IBM Public License, V1.0 is applicable to the following component(s).
 
 
->>> postfix-3.1.1
+>>> postfix-3.6.1
 
 License: IBM Public License 1.0
 
@@ -28684,7 +28683,7 @@ Additional license information:
 
 >BSD
 
-postfix-3.1.1\COPYRIGHT
+postfix-3.6.1\COPYRIGHT
 
 Included for the use of the fix_strcasecmp.c module which works
 around a Solaris problem.
@@ -28745,7 +28744,7 @@ License: MPL v2.0
 License: MPL v2.0
 
 
->>> openjdk-cacerts-1.0.4
+>>> openjdk-cacerts-1.0.8
 
 License: MPL v2.0
 
