@@ -1,7 +1,7 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            3.0.18
-Release:            1zimbra8.8b1ZAPPEND
+Version:            4.0.0
+Release:            1zimbra10.0b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements >= 1.0.2-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.7-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-pflogsumm
@@ -9,7 +9,7 @@ Requires:           zimbra-openssl >= 1.1.1t-1zimbra8.7b4ZAPPEND,zimbra-curl >= 
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-rsync
 Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.4.59-1zimbra8.8b5ZAPPEND
-Requires:           zimbra-osl >= 2.0.0-1zimbra9.0b1ZAPPEND
+Requires:           zimbra-osl >= 3.0.0-1zimbra10.0b1ZAPPEND
 Requires:           zimbra-prepflog, zimbra-tcmalloc-libs, zimbra-perl-innotop >= 1.9.1-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-openjdk >= 17.0.2-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.8-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-amavis-logwatch
@@ -21,6 +21,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Wed Mar 29 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.0
+- Updated osl package, Update modern UI, 3rd party open source licenses
 * Fri Feb 10 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.18
 - Fix ZBUG-3278, upgraded OpenSSL to 1.1.1t and updated core-components to 3.0.18
 * Tue Feb 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.17
