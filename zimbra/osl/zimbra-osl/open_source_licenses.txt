@@ -5717,6 +5717,7 @@ SECTION 2: Apache License, V2.0
    >>> concurrentlinkedhashmap-lru-1.3.1
    >>> curator-2.0.1
    >>> ehcache-core-2.5.1
+   >>> erlang-25.0.3
    >>> google-caja-r4817
    >>> google-guice-2.0
    >>> guava-28.1-jre
@@ -5735,6 +5736,7 @@ SECTION 2: Apache License, V2.0
    >>> openfire-3.10.2
    >>> org.apache.mina-2.1.6
    >>> org.openid4java-1.0.0
+   >>> rabbitmq-server-3.10.7
    >>> ridl-6.2.3
    >>> selenium-2.51.0
    >>> smack-3.2.1
@@ -6113,6 +6115,7 @@ SECTION 14: Mozilla Public License, V2.0
    >>> firefox-nspr-22-zimbra
    >>> openjdk-cacerts-1.0.8
    >>> perl-mozilla-ca-20150826
+   >>> rabbitmq-server-3.10.7
 
 
 
@@ -13677,6 +13680,10 @@ at http://www.opensource.org/licenses/bsd-license.php
 http://www.slf4j.org/license.html
 
 
+>>> erlang-25.0.3
+
+License: Apache 2.0
+
 >>> google-caja-r4817
 
 Copyright (C) 2006 Google Inc.
@@ -19073,6 +19080,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 >>> org.openid4java-1.0.0
+
+License : Apache 2.0
+
+>>> rabbitmq-server-3.10.7
 
 License : Apache 2.0
 
@@ -29114,6 +29125,10 @@ LICENSE
         file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
     The Mozilla::CA distribution itself is available under the same license.
+
+>>> rabbitmq-server-3.10.7
+
+License: MPL v2.0
 
 
 --------------- SECTION 15: Common Public License, V1.0 ----------
