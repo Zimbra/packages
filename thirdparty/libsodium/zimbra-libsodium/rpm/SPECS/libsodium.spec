@@ -1,13 +1,18 @@
 Summary:            Zimbra's libsodium build
 Name:               zimbra-libsodium
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b1ZAPPEND
 License:            ISC
 Source:             %{name}-%{version}.tar.gz
 URL:                https://download.libsodium.org/doc/
 
 %description
 The Zimbra libsodium build
+
+
+%changelog
+* Wed Dec 28 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Upgraded libsodium to 1.0.18
 
 %prep
 %setup -n libsodium-%{version}

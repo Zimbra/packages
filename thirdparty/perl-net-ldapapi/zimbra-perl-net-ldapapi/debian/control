@@ -2,7 +2,7 @@ Source: zimbra-perl-MODNORMNAME
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-openldap-dev,
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-openldap-dev (>= 2.5.13-1zimbra8.8b1ZAPPEND),
  zimbra-cyrus-sasl-dev, zimbra-perl-convert-asn1
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
@@ -10,7 +10,7 @@ Homepage: https://metacpan.org/release/MODNAME
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
- zimbra-perl-convert-asn1, zimbra-openldap-lib
+ zimbra-perl-convert-asn1, zimbra-openldap-lib (>= 2.5.13-1zimbra8.8b1ZAPPEND)
 Description: Net::LDAPapi - Perl5 Module Supporting LDAP API
  This module allows Perl programmers to access and manipulate an LDAP
  based Directory.
