@@ -1,14 +1,15 @@
---- amavisd-new-2.9.0/amavis-services.orig	2015-03-05 16:30:36.942032097 -0600
-+++ amavisd-new-2.9.0/amavis-services	2015-03-05 16:30:36.918020099 -0600
-@@ -48,6 +48,7 @@
+diff -ruN a/bin/amavis-services b/bin/amavis-services
+--- a/bin/amavis-services	2023-03-10 14:02:55.403699797 +0000
++++ b/bin/amavis-services	2023-03-10 14:04:47.971596373 +0000
+@@ -49,6 +49,7 @@
  no warnings 'uninitialized';
  
- use vars qw($VERSION);  $VERSION = 2.008002;
+ use vars qw($VERSION);  $VERSION = 2.011002;
 +use lib "/opt/zimbra/common/lib/perl5";
  
  use Errno qw(ESRCH ENOENT);
  use POSIX qw(strftime);
-@@ -75,7 +76,8 @@
+@@ -76,7 +77,8 @@
  
  # A socket to which amavisd child processes report their data.
  # should match one of the sockets in @zmq_sockets in amavisd.conf

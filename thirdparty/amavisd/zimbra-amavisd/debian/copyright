@@ -1,5 +1,5 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Source: http://www.ijs.si/software/amavisd/
+Source: https://gitlab.com/amavis/amavis
 Files: *
 License: GPL-2
 
