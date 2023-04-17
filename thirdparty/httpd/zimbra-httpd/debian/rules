@@ -16,7 +16,7 @@ override_dh_auto_configure:
 	--datadir=/opt/zimbra/data/httpd \
 	--enable-so \
 	--with-mpm=event \
-	--with-pcre=/usr/bin/pcre-config \
+	--with-pcre=/usr/bin/pcre2-config \
 	--enable-mpms-shared="all"
 
 override_dh_strip:
