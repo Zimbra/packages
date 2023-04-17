@@ -7,8 +7,8 @@ Source:             %{name}-%{version}.tar.bz2
 BuildRequires:      zimbra-apr-devel
 BuildRequires:      zimbra-apr-util-devel >= 1.6.1-1zimbra8.7b2ZAPPEND
 BuildRequires:      zlib-devel
-BuildRequires:      pcre-devel
-Requires:           zlib, pcre
+BuildRequires:      pcre2-devel
+Requires:           zlib, pcre2
 Requires:           zimbra-apr-libs, zimbra-apr-util-libs >= 1.6.1-1zimbra8.7b2ZAPPEND, zimbra-apache-base
 AutoReqProv:        no
 URL:                http://httpd.apache.org/
@@ -19,6 +19,8 @@ The Zimbra Apache HTTPD build
 %define debug_package %{nil}
 
 %changelog
+* Mon Apr 17 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+- ZBUG-3354, Upgraded Apache to 2.4.57
 * Wed Nov 23 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - Fix ZBUG-3126
 * Tue Oct 18 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
@@ -52,7 +54,7 @@ CFLAGS="-O2 -g"; export CFLAGS; \
   --datadir=/opt/zimbra/data/httpd \
   --enable-so \
   --with-mpm=event \
-  --with-pcre=/usr/bin/pcre-config \
+  --with-pcre=/usr/bin/pcre2-config \
   --enable-mpms-shared="all"
 make
 
