@@ -13,9 +13,11 @@ override_dh_auto_configure:
 
 override_dh_auto_install:
 	mkdir -p $(CURDIR)/debian/tmpOZC/sbin
-	cp amavisd $$(pwd)/debian/tmpOZC/sbin
-	cp amavisd-release $$(pwd)/debian/tmpOZC/sbin
-	cp amavis-mc $$(pwd)/debian/tmpOZC/sbin
-	cp amavis-services $$(pwd)/debian/tmpOZC/sbin
-	cp amavisd-status $$(pwd)/debian/tmpOZC/sbin
-	cp amavisd-snmp-subagent-zmq $$(pwd)/debian/tmpOZC/sbin
+	cp bin/amavisd $$(pwd)/debian/tmpOZC/sbin
+	cp bin/amavisd-release $$(pwd)/debian/tmpOZC/sbin
+	cp bin/amavis-mc $$(pwd)/debian/tmpOZC/sbin
+	cp bin/amavis-services $$(pwd)/debian/tmpOZC/sbin
+	cp bin/amavisd-status $$(pwd)/debian/tmpOZC/sbin
+	cp bin/amavisd-snmp-subagent-zmq $$(pwd)/debian/tmpOZC/sbin
+	mkdir -p $(CURDIR)/debian/tmpOZCL/perl5
+	cp -r lib/* $(CURDIR)/debian/tmpOZCL/perl5/

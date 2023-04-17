@@ -4,10 +4,9 @@ include $(PKG_ROOT)/../../package.def
 
 pvers := $(AMAVISD_VERSION)
 pname := amavisd
-uname := $(pname)-new
-pfile := $(uname)-$(pvers).tar.bz2
+pfile := amavis-v$(pvers).tar.bz2
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://www.ijs.si/software/amavisd/$(pfile)
+purl := https://gitlab.com/amavis/amavis/-/archive/v$(pvers)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

@@ -1,17 +1,20 @@
---- amavisd-new-2.9.0/amavisd.orig	2015-03-05 16:30:36.986054097 -0600
-+++ amavisd-new-2.9.0/amavisd	2015-03-05 16:30:36.954038098 -0600
-@@ -4,6 +4,8 @@
+diff -ruN a/bin/amavisd b/bin/amavisd
+--- a/bin/amavisd	2023-03-10 14:09:13.615499390 +0000
++++ b/bin/amavisd	2023-03-10 14:09:41.623501759 +0000
+@@ -4,6 +4,7 @@
+ ### profiling:
  ### #!/usr/bin/perl -d:NYTProf
  ###   NYTPROF=start=no:addpid=1:forkdepth=1 amavisd -m 5 foreground
- 
 +use lib $ENV{PERL5LIB} =~ /([^:]+)/g; # Untaint PERL5LIB so Zimbra's modules can be used
-+
+ 
  #------------------------------------------------------------------------------
- # This is amavisd-new.
- # It is an interface between a message transfer agent (MTA) and virus
-@@ -5039,6 +5041,9 @@
-     my(@dkeys); my $d = $domain;
-     for (;;) {            # (@).sub.example.com (@).example.com (@).com (@).
+ # This is amavis.
+diff -ruN a/bin/amavisd-signer b/bin/amavisd-signer
+--- a/bin/amavisd-signer	2023-03-10 14:10:56.003506111 +0000
++++ b/bin/amavisd-signer	2023-03-10 14:16:18.491679909 +0000
+@@ -492,6 +492,9 @@
+     my(@dkeys); my($d) = $domain;
+     for (;;) {               # (@).sub.example.com (@).example.com (@).com (@).
        push(@dkeys, $prepend_to_domain.'.'.$d);
 +      if ($d ne '') {
 +        push(@dkeys, $d);
@@ -19,50 +22,10 @@
        last  if $d eq '';
        $d = ($d =~ /^([^.]*)\.(.*)\z/s) ? $2 : '';
      }
-@@ -11328,7 +11333,7 @@
-     P => sub {$MSGINFO->partition_tag}, # SQL partition tag
-     partition_tag => sub {$MSGINFO->partition_tag},  # synonym for %P
-     q => sub { my $q = $MSGINFO->quarantined_to;
--               $q && [map { my $m=$_; $m=~s{^\Q$QUARANTINEDIR\E/}{}; $m } @$q];
-+               $q && [map { my($m)=$_; $m=~s{^\Q$QUARANTINEDIR\E/}{}; $m=~s/^march.*\.archive$//; $m } @$q];
-              },  # list of quarantine mailboxes
-     v => sub { !defined $av_output ? undef     # anti-virus scanner output
-                  : [split(/[ \t]*\r?\n/, $av_output)]},
-@@ -12556,7 +12556,7 @@
-           sort map { my $s = $_; $s =~ s/\.pm\z//; $s =~ s{/}{::}g; $s }
-                grep(/\.pm\z/, keys %INC)) {
-     next  if !grep($_ eq $m, qw(Amavis::Conf
--      Archive::Tar Archive::Zip Compress::Zlib Compress::Raw::Zlib
-+      Archive::Zip Compress::Zlib Compress::Raw::Zlib
-       Convert::TNEF Convert::UUlib File::LibMagic
-       MIME::Entity MIME::Parser MIME::Tools Mail::Header Mail::Internet
-       Digest::MD5 Digest::SHA Digest::SHA1 Crypt::OpenSSL::RSA
-@@ -16579,6 +16584,15 @@
-     }
-   }  # endfor per_recip_data
- 
-+  if (defined($qar_method) && $qar_method ne '') {  # archiving quarantine on sender
-+    my($sender) = $msginfo->sender;
-+    if ($sender ne '') {
-+      my($q) = lookup(0,$sender,@{ca('archive_quarantine_to_maps')});
-+      $q = $sender  if $q ne '' && $qar_method =~ /^bsmtp:/i;  # orig.recip
-+      push(@q_tuples, [$qar_method,$q,'Arch'])  if defined $q && $q ne '';
-+    }
-+  }
-+
-   if ($ccat == CC_SPAM) {
-     my $sqbsm = ca('spam_quarantine_bysender_to_maps');
-     if (@$sqbsm) {  # by-sender spam quarantine (hardly useful, rarely used)
-@@ -17589,7 +17603,7 @@
-   push(@{/^no_conf_file_writable_check\z/ ? \@known : \@unknown}, $_)
-     for grep($i_know_what_i_am_doing{$_}, keys %i_know_what_i_am_doing);
-   $unknown[0] = 'unknown: ' . $unknown[0]  if @unknown;
--  warn sprintf("I know what I'm doing: %s\n", join(', ',@known,@unknown));
-+  #warn sprintf("I know what I'm doing: %s\n", join(', ',@known,@unknown));
- }
- 
- # deal with debugging early, based on a command line arg
-@@ -31350,7 +31350,7 @@
+diff -ruN a/lib/Amavis/Unpackers.pm b/lib/Amavis/Unpackers.pm
+--- a/lib/Amavis/Unpackers.pm	2023-03-10 14:27:33.080974132 +0000
++++ b/lib/Amavis/Unpackers.pm	2023-03-10 14:28:18.508404230 +0000
+@@ -784,7 +784,7 @@
    $retval;
  }
  
@@ -71,3 +34,40 @@
  # loads an entire tar into memory (horrors!), or when using extract_archive()
  # it does not relativize absolute paths (which makes it possible to store
  # members in any directory writable by uid), and does not provide a way to
+diff -ruN a/lib/Amavis.pm b/lib/Amavis.pm
+--- a/lib/Amavis.pm	2023-03-10 14:19:18.627625363 +0000
++++ b/lib/Amavis.pm	2023-03-10 14:35:43.375203410 +0000
+@@ -889,7 +889,7 @@
+           sort map { my $s = $_; $s =~ s/\.pm\z//; $s =~ s{/}{::}g; $s }
+                grep(/\.pm\z/, keys %INC)) {
+     next  if !grep($_ eq $m, qw(Amavis::Conf
+-      Archive::Tar Archive::Zip Compress::Zlib Compress::Raw::Zlib
++      Archive::Zip Compress::Zlib Compress::Raw::Zlib
+       Convert::TNEF Convert::UUlib File::LibMagic
+       MIME::Entity MIME::Parser MIME::Tools Mail::Header Mail::Internet
+       Digest::MD5 Digest::SHA Digest::SHA1 Crypt::OpenSSL::RSA
+@@ -5968,6 +5968,15 @@
+     }
+   }  # endfor per_recip_data
+ 
++  if (defined($qar_method) && $qar_method ne '') {  # archiving quarantine on sender
++	my($sender) = $msginfo->sender;
++	if ($sender ne '') {
++		my($q) = lookup(0,$sender,@{ca('archive_quarantine_to_maps')});
++		$q = $sender  if $q ne '' && $qar_method =~ /^bsmtp:/i;  # orig.recip
++		push(@q_tuples, [$qar_method,$q,'Arch'])  if defined $q && $q ne '';
++	}
++  }
++
+   if ($ccat == CC_SPAM) {
+     my $sqbsm = ca('spam_quarantine_bysender_to_maps');
+     if (@$sqbsm) {  # by-sender spam quarantine (hardly useful, rarely used)
+@@ -7007,7 +7016,7 @@
+   push(@{/^no_conf_file_writable_check\z/ ? \@known : \@unknown}, $_)
+     for grep($i_know_what_i_am_doing{$_}, keys %i_know_what_i_am_doing);
+   $unknown[0] = 'unknown: ' . $unknown[0]  if @unknown;
+-  warn sprintf("I know what I'm doing: %s\n", join(', ',@known,@unknown));
++  #warn sprintf("I know what I'm doing: %s\n", join(', ',@known,@unknown));
+ }
+ 
+ # deal with debugging early, based on a command line arg
