@@ -9,19 +9,6 @@ diff -ruN a/bin/amavisd b/bin/amavisd
  
  #------------------------------------------------------------------------------
  # This is amavis.
-diff -ruN a/bin/amavisd-signer b/bin/amavisd-signer
---- a/bin/amavisd-signer	2023-03-10 14:10:56.003506111 +0000
-+++ b/bin/amavisd-signer	2023-03-10 14:16:18.491679909 +0000
-@@ -492,6 +492,9 @@
-     my(@dkeys); my($d) = $domain;
-     for (;;) {               # (@).sub.example.com (@).example.com (@).com (@).
-       push(@dkeys, $prepend_to_domain.'.'.$d);
-+      if ($d ne '') {
-+        push(@dkeys, $d);
-+      }
-       last  if $d eq '';
-       $d = ($d =~ /^([^.]*)\.(.*)\z/s) ? $2 : '';
-     }
 diff -ruN a/lib/Amavis/Unpackers.pm b/lib/Amavis/Unpackers.pm
 --- a/lib/Amavis/Unpackers.pm	2023-03-10 14:27:33.080974132 +0000
 +++ b/lib/Amavis/Unpackers.pm	2023-03-10 14:28:18.508404230 +0000
