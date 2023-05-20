@@ -1,0 +1,13 @@
+diff -ruN a/lib/Amavis/rfc2821_2822_Tools.pm b/lib/Amavis/rfc2821_2822_Tools.pm
+--- a/lib/Amavis/rfc2821_2822_Tools.pm	2023-05-19 17:30:55.604045794 +0000
++++ b/lib/Amavis/rfc2821_2822_Tools.pm	2023-05-19 17:32:29.812090542 +0000
+@@ -515,6 +515,9 @@
+     my(@dkeys); my $d = $domain;
+     for (;;) {            # (@).sub.example.com (@).example.com (@).com (@).
+       push(@dkeys, $prepend_to_domain.'.'.$d);
++      if ($d ne '') {
++	push(@dkeys, $d);
++      }
+       last  if $d eq '';
+       $d = ($d =~ /^([^.]*)\.(.*)\z/s) ? $2 : '';
+     }
