@@ -3,9 +3,9 @@
 @@ -40,7 +40,7 @@
   *  major minor fix final patch/beta)
   */
- # define OPENSSL_VERSION_NUMBER  0x1010114fL
--# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1t  7 Feb 2023"
-+# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1t FIPS 7 Feb 2023"
+ # define OPENSSL_VERSION_NUMBER  0x1010115fL
+-# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1u  30 May 2023"
++# define OPENSSL_VERSION_TEXT    "OpenSSL 1.1.1u FIPS 30 May 2023"
  
  /*-
   * The macros below are to be used for shared library (.so, .dll, ...)
