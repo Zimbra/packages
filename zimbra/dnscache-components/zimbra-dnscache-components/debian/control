@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-dnscache-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-dnscache-base, zimbra-unbound (>= 1.11.0-1zimbra8.7b4ZAPPEND)
+ zimbra-dnscache-base, zimbra-unbound (>= 1.17.1-1zimbra8.8b1ZAPPEND)
 Description: Zimbra components for dnscache package
  Zimbra dnscache components pulls in all the packages used by
  zimbra-dnscache
