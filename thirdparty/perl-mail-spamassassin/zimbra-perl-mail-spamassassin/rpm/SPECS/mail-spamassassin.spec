@@ -1,18 +1,18 @@
 Summary:            Mail::SpamAssassin - Spam detector and markup engine
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.8b3ZAPPEND
+Release:            1zimbra8.8b4ZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
 BuildRequires:      zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
-BuildRequires:      zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b3ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
+BuildRequires:      zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b4ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 BuildRequires:      zimbra-perl-encode-detect
 Requires:           zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
 Requires:           zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
-Requires:           zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b3ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
+Requires:           zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b4ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 Requires:           zimbra-perl-encode-detect, zimbra-mta-base
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
@@ -23,6 +23,8 @@ including text analysis, internet-based realtime blacklists, statistical
 analysis, and internet-based hashing algorithms.
 
 %changelog
+* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- Updated dependency zimbra-perl-mail-dkim
 * Mon Mar 28 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Fix ZCS-11117, Upgraded spamassassin to 3.4.6
 * Thu Apr 08 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
