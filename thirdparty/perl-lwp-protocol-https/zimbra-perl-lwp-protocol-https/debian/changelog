@@ -1,6 +1,12 @@
 zimbra-perl-lwp-protocol-https (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
 
-  * Updated Updated dependencies zimbra-perl-libwww,zimbra-perl-net-http,zimbra-perl-io-socket-ssl
+  * Updated dependencies zimbra-perl-libwww,zimbra-perl-net-http,zimbra-perl-io-socket-ssl and upgraded LWP::Protocol::https to 6.10
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
+
+zimbra-perl-lwp-protocol-https (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
+
+  * Updated dependencies zimbra-perl-libwww,zimbra-perl-net-http,zimbra-perl-io-socket-ssl
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sat, 05 Dec 2020 22:26:24 +0000
 
