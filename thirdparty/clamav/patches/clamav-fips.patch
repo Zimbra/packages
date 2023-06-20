@@ -1,0 +1,66 @@
+diff -ruN a/libclamav/crypto.c b/libclamav/crypto.c
+--- a/libclamav/crypto.c	2023-06-19 11:20:46.996793622 +0000
++++ b/libclamav/crypto.c	2023-06-19 11:27:53.568952679 +0000
+@@ -170,7 +170,7 @@
+     size_t cur;
+     int winres = 0;
+ 
+-    md = EVP_get_digestbyname(alg);
++    md = EVP_MD_fetch(NULL, alg, "-fips");
+     if (!(md))
+         return NULL;
+ 
+@@ -260,7 +260,7 @@
+     const EVP_MD *md;
+     unsigned char *res;
+ 
+-    md = EVP_get_digestbyname(alg);
++    md = EVP_MD_fetch(NULL, alg, "-fips");
+     if (!(md))
+         return NULL;
+ 
+@@ -392,7 +392,7 @@
+     const EVP_MD *md;
+     size_t mdsz;
+ 
+-    md = EVP_get_digestbyname(alg);
++    md = EVP_MD_fetch(NULL, alg, "-fips");
+     if (!(md))
+         return -1;
+ 
+@@ -437,7 +437,7 @@
+     if (!(digest))
+         return -1;
+ 
+-    md = EVP_get_digestbyname(alg);
++    md = EVP_MD_fetch(NULL, alg, "-fips");
+     if (!(md)) {
+         free(digest);
+         return -1;
+@@ -506,7 +506,7 @@
+         return -1;
+     }
+ 
+-    md = EVP_get_digestbyname(alg);
++    md = EVP_MD_fetch(NULL, alg, "-fips");
+     if (!(md)) {
+         free(digest);
+         if (decode)
+@@ -725,7 +725,7 @@
+     unsigned int siglen;
+     unsigned char *sig;
+ 
+-    md = EVP_get_digestbyname(alg);
++    md = EVP_MD_fetch(NULL, alg, "-fips");
+     if (!(md))
+         return NULL;
+ 
+@@ -1148,7 +1148,7 @@
+     EVP_MD_CTX *ctx;
+     const EVP_MD *md;
+ 
+-    md = EVP_get_digestbyname(alg);
++    md = EVP_MD_fetch(NULL, alg, "-fips");
+     if (!(md))
+         return NULL;
+ 
