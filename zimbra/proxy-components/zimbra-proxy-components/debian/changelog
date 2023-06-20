@@ -1,3 +1,9 @@
+zimbra-proxy-components (1.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Updated zimbra-nginx
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
+
 zimbra-proxy-components (1.0.10-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-nginx,Fix ZBUG-2738
