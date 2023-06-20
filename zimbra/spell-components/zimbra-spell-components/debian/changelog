@@ -1,3 +1,9 @@
+zimbra-spell-components (2.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Updated zimbra-httpd
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
+
 zimbra-spell-components (2.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * ZBUG-3354, Upgraded Apache to 2.4.57
