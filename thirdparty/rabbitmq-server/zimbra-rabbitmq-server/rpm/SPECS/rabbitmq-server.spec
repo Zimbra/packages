@@ -1,7 +1,7 @@
 Summary:            Zimbra's RabbitMQ server
 Name:               zimbra-rabbitmq-server
 Version:            VERSION
-Release:            1zimbra8.8b1ZAPPEND
+Release:            1zimbra8.8b2ZAPPEND
 License:            MPLv2.0 and MIT and ASL 2.0 and BSD
 Source:             %{name}-%{version}.tar.xz
 Source1:            rabbitmq-env.conf
@@ -9,10 +9,10 @@ Patch0:             rabbitmq-script-wrapper.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 AutoReqProv:        no
 URL:                https://github.com/rabbitmq/rabbitmq-server
-BuildRequires:      zimbra-erlang >= 25.0.3-1zimbra8.8b1ZAPPEND
-BuildRequires:      zimbra-openssl-devel >= 1.1.1q-1zimbra8.7b4ZAPPEND, zimbra-openssl-libs >= 1.1.1q-1zimbra8.7b4ZAPPEND
+BuildRequires:      zimbra-erlang >= 25.0.3-1zimbra8.8b2ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      gzip, sed, zip, rsync
-Requires:           zimbra-erlang >= 25.0.3-1zimbra8.8b1ZAPPEND
+Requires:           zimbra-erlang >= 25.0.3-1zimbra8.8b2ZAPPEND
 
 
 %description
@@ -22,6 +22,8 @@ The Zimbra's RabbitMQ server
 %define debug_package %{nil}
 
 %changelog
+* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+- ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Mon Aug 08 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - Initial Release.
 
