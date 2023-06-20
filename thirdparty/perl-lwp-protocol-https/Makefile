@@ -8,7 +8,7 @@ pname_lc := lwp-protocol-https
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/M/MS/MSCHILLI/$(pfile)
+purl := https://cpan.metacpan.org/authors/id/O/OA/OALDERS/$(pfile)
 
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
