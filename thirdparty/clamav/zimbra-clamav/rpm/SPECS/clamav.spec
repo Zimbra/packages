@@ -1,16 +1,17 @@
 Summary:            Zimbra's ClamAV build
 Name:               zimbra-clamav
 Version:            VERSION
-Release:            1zimbra8.8b3ZAPPEND
+Release:            1zimbra8.8b4ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tar.gz
+Patch0:             clamav-fips.patch
 BuildRequires:      zlib-devel
 BuildRequires:      ncurses-devel
 BuildRequires:      bzip2-devel, check-devel, json-c-devel, pcre2-devel
-BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b4ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-libxml2-devel
 BuildRequires:      zimbra-libmilter-devel
-Requires:           zlib, ncurses-libs, zimbra-clamav-libs = %{version}-%{release}, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b4ZAPPEND
+Requires:           zlib, ncurses-libs, zimbra-clamav-libs = %{version}-%{release}, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
 Requires:           zimbra-libxml2-libs, pcre2, json-c, bzip2-libs
 AutoReqProv:        no
 URL:                http://www.clamav.net/
@@ -21,6 +22,8 @@ The Zimbra ClamAV build
 %define debug_package %{nil}
 
 %changelog
+* Mon Jun 12 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Wed Feb 22 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Upgraded ClamAV to 0.105.2
 * Wed Nov 02 2022  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
@@ -40,6 +43,7 @@ The Zimbra ClamAV build
 
 %prep
 %setup -n clamav-%{version}
+%patch0 -p1
 
 %build
 LDFLAGS="-LOZCL -Wl,-rpath,OZCL"; export LDFLAGS; \
