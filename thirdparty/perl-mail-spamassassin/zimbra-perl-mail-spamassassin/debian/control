@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
 Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-digest-sha1,
  zimbra-perl-net-dns, zimbra-perl-html-parser, zimbra-perl-io-compress,
- zimbra-perl-mail-spf, zimbra-perl-mail-dkim (>= 0.40-1zimbra8.7b4ZAPPEND), zimbra-perl-netaddr-ip,
+ zimbra-perl-mail-spf, zimbra-perl-mail-dkim (>= 0.43-1zimbra8.8b1ZAPPEND), zimbra-perl-netaddr-ip,
  zimbra-perl-net-cidr-lite, zimbra-perl-encode-detect
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
@@ -14,7 +14,7 @@ Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
  zimbra-perl-base, zimbra-perl-digest-sha1,
  zimbra-perl-net-dns, zimbra-perl-html-parser, zimbra-perl-io-compress,
- zimbra-perl-mail-spf, zimbra-perl-mail-dkim (>= 0.40-1zimbra8.7b4ZAPPEND), zimbra-perl-netaddr-ip,
+ zimbra-perl-mail-spf, zimbra-perl-mail-dkim (>= 0.43-1zimbra8.8b1ZAPPEND), zimbra-perl-netaddr-ip,
  zimbra-perl-net-cidr-lite, zimbra-perl-encode-detect, zimbra-mta-base
 Description: Mail::SpamAssassin - Spam detector and markup engine
  Mail::SpamAssassin is a module to identify spam using several methods
