@@ -1,4 +1,4 @@
-zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated dependency zimbra-perl-crypt-openssl-rsa
 
