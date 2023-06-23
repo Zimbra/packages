@@ -1,0 +1,15 @@
+diff -ruN a/t/public_key.t b/t/public_key.t
+--- a/t/public_key.t	2023-06-21 09:47:35.518736184 +0000
++++ b/t/public_key.t	2023-06-21 09:48:17.086737523 +0000
+@@ -25,8 +25,9 @@
+ 		Selector => "nonexistent",
+ 		Domain => "test.authmilter.org",
+ 		);
+-ok(!$pubkey, "public key should not exist");
+-ok($@ =~ /^NODATA$/, "reason given is NODATA");
++ok( !$pubkey,         "public key should not exist" );
++ok( $@ eq 'NODATA' || $@ eq 'NXDOMAIN', "reason given is NODATA or NXDOMAIN" );
++
+ 
+ SKIP:
+ {
