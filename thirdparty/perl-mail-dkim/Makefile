@@ -8,7 +8,7 @@ pname_lc := mail-dkim
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/J/JA/JASLONG/$(pfile)
+purl := https://cpan.metacpan.org/authors/id/M/MB/MBRADSHAW/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
