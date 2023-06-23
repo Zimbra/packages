@@ -8,11 +8,11 @@ Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
 BuildRequires:      zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
-BuildRequires:      zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b4ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
+BuildRequires:      zimbra-perl-mail-dkim >= 0.43-1zimbra8.8b1ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 BuildRequires:      zimbra-perl-encode-detect
 Requires:           zimbra-perl-base, zimbra-perl-digest-sha1, zimbra-perl-net-dns
 Requires:           zimbra-perl-html-parser, zimbra-perl-io-compress, zimbra-perl-mail-spf
-Requires:           zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b4ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
+Requires:           zimbra-perl-mail-dkim >= 0.43-1zimbra8.8b1ZAPPEND, zimbra-perl-netaddr-ip, zimbra-perl-net-cidr-lite
 Requires:           zimbra-perl-encode-detect, zimbra-mta-base
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
