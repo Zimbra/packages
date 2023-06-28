@@ -1,3 +1,9 @@
+zimbra-clamav-db (1.0.0-1zimbra8.7b2ZAPPEND) unstable; urgency=low
+
+  * ZCS-13605, Updated clamav-db for ClamAV-1.0.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 23 Jun 2023 16:05:22 +0000
+
 zimbra-clamav-db (1.0.0-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.
