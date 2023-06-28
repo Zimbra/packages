@@ -1,6 +1,15 @@
 #!/bin/bash
 if [ "$1" = configure ]; then
-  /bin/chown -R zimbra:zimbra /opt/zimbra/data/clamav
-  /bin/chmod 644 /opt/zimbra/data/clamav/init/*.init
+	/bin/chown -R zimbra:zimbra /opt/zimbra/data/clamav
+	/bin/chmod 644 /opt/zimbra/data/clamav/init/*.init
+	if [ -f /opt/zimbra/data/clamav/db/daily.cvd ]; then
+		rm -rf /opt/zimbra/data/clamav/db/daily.cvd
+	fi
+	if [ -f /opt/zimbra/data/clamav/db/main.cvd ]; then
+		rm -rf /opt/zimbra/data/clamav/db/main.cvd
+	fi
+	if [ -f /opt/zimbra/data/clamav/db/bytecode.cvd ]; then
+		rm -rf /opt/zimbra/data/clamav/db/bytecode.cvd
+	fi
 fi
 exit 0
