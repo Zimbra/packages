@@ -22,6 +22,8 @@ The Zimbra ClamAV build
 %define debug_package %{nil}
 
 %changelog
+* Fri Jun 23 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- ZCS-13605, Upgraded ClamAV to 1.0.1
 * Mon Jun 12 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Wed Feb 22 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
