@@ -3,6 +3,7 @@ PKG_ROOT := $(shell pwd)
 include $(PKG_ROOT)/../../package.def
 
 pname_lc := clamav-db
+pvers := $(CLAMAV_VERSION)
 zname := zimbra-$(pname_lc)
 zspec := $(pname_lc).spec
 bcvd := bytecode.cvd
@@ -11,9 +12,9 @@ mcvd := main.cvd
 bcvd_file := $(SRC_DIR)/$(bcvd)
 dcvd_file := $(SRC_DIR)/$(dcvd)
 mcvd_file := $(SRC_DIR)/$(mcvd)
-burl := http://database.clamav.net/$(bcvd)
-durl := http://database.clamav.net/$(dcvd)
-murl := http://database.clamav.net/$(mcvd)
+burl := https://files.zimbra.com/downloads/clamav-database/$(pvers)/$(bcvd)
+durl := https://files.zimbra.com/downloads/clamav-database/$(pvers)/$(dcvd)
+murl := https://files.zimbra.com/downloads/clamav-database/$(pvers)/$(mcvd)
 
 .PHONY: all getsrc clean build setup
 
