@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.22-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * ZCS-13605, Upgraded ClamAV to 1.0.1 and updated clamav-db for ClamAV-1.0.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 23 Jun 2023 16:05:22 +0000
+
 zimbra-mta-components (1.0.21-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Updated perl-mail-spamassassin,spamassassin-rules,opendkim,clamav,postfix
