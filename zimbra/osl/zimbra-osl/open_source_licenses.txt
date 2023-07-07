@@ -5483,9 +5483,10 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> winston@3.7.2
    >>> winston-daily-rotate-file@4.6.1
    >>> better-queue@3.8.12
-   >>> better-queue-sql@1.0.5
+   >>> better-queue-sqlite@1.0.7
    >>> better-queue-memory@1.0.4
    >>> node-eta@0.9.0
+   >>> node-abort-controller@3.1.1
    >>> async@3.2.3
    >>> colorette@2.0.19
    >>> commander@9.5.0
