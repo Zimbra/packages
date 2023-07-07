@@ -1,3 +1,9 @@
+zimbra-osl (3.0.0-1zimbra10.0b1ZAPPEND) unstable; urgency=low
+
+  * ZBUG-3355, Updated OpenSSL License and other 3rd party open source licenses
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 07 Jul 2023 05:12:55 +0000
+
 zimbra-osl (2.0.0-1zimbra9.0b1ZAPPEND) unstable; urgency=low
   * Update modern webclient
 
