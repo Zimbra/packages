@@ -338,6 +338,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> basic-auth@2.0.1
    >>> batch@0.6.1
    >>> better-assert@1.0.2
+   >>> better-queue-sqlite@1.0.7
    >>> big.js@3.2.0
    >>> big.js@5.2.2
    >>> bin-v8-flags-filter@1.2.0
@@ -1029,6 +1030,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> negotiator@0.6.2
    >>> neo-async@2.6.1
    >>> nice-try@1.0.5
+   >>> node-abort-controller@3.1.1
    >>> node-addon-api@1.7.1
    >>> node-ensure@0.0.0
    >>> node-fetch@1.7.3
