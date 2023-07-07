@@ -1,3 +1,9 @@
+zimbra-ldap-components (3.0.0-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-3355, Updated core-components, OpenSSL License and other 3rd party open source licenses
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 07 Jul 2023 05:12:55 +0000
+
 zimbra-ldap-components (2.0.13-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * ZBUG-3355, Upgraded OpenSSL to 3.0.9 and Updated core-components to 3.0.19
