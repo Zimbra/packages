@@ -1,7 +1,8 @@
-zimbra-osl (2.0.0-1zimbra9.0b1ZAPPEND) unstable; urgency=low
-  * Update modern webclient
+zimbra-osl (1.0.10-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+  * ZBUG-3355, Updated core-components, OpenSSL License and other 3rd party open source licenses
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 31 Mar 2020 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 07 Jul 2023 00:00:00 +0000
+
 zimbra-osl (1.0.9-ITERATIONZAPPEND) unstable; urgency=low
   * Update Freetype to 2.6.3
 

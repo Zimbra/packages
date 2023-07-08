@@ -41,8 +41,8 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> bouncycastle-1.46
    >>> bouncycastle-zimbra-20110708
    >>> clipboard.js-0.2.0
-   >>> curl-7.49.0
-   >>> cyrus-sasl-zimbra-2.1.26
+   >>> curl-7.49.1
+   >>> cyrus-sasl-zimbra-2.1.28
    >>> dom4j-1.5.2
    >>> ext.ux.touchcalendar-0.1
    >>> ganymed-ssh2-build210-none
@@ -67,29 +67,28 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> libsodium-1.0.6
    >>> libxml2-2.9.4
    >>> md5.js-2.1
-   >>> memcached-1.4.25
+   >>> memcached-1.4.37
    >>> modernizr-2.6.2
-   >>> net-snmp-5.7.3
-   >>> nginx-1.7.1-zimbra
+   >>> net-snmp-5.8
+   >>> nginx-1.20-zimbra
    >>> nist-sip-1.2
    >>> nviennot-nginx-tcp-keepalive-4d7186d
    >>> opendkim-2.10.3
-   >>> openldap-2.4.49
-   >>> openssl-1.0.2h
-   >>> owasp-java-html-sanitizer.jar-r239
+   >>> openldap-2.4.59
+   >>> owasp-java-html-sanitizer.jar-20190610.5z
    >>> perl-data-uuid-1.221
    >>> perl-geography-countries-2009041301
    >>> perl-mail-spf-2.9.0
    >>> perl-net-dns-1.04
    >>> perl-term-readkey-2.33
-   >>> php-5.6.23
-   >>> postfix-logwatch-1.40.01
+   >>> php-7.4.27
+   >>> postfix-logwatch-1.40.03
    >>> sendmail-8.15.2
-   >>> slf4j-1.6.4
-   >>> spymemcached-2.6
+   >>> slf4j-1.7.36
+   >>> spymemcached-2.12.1
    >>> sqlitejdbc-3.7.5-1
    >>> tnef-1.8.0
-   >>> unbound-1.5.9
+   >>> unbound-1.17.1
    >>> yui-compressor-2.4.2
    >>> zeroclipboard-1.0.7
 
@@ -98,7 +97,7 @@ SECTION 2: Apache License, V2.0
    >>> apache-ant-1.6.5
    >>> apache-ant-ziputil-1.7.0
    >>> apache-apr-1.5.2
-   >>> apache-apr-util-1.5.4
+   >>> apache-apr-util-1.6.1
    >>> apache-cxf-2.7.18
    >>> apache-commons-beanutils-1.7.0
    >>> apache-commons-cli-1.2
@@ -116,7 +115,7 @@ SECTION 2: Apache License, V2.0
    >>> apache-helix-0.6.1
    >>> apache-httpasyncclient-4.0-beta3
    >>> apache-httpcomponents-core-4.2.2 (httpcore, httpcore-nio)
-   >>> apache-httpd-2.4.20
+   >>> apache-httpd-2.4.57
    >>> apache-jcs-1.3
    >>> apache-log4j-1.2.16
    >>> apache-log4j-extras-1.0
@@ -141,12 +140,13 @@ SECTION 2: Apache License, V2.0
    >>> objenesis-2.1
    >>> opencsv-1.8
    >>> openfire-3.10.2
+   >>> openssl-3.0.9
    >>> org.apache.mina-2.0.4
    >>> org.openid4java-1.0.0
    >>> ridl-4.0.2
    >>> selenium-2.51.0
    >>> smack-3.2.1
-   >>> spamassassin-3.4.4
+   >>> spamassassin-3.4.6
    >>> spring-framework-3.0.7
    >>> stax2-api-3.1.1
    >>> testng-5.12.1
@@ -159,7 +159,7 @@ SECTION 2: Apache License, V2.0
 
 SECTION 3: Artistic License, V2.0
 
-   >>> perl-net-ssleay-1.72
+   >>> perl-net-ssleay-1.92
    >>> perl-unix-syslog-1.1
 
 
@@ -183,7 +183,7 @@ SECTION 6: GNU General Public License, V1.0
 
    >>> perl-canary-stability-2006
    >>> perl-convert-asn1-0.27
-   >>> perl-crypt-openssl-rsa-0.28
+   >>> perl-crypt-openssl-rsa-0.33
    >>> perl-dbd-sqlite-1.48
    >>> perl-digest-hmac-1.03
    >>> perl-email-date-format-1.005
@@ -206,14 +206,14 @@ SECTION 6: GNU General Public License, V1.0
    >>> perl-xml-parser-lite-0.721
    >>> perl-xml-sax-0.99
    >>> perl-xml-sax-base-1.08
-   >>> perl-xml-simple-2.20
+   >>> perl-xml-simple-2.25
 
 
 
 SECTION 7: GNU General Public License, V2.0
 
-   >>> amavisd-2.10.1
-   >>> clamav-0.102.2
+   >>> amavisd-2.13.0
+   >>> clamav-1.0.1
    >>> cluebringer-2.1.0.0.cf484f1b93cf9965886cc89d33bdeee9c26426cb
    >>> freetype-2.6.3
    >>> innotop-1.9.1
@@ -221,7 +221,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> juniversalchardet-1.0.3
    >>> libtool-2.2.6b
    >>> libwww-perl-6.13
-   >>> mariadb-10.1.14
+   >>> mariadb-10.1.25
    >>> openjdk-1.8.0u172b1
    >>> perl-archive-zip-1.53
    >>> perl-berkeleydb-0.55
@@ -230,7 +230,7 @@ SECTION 7: GNU General Public License, V2.0
    >>> perl-carp-clan-6.04
    >>> perl-class-inspector-1.28
    >>> perl-compress-raw-bzip2-2.069
-   >>> perl-compress-raw-zlib-2.069
+   >>> perl-compress-raw-zlib-2.103
    >>> perl-config-inifiles-2.86
    >>> perl-convert-binhex-1.124
    >>> perl-convert-uulib-1.5
@@ -238,9 +238,9 @@ SECTION 7: GNU General Public License, V2.0
    >>> perl-crypt-openssl-random-0.11
    >>> perl-crypt-saltedhash-0.09
    >>> perl-date-calc-6.4
-   >>> perl-date-manip-6.51
+   >>> perl-date-manip-6.90
    >>> perl-db_file-1.835
-   >>> perl-dbd-mysql-4.033
+   >>> perl-dbd-mysql-4.050
    >>> perl-dbi-1.634
    >>> perl-digest-sha1-2.13
    >>> perl-encode-detect-1.01
@@ -257,13 +257,13 @@ SECTION 7: GNU General Public License, V2.0
    >>> perl-http-negotiate-6.01
    >>> perl-io-compress-2.069
    >>> perl-io-socket-inet6-2.72
-   >>> perl-io-socket-ssl-2.020
+   >>> perl-io-socket-ssl-2.083
    >>> perl-io-stringy-2.111
    >>> perl-ip-country-2.28
    >>> perl-ldap-0.65
    >>> perl-lwp-mediatypes-6.02
-   >>> perl-lwp-protocol-https-6.06
-   >>> perl-mail-dkim-0.40
+   >>> perl-lwp-protocol-https-6.10
+   >>> perl-mail-dkim-0.43
    >>> perl-mailtools-2.14
    >>> perl-math-bigint-1.99708
    >>> perl-mime-tools-5.507
@@ -302,11 +302,11 @@ SECTION 8: GNU General Public License, V3.0
 
 SECTION 9: GNU Lesser General Public License, V2.1
 
-   >>> aspell-0.60.6.1
+   >>> aspell-0.60.7-rc1
    >>> jcommon-1.0.20
    >>> jfreechart-1.0.16
    >>> jna-3.4.0
-   >>> mariadb-java-client-1.1.8
+   >>> mariadb-java-client-2.4.3
    >>> syslog4j-0.9.46
    >>> tinymce-4.2.6
    >>> unbound-ldap-sdk-2.3.5
@@ -326,7 +326,7 @@ SECTION 11: GNU Library General Public License, V2.0
 
 SECTION 12: IBM Public License, V1.0
 
-   >>> postfix-3.1.1
+   >>> postfix-3.6.1
 
 
 
@@ -340,7 +340,7 @@ SECTION 14: Mozilla Public License, V2.0
 
    >>> firefox-nss-22-zimbra
    >>> firefox-nspr-22-zimbra
-   >>> openjdk-cacerts-1.0.4
+   >>> openjdk-cacerts-1.0.8
    >>> perl-mozilla-ca-20150826
 
 
@@ -779,7 +779,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
->>> curl-7.49.0
+>>> curl-7.49.1
 
 COPYRIGHT AND PERMISSION NOTICE
 
@@ -874,7 +874,7 @@ There's ABSOLUTELY NO WARRANTY, express or implied.
 (This is a heavily cut-down "BSD license".)
 
 
->>> cyrus-sasl-zimbra-2.1.26
+>>> cyrus-sasl-zimbra-2.1.28
 
 Copyright (c) 1998-2003 Carnegie Mellon University.  All rights reserved.
 
@@ -2414,138 +2414,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 >>> keyview-10.13.0.0
 
-> OpenSSL
-
-OpenSSL (1.0.0c 2 Dec 2010)
-
-http://www.openssl.org/
-
-LICENSE:
-
-The OpenSSL toolkit stays under a dual license, i.e. both the conditions of
-the OpenSSL License and the original SSLeay license apply to the toolkit.
-See below for the actual license texts. Actually both licenses are BSD-style
-Open Source licenses. In case of any license issues related to OpenSSL
-please contact openssl-core@openssl.org.
-
-OpenSSL License
----------------
-
-====================================================================
-Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in
-the documentation and/or other materials provided with the
-distribution.
-
-3. All advertising materials mentioning features or use of this
-software must display the following acknowledgment:
-"This product includes software developed by the OpenSSL Project
-for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
-
-4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
-endorse or promote products derived from this software without
-prior written permission. For written permission, please contact
-openssl-core@openssl.org.
-
-5. Products derived from this software may not be called "OpenSSL"
-nor may "OpenSSL" appear in their names without prior written
-permission of the OpenSSL Project.
-
-6. Redistributions of any form whatsoever must retain the following
-acknowledgment:
-"This product includes software developed by the OpenSSL Project
-for use in the OpenSSL Toolkit (http://www.openssl.org/)"
-
-THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
-EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-OF THE POSSIBILITY OF SUCH DAMAGE.
-====================================================================
-
-This product includes cryptographic software written by Eric Young
-(eay@cryptsoft.com).  This product includes software written by Tim
-Hudson (tjh@cryptsoft.com).
-
-
-Original SSLeay License
------------------------
-
-Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
-All rights reserved.
-
-This package is an SSL implementation written
-by Eric Young (eay@cryptsoft.com).
-The implementation was written so as to conform with Netscapes SSL.
-
-This library is free for commercial and non-commercial use as long as
-the following conditions are aheared to.  The following conditions
-apply to all code found in this distribution, be it the RC4, RSA,
-lhash, DES, etc., code; not just the SSL code.  The SSL documentation
-included with this distribution is covered by the same copyright terms
-except that the holder is Tim Hudson (tjh@cryptsoft.com).
-
-Copyright remains Eric Young's, and as such any Copyright notices in
-the code are not to be removed.
-If this package is used in a product, Eric Young should be given attribution
-as the author of the parts of the library used.
-This can be in the form of a textual message at program startup or
-in documentation (online or textual) provided with the package.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-1. Redistributions of source code must retain the copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. All advertising materials mentioning features or use of this software
-   must display the following acknowledgement:
-   "This product includes cryptographic software written by
-   Eric Young (eay@cryptsoft.com)"
-   The word 'cryptographic' can be left out if the rouines from the library
-   being used are not cryptographic related :-).
-4. If you include any Windows specific code (or a derivative thereof) from
-   the apps directory (application code) you must include an acknowledgement:
-  "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
-
-THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-The licence and distribution terms for any publically available version or
-derivative of this code cannot be changed.  i.e. this code cannot simply be
-copied and put under another distribution licence
-[including the GNU Public Licence.]
-
-
-
 > LGPL 3.0
 
 LibPff (libpff-alpha-20110413)
@@ -3871,7 +3739,7 @@ Neither the name of the author nor the names of its contributors may be used to 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
->>> memcached-1.4.25
+>>> memcached-1.4.37
 
 Copyright (c) 2003, Danga Interactive, Inc.
 All rights reserved.
@@ -3927,7 +3795,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
->>> net-snmp-5.7.3
+>>> net-snmp-5.8
 
 Various copyrights apply to this package, listed in various separate
 parts below.  Please make sure that you read all the parts.
@@ -4258,7 +4126,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
->>> nginx-1.7.1-zimbra
+>>> nginx-1.20-zimbra
 
 Copyright (C) 2002-2014 Igor Sysoev
 Copyright (C) 2011,2014 Nginx, Inc.
@@ -4283,138 +4151,6 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
-
-
-
-ADDITIONAL LICENSE INFORMATION:
-
-> OpenSSL
-
-nginx-1.7.1.zip\nginx-1.7.1\docs\OpenSSL LICENSE
-
-
-  LICENSE ISSUES
-  ==============
-
-  The OpenSSL toolkit stays under a dual license, i.e. both the conditions of
-  the OpenSSL License and the original SSLeay license apply to the toolkit.
-  See below for the actual license texts. Actually both licenses are BSD-style
-  Open Source licenses. In case of any license issues related to OpenSSL
-  please contact openssl-core@openssl.org.
-
-  OpenSSL License
-  ---------------
- ====================================================================
- * Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
-  ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
-
-
- Original SSLeay License
- -----------------------
-
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
 
 
 > MIT
@@ -4620,7 +4356,7 @@ Portions Copyright (c) 2010-2012, The Trusted Domain Project.
 All rights reserved.
 
 
->>> openldap-2.4.49
+>>> openldap-2.4.59
 
 The OpenLDAP Public License
 Version 2.8, 17 August 2003
@@ -4671,136 +4407,187 @@ California, USA.  All Rights Reserved.  Permission to copy and
 distribute verbatim copies of this document is granted.
 
 
->>> openssl-1.0.2h
-
-LICENSE ISSUES
-  ==============
-
-  The OpenSSL toolkit stays under a dual license, i.e. both the conditions of
-  the OpenSSL License and the original SSLeay license apply to the toolkit.
-  See below for the actual license texts. Actually both licenses are BSD-style
-  Open Source licenses. In case of any license issues related to OpenSSL
-  please contact openssl-core@openssl.org.
-
-  OpenSSL License
-  ---------------
-
-/* ====================================================================
- * Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
- */
-
- Original SSLeay License
- -----------------------
-
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
+>>> openssl-3.0.9
 
 
->>> owasp-java-html-sanitizer.jar-r239
+                               Apache License
+                         Version 2.0, January 2004
+                      https://www.apache.org/licenses/
+
+ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+ 1. Definitions.
+
+    "License" shall mean the terms and conditions for use, reproduction,
+    and distribution as defined by Sections 1 through 9 of this document.
+
+    "Licensor" shall mean the copyright owner or entity authorized by
+    the copyright owner that is granting the License.
+
+    "Legal Entity" shall mean the union of the acting entity and all
+    other entities that control, are controlled by, or are under common
+    control with that entity. For the purposes of this definition,
+    "control" means (i) the power, direct or indirect, to cause the
+    direction or management of such entity, whether by contract or
+    otherwise, or (ii) ownership of fifty percent (50%) or more of the
+    outstanding shares, or (iii) beneficial ownership of such entity.
+
+    "You" (or "Your") shall mean an individual or Legal Entity
+    exercising permissions granted by this License.
+
+    "Source" form shall mean the preferred form for making modifications,
+    including but not limited to software source code, documentation
+    source, and configuration files.
+
+    "Object" form shall mean any form resulting from mechanical
+    transformation or translation of a Source form, including but
+    not limited to compiled object code, generated documentation,
+    and conversions to other media types.
+
+    "Work" shall mean the work of authorship, whether in Source or
+    Object form, made available under the License, as indicated by a
+    copyright notice that is included in or attached to the work
+    (an example is provided in the Appendix below).
+
+    "Derivative Works" shall mean any work, whether in Source or Object
+    form, that is based on (or derived from) the Work and for which the
+    editorial revisions, annotations, elaborations, or other modifications
+    represent, as a whole, an original work of authorship. For the purposes
+    of this License, Derivative Works shall not include works that remain
+    separable from, or merely link (or bind by name) to the interfaces of,
+    the Work and Derivative Works thereof.
+
+    "Contribution" shall mean any work of authorship, including
+    the original version of the Work and any modifications or additions
+    to that Work or Derivative Works thereof, that is intentionally
+    submitted to Licensor for inclusion in the Work by the copyright owner
+    or by an individual or Legal Entity authorized to submit on behalf of
+    the copyright owner. For the purposes of this definition, "submitted"
+    means any form of electronic, verbal, or written communication sent
+    to the Licensor or its representatives, including but not limited to
+    communication on electronic mailing lists, source code control systems,
+    and issue tracking systems that are managed by, or on behalf of, the
+    Licensor for the purpose of discussing and improving the Work, but
+    excluding communication that is conspicuously marked or otherwise
+    designated in writing by the copyright owner as "Not a Contribution."
+
+    "Contributor" shall mean Licensor and any individual or Legal Entity
+    on behalf of whom a Contribution has been received by Licensor and
+    subsequently incorporated within the Work.
+
+ 2. Grant of Copyright License. Subject to the terms and conditions of
+    this License, each Contributor hereby grants to You a perpetual,
+    worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+    copyright license to reproduce, prepare Derivative Works of,
+    publicly display, publicly perform, sublicense, and distribute the
+    Work and such Derivative Works in Source or Object form.
+
+ 3. Grant of Patent License. Subject to the terms and conditions of
+    this License, each Contributor hereby grants to You a perpetual,
+    worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+    (except as stated in this section) patent license to make, have made,
+    use, offer to sell, sell, import, and otherwise transfer the Work,
+    where such license applies only to those patent claims licensable
+    by such Contributor that are necessarily infringed by their
+    Contribution(s) alone or by combination of their Contribution(s)
+    with the Work to which such Contribution(s) was submitted. If You
+    institute patent litigation against any entity (including a
+    cross-claim or counterclaim in a lawsuit) alleging that the Work
+    or a Contribution incorporated within the Work constitutes direct
+    or contributory patent infringement, then any patent licenses
+    granted to You under this License for that Work shall terminate
+    as of the date such litigation is filed.
+
+ 4. Redistribution. You may reproduce and distribute copies of the
+    Work or Derivative Works thereof in any medium, with or without
+    modifications, and in Source or Object form, provided that You
+    meet the following conditions:
+
+    (a) You must give any other recipients of the Work or
+        Derivative Works a copy of this License; and
+
+    (b) You must cause any modified files to carry prominent notices
+        stating that You changed the files; and
+
+    (c) You must retain, in the Source form of any Derivative Works
+        that You distribute, all copyright, patent, trademark, and
+        attribution notices from the Source form of the Work,
+        excluding those notices that do not pertain to any part of
+        the Derivative Works; and
+
+    (d) If the Work includes a "NOTICE" text file as part of its
+        distribution, then any Derivative Works that You distribute must
+        include a readable copy of the attribution notices contained
+        within such NOTICE file, excluding those notices that do not
+        pertain to any part of the Derivative Works, in at least one
+        of the following places: within a NOTICE text file distributed
+        as part of the Derivative Works; within the Source form or
+        documentation, if provided along with the Derivative Works; or,
+        within a display generated by the Derivative Works, if and
+        wherever such third-party notices normally appear. The contents
+        of the NOTICE file are for informational purposes only and
+        do not modify the License. You may add Your own attribution
+        notices within Derivative Works that You distribute, alongside
+        or as an addendum to the NOTICE text from the Work, provided
+        that such additional attribution notices cannot be construed
+        as modifying the License.
+
+    You may add Your own copyright statement to Your modifications and
+    may provide additional or different license terms and conditions
+    for use, reproduction, or distribution of Your modifications, or
+    for any such Derivative Works as a whole, provided Your use,
+    reproduction, and distribution of the Work otherwise complies with
+    the conditions stated in this License.
+
+ 5. Submission of Contributions. Unless You explicitly state otherwise,
+    any Contribution intentionally submitted for inclusion in the Work
+    by You to the Licensor shall be under the terms and conditions of
+    this License, without any additional terms or conditions.
+    Notwithstanding the above, nothing herein shall supersede or modify
+    the terms of any separate license agreement you may have executed
+    with Licensor regarding such Contributions.
+
+ 6. Trademarks. This License does not grant permission to use the trade
+    names, trademarks, service marks, or product names of the Licensor,
+    except as required for reasonable and customary use in describing the
+    origin of the Work and reproducing the content of the NOTICE file.
+
+ 7. Disclaimer of Warranty. Unless required by applicable law or
+    agreed to in writing, Licensor provides the Work (and each
+    Contributor provides its Contributions) on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+    implied, including, without limitation, any warranties or conditions
+    of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+    PARTICULAR PURPOSE. You are solely responsible for determining the
+    appropriateness of using or redistributing the Work and assume any
+    risks associated with Your exercise of permissions under this License.
+
+ 8. Limitation of Liability. In no event and under no legal theory,
+    whether in tort (including negligence), contract, or otherwise,
+    unless required by applicable law (such as deliberate and grossly
+    negligent acts) or agreed to in writing, shall any Contributor be
+    liable to You for damages, including any direct, indirect, special,
+    incidental, or consequential damages of any character arising as a
+    result of this License or out of the use or inability to use the
+    Work (including but not limited to damages for loss of goodwill,
+    work stoppage, computer failure or malfunction, or any and all
+    other commercial damages or losses), even if such Contributor
+    has been advised of the possibility of such damages.
+
+ 9. Accepting Warranty or Additional Liability. While redistributing
+    the Work or Derivative Works thereof, You may choose to offer,
+    and charge a fee for, acceptance of support, warranty, indemnity,
+    or other liability obligations and/or rights consistent with this
+    License. However, in accepting such obligations, You may act only
+    on Your own behalf and on Your sole responsibility, not on behalf
+    of any other Contributor, and only if You agree to indemnify,
+    defend, and hold each Contributor harmless for any liability
+    incurred by, or claims asserted against, such Contributor by reason
+    of your accepting any such warranty or additional liability.
+
+ END OF TERMS AND CONDITIONS
+
+>>> owasp-java-html-sanitizer.jar-20190610.5z
 
 Copyright (c) 2011, Mike Samuel
 All rights reserved.
@@ -4960,7 +4747,7 @@ Unlimited distribution and/or modification is allowed as long as this
 copyright notice remains intact.
 
 
->>> php-5.6.23
+>>> php-7.4.27
 
 The PHP License, version 3.01
 
@@ -5183,7 +4970,7 @@ May you find forgiveness for yourself and forgive others.
 May you share freely, never taking more than you give.
 
 
->>> postfix-logwatch-1.40.01
+>>> postfix-logwatch-1.40.03
 
 #######################################################
 ### All work since Dec 12, 2006 (logwatch CVS revision 1.28)
@@ -5279,7 +5066,7 @@ each of the following conditions is met:
 $Revision: 8.23 $, Last updated $Date: 2014-01-26 20:10:01 $, Document 139848.1
 
 
->>> slf4j-1.6.4
+>>> slf4j-1.7.36
 
 Copyright (c) 2004-2008 QOS.ch
 All rights reserved.
@@ -5329,7 +5116,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> spymemcached-2.6
+>>> spymemcached-2.12.1
 
 Copyright (c) 2006-2009 Dustin Sallings
 Copyright (c) 2009-2011 Couchbase, Inc.
@@ -5457,7 +5244,7 @@ in courts and fora located in the State of New York, and you consent to such
 jurisdiction and venue.
 
 
->>> unbound-1.5.9
+>>> unbound-1.17.1
 
 Copyright (c) 2007, NLnet Labs. All rights reserved.
 
@@ -6034,7 +5821,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
 
->>> apache-apr-util-1.5.4
+>>> apache-apr-util-1.6.1
 
 Apache Portable Runtime Utility Library
 Copyright (c) 2011 The Apache Software Foundation.
@@ -6553,7 +6340,7 @@ This project contains annotations derived from JCIP-ANNOTATIONS
 Copyright (c) 2005 Brian Goetz and Tim Peierls. See http://www.jcip.net
 
 
->>> apache-httpd-2.4.20
+>>> apache-httpd-2.4.57
 
 copyright 2013 The Apache Software Foundation.
 
@@ -12568,6 +12355,9 @@ laws of Oregon. If any provision of this License Agreement is held to be
 unenforceable, this License Agreement will remain in effect with the provision
 omitted.
 
+>>> openssl-3.0.9
+
+License : Apache 2.0
 
 >>> org.apache.mina-2.0.4
 
@@ -12742,7 +12532,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
->>> spamassassin-3.4.4
+>>> spamassassin-3.4.6
 
 License: Apache 2.0
 
@@ -12914,7 +12704,7 @@ The Apache Software Foundation (http://www.apache.org/).
 Artistic License, V2.0 is applicable to the following component(s).
 
 
->>> perl-net-ssleay-1.72
+>>> perl-net-ssleay-1.92
 
 Copyright (c) 1996-2003 Sampo Kellomaki <sampo@iki.fi>
 Copyright (C) 2005 Florian Ragwitz <rafl@debian.org>
@@ -14428,7 +14218,7 @@ a) the GNU General Public License as published by the Free
 b) the "Artistic License"
 
 
->>> perl-crypt-openssl-rsa-0.28
+>>> perl-crypt-openssl-rsa-0.33
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 1.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 1.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -14785,7 +14575,7 @@ a) the GNU General Public License as published by the Free Software Foundation; 
 b) the "Artistic License".
 
 
->>> perl-xml-simple-2.20
+>>> perl-xml-simple-2.25
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 1.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 1.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -14807,7 +14597,7 @@ b) the "Artistic License"
 GNU General Public License, V2.0 is applicable to the following component(s).
 
 
->>> amavisd-2.10.1
+>>> amavisd-2.13.0
 
 GNU GENERAL PUBLIC LICENSE
 Version 2, June 1991
@@ -14867,7 +14657,7 @@ A copy of the license is included in the section entitled "GNU
 Free Documentation License".
 
 
->>> clamav-0.102.2
+>>> clamav-1.0.1
 
 Copyright (C) 2015 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
 Copyright (C) 2007-2009 Sourcefire, Inc.
@@ -15034,11 +14824,11 @@ not be used to develop a RAR (WinRAR) compatible archiver.
 Original UnRAR licence:
 
 UnRAR - free utility for RAR archives
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 License for use and distribution of
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 FREE portable version
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 The source code of UnRAR utility is freeware. This means:
 
@@ -15377,7 +15167,7 @@ COPYRIGHT
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 
->>> mariadb-10.1.14
+>>> mariadb-10.1.25
 
 
 This is a release of MariaDB.
@@ -21276,7 +21066,7 @@ This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 
->>> perl-compress-raw-zlib-2.069
+>>> perl-compress-raw-zlib-2.103
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -21406,7 +21196,7 @@ Please refer to the files "Artistic.txt", "GNU_GPL.txt" and
 for any details!
 
 
->>> perl-date-manip-6.51
+>>> perl-date-manip-6.90
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -21425,7 +21215,7 @@ Copyright (c) 1995-2014 Paul Marquess. All rights reserved.
      modify it under the same terms as Perl itself.
 
 
->>> perl-dbd-mysql-4.033
+>>> perl-dbd-mysql-4.050
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -21660,7 +21450,7 @@ This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 
->>> perl-io-socket-ssl-2.020
+>>> perl-io-socket-ssl-2.083
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0.  PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0.  THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -21721,7 +21511,7 @@ Copyright 1995-1999 Gisle Aas.
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 
->>> perl-lwp-protocol-https-6.06
+>>> perl-lwp-protocol-https-6.10
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0. PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0. THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -21730,7 +21520,7 @@ Copyright 1997-2011 Gisle Aas.
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 
->>> perl-mail-dkim-0.40
+>>> perl-mail-dkim-0.43
 
 [PLEASE NOTE:  ZIMBRA, INC. ELECTS TO USE AND DISTRIBUTE THIS COMPONENT UNDER THE TERMS OF THE GPL 2.0. PLEASE SEE THE APPENDIX TO REVIEW THE FULL TEXT OF THE GPL 2.0. THE ORIGINAL LICENSE TERMS ARE REPRODUCED BELOW ONLY AS A REFERENCE.]
 
@@ -22390,7 +22180,7 @@ Comments) 1950 to 1952 in the files http://www.ietf.org/rfc/rfc1950.txt
 GNU Lesser General Public License, V2.1 is applicable to the following component(s).
 
 
->>> aspell-0.60.6.1
+>>> aspell-0.60.7-rc1
 
 This file is part of The New Aspell
 Copyright (C) 2001-2002 by Kevin Atkinson under the GNU LGPL
@@ -22504,7 +22294,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 
->>> mariadb-java-client-1.1.8
+>>> mariadb-java-client-2.4.3
 
 MariaDB Client for Java
 
@@ -22668,7 +22458,7 @@ Boston, MA 02111-1307, USA.
 IBM Public License, V1.0 is applicable to the following component(s).
 
 
->>> postfix-3.1.1
+>>> postfix-3.6.1
 
 License: IBM Public License 1.0
 
@@ -22676,7 +22466,7 @@ Additional license information:
 
 >BSD
 
-postfix-3.1.1\COPYRIGHT
+postfix-3.6.1\COPYRIGHT
 
 Included for the use of the fix_strcasecmp.c module which works
 around a Solaris problem.
@@ -22737,7 +22527,7 @@ License: MPL v2.0
 License: MPL v2.0
 
 
->>> openjdk-cacerts-1.0.4
+>>> openjdk-cacerts-1.0.8
 
 License: MPL v2.0
 
