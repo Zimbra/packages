@@ -1,9 +1,3 @@
-zimbra-perl-net-http (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
-
-  * Updated dependency perl-io-socket-ssl for perl-net-http
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
-
 zimbra-perl-net-http (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=medium
 
   * Updated dependency perl-io-socket-ssl for perl-net-http
