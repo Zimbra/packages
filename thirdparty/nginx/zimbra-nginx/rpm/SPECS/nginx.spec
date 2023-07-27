@@ -1,15 +1,15 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra8.8b4ZAPPEND
+Release:            1zimbra8.8b3ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      pcre-devel, zlib-devel
-BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
-BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 Requires:           pcre, zlib
-Requires:           zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
-Requires:           zimbra-cyrus-sasl-libs >= 2.1.28-1zimbra8.7b4ZAPPEND, zimbra-proxy-base
+Requires:           zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
+Requires:           zimbra-cyrus-sasl-libs >= 2.1.26-1zimbra8.7b3ZAPPEND, zimbra-proxy-base
 AutoReqProv:        no
 URL:                http://nginx.org
 
@@ -17,8 +17,6 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
-* Tue Jun 13 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
-- ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Fri May 06 2022  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
 - Fix ZBUG-2738
 * Wed Jul 07 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
