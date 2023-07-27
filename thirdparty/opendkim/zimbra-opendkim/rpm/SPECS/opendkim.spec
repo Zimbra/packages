@@ -1,21 +1,21 @@
 Summary:            Zimbra's OpenDKIM build
 Name:               zimbra-opendkim
 Version:            VERSION
-Release:            1zimbra8.7b6ZAPPEND
+Release:            1zimbra8.7b5ZAPPEND
 License:            OpenDKIM
 Source:             %{name}-%{version}.tar.gz
 Patch0:             ticket226.patch
 Patch1:             opendkim-2.10.3.patch
 BuildRequires:      zlib-devel
-BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-libbsd-devel
-BuildRequires:      zimbra-openldap-devel >= 2.4.59-1zimbra8.8b6ZAPPEND
+BuildRequires:      zimbra-openldap-devel >= 2.4.49-1zimbra8.8b4ZAPPEND 
 BuildRequires:      zimbra-libmilter-devel
-BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
 Requires:           zlib, zimbra-opendkim-libs = %{version}-%{release}
-Requires:           zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
+Requires:           zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-libbsd-libs
-Requires:           zimbra-openldap-libs >= 2.4.59-1zimbra8.8b6ZAPPEND
+Requires:           zimbra-openldap-libs >= 2.4.49-1zimbra8.8b4ZAPPEND
 AutoReqProv:        no
 URL:                http://www.opendkim.org/
 
@@ -25,8 +25,6 @@ The Zimbra OpenDKIM build
 %define debug_package %{nil}
 
 %changelog
-* Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b6ZAPPEND
-- ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Tue Mar 16 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
 - add patch for ZBUG-2140
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
