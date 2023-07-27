@@ -2,13 +2,13 @@ Source: zimbra-perl-MODNORMNAME
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-xml-sax-expat (>= 0.51-1zimbra8.7b4ZAPPEND)
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-xml-sax-expat (>= 0.51-1zimbra8.7b3ZAPPEND)
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
 
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
- zimbra-perl-xml-sax-expat (>= 0.51-1zimbra8.7b4ZAPPEND)
+ zimbra-perl-xml-sax-expat (>= 0.51-1zimbra8.7b3ZAPPEND)
 Description: XML::Simple - Easily read/write XML (esp config files)
  Easily read/write XML (esp config files)
