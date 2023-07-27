@@ -1,7 +1,7 @@
 Summary:	Zimbra's erlang
 Name:		zimbra-erlang
 Version:	VERSION
-Release:	1zimbra8.8b2ZAPPEND
+Release:	1zimbra8.8b1ZAPPEND
 License:	ASL 2.0
 URL:		https://www.erlang.org
 Source:         %{name}-%{version}.tar.gz
@@ -10,8 +10,8 @@ Patch1:         otp-0001-Do-not-format-man-pages-and-do-not-install-miscellan.pa
 Patch2:         otp-0002-Do-not-install-C-sources.patch
 Patch3:         otp-0003-Do-not-install-erlang-sources.patch
 BuildRequires:	ncurses-devel, zlib-devel
-BuildRequires:	zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
-Requires:       zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
+BuildRequires:	zimbra-openssl-devel >= 1.1.1q-1zimbra8.7b4ZAPPEND
+Requires:       zimbra-openssl-libs >= 1.1.1q-1zimbra8.7b4ZAPPEND
 AutoReqProv:    no
 
 %description
@@ -202,7 +202,5 @@ OZCL/erlang/lib/tools-*/
 OZCL/erlang/lib/xmerl-*/
 
 %changelog
-* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
-- ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Mon Aug 08 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - Initial Release.
