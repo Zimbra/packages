@@ -1,12 +1,12 @@
 Summary:            Zimbra's Unbound build
 Name:               zimbra-unbound
 Version:            VERSION
-Release:            1zimbra8.8b1ZAPPEND
+Release:            1zimbra8.7b4ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
 Patch0:             log-facility.patch
-BuildRequires:      expat-devel, zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
-Requires:           expat, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
+BuildRequires:      expat-devel, zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
+Requires:           expat, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-unbound-libs = %{version}-%{release}
 AutoReqProv:        no
 URL:                https://www.unbound.net/
@@ -17,8 +17,6 @@ The Zimbra Unbound build
 %define debug_package %{nil}
 
 %changelog
-* Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
-- ZBUG-3355, Upgraded OpenSSL to 3.0.9 and upgraded unbound to 1.17.1
 * Sat Aug 20 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - Fix ZCS-11941, remove anchor key generation
 * Tue Apr 12 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
