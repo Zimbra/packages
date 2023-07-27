@@ -2,15 +2,15 @@ Source: zimbra-perl-lwp-protocol-https
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-libwww (>= 6.13-1zimbra8.7b4ZAPPEND), zimbra-perl-net-http (>= 6.09-1zimbra8.7b4ZAPPEND),
- zimbra-perl-io-socket-ssl (>= 2.083-1zimbra8.7b3ZAPPEND), zimbra-perl-mozilla-ca
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-libwww (>= 6.13-1zimbra8.7b3ZAPPEND), zimbra-perl-net-http (>= 6.09-1zimbra8.7b3ZAPPEND),
+ zimbra-perl-io-socket-ssl (>= 2.068-1zimbra8.7b2ZAPPEND), zimbra-perl-mozilla-ca
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/LWP-Protocol-https
 
 Package: zimbra-perl-lwp-protocol-https
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-libwww (>= 6.13-1zimbra8.7b4ZAPPEND),
- zimbra-perl-net-http (>= 6.09-1zimbra8.7b4ZAPPEND), zimbra-perl-io-socket-ssl (>= 2.083-1zimbra8.7b3ZAPPEND), zimbra-perl-mozilla-ca
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-libwww (>= 6.13-1zimbra8.7b3ZAPPEND),
+ zimbra-perl-net-http (>= 6.09-1zimbra8.7b3ZAPPEND), zimbra-perl-io-socket-ssl (>= 2.068-1zimbra8.7b2ZAPPEND), zimbra-perl-mozilla-ca
 Description: LWP::Protocol::https - Provide https support for LWP::UserAgent
  The LWP::Protocol::https module provides support for using https schemed
  URLs with LWP. This module is a plug-in to the LWP protocol handling, so
