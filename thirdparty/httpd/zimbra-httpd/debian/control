@@ -1,6 +1,6 @@
 Source: zimbra-httpd
 Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7),
- zimbra-apr-dev, zimbra-apr-util-dev (>= 1.6.1-1zimbra8.7b3ZAPPEND),
+ zimbra-apr-dev, zimbra-apr-util-dev (>= 1.6.1-1zimbra8.7b2ZAPPEND),
  libz-dev, libpcre2-dev
 Section: utils
 Priority: optional
@@ -21,7 +21,7 @@ Priority: optional
 Architecture: any
 Multi-Arch: same
 Depends: zimbra-httpd (= ${binary:Version}), ${misc:Depends}, zimbra-apr-dev,
- zimbra-apr-util-dev (>= 1.6.1-1zimbra8.7b3ZAPPEND)
+ zimbra-apr-util-dev (>= 1.6.1-1zimbra8.7b2ZAPPEND)
 Description: Apache HTTPD development pieces
 
 Package: zimbra-httpd-dbg

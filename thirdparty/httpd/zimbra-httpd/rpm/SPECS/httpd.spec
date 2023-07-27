@@ -1,15 +1,15 @@
 Summary:            Zimbra's Apache HTTPD build
 Name:               zimbra-httpd
 Version:            VERSION
-Release:            1zimbra8.7b5ZAPPEND
+Release:            1zimbra8.7b4ZAPPEND
 License:            Apache-2.0
 Source:             %{name}-%{version}.tar.bz2
 BuildRequires:      zimbra-apr-devel
-BuildRequires:      zimbra-apr-util-devel >= 1.6.1-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-apr-util-devel >= 1.6.1-1zimbra8.7b2ZAPPEND
 BuildRequires:      zlib-devel
 BuildRequires:      pcre2-devel
 Requires:           zlib, pcre2
-Requires:           zimbra-apr-libs, zimbra-apr-util-libs >= 1.6.1-1zimbra8.7b3ZAPPEND, zimbra-apache-base
+Requires:           zimbra-apr-libs, zimbra-apr-util-libs >= 1.6.1-1zimbra8.7b2ZAPPEND, zimbra-apache-base
 AutoReqProv:        no
 URL:                http://httpd.apache.org/
 
@@ -19,8 +19,6 @@ The Zimbra Apache HTTPD build
 %define debug_package %{nil}
 
 %changelog
-* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
-- Updated dependency zimbra-apr-util
 * Mon Apr 17 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - ZBUG-3354, Upgraded Apache to 2.4.57
 * Wed Nov 23 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
@@ -70,7 +68,7 @@ mv ${RPM_BUILD_ROOT}/OZC/conf/magic ${RPM_BUILD_ROOT}/opt/zimbra/data/httpd/conf
 Summary:        Apache HTTPD Development
 Requires: zimbra-httpd = %{version}-%{release}
 Requires: zimbra-apr-devel
-Requires: zimbra-apr-util-devel >= 1.6.1-1zimbra8.7b3ZAPPEND
+Requires: zimbra-apr-util-devel >= 1.6.1-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 
 %description devel
