@@ -1,9 +1,3 @@
-zimbra-postfix (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
-
-  * ZBUG-3355, Upgraded OpenSSL to 3.0.9 and updated openldap, cyrus-sasl, lmdb
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 12 Jun 2023 05:12:55 +0000
-
 zimbra-postfix (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
 
   * Upgraded postfix to 3.6.1

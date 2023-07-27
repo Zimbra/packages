@@ -1,19 +1,19 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            1zimbra8.7b4ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-openldap-devel >= 2.4.59-1zimbra8.8b6ZAPPEND
-BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
-BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
+BuildRequires:      zimbra-openldap-devel >= 2.4.59-1zimbra8.8b4ZAPPEND
+BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.26-1zimbra8.7b3ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 1.1.1h-1zimbra8.7b3ZAPPEND
 BuildRequires:      zimbra-mariadb-devel
-BuildRequires:      zimbra-lmdb-devel >= 2.4.59-1zimbra8.8b6ZAPPEND
+BuildRequires:      zimbra-lmdb-devel >= 2.4.59-1zimbra8.8b4ZAPPEND
 BuildRequires:      pcre-devel
 Requires:           pcre, libicu
-Requires:           zimbra-openldap-libs >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-mta-base
-Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND, zimbra-mariadb
-Requires:           zimbra-lmdb-libs >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
+Requires:           zimbra-openldap-libs >= 2.4.59-1zimbra8.8b4ZAPPEND, zimbra-mta-base
+Requires:           zimbra-cyrus-sasl >= 2.1.26-1zimbra8.7b3ZAPPEND, zimbra-mariadb
+Requires:           zimbra-lmdb-libs >= 2.4.59-1zimbra8.8b4ZAPPEND, zimbra-openssl-libs >= 1.1.1h-1zimbra8.7b3ZAPPEND
 Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
@@ -27,8 +27,6 @@ The Zimbra Postfix build
 %define debug_package %{nil}
 
 %changelog
-* Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
-- ZBUG-3355, Upgraded OpenSSL to 3.0.9 and updated openldap, cyrus-sasl, lmdb
 * Wed Jun 30 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded postfix to 3.6.1
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
