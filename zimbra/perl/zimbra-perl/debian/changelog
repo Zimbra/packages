@@ -1,12 +1,3 @@
-zimbra-perl (1.0.8-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
-
-  * Updated perl-net-ssleay, perl-dbd-mysql, perl-crypt-openssl-random
-  * Updated perl-crypt-openssl-rsa, perl-io-socket-ssl, perl-net-http
-  * Updated perl-libwww, perl-lwp-protocol-https, perl-xml-parser
-  * Updated perl-soap-lite, perl-xml-sax-expat, perl-xml-simple, perl-mail-dkim, perl-innotop
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
-
 zimbra-perl (1.0.7-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded Date-Manip to 6.90
