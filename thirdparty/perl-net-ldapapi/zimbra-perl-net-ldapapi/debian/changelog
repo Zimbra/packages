@@ -1,9 +1,3 @@
-zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=low
-
-  * Updated openldap, cyrus-sasl
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
-
 zimbra-perl-MODNORMNAME (VERSION-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.
