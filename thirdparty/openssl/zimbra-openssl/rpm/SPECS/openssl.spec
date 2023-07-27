@@ -2,7 +2,7 @@ Summary:            Zimbra's Secure Socket Layer build
 Name:               zimbra-openssl
 Version:            VERSION
 Release:            1zimbra8.8b1ZAPPEND
-License:            Apache License v2
+License:            OpenSSL
 Source:             %{name}-%{version}.tar.gz
 Source1:            openssl-fips.cnf
 Requires:           zimbra-openssl-libs = %{version}-%{release}, perl, perl-core
