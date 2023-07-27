@@ -26,7 +26,7 @@ Requires:       zimbra-perl-io-socket-ip, zimbra-perl-io-socket-ssl >= 2.083-1zi
 Requires:       zimbra-perl-json-pp
 Requires:       zimbra-perl-libwww >= 6.13-1zimbra8.7b4ZAPPEND, zimbra-perl-list-moreutils, zimbra-perl-lwp-mediatypes
 Requires:       zimbra-perl-lwp-protocol-https >= 6.10-1zimbra8.7b3ZAPPEND
-Requires:       zimbra-perl-mail-dkim >= 0.43-1zimbra8.8b1ZAPPEND, zimbra-perl-mail-spf, zimbra-perl-mailtools, zimbra-perl-math-bigint
+Requires:       zimbra-perl-mail-dkim >= 0.40-1zimbra8.7b4ZAPPEND, zimbra-perl-mail-spf, zimbra-perl-mailtools, zimbra-perl-math-bigint
 Requires:       zimbra-perl-mime-lite
 Requires:       zimbra-perl-mime-tools, zimbra-perl-mime-types, zimbra-perl-mozilla-ca, zimbra-perl-netaddr-ip
 Requires:       zimbra-perl-net-cidr, zimbra-perl-net-cidr-lite, zimbra-perl-net-dns, zimbra-perl-net-dns-resolver-programmable
