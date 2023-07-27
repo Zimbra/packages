@@ -1,9 +1,3 @@
-zimbra-snmp-components (1.0.4-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
-
-  * Updated dependency zimbra-net-snmp
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
-
 zimbra-snmp-components (1.0.3-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Updated dependency zimbra-net-snmp
