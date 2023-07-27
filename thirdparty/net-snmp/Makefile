@@ -6,7 +6,7 @@ pvers := $(SNMP_VERSION)
 pname := net-snmp
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://sourceforge.net/projects/net-snmp/files/net-snmp/$(pvers)/$(pfile)
+purl := http://iweb.dl.sourceforge.net/project/net-snmp/net-snmp/$(pvers)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
