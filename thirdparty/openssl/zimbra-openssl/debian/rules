@@ -9,8 +9,8 @@ export DEB_LDFLAGS_MAINT_APPEND="-LOZCL -ROZCL -Wl,-rpath,OZCL"
 %:
 	dh $@
 override_dh_auto_configure:
-	./Configure no-idea enable-fips enable-ec_nistp_64_gcc_128 no-mdc2 no-rc5 \
-  --prefix=OZC --with-rand-seed=devrandom,rdcpu,os,getrandom --libdir=lib --openssldir=OZCE/ssl \
+	./Configure no-idea enable-ec_nistp_64_gcc_128 no-mdc2 no-rc5 no-ssl2 \
+  no-hw --prefix=OZC --with-rand-seed=devrandom,rdcpu,os,getrandom --libdir=lib --openssldir=OZCE/ssl \
   shared linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
 
 override_dh_auto_build:
@@ -21,11 +21,15 @@ override_dh_strip:
 	dh_strip -pzimbra-openssl-lib --dbg-package=zimbra-openssl-lib-dbg
 	dh_strip -pzimbra-openssl --dbg-package=zimbra-openssl-dbg
 	dh_strip -Nzimbra-openssl-lib -Nzimbra-openssl
+	export LD_LIBRARY_PATH="$$(pwd)/debian/tmpOZCL" && crypto/fips/fips_standalone_hmac $$(pwd)/debian/zimbra-openssl-lib/opt/zimbra/common/lib/libcrypto.so.1.1 >$$(pwd)/debian/tmpOZCL/.libcrypto.so.1.1.hmac
+	export LD_LIBRARY_PATH="$$(pwd)/debian/tmpOZCL" && crypto/fips/fips_standalone_hmac $$(pwd)/debian/zimbra-openssl-lib/opt/zimbra/common/lib/libssl.so.1.1 >$$(pwd)/debian/tmpOZCL/.libssl.so.1.1.hmac
+	cp -r $$(pwd)/debian/tmpOZCL/.libssl.so.1.1.hmac $$(pwd)/debian/zimbra-openssl-lib/opt/zimbra/common/lib/.libssl.so.1.1.hmac
+	cp -r $$(pwd)/debian/tmpOZCL/.libcrypto.so.1.1.hmac $$(pwd)/debian/zimbra-openssl-lib/opt/zimbra/common/lib/.libcrypto.so.1.1.hmac
 
 override_dh_shlibdeps:
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
 
 override_dh_auto_install:
 	LD_RUN_PATH=OZCL $(MAKE) DESTDIR=$$(pwd)/debian/tmp MANDIR="OZCS/man" LIBS="" install
-	cp $$(pwd)/debian/tmp/opt/zimbra/common/etc/ssl/openssl.cnf $$(pwd)/debian/tmp/opt/zimbra/common/etc/ssl/openssl-source.cnf
-	cp -af debian/openssl-fips.cnf $$(pwd)/debian/tmp/opt/zimbra/common/etc/ssl/openssl-fips.cnf
+	export LD_LIBRARY_PATH="$$(pwd)/debian/tmpOZCL" && crypto/fips/fips_standalone_hmac $$(pwd)/debian/tmpOZCL/libcrypto.so.1.1 >$$(pwd)/debian/tmpOZCL/.libcrypto.so.1.1.hmac
+	export LD_LIBRARY_PATH="$$(pwd)/debian/tmpOZCL" && crypto/fips/fips_standalone_hmac $$(pwd)/debian/tmpOZCL/libssl.so.1.1 >$$(pwd)/debian/tmpOZCL/.libssl.so.1.1.hmac

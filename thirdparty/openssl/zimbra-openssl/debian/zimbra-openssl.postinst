@@ -1,6 +1,0 @@
-#!/bin/bash
-if [ "$1" = configure ]; then
-	/opt/zimbra/common/bin/openssl fipsinstall -quiet -out /opt/zimbra/common/etc/ssl/fipsmodule.cnf -module /opt/zimbra/common/lib/ossl-modules/fips.so
-	cp -af /opt/zimbra/common/etc/ssl/openssl-fips.cnf /opt/zimbra/common/etc/ssl/openssl.cnf
-fi
-exit 0
