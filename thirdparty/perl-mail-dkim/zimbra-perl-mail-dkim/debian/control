@@ -2,14 +2,14 @@ Source: zimbra-perl-MODNORMNAME
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-crypt-openssl-rsa (>= 0.33-1zimbra8.8b1ZAPPEND),
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-crypt-openssl-rsa (>= 0.31-1zimbra8.7b2ZAPPEND),
  zimbra-perl-digest-sha1, zimbra-perl-net-dns, zimbra-perl-mailtools
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
 
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-crypt-openssl-rsa (>= 0.33-1zimbra8.8b1ZAPPEND),
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-crypt-openssl-rsa (>= 0.31-1zimbra8.7b2ZAPPEND),
  zimbra-perl-digest-sha1, zimbra-perl-net-dns, zimbra-perl-mailtools
 Description: Mail::DKIM - Signs/verifies Internet mail with DKIM/DomainKey signatures
  This module implements the various components of the DKIM and DomainKeys
