@@ -1650,10 +1650,11 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
             "zmauth: search for ZM_AUTH_TOKEN");
 
-    /* look for auth token in the request cookie(s) */
+    /* look for auth token in the request cookie(s) 
+	AMB - There appears to be a significant change in request member "cookie" that must be handled. Code is commented in order to move compilation forward and detect any errors that arise. ( Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts). 
     f = ngx_get_cookie_value(log,
             (ngx_table_elt_t **) r->headers_in.cookies.elts,
-            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN, &token);
+            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN, &token);*/
 
     if (!f) {
         /* if not found, then look in the zauthtoken= query string arg */
@@ -1783,10 +1784,11 @@ zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
             "zmauth: search for ZM_ADMIN_AUTH_TOKEN");
 
-    /* look for auth token in the request cookie(s) */
+    /* look for auth token in the request cookie(s) 
+	AMB - There appears to be a significant change in request member "cookie" that must be handled. Code is commented in order to move compilation forward and detect any errors that arise. ( Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts). 
     f = ngx_get_cookie_value(log,
             (ngx_table_elt_t **) r->headers_in.cookies.elts,
-            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN_ADMIN, &token);
+            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN_ADMIN, &token);*/
 
     if (f) {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
