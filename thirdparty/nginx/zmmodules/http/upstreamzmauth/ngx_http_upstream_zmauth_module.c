@@ -82,8 +82,12 @@ static ngx_flag_t ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
         ngx_http_headers_in_t *headers_in, ngx_str_t *value);
 static ngx_flag_t ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
         ngx_str_t *payload, ngx_str_t *value);
+/*
+AMB : Function ngx_get_cookie_value changed to receive the ngx_table_elt_t* instead of ngx_array_t. As the type ngx_table_elt_t don't have  members elts & nelts
+This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0
+*/		
 static ngx_flag_t ngx_get_cookie_value(ngx_log_t *log,
-        ngx_table_elt_t **cookies, ngx_uint_t ncookies, ngx_str_t *name,
+        ngx_table_elt_t *cookies, ngx_uint_t ncookies, ngx_str_t *name,
         ngx_str_t *value);
 static ngx_flag_t ngx_get_query_string_arg(ngx_log_t *log, ngx_str_t *args,
         ngx_str_t *name, ngx_str_t *value);
@@ -845,15 +849,15 @@ static ngx_flag_t ngx_http_upstream_zmserver_from_cookie
 
 static ngx_flag_t
 ngx_get_cookie_value(ngx_log_t *log,
-        ngx_table_elt_t **cookies, ngx_uint_t ncookies, ngx_str_t *name,
+        ngx_table_elt_t *cookies, ngx_uint_t ncookies, ngx_str_t *name,
         ngx_str_t *value) {
-    ngx_table_elt_t **c;
+    ngx_table_elt_t *c;
     u_char *s, *p, *e;
     ngx_str_t V, n, v;
     ngx_flag_t f;
-
-    for (c = cookies, f = 0; c < cookies + ncookies && f == 0; ++c) {
-        V = (*c)->value;
+	// AMB : changed cookies from ngx_array_t to ngx_table_elt_t when upgrading the nginx library from version 1.20.0 to 1.24.0
+    for (c = cookies, f = 0; /*c < cookies + ncookies && f == 0*/;/* ++c*/) {
+        V = c->value;
         /* v is of the form "name=value; name=value;" */
         s = V.data;
         e = s + V.len;
@@ -891,6 +895,7 @@ ngx_get_cookie_value(ngx_log_t *log,
                 ++p;
             }
         }
+		break; // AMB : change done as part of cookie handling as per new type "ngx_table_elt_t"
     }
 
     return f;
@@ -1651,10 +1656,10 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
             "zmauth: search for ZM_AUTH_TOKEN");
 
     /* look for auth token in the request cookie(s) 
-	AMB - There appears to be a significant change in request member "cookie" that must be handled. Code is commented in order to move compilation forward and detect any errors that arise. ( Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts). 
+	AMB - There appears that in version 1.24.0 request member "cookie" has changed. This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0 (Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts).*/ 
     f = ngx_get_cookie_value(log,
-            (ngx_table_elt_t **) r->headers_in.cookies.elts,
-            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN, &token);*/
+            (ngx_table_elt_t *) r->headers_in.cookie,
+            (ngx_uint_t)r->headers_in.cookie, &NGX_ZMAUTHTOKEN, &token);
 
     if (!f) {
         /* if not found, then look in the zauthtoken= query string arg */
@@ -1785,10 +1790,10 @@ zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
             "zmauth: search for ZM_ADMIN_AUTH_TOKEN");
 
     /* look for auth token in the request cookie(s) 
-	AMB - There appears to be a significant change in request member "cookie" that must be handled. Code is commented in order to move compilation forward and detect any errors that arise. ( Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts). 
+	AMB - There appears that in version 1.24.0 request member "cookie" has changed. This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0 (Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts).*/  
     f = ngx_get_cookie_value(log,
-            (ngx_table_elt_t **) r->headers_in.cookies.elts,
-            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN_ADMIN, &token);*/
+            (ngx_table_elt_t *) r->headers_in.cookie,
+            (ngx_uint_t)r->headers_in.cookie, &NGX_ZMAUTHTOKEN_ADMIN, &token);
 
     if (f) {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
