@@ -864,7 +864,7 @@ ngx_get_cookie_value(ngx_log_t *log,
         p = s;
 
         ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: examining cookie value:%V",&V);
+                "zmauth: examining cookie value:(AMB)%V",&V);
 
         while (p < e) {
             n.data = p;
@@ -1653,7 +1653,7 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
     log = r->connection->log;
 
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
-            "zmauth: search for ZM_AUTH_TOKEN");
+            "zmauth: search for ZM_AUTH_TOKEN(AMB)");
 
     /* look for auth token in the request cookie(s) 
 	AMB - There appears that in version 1.24.0 request member "cookie" has changed. This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0 (Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts).*/ 
@@ -1668,13 +1668,13 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
 
     if (f) {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: found ZM_AUTH_TOKEN:%V",
+                "zmauth: found ZM_AUTH_TOKEN(AMB):%V",
                 &token);
 
         f = ngx_field_from_zmauthtoken(log, pool, &token, field, &value);
         if (f) {
             ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
-                    "zmauth: got %V:%V from ZM_AUTH_TOKEN",
+                    "zmauth: got %V:%V from ZM_AUTH_TOKEN(AMB)",
                     field, &value);
             if (value.len > 0) {
                 pvalue = ngx_palloc(pool, sizeof(ngx_str_t));
@@ -1694,12 +1694,12 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
             }
         } else {
             ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                    "zmauth: no %V in ZM_AUTH_TOKEN", field);
+                    "zmauth: no %V in ZM_AUTH_TOKEN(AMB)", field);
         }
 
     } else {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: no ZM_AUTH_TOKEN",
+                "zmauth: no ZM_AUTH_TOKEN(AMB)",
                 &token);
     }
 
@@ -1787,7 +1787,7 @@ zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
     log = r->connection->log;
 
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
-            "zmauth: search for ZM_ADMIN_AUTH_TOKEN");
+            "zmauth: search for ZM_ADMIN_AUTH_TOKEN(AMB)");
 
     /* look for auth token in the request cookie(s) 
 	AMB - There appears that in version 1.24.0 request member "cookie" has changed. This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0 (Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts).*/  
@@ -1797,13 +1797,13 @@ zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
 
     if (f) {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: found ZM_AUTH_TOKEN:%V",
+                "zmauth: found ZM_AUTH_TOKEN:(AMB)%V",
                 &token);
 
         f = ngx_field_from_zmauthtoken(log, pool, &token, field, &value);
         if (f) {
         	ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
-        			"zmauth: got %V:%V from ZM_AUTH_TOKEN",
+        			"zmauth: got %V:%V from ZM_AUTH_TOKEN(AMB)",
         			field, &value);
 
             if (value.len > 0) {
@@ -1824,12 +1824,12 @@ zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
             }
         } else {
             ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                    "zmauth: no %V in ZM_ADMIN_AUTH_TOKEN", field);
+                    "zmauth: no %V in ZM_ADMIN_AUTH_TOKEN(AMB)", field);
         }
 
     } else {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: no ZM_ADMIN_AUTH_TOKEN",
+                "zmauth: no ZM_ADMIN_AUTH_TOKEN(AMB)",
                 &token);
     }
 
