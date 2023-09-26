@@ -855,48 +855,59 @@ ngx_get_cookie_value(ngx_log_t *log,
     u_char *s, *p, *e;
     ngx_str_t V, n, v;
     ngx_flag_t f;
-	// AMB : changed cookies from ngx_array_t to ngx_table_elt_t when upgrading the nginx library from version 1.20.0 to 1.24.0
-    for (c = cookies, f = 0; /*c < cookies + ncookies && f == 0*/;/* ++c*/) {
-        V = c->value;
-        /* v is of the form "name=value; name=value;" */
-        s = V.data;
-        e = s + V.len;
-        p = s;
+	
+	if (cookies && cookies->value.len)
+	{
+		ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
+				"zmauth: printing cookie value:(AMB)%V",&cookies->value);
+		// AMB : changed cookies from ngx_array_t to ngx_table_elt_t when upgrading the nginx library from version 1.20.0 to 1.24.0
+		for (c = cookies, f = 0; /*c < cookies + ncookies && f == 0*/;/* ++c*/) {
+			V = c->value;
+			/* v is of the form "name=value; name=value;" */
+			s = V.data;
+			e = s + V.len;
+			p = s;
 
-        ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: examining cookie value:(AMB)%V",&V);
+			ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
+					"zmauth: examining cookie value:(AMB)%V",&V);
 
-        while (p < e) {
-            n.data = p;
-            while (p < e && *p != '=') {
-                ++p;
-            }
-            if (p == e) {
-                break;
-            }
-            n.len = p - n.data;
-            ++p; // consume =
-            v.data = p;
-            while (p < e && *p != ';') {
-                ++p;
-            }
-            v.len = p - v.data;
-            if (n.len == name->len && ngx_memcmp(n.data, name->data, n.len)
-                    == 0) {
-                *value = v;
-                f = 1;
-                break;
-            }
-            if (p == e) {
-                break;
-            }
-            ++p; // consume ;
-            while (p < e && (*p == ' ' || *p == '\t')) {
-                ++p;
-            }
-        }
-		break; // AMB : change done as part of cookie handling as per new type "ngx_table_elt_t"
-    }
+			while (p < e) {
+				n.data = p;
+				while (p < e && *p != '=') {
+					++p;
+				}
+				if (p == e) {
+					break;
+				}
+				n.len = p - n.data;
+				++p; // consume =
+				v.data = p;
+				while (p < e && *p != ';') {
+					++p;
+				}
+				v.len = p - v.data;
+				if (n.len == name->len && ngx_memcmp(n.data, name->data, n.len)
+						== 0) {
+					*value = v;
+					f = 1;
+					break;
+				}
+				if (p == e) {
+					break;
+				}
+				++p; // consume ;
+				while (p < e && (*p == ' ' || *p == '\t')) {
+					++p;
+				}
+			}
+			break; // AMB : change done as part of cookie handling as per new type "ngx_table_elt_t"
+		}
+	}
+	else
+	{
+		ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+		"zmauth: exiting get cookie without value:(AMB)");
+	}
 
     return f;
 }
