@@ -854,7 +854,7 @@ ngx_get_cookie_value(ngx_log_t *log,
     ngx_table_elt_t *c;
     u_char *s, *p, *e;
     ngx_str_t V, n, v;
-    ngx_flag_t f;
+    ngx_flag_t f = 0;
 	
 	if (cookies && cookies->value.len)
 	{
