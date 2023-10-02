@@ -4,6 +4,28 @@ Version:            VERSION
 Release:            1zimbra8.8b4ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
+Patch0: 			nginx_auto_cc.patch
+Patch1: 			nginx_auto_lib.patch
+Patch2: 			nginx_auto_modules.patch
+Patch3: 			nginx_auto_options.patch
+Patch4: 			nginx_auto_sources.patch
+Patch5: 			nginx_README.patch
+Patch6: 			nginx_src_core.patch
+Patch7: 			nginx_src_event.patch
+Patch8: 			nginx_src_http.patch
+Patch9: 			nginx_src_mail_ngx_mail.patch
+Patch10: 			nginx_src_mail_ngx_mail_auth_http_module.patch
+Patch11: 			nginx_src_mail_ngx_mail_core_module.patch
+Patch12: 			nginx_src_mail_ngx_mail_handler.patch
+Patch13: 			nginx_src_mail_ngx_mail_imap_handler.patch
+Patch14: 			nginx_src_mail_ngx_mail_imap_module_c.patch
+Patch15: 			nginx_src_mail_ngx_mail_imap_module_h.patch
+Patch16: 			nginx_src_mail_ngx_mail_parse.patch
+Patch17: 			nginx_src_mail_ngx_mail_pop3_handler.patch
+Patch18: 			nginx_src_mail_ngx_mail_pop3_module_c.patch
+Patch19: 			nginx_src_mail_ngx_mail_pop3_module_h.patch
+Patch20: 			nginx_src_mail_ngx_mail_proxy_module.patch
+Patch21: 			nginx_src_mail_ngx_mail_smtp_module.patch
 BuildRequires:      pcre-devel, zlib-devel
 BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
@@ -62,11 +84,33 @@ The Zimbra nginx build
 
 %prep
 %setup -n nginx-%{version}-zimbra
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
 CFLAGS="-g -O0"; export CFLAGS; \
-./auto/configure --prefix=OZC \
+./configure --prefix=OZC \
   --with-cc-opt="-g -IOZCI" \
   --with-ld-opt="-Wl,-rpath,OZCL -LOZCL" \
   --with-debug \
