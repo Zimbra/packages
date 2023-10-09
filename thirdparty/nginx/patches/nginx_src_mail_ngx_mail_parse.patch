@@ -1,5 +1,5 @@
 --- nginx/src/mail/ngx_mail_parse.c	2023-10-03 16:49:31.548168900 +0530
-+++ nginx/src/mail/ngx_mail_parse.c	2023-10-09 13:58:27.495188500 +0530
++++ nginx/src/mail/ngx_mail_parse.c	2023-10-09 19:09:23.434448700 +0530
 @@ -14,21 +14,104 @@
  #include <ngx_mail_smtp_module.h>
  
@@ -296,7 +296,7 @@
                  goto invalid;
              default:
                  if ((ch < 'A' || ch > 'Z') && (ch < 'a' || ch > 'z')
-@@ -279,15 +358,15 @@
+@@ -279,35 +358,59 @@
                  }
                  if (p - s->tag_start > 31) {
                      goto invalid;
@@ -316,7 +316,9 @@
              switch (ch) {
              case ' ':
                  break;
-@@ -296,18 +375,41 @@
+             case CR:
+             case LF:
++            case '\x0':
                  goto invalid;
              default:
                  s->cmd_start = p;
@@ -360,7 +362,7 @@
                  case 4:
                      if ((c[0] == 'N' || c[0] == 'n')
                          && (c[1] == 'O'|| c[1] == 'o')
-@@ -315,7 +417,7 @@
+@@ -315,7 +418,7 @@
                          && (c[3] == 'P'|| c[3] == 'p'))
                      {
                          s->command = NGX_IMAP_NOOP;
@@ -369,7 +371,7 @@
                      } else {
                          goto invalid;
                      }
-@@ -329,7 +431,7 @@
+@@ -329,7 +432,7 @@
                          && (c[4] == 'N'|| c[4] == 'n'))
                      {
                          s->command = NGX_IMAP_LOGIN;
@@ -378,7 +380,7 @@
                      } else {
                          goto invalid;
                      }
-@@ -344,7 +446,7 @@
+@@ -344,7 +447,7 @@
                          && (c[5] == 'T'|| c[5] == 't'))
                      {
                          s->command = NGX_IMAP_LOGOUT;
@@ -387,7 +389,7 @@
                      } else {
                          goto invalid;
                      }
-@@ -362,7 +464,7 @@
+@@ -362,7 +465,7 @@
                          && (c[7] == 'S'|| c[7] == 's'))
                      {
                          s->command = NGX_IMAP_STARTTLS;
@@ -396,7 +398,7 @@
                      } else {
                          goto invalid;
                      }
-@@ -382,7 +484,7 @@
+@@ -382,7 +485,7 @@
                          && (c[9] == 'Y'|| c[9] == 'y'))
                      {
                          s->command = NGX_IMAP_CAPABILITY;
@@ -405,7 +407,7 @@
                      } else {
                          goto invalid;
                      }
-@@ -402,7 +504,12 @@
+@@ -402,7 +505,12 @@
                          && (c[10] == 'T'|| c[10] == 't')
                          && (c[11] == 'E'|| c[11] == 'e'))
                      {
@@ -419,7 +421,7 @@
  
                      } else {
                          goto invalid;
-@@ -418,10 +525,13 @@
+@@ -418,10 +526,13 @@
  
                  switch (ch) {
                  case ' ':
@@ -435,7 +437,7 @@
                      break;
                  case LF:
                      goto done;
-@@ -435,40 +545,46 @@
+@@ -435,40 +546,46 @@
  
              break;
  
@@ -491,7 +493,7 @@
              if (ch == ' ' && s->quoted) {
                  break;
              }
-@@ -510,10 +626,10 @@
+@@ -510,10 +627,10 @@
                  switch (ch) {
                  case '"':
                  case ' ':
@@ -504,7 +506,7 @@
                      break;
                  case LF:
                      goto done;
-@@ -522,46 +638,52 @@
+@@ -522,46 +639,52 @@
              case '\\':
                  if (s->quoted) {
                      s->backslash = 1;
@@ -566,7 +568,7 @@
              switch (ch) {
              case CR:
                  break;
-@@ -569,10 +691,10 @@
+@@ -569,10 +692,10 @@
                  s->buffer->pos = p + 1;
                  s->arg_start = p + 1;
                  if (s->no_sync_literal == 0) {
@@ -579,7 +581,7 @@
                  s->no_sync_literal = 0;
                  break;
              default:
-@@ -580,7 +702,7 @@
+@@ -580,7 +703,7 @@
              }
              break;
  
@@ -588,7 +590,7 @@
              if (s->literal_len && --s->literal_len) {
                  break;
              }
-@@ -592,36 +714,38 @@
+@@ -592,36 +715,38 @@
              arg->len = p + 1 - s->arg_start;
              arg->data = s->arg_start;
              s->arg_start = NULL;
@@ -634,7 +636,7 @@
          }
      }
  
-@@ -633,13 +757,11 @@
+@@ -633,13 +758,11 @@
  done:
  
      s->buffer->pos = p + 1;
@@ -649,7 +651,7 @@
      s->quoted = 0;
      s->backslash = 0;
      s->no_sync_literal = 0;
-@@ -649,7 +771,7 @@
+@@ -649,7 +772,7 @@
  
      for ( /* void */ ; p < s->buffer->last; p++) {
          if (*p == LF) {
@@ -658,7 +660,7 @@
              s->buffer->pos = p + 1;
  
              /* detect non-synchronizing literals */
-@@ -676,21 +798,500 @@
+@@ -676,21 +799,500 @@
  }
  
  
@@ -1168,7 +1170,7 @@
  
      for (p = s->buffer->pos; p < s->buffer->last; p++) {
          ch = *p;
-@@ -698,13 +1299,13 @@
+@@ -698,13 +1300,13 @@
          switch (state) {
  
          /* SMTP command */
@@ -1185,7 +1187,7 @@
              if (ch == ' ' || ch == CR || ch == LF) {
                  c = s->cmd_start;
  
-@@ -789,10 +1390,10 @@
+@@ -789,10 +1391,10 @@
  
                  switch (ch) {
                  case ' ':
@@ -1198,7 +1200,7 @@
                      break;
                  case LF:
                      goto done;
-@@ -806,21 +1407,21 @@
+@@ -806,21 +1408,21 @@
  
              break;
  
@@ -1224,7 +1226,7 @@
                      s->arg_start = p;
                      break;
                  }
-@@ -828,7 +1429,7 @@
+@@ -828,7 +1430,7 @@
              }
              break;
  
@@ -1233,7 +1235,7 @@
              switch (ch) {
              case ' ':
              case CR:
-@@ -843,10 +1444,10 @@
+@@ -843,10 +1445,10 @@
  
                  switch (ch) {
                  case ' ':
@@ -1246,7 +1248,7 @@
                      break;
                  case LF:
                      goto done;
-@@ -858,7 +1459,7 @@
+@@ -858,7 +1460,7 @@
              }
              break;
  
@@ -1255,7 +1257,7 @@
              switch (ch) {
              case LF:
                  goto done;
-@@ -876,19 +1477,19 @@
+@@ -876,19 +1478,19 @@
  done:
  
      s->buffer->pos = p + 1;
@@ -1278,7 +1280,7 @@
              s->buffer->pos = p + 1;
              return NGX_MAIL_PARSE_INVALID_COMMAND;
          }
-@@ -905,12 +1506,6 @@
+@@ -905,12 +1507,6 @@
  {
      ngx_str_t                 *arg;
  
@@ -1291,7 +1293,7 @@
      if (s->args.nelts == 0) {
          return NGX_MAIL_PARSE_INVALID_COMMAND;
      }
-@@ -925,7 +1520,7 @@
+@@ -925,7 +1521,7 @@
                  return NGX_MAIL_AUTH_LOGIN;
              }
  
@@ -1300,7 +1302,7 @@
                  return NGX_MAIL_AUTH_LOGIN_USERNAME;
              }
  
-@@ -938,14 +1533,28 @@
+@@ -938,14 +1534,28 @@
                  return NGX_MAIL_AUTH_PLAIN;
              }
  
@@ -1331,7 +1333,7 @@
      if (arg[0].len == 8) {
  
          if (ngx_strncasecmp(arg[0].data, (u_char *) "CRAM-MD5", 8) == 0) {
-@@ -971,5 +1580,5 @@
+@@ -971,5 +1581,5 @@
          return NGX_MAIL_PARSE_INVALID_COMMAND;
      }
  
