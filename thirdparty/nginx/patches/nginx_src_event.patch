@@ -1,20 +1,17 @@
 diff -urN nginx/src/event/ngx_event_openssl.c nginx/src/event/ngx_event_openssl.c
---- nginx/src/event/ngx_event_openssl.c	2023-10-01 23:06:48.920736200 +0530
-+++ nginx/src/event/ngx_event_openssl.c	2023-10-01 23:19:50.724583800 +0530
-@@ -3203,9 +3203,9 @@
+--- nginx/src/event/ngx_event_openssl.c	2023-10-03 16:49:31.242377500 +0530
++++ nginx/src/event/ngx_event_openssl.c	2023-10-12 01:03:16.055868100 +0530
+@@ -3203,9 +3203,6 @@
      ngx_uint_t  tries;
  
      rc = NGX_OK;
 -
 -    ngx_ssl_ocsp_cleanup(c);
 -
-+// Zimbra customizations start here (Jira Tickets: )	
-+//	ngx_ssl_ocsp_cleanup(c);
-+// Zimbra customizations end here
      if (SSL_in_init(c->ssl->connection)) {
          /*
           * OpenSSL 1.0.2f complains if SSL_shutdown() is called during
-@@ -3216,6 +3216,9 @@
+@@ -3216,6 +3213,9 @@
          goto done;
      }
  
@@ -25,7 +22,7 @@ diff -urN nginx/src/event/ngx_event_openssl.c nginx/src/event/ngx_event_openssl.
          mode = SSL_RECEIVED_SHUTDOWN|SSL_SENT_SHUTDOWN;
          SSL_set_quiet_shutdown(c->ssl->connection, 1);
 diff -urN nginx/src/event/ngx_event_udp.h nginx/src/event/ngx_event_udp.h
---- nginx/src/event/ngx_event_udp.h	2023-08-18 17:02:49.289936600 +0530
+--- nginx/src/event/ngx_event_udp.h	2023-10-03 16:49:31.264377900 +0530
 +++ nginx/src/event/ngx_event_udp.h	2023-09-19 12:57:46.301787700 +0530
 @@ -33,10 +33,11 @@
  #if (NGX_HAVE_IP_PKTINFO)
