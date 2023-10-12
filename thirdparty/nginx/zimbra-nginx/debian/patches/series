@@ -20,3 +20,4 @@ nginx_src_mail_ngx_mail_pop3_module_c.patch
 nginx_src_mail_ngx_mail_pop3_module_h.patch
 nginx_src_mail_ngx_mail_proxy_module.patch
 nginx_src_mail_ngx_mail_smtp_module.patch
+nginx_docs.patch

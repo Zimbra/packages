@@ -26,6 +26,8 @@ Patch18: 			nginx_src_mail_ngx_mail_pop3_module_c.patch
 Patch19: 			nginx_src_mail_ngx_mail_pop3_module_h.patch
 Patch20: 			nginx_src_mail_ngx_mail_proxy_module.patch
 Patch21: 			nginx_src_mail_ngx_mail_smtp_module.patch
+Patch22: 			nginx_docs.patch
+
 BuildRequires:      pcre-devel, zlib-devel
 BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
@@ -106,6 +108,7 @@ The Zimbra nginx build
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
