@@ -27,7 +27,7 @@ getsrc:
 	mkdir -p $(SRC_DIR)
 	(echo "Downloading openjdk binaries.  This may take some time." && \
 	cd $(SRC_DIR) && \
-	wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/$(pfile)  && \
+	wget https://files.zimbra.com/downloads/openjdk/$(pfile) && \
 	tar xvzf $(pfile) && \
 	mv jdk-$(pvers) openjdk-$(pvers)-zimbra && \
 	tar -czf ../openjdk-$(pvers)-zimbra.tgz  openjdk-$(pvers)-zimbra )
