@@ -6,7 +6,7 @@ export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
 export PKG_CONFIG_PATH=OZCL/pkgconfig
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 
 override_dh_auto_configure:
 	./configure --prefix=OZC
