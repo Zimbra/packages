@@ -1,0 +1,106 @@
+diff -ur a/MIME_headers.c b/MIME_headers.c
+--- a/MIME_headers.c	2023-09-27 11:05:54.988276818 +0000
++++ b/MIME_headers.c	2023-09-27 11:06:26.996936153 +0000
+@@ -785,7 +785,7 @@
+ 
+ 	do {
+ 		glb.doubleCR_count++;
+-		snprintf(glb.doubleCRname,_MIMEH_STRLEN_MAX,"%s/doubleCR.%d",glb.output_dir,glb.doubleCR_count);
++		snprintf(glb.doubleCRname,_MIMEH_STRLEN_MAX,"%.*s/doubleCR.%d", _MIMEH_STRLEN_MAX -40, glb.output_dir,glb.doubleCR_count);
+ 	}
+ 	while (stat(glb.doubleCRname, &st) == 0);
+ 
+@@ -2012,7 +2012,7 @@
+ 			{
+ 				if (strlen(glb.appledouble_filename)>0)
+ 				{
+-					snprintf(hinfo->filename, sizeof(hinfo->filename), "%s.applemeta", glb.appledouble_filename );
++					snprintf(hinfo->filename, sizeof(hinfo->filename), "%.*s.applemeta", _MIMEH_FILENAMELEN_MAX -12, glb.appledouble_filename );
+ 				} else {
+ 					snprintf(hinfo->filename, sizeof(hinfo->filename), "applefile");
+ 				}
+@@ -2921,8 +2921,8 @@
+ 	// Final analysis on our headers:
+ 	if ( hinfo->content_type == _CTYPE_MULTIPART_APPLEDOUBLE )
+ 	{
+-		char tmp[128];
+-		snprintf( tmp, sizeof(tmp), "mac-%s", hinfo->filename );
++		char tmp[_MIMEH_FILENAMELEN_MAX +1];
++		snprintf( tmp, sizeof(tmp), "mac-%.*s", _MIMEH_FILENAMELEN_MAX -4, hinfo->filename );
+ 		snprintf( hinfo->filename, sizeof(hinfo->filename), "%s", tmp );
+ 		snprintf( hinfo->name, sizeof(hinfo->name), "%s", tmp );
+ 	}
+@@ -3034,7 +3034,7 @@
+ 
+ 	// Initialise header defects array.
+ 	hinfo->header_defect_count = 0;
+-	memset(hinfo->defects, 0, _MIMEH_DEFECT_ARRAY_SIZE);
++	memset(hinfo->defects, 0, _MIMEH_DEFECT_ARRAY_SIZE *sizeof(int));
+ 
+ 	snprintf( hinfo->content_type_string, _MIMEH_CONTENT_TYPE_MAX , "text/plain" ); 
+ 
+@@ -3238,4 +3238,3 @@
+ }
+ 
+ //----------------------END
+-
+diff -ur a/altermime.c b/altermime.c
+--- a/altermime.c	2023-09-27 11:10:46.846337912 +0000
++++ b/altermime.c	2023-09-27 11:11:42.727508707 +0000
+@@ -375,7 +375,7 @@
+ 
+ 		glb.input_is_stdin = 1;
+ 
+-		snprintf(scratch,sizeof(scratch),"%s/%ld%d.amtmp", glb.tmpdir, time(NULL), getpid());
++		snprintf(scratch,sizeof(scratch),"%.*s/%ld%d.amtmp", (int)(sizeof(scratch) -20), glb.tmpdir, time(NULL), getpid());
+ 		//		free(glb.input_file);
+ 
+ 		glb.input_file = strdup(scratch);
+diff -ur a/mime_alter.c b/mime_alter.c
+--- a/mime_alter.c	2023-09-27 10:54:05.861626358 +0000
++++ b/mime_alter.c	2023-09-27 10:55:24.479331955 +0000
+@@ -1543,7 +1543,7 @@
+ 
+ 	if (dd->boundary_found == 1)
+ 	{
+-		snprintf(boundary, sizeof(boundary), "--%s", dd->boundary);
++		snprintf(boundary, sizeof(boundary), "--%.*s", AM_BOUNDARY_BUFFER_SIZE -2, dd->boundary);
+ 		boundary_length = strlen(boundary);
+ 	}
+ 
+diff -ur a/mime_alter.h b/mime_alter.h
+--- a/mime_alter.h	2023-09-27 10:58:30.843352861 +0000
++++ b/mime_alter.h	2023-09-27 10:58:51.875762772 +0000
+@@ -23,6 +23,8 @@
+ #define AM_NULLIFY_MATCH_MODE_FILENAME 1
+ #define AM_NULLIFY_MATCH_MODE_CONTENT_TYPE 2
+ 
++#define AM_BOUNDARY_BUFFER_SIZE 1024
++
+ struct AM_disclaimer_details {
+ 
+ 	// File details
+diff -ur a/pldstr.c b/pldstr.c
+--- a/pldstr.c	2023-09-27 11:01:32.718946199 +0000
++++ b/pldstr.c	2023-09-27 11:02:13.067756480 +0000
+@@ -297,7 +297,7 @@
+ 
+ 	result = st->start;
+ 
+-	if ((st->start)&&(st->start != '\0'))
++	if ((st->start)&&(*(st->start) != '\0'))
+ 	{
+ 		stop = strpbrk( st->start, delimeters ); /* locate our next delimeter */
+ 
+diff -ur a/qpe.c b/qpe.c
+--- a/qpe.c	2023-09-27 11:07:41.034466948 +0000
++++ b/qpe.c	2023-09-27 11:08:28.903460520 +0000
+@@ -106,7 +106,7 @@
+ 		char charout[4];
+ 		int charout_size=0;
+ 
+-		if (lineend != '\0') {
++		if (*lineend != '\0') {
+ 			if (linestart == NULL) {
+ 				linestart = in;
+ 			} else {
