@@ -1,5 +1,11 @@
 zimbra-libevent (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
+  * Upgraded libevent to 2.1.12
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 26 Sep 2023 22:26:24 +0000
+
+zimbra-libevent (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+
   * Initial Release.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 1 May 2015 22:26:24 +0000
