@@ -7,7 +7,7 @@ export DEB_LDFLAGS_MAINT_APPEND="-LOZCL -ROZCL -Wl,-rpath,OZCL"
 # However, due to the above bug, we need to override LD_RUN_PATH as well, as seen below
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 override_dh_auto_configure:
 	./Configure no-idea enable-fips enable-ec_nistp_64_gcc_128 no-mdc2 no-rc5 \
   --prefix=OZC --with-rand-seed=devrandom,rdcpu,os,getrandom --libdir=lib --openssldir=OZCE/ssl \

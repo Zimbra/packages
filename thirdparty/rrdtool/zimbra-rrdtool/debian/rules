@@ -7,7 +7,7 @@ export PKG_CONFIG_PATH=OZCL/pkgconfig
 export DEB_CFLAGS_MAINT_APPEND=-fPIC
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 
 override_dh_auto_configure:
 	./configure --prefix=OZC \

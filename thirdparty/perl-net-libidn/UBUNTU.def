@@ -1,0 +1,4 @@
+osdeps.UBUNTU22_64 := libidn12
+osdeps.UBUNTU20_64 := libidn11
+osdeps.UBUNTU18_64 := libidn11
+osdeps.UBUNTU16_64 := libidn11
