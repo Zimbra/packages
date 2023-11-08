@@ -6,7 +6,7 @@ pvers := $(MARIADB_VERSION)
 pname := mariadb
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://ftp.hosteurope.de/mirror/archive.mariadb.org/$(pname)-$(pvers)/source/$(pfile)
+purl := https://archive.mariadb.org/$(pname)-$(pvers)/source/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
@@ -47,6 +47,7 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 --exclude=debian && \
 	$(PKG_BUILD)
 
