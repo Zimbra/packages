@@ -1,0 +1,4 @@
+libbsd.UBUNTU22_64 := libmd-dev
+libbsd.UBUNTU20_64 := libmd-dev
+libbsd.UBUNTU18_64 := libmd-dev
+libbsd.UBUNTU16_64 := libmd-dev

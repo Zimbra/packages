@@ -10,7 +10,9 @@ purl := http://libbsd.freedesktop.org/releases/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean
+libbsd = $(libbsd.$(BUILD_PLATFORM))
+
+.PHONY: all getsrc setup build clean pkgadd
 
 all: clean getsrc build
 
@@ -19,10 +21,13 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+pkgadd:
+	$(PKG_EXTRACT) $(libbsd)
+
 setup:
 	$(generic-setup)
 
-build: setup build_$(PKG_EXT)
+build: setup pkgadd build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:

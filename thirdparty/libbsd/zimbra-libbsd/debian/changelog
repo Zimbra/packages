@@ -1,5 +1,11 @@
 zimbra-libbsd (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
+  * Upgraded libbsd to 0.11.7
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 26 Sep 2023 22:26:24 +000
+
+zimbra-libbsd (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+
   * Initial Release.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 1 May 2015 22:26:24 +0000
