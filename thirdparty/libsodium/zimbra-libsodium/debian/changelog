@@ -6,6 +6,12 @@ zimbra-libsodium (VERSION-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
 zimbra-libsodium (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
+  * Upgraded libsodium to 1.0.19
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 26 Sep 2023 22:26:24 +0000
+
+zimbra-libsodium (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
+
   * Initial Release.
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 1 May 2015 22:26:24 +0000
