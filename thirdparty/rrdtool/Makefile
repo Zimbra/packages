@@ -6,7 +6,7 @@ pvers := $(RRDTOOL_VERSION)
 pname := rrdtool
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://oss.oetiker.ch/rrdtool/pub/$(pfile)
+purl := https://oss.oetiker.ch/rrdtool/pub/archive/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
