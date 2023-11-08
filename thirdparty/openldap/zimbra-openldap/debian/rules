@@ -9,7 +9,7 @@ export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
 MAKEVARS        := STRIP=
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 override_dh_auto_configure:
 	./configure --prefix=OZC \
 	--with-cyrus-sasl \

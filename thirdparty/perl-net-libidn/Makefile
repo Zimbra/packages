@@ -12,6 +12,8 @@ purl := https://cpan.metacpan.org/authors/id/T/TH/THOR/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
+osdeps = $(osdeps.$(BUILD_PLATFORM))
+
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
@@ -48,6 +50,7 @@ build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
 build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
+	$(PERL) -pi -e 's/OSDEPS/$(osdeps)/' debian/control && \
 	$(replace-pathinfo) debian/rules && \
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \

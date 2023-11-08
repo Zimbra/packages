@@ -5,7 +5,7 @@ export DEB_BUILD_OPTIONS=nocheck
 export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 override_dh_auto_configure:
 	./configure --prefix=OZC \
 	--localstatedir=$(ZIMBRA_HOME)/data/tmp
