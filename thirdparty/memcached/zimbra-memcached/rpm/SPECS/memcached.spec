@@ -15,6 +15,8 @@ URL:                http://memcached.org/
 The Zimbra memcached build
 
 %changelog
+* Tue Sep 26 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Upgrade to memcached 1.6.21
 * Tue Aug 10 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
 - Upgrade to memcached 1.6.5 .
 * Sat Jun 24 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
