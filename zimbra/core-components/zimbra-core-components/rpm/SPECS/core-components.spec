@@ -1,6 +1,6 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            3.0.21
+Version:            3.0.22
 Release:            1zimbra9.0b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements >= 1.0.3-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.8-1zimbra8.7b1ZAPPEND
@@ -11,7 +11,7 @@ Requires:           zimbra-rsync
 Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.4.59-1zimbra8.8b6ZAPPEND
 Requires:           zimbra-osl >= 2.0.1-1zimbra9.0b1ZAPPEND
 Requires:           zimbra-prepflog, zimbra-tcmalloc-libs, zimbra-perl-innotop >= 1.9.1-1zimbra8.7b4ZAPPEND
-Requires:           zimbra-openjdk >= 17.0.2-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.8-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-openjdk >= 17.0.8-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.10-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-amavis-logwatch
 Requires:           zimbra-postfix-logwatch >= 1.40.03-1zimbra8.7b1ZAPPEND, zimbra-rrdtool
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -21,6 +21,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Wed Nov 29 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.22
+- ZBUG-3696, Updated core-components for openjdk, openjdk-cacerts
 * Mon Jul 17 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.21
 - ZBUG-2931, Updated os-requirements
 * Fri Jul 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.20
