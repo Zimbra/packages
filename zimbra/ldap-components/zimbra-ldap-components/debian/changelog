@@ -1,3 +1,9 @@
+zimbra-ldap-components (2.0.16-1zimbra9.0b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-3696, Updated core-components for openjdk, openjdk-cacerts
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 29 Nov 2023 00:00:00 +0000
+
 zimbra-ldap-components (2.0.15-1zimbra9.0b1ZAPPEND) unstable; urgency=medium
 
   * ZBUG-2931, Updated core-requirements, os-requirements
