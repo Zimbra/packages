@@ -1,9 +1,9 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            4.0.0
+Version:            4.0.2
 Release:            1zimbra10.0b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-base, zimbra-os-requirements >= 1.0.2-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.8-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-base, zimbra-os-requirements >= 1.0.3-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.8-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-pflogsumm
 Requires:           zimbra-openssl >= 3.0.9-1zimbra8.8b1ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND
@@ -11,7 +11,7 @@ Requires:           zimbra-rsync
 Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.4.59-1zimbra8.8b6ZAPPEND
 Requires:           zimbra-osl >= 3.0.0-1zimbra10.0b1ZAPPEND
 Requires:           zimbra-prepflog, zimbra-tcmalloc-libs, zimbra-perl-innotop >= 1.9.1-1zimbra8.7b4ZAPPEND
-Requires:           zimbra-openjdk >= 17.0.2-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.8-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-openjdk >= 17.0.8-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.10-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-amavis-logwatch
 Requires:           zimbra-postfix-logwatch >= 1.40.03-1zimbra8.7b1ZAPPEND, zimbra-rrdtool
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -21,6 +21,10 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Wed Nov 29 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.2
+- ZBUG-3696, Updated core-components for openjdk, openjdk-cacerts
+* Mon Jul 17 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.1
+- ZBUG-2931, Updated os-requirements
 * Fri Jul 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.0
 - ZBUG-3355, Updated OpenSSL License and other 3rd party open source licenses
 * Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.19
