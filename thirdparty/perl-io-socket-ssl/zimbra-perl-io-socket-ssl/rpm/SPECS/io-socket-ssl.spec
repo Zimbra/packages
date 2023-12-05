@@ -1,7 +1,7 @@
 Summary:            SSL sockets with IO::Socket interface
 Name:               zimbra-perl-io-socket-ssl
 Version:            VERSION
-Release:            1zimbra8.7b3ZAPPEND
+Release:            1zimbra8.7b4ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
