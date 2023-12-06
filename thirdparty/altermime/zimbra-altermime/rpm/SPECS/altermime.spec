@@ -5,7 +5,7 @@ Release:            ITERATIONZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tar.gz
 Requires:           zimbra-mta-base
-Patch0:             qpe.patch
+Patch0:             fix_compile_issues.patch
 AutoReqProv:        no
 URL:                http://www.pldaniels.com/altermime/
 
