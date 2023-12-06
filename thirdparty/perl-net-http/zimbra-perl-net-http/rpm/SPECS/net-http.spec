@@ -1,7 +1,7 @@
 Summary:            Net::HTTP - Low-level HTTP connection (client)
 Name:               zimbra-perl-net-http
 Version:            VERSION
-Release:            1zimbra8.7b4ZAPPEND
+Release:            1zimbra8.7b5ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>

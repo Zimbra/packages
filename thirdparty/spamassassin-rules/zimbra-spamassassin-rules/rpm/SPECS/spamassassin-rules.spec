@@ -1,9 +1,9 @@
 Summary:            Default ruleset for SpamAssassin
 Name:               zimbra-spamassassin-rules
 Version:            1.0.0
-Release:            1zimbra8.8b7ZAPPEND
+Release:            1zimbra8.8b8ZAPPEND
 License:            Apache-2.0
-Requires:           zimbra-mta-base, zimbra-perl-mail-spamassassin >= 4.0.1-1zimbra8.8b4ZAPPEND
+Requires:           zimbra-mta-base, zimbra-perl-mail-spamassassin >= 4.0.1-1zimbra8.8b5ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
@@ -14,11 +14,11 @@ AutoReqProv:        no
 Default ruleset for SpamAssassin
 
 %changelog
-* Tue Oct 01 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b7ZAPPEND
+* Tue Oct 01 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b8ZAPPEND
 - Upgraded spamassassin to 4.0.1
-* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b6ZAPPEND
+* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b7ZAPPEND
 - Updated spamassassin
-* Mon Mar 28 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b5ZAPPEND
+* Mon Mar 28 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b6ZAPPEND
 - Fix ZCS-11117, Upgraded spamassassin to 3.4.6
 * Tue Aug 10 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b5ZAPPEND
 -Updated dependency zimbra-perl-mail-spamassassin
