@@ -4,6 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
+Patch0:             Net-Server-2.009-RT132245.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base
@@ -29,6 +30,7 @@ based on server load (Net::Server::PreFork).
 
 %prep
 %setup -n Net-Server-%{version}
+%patch0 -p1
 
 %build
 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
