@@ -42,6 +42,10 @@ rm -f t/001_context.t t/002_socket.t t/003_message.t t/005_poll.t t/006_anyevent
 rm -f t/100_basic.t t/101_threads.t t/200_fork.t t/201_thread.t t/202_proxy.t
 rm -f t/rt64944.t t/rt74653.t
 %endif
+%if 0%{?rhel} == 9
+#https://metacpan.org/release/XSAWYERX/perl-5.26.0/view/pod/perldelta.pod#Removal_of_the_current_directory_(%22.%22)_from_@INC
+export PERL_USE_UNSAFE_INC=1;
+%endif
 ZMQ_INCLUDES=OZCI ZMQ_LIBS=OZCL ZMQ_H=OZCI \
  perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
  INSTALLSITEMAN1DIR=OZCS/man/man1 INSTALLSITEMAN3DIR=OZCS/man/man3

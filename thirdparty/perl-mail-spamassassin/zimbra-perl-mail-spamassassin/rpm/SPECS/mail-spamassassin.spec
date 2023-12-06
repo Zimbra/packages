@@ -1,4 +1,3 @@
-spec
 Summary:            Mail::SpamAssassin - Spam detector and markup engine
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
