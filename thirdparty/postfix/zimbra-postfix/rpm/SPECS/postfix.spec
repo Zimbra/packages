@@ -18,6 +18,7 @@ Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
 Patch3:             lmdb-default.patch
+Patch4:             glibc-2.34.patch
 AutoReqProv:        no
 URL:                https://www.postfix.org/
 
@@ -46,7 +47,7 @@ The Zimbra Postfix build
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-#%patch4 -p1
+%patch4 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
