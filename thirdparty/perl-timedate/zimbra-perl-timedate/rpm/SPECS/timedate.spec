@@ -4,6 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
+Patch0:             timedate.patch
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 BuildRequires:      zimbra-perl-base
@@ -18,6 +19,7 @@ Date formatting subroutines
 
 %prep
 %setup -n TimeDate-%{version}
+%patch0 -p1
 
 %build
 perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
