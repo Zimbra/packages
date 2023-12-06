@@ -4,6 +4,7 @@ Version:            VERSION
 Release:            1zimbra8.7b3ZAPPEND
 License:            GPLv2
 Source:             %{name}-%{version}.tar.gz
+Patch0:             mariadb.patch
 BuildRequires:      libaio-devel
 BuildRequires:      ncurses-devel
 BuildRequires:      zimbra-openssl-devel = 1.0.2t-1zimbra8.7b2ZAPPEND
@@ -17,6 +18,7 @@ The Zimbra MariaDB build for SQL database storage
 
 %prep
 %setup -n mariadb-%{version}
+%patch0 -p1
 
 %define debug_package %{nil}
 
@@ -24,6 +26,7 @@ The Zimbra MariaDB build for SQL database storage
 LDFLAGS="-Wl,-rpath,OZCL:OZCL/mysql"; export LDFLAGS; \
 CFLAGS="-O3 -fno-omit-frame-pointer -pipe -Wall -Wno-uninitialized -DNDEBUG"; export CFLAGS; \
 /usr/bin/cmake . \
+  -DCMAKE_CXX_STANDARD=11 \
   -DBUILD_CONFIG=mysql_release \
   -DCOMPILATION_COMMENT="Zimbra MariaDB binary distribution" \
   -DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE  \
