@@ -1,5 +1,6 @@
---- postfix-3.0.3/conf/main.cf.orig	2016-02-09 13:01:33.516094855 -0600
-+++ postfix-3.0.3/conf/main.cf	2016-02-09 13:01:54.368094160 -0600
+diff -Naru a/conf/main.cf b/conf/main.cf
+--- a/conf/main.cf	2024-01-29 07:51:12.390959923 +0000
++++ b/conf/main.cf	2024-01-29 07:53:42.350432651 +0000
 @@ -262,7 +262,7 @@
  # only the local machine.
  # 
@@ -18,12 +19,13 @@
  
  # FAST ETRN SERVICE
  #
-@@ -673,4 +673,54 @@
+@@ -673,4 +673,57 @@
  # readme_directory: The location of the Postfix README files.
  #
  readme_directory =
 -inet_protocols = ipv4
 +inet_protocols = all
++
 +
 +#
 +# Zimbra changes.
@@ -73,4 +75,6 @@
 +smtpd_tls_key_file = /opt/zimbra/conf/smtpd.key
 +smtpd_tls_loglevel = 3
 +smtputf8_enable = no
++smtpd_forbid_bare_newline = yes
++smtpd_discard_ehlo_keywords = chunking, silent-discard
 +
