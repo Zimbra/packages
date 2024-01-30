@@ -75,6 +75,6 @@ diff -Naru a/conf/main.cf b/conf/main.cf
 +smtpd_tls_key_file = /opt/zimbra/conf/smtpd.key
 +smtpd_tls_loglevel = 3
 +smtputf8_enable = no
-+smtpd_forbid_bare_newline = yes
++smtpd_forbid_bare_newline = normalize
 +smtpd_discard_ehlo_keywords = chunking, silent-discard
 +
