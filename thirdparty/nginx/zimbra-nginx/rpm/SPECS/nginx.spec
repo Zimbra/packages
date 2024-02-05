@@ -41,6 +41,8 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Mon Feb 05 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- Upgraded zimbra-nginx to 1.24.0
 * Tue Jun 13 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Fri May 06 2022  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b3ZAPPEND
