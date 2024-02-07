@@ -1,0 +1,45 @@
+--- nginx/auto/sources	2023-08-18 17:02:49.229066800 +0530
++++ nginx/auto/sources	2023-09-14 18:47:11.526404800 +0530
+@@ -7,6 +7,7 @@
+ 
+ CORE_INCS="src/core"
+ 
++# Zimbra customizations start here: Adding Nginx memcache and zm_lookup module (Jira Tickets: )
+ CORE_DEPS="src/core/nginx.h \
+            src/core/ngx_config.h \
+            src/core/ngx_core.h \
+@@ -39,6 +40,8 @@
+            src/core/ngx_module.h \
+            src/core/ngx_resolver.h \
+            src/core/ngx_open_file_cache.h \
++           src/core/ngx_memcache.h \
++           src/core/ngx_zm_lookup.h \
+            src/core/ngx_crypt.h \
+            src/core/ngx_proxy_protocol.h \
+            src/core/ngx_syslog.h"
+@@ -76,10 +79,12 @@
+            src/core/ngx_module.c \
+            src/core/ngx_resolver.c \
+            src/core/ngx_open_file_cache.c \
++           src/core/ngx_memcache.c \
++           src/core/ngx_zm_lookup.c \
+            src/core/ngx_crypt.c \
+            src/core/ngx_proxy_protocol.c \
+            src/core/ngx_syslog.c"
+-
++# Zimbra customizations end
+ 
+ EVENT_MODULES="ngx_events_module ngx_event_core_module"
+ 
+@@ -127,6 +132,11 @@
+ FILE_AIO_SRCS="src/os/unix/ngx_file_aio_read.c"
+ LINUX_AIO_SRCS="src/os/unix/ngx_linux_aio_read.c"
+ 
++# Zimbra customizations start here: Adding Nginx memcache and zm_lookup module (Jira Tickets: )
++MEMCACHE_MODULE=ngx_memcache_module
++ZM_LOOKUP_MODULE=ngx_zm_lookup_module
++# Zimbra customizations end here
++
+ UNIX_INCS="$CORE_INCS $EVENT_INCS src/os/unix"
+ 
+ UNIX_DEPS="$CORE_DEPS $EVENT_DEPS \

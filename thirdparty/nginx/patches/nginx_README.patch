@@ -1,0 +1,14 @@
+--- nginx/README.md	1970-01-01 05:30:00.000000000 +0530
++++ nginx/README.md	2023-09-14 18:47:11.380437400 +0530
+@@ -0,0 +1,11 @@
++# nginx
++
++This is the official repository for building out the third party dependency nginx for Zimbra Collaboration Suite 8.7 and later.
++
++Issues should be reported via [Zimbra Forum](https://forums.zimbra.org/)
++
++## Development branch
++zimbra/develop
++
++## Release tags
++zimbra-release-1.24.0

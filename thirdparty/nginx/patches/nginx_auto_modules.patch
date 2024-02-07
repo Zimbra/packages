@@ -1,0 +1,65 @@
+--- nginx/auto/modules	2023-08-18 17:02:49.192905800 +0530
++++ nginx/auto/modules	2023-09-14 18:47:11.461941600 +0530
+@@ -63,6 +63,7 @@
+ 
+     ngx_module_type=HTTP
+ 
++    # Zimbra customizations start here: Adding ngx_http_upstream_fair (Jira Tickets: )
+     if :; then
+         ngx_module_name="ngx_http_module \
+                          ngx_http_core_module \
+@@ -77,7 +78,8 @@
+                          src/http/ngx_http_variables.h \
+                          src/http/ngx_http_script.h \
+                          src/http/ngx_http_upstream.h \
+-                         src/http/ngx_http_upstream_round_robin.h"
++                         src/http/ngx_http_upstream_round_robin.h \
++                         src/http/ngx_http_upstream_fair.h"
+         ngx_module_srcs="src/http/ngx_http.c \
+                          src/http/ngx_http_core_module.c \
+                          src/http/ngx_http_special_response.c \
+@@ -88,13 +90,14 @@
+                          src/http/ngx_http_variables.c \
+                          src/http/ngx_http_script.c \
+                          src/http/ngx_http_upstream.c \
+-                         src/http/ngx_http_upstream_round_robin.c"
++                         src/http/ngx_http_upstream_round_robin.c \
++                         src/http/ngx_http_upstream_fair.c"
+         ngx_module_libs=
+         ngx_module_link=YES
+ 
+         . auto/module
+     fi
+-
++    # Zimbra customizations end here (Jira Tickets: )
+ 
+     if [ $HTTP_CACHE = YES ]; then
+         have=NGX_HTTP_CACHE . auto/have
+@@ -939,6 +942,13 @@
+ 
+     ngx_module_incs=
+ 
++    # Zimbra customizations start here: Implement SASL Authentication (Jira Tickets: )
++    if [ $MAIL_SASL = YES ]; then
++        USE_SASL=YES
++        have=NGX_MAIL_SASL . auto/have
++    fi
++    # Zimbra customizations end
++
+     if [ $MAIL_SSL = YES ]; then
+         USE_OPENSSL=YES
+         have=NGX_MAIL_SSL . auto/have
+@@ -1285,9 +1295,11 @@
+     . auto/module
+ fi
+ 
+-
++# Zimbra customizations start here: Adding Nginx memcache and zm_lookup module (Jira Tickets: )
+ modules="$CORE_MODULES $EVENT_MODULES"
+-
++modules="$modules $MEMCACHE_MODULE"
++modules="$modules $ZM_LOOKUP_MODULE"
++# Zimbra customizations end here
+ 
+ # thread pool module should be initialized after events
+ if [ $USE_THREADS = YES ]; then

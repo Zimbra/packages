@@ -1,0 +1,58 @@
+--- nginx/auto/options	2023-08-18 17:02:49.224080200 +0530
++++ nginx/auto/options	2023-09-14 18:47:11.483533400 +0530
+@@ -151,6 +151,12 @@
+ USE_OPENSSL=NO
+ OPENSSL=NONE
+ 
++# Zimbra customizations start here: Implement SASL Authentication (Jira Tickets: )
++USE_SASL=NO
++SASL=NONE
++SASL_OPT=
++# Zimbra customizations end here
++
+ USE_ZLIB=NO
+ ZLIB=NONE
+ ZLIB_OPT=
+@@ -292,6 +298,9 @@
+         --with-http_stub_status_module)  HTTP_STUB_STATUS=YES       ;;
+ 
+         --with-mail)                     MAIL=YES                   ;;
++        # Zimbra customizations start here: Implement SASL Authentication (Jira Tickets: )
++        --with-mail-sasl)                MAIL_SASL=YES              ;;
++        # Zimbra customizations end here
+         --with-mail=dynamic)             MAIL=DYNAMIC               ;;
+         --with-mail_ssl_module)          MAIL_SSL=YES               ;;
+         # STUB
+@@ -363,6 +372,11 @@
+         --with-openssl=*)                OPENSSL="$value"           ;;
+         --with-openssl-opt=*)            OPENSSL_OPT="$value"       ;;
+ 
++        # Zimbra customizations start here: Implement SASL Authentication (Jira Tickets: )
++        --with-sasl=*)                   SASL="$value"              ;;
++        --with-sasl-opt=*)               SASL_OPT="$value"          ;;
++        # Zimbra customizations end here
++
+         --with-md5=*)
+             NGX_POST_CONF_MSG="$NGX_POST_CONF_MSG
+ $0: warning: the \"--with-md5\" option is deprecated"
+@@ -524,6 +538,9 @@
+   --without-http-cache               disable HTTP cache
+ 
+   --with-mail                        enable POP3/IMAP4/SMTP proxy module
++  # Zimbra customizations start here: Implement SASL Authentication (Jira Tickets: )
++  --with-mail-sasl                   enable SASL support
++  # Zimbra customizations end here
+   --with-mail=dynamic                enable dynamic POP3/IMAP4/SMTP proxy module
+   --with-mail_ssl_module             enable ngx_mail_ssl_module
+   --without-mail_pop3_module         disable ngx_mail_pop3_module
+@@ -577,6 +594,10 @@
+   --with-pcre-jit                    build PCRE with JIT compilation support
+   --without-pcre2                    do not use PCRE2 library
+ 
++  # Zimbra customizations start here: Implement SASL Authentication (Jira Tickets: )
++  --with-sasl=DIR                    set path to sasl library sources
++  --with-sasl-opt=OPTIONS            set additional options for sasl building
++  # Zimbra customizations end
+   --with-zlib=DIR                    set path to zlib library sources
+   --with-zlib-opt=OPTIONS            set additional build options for zlib
+   --with-zlib-asm=CPU                use zlib assembler sources optimized

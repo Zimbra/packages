@@ -1,0 +1,4943 @@
+diff -urN nginx/src/core/ngx_log.c nginx/src/core/ngx_log.c
+--- nginx/src/core/ngx_log.c	2023-07-26 17:25:13.691656100 +0530
++++ nginx/src/core/ngx_log.c	2023-10-01 21:39:22.880121200 +0530
+@@ -86,7 +86,7 @@
+ 
+ static const char *debug_levels[] = {
+     "debug_core", "debug_alloc", "debug_mutex", "debug_event",
+-    "debug_http", "debug_mail", "debug_stream"
++    "debug_http", "debug_mail", "debug_stream", "debug_zimbra" // Zimbra customizations added debug_zimbra for logging (Jira Tickets: Part of first commit:https://github.com/Zimbra/packages/commit/2b59af7543b67542dfdb0ea21844f0caf73b0cd0)
+ };
+ 
+ 
+diff -urN nginx/src/core/ngx_log.h nginx/src/core/ngx_log.h
+--- nginx/src/core/ngx_log.h	2023-07-26 17:25:13.689661500 +0530
++++ nginx/src/core/ngx_log.h	2023-10-01 21:39:22.878112400 +0530
+@@ -30,14 +30,18 @@
+ #define NGX_LOG_DEBUG_HTTP        0x100
+ #define NGX_LOG_DEBUG_MAIL        0x200
+ #define NGX_LOG_DEBUG_STREAM      0x400
+-
++// Zimbra customizations start here (Jira Tickets: )
++#define NGX_LOG_DEBUG_ZIMBRA      0x800
++// Zimbra customizations end here
+ /*
+  * do not forget to update debug_levels[] in src/core/ngx_log.c
+  * after the adding a new debug level
+  */
+ 
+ #define NGX_LOG_DEBUG_FIRST       NGX_LOG_DEBUG_CORE
+-#define NGX_LOG_DEBUG_LAST        NGX_LOG_DEBUG_STREAM
++// Zimbra customizations start here: instead of NGX_LOG_DEBUG_STREAM as last debug logs we have mentioned ZIMBRA logs as last one (Jira Tickets:Part of first commit:https://github.com/Zimbra/packages/commit/2b59af7543b67542dfdb0ea21844f0caf73b0cd0 )
++#define NGX_LOG_DEBUG_LAST        NGX_LOG_DEBUG_ZIMBRA
++// Zimbra customizations end here
+ #define NGX_LOG_DEBUG_CONNECTION  0x80000000
+ #define NGX_LOG_DEBUG_ALL         0x7ffffff0
+ 
+diff -urN nginx/src/core/ngx_memcache.c nginx/src/core/ngx_memcache.c
+--- nginx/src/core/ngx_memcache.c	1970-01-01 05:30:00.000000000 +0530
++++ nginx/src/core/ngx_memcache.c	2023-03-04 13:25:59.822406800 +0530
+@@ -0,0 +1,2185 @@
++/*
++ * ***** BEGIN LICENSE BLOCK *****
++ * Zimbra Collaboration Suite Server
++ * Copyright (C) 2011 Zimbra Software, LLC.
++ *
++ * The contents of this file are subject to the Zimbra Public License
++ * Version 1.4 ("License"); you may not use this file except in
++ * compliance with the License.  You may obtain a copy of the License at
++ * http://www.zimbra.com/license.
++ *
++ * Software distributed under the License is distributed on an "AS IS"
++ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
++ * ***** END LICENSE BLOCK *****
++ */
++
++#include <ngx_memcache.h>
++#include <openssl/md5.h>
++
++#define MC_INVALID_HASH ((ngx_uint_t) - 1)
++#define MC_REQ_POOL_SIZE 1024
++#define SHA256_KEY_LENGTH 64
++
++static int mc_sndbuf_len = 256 * 1024;
++
++ngx_str_t NGX_EMPTY_STR = ngx_string("");
++
++/* config-related function prototypes */
++static char *ngx_memcache_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
++static void *ngx_memcache_create_conf(ngx_cycle_t *cycle);
++static char *ngx_memcache_init_conf(ngx_cycle_t *cycle, void *conf);
++static ngx_int_t ngx_memcache_init_process(ngx_cycle_t *cycle);
++static char *
++ngx_memcache_servers (ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
++static char *
++ngx_memcache_ttl (ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
++
++/* memcache protocol response handler prototype */
++typedef ngx_int_t (*mcp_handler)
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++
++/* memcache protocol response processing functions */
++static ngx_int_t ngx_memcache_process_add_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_add_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_add_invalid
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_delete_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_delete_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_get_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_get_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_incr_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_incr_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_decr_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_decr_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_error
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_client_error
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_server_error
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_error_line
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++static ngx_int_t ngx_memcache_process_any_response
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed);
++
++/* hashing functions to elect a memcached server for caching */
++static ngx_uint_t ngx_memcache_hash (u_char *key, size_t len);
++static ngx_uint_t ngx_memcache_perl_hash (u_char *key, size_t len);
++static ngx_str_t ngx_sha256_hash (ngx_pool_t* p, u_char *key, size_t len);
++
++/* generic event handler to read any memcache response */
++static void ngx_memcache_any_read_handler (ngx_event_t *rev);
++static void ngx_memcache_dummy_write_handler (ngx_event_t *wev);
++static void ngx_memcache_reconnection_handler (ngx_event_t *ev);
++static inline void ngx_memcache_callback (mc_work_t * w);
++
++/* Workqueue and connection maintenance functions */
++static inline mc_workqueue_t *ngx_memcache_wq_front (mc_workqueue_t *head);
++static inline ngx_int_t ngx_memcache_wq_isempty (mc_workqueue_t *head);
++static void ngx_memcache_purge_connection_workqueue (mc_context_t *mcctx, mc_response_code_t res);
++static void ngx_memcache_reestablish_connection (mc_context_t *mcctx);
++static inline void ngx_memcache_close_connection (ngx_peer_connection_t *pc);
++static inline void ngx_memcache_prepare_reconnection (mc_context_t *mcctx);
++
++/* main post function */
++static void ngx_memcache_do_post(mc_work_t *w, ngx_str_t key, ngx_str_t value,
++        ngx_str_t ttl, ngx_pool_t *p, ngx_log_t *l);
++
++/* other utility */
++static u_char * ngx_memcache_hexstr(u_char* md, int len);
++static ngx_str_t ngx_memcache_create_pdu(ngx_pool_t *pool, mc_work_t *w,
++        ngx_str_t key, ngx_str_t value, ngx_str_t ttl, ngx_log_t * log);
++
++static ngx_command_t ngx_memcache_commands[] =
++{
++    { ngx_string("memcache"),
++      NGX_MAIN_CONF|NGX_CONF_BLOCK|NGX_CONF_NOARGS,
++      ngx_memcache_block,
++      0,
++      0,
++      NULL },
++
++    { ngx_string("servers"),
++      NGX_DIRECT_CONF|NGX_MEMCACHE_CONF|NGX_CONF_1MORE,
++      ngx_memcache_servers,
++      0,
++      0,
++      NULL },
++
++    { ngx_string("timeout"),
++      NGX_DIRECT_CONF|NGX_MEMCACHE_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_msec_slot,
++      0,
++      offsetof(ngx_memcache_conf_t, timeout),
++      NULL },
++
++    { ngx_string("reconnect"),
++      NGX_DIRECT_CONF|NGX_MEMCACHE_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_msec_slot,
++      0,
++      offsetof(ngx_memcache_conf_t, reconnect),
++      NULL },
++
++    { ngx_string("ttl"),
++      NGX_DIRECT_CONF|NGX_MEMCACHE_CONF|NGX_CONF_TAKE1,
++      ngx_memcache_ttl,
++      0,
++      offsetof(ngx_memcache_conf_t, ttl),
++      NULL },
++
++    ngx_null_command
++};
++
++static ngx_core_module_t ngx_memcache_module_ctx =
++{
++    ngx_string("memcache"),
++    ngx_memcache_create_conf,
++    ngx_memcache_init_conf
++};
++
++ngx_module_t ngx_memcache_module =
++{
++    NGX_MODULE_V1,
++    &ngx_memcache_module_ctx,           /* module context */
++    ngx_memcache_commands,              /* module directives */
++    NGX_CORE_MODULE,                    /* module type */
++    NULL,                               /* init master */
++    NULL,                               /* init module */
++    ngx_memcache_init_process,          /* init process */
++    NULL,                               /* init thread */
++    NULL,                               /* exit thread */
++    NULL,                               /* exit process */
++    NULL,                               /* exit master */
++    NGX_MODULE_V1_PADDING
++};
++
++static void *ngx_memcache_create_conf(ngx_cycle_t *cycle)
++{
++    ngx_memcache_conf_t *mcf;
++    ngx_pool_t          *pool;
++    ngx_log_t           *log;
++
++    log = cycle->log;
++    pool = ngx_create_pool (8 * ngx_pagesize, cycle->log);
++
++    mcf = ngx_pcalloc (pool, sizeof(ngx_memcache_conf_t));
++    if (mcf == NULL) {
++        return NGX_CONF_ERROR;
++    }
++
++    mcf->cpool = pool;
++    mcf->log = log;
++
++    if(ngx_array_init (&mcf->servers, mcf->cpool, 4, sizeof(ngx_addr_t*))
++        != NGX_OK) {
++        return NGX_CONF_ERROR;
++    }
++
++    mcf->timeout = NGX_CONF_UNSET_MSEC;
++    mcf->reconnect = NGX_CONF_UNSET_MSEC;
++    mcf->ttl = NGX_CONF_UNSET_MSEC;
++    mcf->ttl_text.len = 0;
++    mcf->allow_unqualified = NGX_CONF_UNSET;
++
++    ngx_log_error(NGX_LOG_DEBUG_CORE, cycle->log, 0,
++        "memcache - created configuration:%p", mcf);
++    return mcf;
++}
++
++static char *ngx_memcache_init_conf(ngx_cycle_t *cycle, void *conf)
++{
++    ngx_memcache_conf_t *mcf = conf;
++
++    ngx_conf_init_msec_value(mcf->timeout, 5000);
++    ngx_conf_init_msec_value(mcf->reconnect, 60000);
++    ngx_conf_init_msec_value(mcf->ttl, 0);
++    if (mcf->ttl_text.len == 0) {
++        ngx_str_set(&mcf->ttl_text, "0");
++    }
++    ngx_conf_init_value(mcf->allow_unqualified, 0);
++
++    ngx_log_error(NGX_LOG_DEBUG_CORE,cycle->log, 0,
++        "memcache - initialized config defaults:%p", mcf);
++    return NGX_CONF_OK;
++}
++
++static char* ngx_memcache_ttl(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    char      *res;
++    ngx_str_t *value, *ttl;
++    ngx_memcache_conf_t *mcf = (ngx_memcache_conf_t *)conf;
++
++    res = ngx_conf_set_msec_slot(cf, cmd, conf);
++
++    if (res != NGX_CONF_OK) {
++        return res;
++    }
++
++    value = cf->args->elts;
++    ttl = &value[1];
++
++    /* trim the last 5 digit 'NNNms' and become the number of seconds
++     * for example, 3600000ms --> 3600 */
++    if (mcf->ttl > 1000) {
++        mcf->ttl_text.data = ttl->data;
++        mcf->ttl_text.len = ttl->len - 5;
++    } else if (mcf->ttl > 0) {
++        /* 0 ~ 1000ms, make it 1 */
++        ngx_str_set(&mcf->ttl_text, "1");
++    } else {
++        /* ttl is 0, so keep the default ttl_text "0" */
++    }
++
++    return NGX_CONF_OK;
++}
++/* per-process initialization routine */
++static ngx_int_t ngx_memcache_init_process(ngx_cycle_t *cycle)
++{
++    ngx_memcache_conf_t     *mcf;
++    ngx_log_t               *log;
++    ngx_pool_t              *pool;
++    ngx_addr_t              *peer,
++                           **peers;
++    ngx_peer_connection_t   *peercxn;
++    mc_context_t            *mcctx;
++    mc_workqueue_t          *mcwq;
++    ngx_int_t                rc;
++    ngx_uint_t               npeers,i;
++    ngx_buf_t               *buff;
++
++    mcf = (ngx_memcache_conf_t*) ngx_get_conf(cycle->conf_ctx, ngx_memcache_module);
++    log = cycle->log;
++    // pool = ngx_create_pool(8*ngx_pagesize,log);
++    pool = mcf->cpool;
++
++    npeers = mcf->servers.nelts;
++    peers = (ngx_addr_t **)mcf->servers.elts;
++
++    rc = ngx_array_init(&mcf->contexts, pool, npeers > 0 ? npeers : 1, sizeof(mc_context_t));
++    if (rc != NGX_OK) {
++        return rc;
++    }
++
++    for ( i = 0; i < npeers; ++i)
++    {
++        peer = peers[i];
++        peercxn = ngx_pcalloc(pool, sizeof(ngx_peer_connection_t));
++        peercxn->sockaddr = peer->sockaddr; /* XXX peer->sockaddr is on cf->pool */
++        peercxn->socklen = peer->socklen;
++        peercxn->name = &peer->name;        /* XXX peer->name is on cf->pool */
++        peercxn->get = ngx_event_get_peer;
++        peercxn->log = log;
++        peercxn->log_error = NGX_ERROR_ERR;
++
++        rc = ngx_event_connect_peer(peercxn);
++
++        if (rc == NGX_ERROR || rc == NGX_BUSY || rc == NGX_DECLINED) {
++            ngx_log_error (NGX_LOG_ERR, log, 0, 
++                "cannot connect to memcached server %V (rc:%d)",
++                &peer->name, rc);
++
++            if (peercxn->connection) {
++                ngx_close_connection (peercxn->connection);
++            }
++            continue;
++        }
++
++        /* nginx sockets are non-blocking, so connect() returns EINPROGRESS */
++        peercxn->connection->read->handler = ngx_memcache_any_read_handler;
++        peercxn->connection->write->handler = ngx_memcache_dummy_write_handler;
++
++        mcctx = ngx_array_push (&mcf->contexts);
++        ngx_memzero (mcctx, sizeof (mc_context_t));
++        buff = ngx_create_temp_buf (pool, ngx_pagesize);    /* circular buffer */
++        mcctx->readbuffer = buff;
++
++        /* reconnection event */
++        mcctx->reconnect_ev = ngx_palloc (pool, sizeof (ngx_event_t));
++        ngx_memzero (mcctx->reconnect_ev, sizeof (ngx_event_t));
++        mcctx->reconnect_ev->handler = ngx_memcache_reconnection_handler;
++        mcctx->reconnect_ev->log = log;
++
++        /* Initialize the head of the work queue doubly-linked list */
++        mcwq = &mcctx->wq_head;
++        mcwq->w.request_code = mcreq_noop;
++        mcwq->pool = pool;
++        mcwq->prev = mcwq;
++        mcwq->next = mcwq;
++
++        peercxn->connection->data = mcctx;
++        peercxn->connection->log = log;
++
++        mcctx->srvconn  = peercxn;
++        mcctx->srvaddr  = peer;
++        mcctx->status   = mcchan_good;
++        mcctx->timeout  = mcf->timeout;
++        mcctx->cxn_interval = mcf->reconnect;
++        setsockopt(peercxn->connection->fd, SOL_SOCKET, SO_SNDBUF,
++        (void *) &mc_sndbuf_len, sizeof (mc_sndbuf_len));
++    }
++
++    ngx_log_error(NGX_LOG_INFO, log, 0,
++        "memcache: %d/%d connections initialized",
++        mcf->contexts.nelts, mcf->servers.nelts);
++
++    return NGX_OK;
++}
++
++static char *ngx_memcache_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    ngx_conf_t  ocf;
++    char        *rc;
++
++    ocf = *cf;
++
++    cf->ctx = cf->cycle->conf_ctx;
++    cf->module_type = NGX_CORE_MODULE;
++    cf->cmd_type = NGX_MEMCACHE_CONF;
++
++    rc = ngx_conf_parse(cf, NULL);
++
++    *cf = ocf;
++
++    return rc;
++}
++
++static char *
++ngx_memcache_servers (ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    ngx_memcache_conf_t     *mcf = conf;
++    ngx_addr_t              **server;
++    ngx_uint_t               i;
++    ngx_url_t                u;
++
++    for (i = 1; i < cf->args->nelts; ++i)
++    {
++        server = ngx_array_push(&mcf->servers);
++        if (server == NULL) {
++            return NGX_CONF_ERROR;
++        }
++
++        *server = NULL;
++
++        ngx_memzero(&u, sizeof(u));
++        u.url = ((ngx_str_t *)cf->args->elts)[i];
++        u.default_port = 11211;
++        u.uri_part = 1;
++
++        /* note - since ngx_parse_url uses pools from cf, therefore all address
++           structures in *server will be allocated on the config pool instead
++           of the memcached pool
++         */
++        if (ngx_parse_url(cf->pool, &u) != NGX_OK) {
++            if (u.err) {
++                ngx_log_error(NGX_LOG_ERR, cf->cycle->log, 0,
++                    "%s in memcache:server %V", u.err, &u.url);
++            }
++            return NGX_CONF_ERROR;
++        }
++
++        *server = u.addrs;
++    }
++
++    return NGX_CONF_OK;
++}
++
++/* Work queue manipulation functions */
++static inline mc_workqueue_t *ngx_memcache_wq_front (mc_workqueue_t *head)
++{
++    return head->next;
++}
++
++mc_workqueue_t *ngx_memcache_wq_enqueue (mc_workqueue_t *head, mc_workqueue_t *wqe)
++{
++    wqe->prev = head->prev;
++    wqe->next = head;
++    wqe->prev->next = wqe;
++    wqe->next->prev = wqe;
++    return wqe;
++}
++
++mc_workqueue_t *ngx_memcache_wq_dequeue (mc_workqueue_t *head)
++{
++    mc_workqueue_t  *wqe;
++
++    wqe = head->next;
++
++    if (wqe != head)
++    {
++        wqe->prev->next = wqe->next;
++        wqe->next->prev = wqe->prev;
++        wqe->prev = NULL;
++        wqe->next = NULL;
++    }
++
++    return wqe;
++}
++
++static inline ngx_int_t ngx_memcache_wq_isempty (mc_workqueue_t *head)
++{
++    return (ngx_memcache_wq_front(head) == head);
++}
++
++/* Ignore a work entry in memcache work queue. This should be done if
++ * the ctx who initiated the memcache request is destroyed before
++ * memcache server returns. Otherwise, when response is coming, the
++ * invalid ctx may be callback and reused.
++ *
++ * Any work entry in the queue whose ctx is equal to the specified one
++ * will be ignored.
++ *
++ * */
++void ngx_memcache_ignore_work_by_ctx (void * ctx) {
++    mc_workqueue_t      * head, * entry;
++    ngx_memcache_conf_t * mcf;
++    mc_context_t        * contexts;
++    ngx_uint_t            i;
++
++    mcf = (ngx_memcache_conf_t *)
++    ngx_get_conf(ngx_cycle->conf_ctx, ngx_memcache_module);
++    contexts = (mc_context_t *)mcf->contexts.elts;
++    for (i = 0; i < mcf->contexts.nelts; i++) {
++        mc_context_t * context = contexts + i;
++        head = &context->wq_head;
++        if (!ngx_memcache_wq_isempty(head)) {
++            entry = head->next;
++            while (entry->w.request_code != mcreq_noop) {
++                if ((void *) entry->w.ctx == (void *) ctx ) {
++                    // mark it NULL and ignored later
++                    entry->w.ctx = NULL;
++                }
++                entry = entry->next;
++            }
++        }
++    }
++}
++
++/* Post a memcached request onto the workqueue of a memcached server
++   w    work request describing the task
++        (also contains on_success/on_failure handlers)
++   k    opaque key which will be used for calculating the server hash
++   value  the data which should be sent to the memcached server
++   p    the pool from which additional memory may be allocated as needed
++   l    log object for debug/informational messages
++ */
++void ngx_memcache_post (
++     mc_work_t      *w,
++     ngx_str_t       key,
++     ngx_str_t       value,
++     ngx_pool_t     *p,
++     ngx_log_t      *l
++    )
++{
++    ngx_str_t dummy_ttl = ngx_string("-1");
++    ngx_memcache_post_with_ttl (w, key, value, dummy_ttl, p, l);
++}
++
++void ngx_memcache_post_with_ttl (
++        mc_work_t      *w,
++        ngx_str_t       key,
++        ngx_str_t       value,
++        ngx_str_t       ttl,
++        ngx_pool_t     *p,
++        ngx_log_t      *l) {
++    ngx_memcache_do_post(w, key, value, ttl, p, l);
++}
++
++static void
++ngx_memcache_do_post (
++     mc_work_t      *w,
++     ngx_str_t       key,
++     ngx_str_t       value,
++     ngx_str_t       ttl,
++     ngx_pool_t     *p,
++     ngx_log_t      *l
++    )
++{
++    ngx_uint_t       h;
++    size_t           t;
++    ssize_t          n;
++    mc_context_t    *mcctx;
++    mc_workqueue_t  *r;
++    ngx_memcache_conf_t  *mcf;
++    mc_context_t    *contexts;
++    ngx_flag_t      locked = 0;
++    ngx_flag_t      reclaim = 0;
++    ngx_str_t       pdu;
++
++    mcf = (ngx_memcache_conf_t *)ngx_get_conf(ngx_cycle->conf_ctx, ngx_memcache_module);
++    contexts = (mc_context_t *)mcf->contexts.elts;
++
++    ngx_log_debug1 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0, "ngx_mc_log, org_key=[%s]", key.data);
++    h = ngx_memcache_hash (key.data, key.len);
++
++    ngx_log_debug1 (NGX_LOG_DEBUG_CORE, l, 0,
++        "ngx_mc_log, posting memcache request to cache server #%d", h);
++    mcctx =  contexts + h;
++
++    if (h == MC_INVALID_HASH) {
++        ngx_log_error (NGX_LOG_NOTICE, l, 0,
++            "ngx_mc_log, no memcache server available, cannot post request");
++        w->response_code = mcres_failure_unavailable;
++        w->on_failure(w);
++        return;
++    }
++
++    if (p == NULL) {
++        p = ngx_create_pool(MC_REQ_POOL_SIZE, l);
++        if (p == NULL) {
++            ngx_log_error (NGX_LOG_NOTICE, l, 0,
++                "ngx_mc_log, failed to create pool, cannot post request");
++            w->response_code = mcres_failure_unavailable;
++            w->on_failure(w);
++            return;
++        }
++        reclaim = 1;
++    }
++
++    key = ngx_sha256_hash (p, key.data, key.len);
++    if (0 == key.len || NULL == key.data) {
++        ngx_log_error (NGX_LOG_NOTICE, l, 0,
++            "ngx_mc_log, failed to hash the key, cannot post request");
++        w->response_code = mcres_failure_unavailable;
++        w->on_failure(w);
++        return;
++    }
++    ngx_log_debug1 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0, "ngx_mc_log, hashed_key=[%s]", key.data);
++
++    pdu = ngx_memcache_create_pdu(p, w, key, value, ttl, l);
++    if (pdu.data == NULL) {
++        ngx_log_error (NGX_LOG_NOTICE, l, 0,
++            "ngx_mc_log, failed to create pdu, cannot post request");
++        w->response_code = mcres_failure_normal;
++        w->on_failure(w);
++        return;
++    }
++
++    /* build up the request to enqueue on the workqueue
++       we build up the request earlier on, so that if 
++       memory errors occur, we would not have posted a pdu
++       on the memcached channel that we cannot handle
++     */
++
++    r = ngx_pcalloc(p, sizeof(mc_workqueue_t));
++    if (r == NULL) {
++        ngx_log_error (NGX_LOG_NOTICE, l, 0,
++            "ngx_mc_log, failed to allocate memory, cannot post request");
++        w->response_code = mcres_failure_unavailable;
++        w->on_failure(w);
++        return;
++    }
++
++    if (ngx_log_tid && mcctx->lock != ngx_log_tid) {
++        ngx_spinlock(&mcctx->lock, ngx_log_tid, 40);
++        locked = 1;
++    }
++    t = 0;
++    while (t < pdu.len)
++    {
++        n = ngx_send (mcctx->srvconn->connection, pdu.data + t, pdu.len - t);
++        if (n > 0) {
++            t += n;
++            if (mcctx->status == mcchan_reconnect) {
++                mcctx->status = mcchan_good;
++            }
++        } else {
++            if (locked)
++                ngx_unlock(&mcctx->lock);
++
++            ngx_log_error (NGX_LOG_NOTICE, l, 0,
++                    "ngx_mc_log, memcached channel %V orderly shutdown when posting request",
++                    mcctx->srvconn->name);
++
++            mcctx->status = mcchan_bad;
++            ngx_memcache_close_connection (mcctx->srvconn);
++            ngx_memcache_purge_connection_workqueue
++                            (mcctx, mcres_failure_again);
++            ngx_memcache_prepare_reconnection(mcctx);
++            w->response_code = mcres_failure_again;
++            w->on_failure(w);
++            return;
++        }
++    }
++
++    if (t == pdu.len) {
++        /* set the read timeout on the server channel *only* if there is no 
++           outstanding timer set already (this is to opportunistically catch
++           any responses before the stipulated timeout
++         */
++
++        if (!mcctx->srvconn->connection->read->timer_set) {
++            ngx_add_timer (mcctx->srvconn->connection->read, mcctx->timeout);
++        }
++
++       /* ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, ngx_cycle->log, 0,
++                "XXX post requst:%V", &pdu);*/
++    }
++
++    r->pool = p;
++    r->reclaim = reclaim;
++    r->w = *w;
++    r->w.response_code = mcres_unknown;
++
++    ngx_memcache_wq_enqueue (&mcctx->wq_head, r);
++
++    if (locked) {
++        ngx_unlock(&mcctx->lock);
++    }
++    ngx_log_debug2 (NGX_LOG_DEBUG_CORE, l, 0,
++        "ngx_mc_log, posted request(%p) on server #%d", r, h);
++
++    return;
++}
++
++/* memcache protocol handling routines */
++
++/* process successful add response */
++static ngx_int_t ngx_memcache_process_add_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("STORED") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "STORED" CRLF, sizeof("STORED" CRLF) - 1))
++    {
++        return ngx_memcache_process_error_line(stream, size, wq, consumed);
++    }
++
++    *consumed = sizeof ("STORED" CRLF) - 1;
++    wq->w.response_code = mcres_success;
++
++    return NGX_OK;
++}
++
++/* process unsuccessful add response */
++static ngx_int_t ngx_memcache_process_add_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("NOT_STORED") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "NOT_STORED" CRLF, sizeof("NOT_STORED" CRLF) - 1))
++    {
++        return ngx_memcache_process_error_line(stream, size, wq, consumed);
++    }
++
++    *consumed = sizeof ("NOT_STORED" CRLF) - 1;
++    wq->w.response_code = mcres_failure_normal;
++
++    return NGX_OK;
++}
++
++/*
++ *  process the invalid add command. If the key in add command too long,
++ *  memcached will return 2 error msgs for "add <key> <flag> <ttl> <len>CRLF"
++ *  and the "<value>CRLF" respectively. It should be:
++ *  CLIENT_ERROR bad command line format\r\nERROR\r\n
++ */
++static ngx_int_t ngx_memcache_process_add_invalid
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t len;
++    len = sizeof ("CLIENT_ERROR bad command line format" CRLF) - 1 +
++                  sizeof ("ERROR" CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "CLIENT_ERROR bad command line format" CRLF
++                            "ERROR" CRLF,
++                    len))
++    {
++        return ngx_memcache_process_error_line(stream, size, wq, consumed);
++    }
++
++    *consumed = len;
++    wq->w.response_code = mcres_failure_input;
++
++    ngx_log_error (NGX_LOG_NOTICE, ngx_cycle->log, 0,
++            "memcached return error message: "
++            "CLIENT_ERROR bad command line format ERROR");
++
++    return NGX_OK;
++}
++
++/* process successful delete response */
++static ngx_int_t ngx_memcache_process_delete_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("DELETED") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "DELETED" CRLF, sizeof("DELETED" CRLF) - 1))
++    {
++        return ngx_memcache_process_error_line(stream, size, wq, consumed);
++    }
++
++    *consumed = sizeof ("DELETED" CRLF) - 1;
++    wq->w.response_code = mcres_success;
++
++    return NGX_OK;
++}
++
++/* handle unsuccessful delete response */
++static ngx_int_t ngx_memcache_process_delete_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("NOT_FOUND") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "NOT_FOUND" CRLF, sizeof("NOT_FOUND" CRLF) - 1))
++    {
++        return ngx_memcache_process_error_line(stream,size,wq,consumed);
++    }
++
++    *consumed = sizeof ("NOT_FOUND" CRLF) - 1;
++    wq->w.response_code = mcres_failure_normal;
++
++    return NGX_OK;
++}
++
++/* process successful get response */
++static ngx_int_t ngx_memcache_process_get_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    /* A successful `get' response looks like:
++
++       VALUE keyname flag size
++       <size bytes of data>
++       END
++
++       A successful `get' response must be at least as long as:
++
++       VALUE K F S
++       b
++       END
++     */
++
++    enum {
++                rr_value_read,
++                rr_key_read,
++                rr_flag_read,
++                rr_size_read,
++                rr_data_read,
++                rr_end_read
++    } state;
++
++    size_t      minimum_len;
++    u_char      *p;
++    /* size_t      tokenpos; */
++    /* ngx_str_t   key = ngx_string (""); */
++    ngx_str_t   value = ngx_string ("");
++    size_t      value_size;
++    uint16_t    flag;
++
++    minimum_len =
++                sizeof ("VALUE ") - 1 +
++                sizeof ("k ") - 1 + 
++                sizeof ("0 ") - 1 +
++                sizeof ("0 ") - 1 +
++                sizeof (CRLF) - 1 +
++                sizeof (CRLF) - 1 +
++                sizeof ("END") - 1 +
++                sizeof (CRLF) -1;
++
++    p = stream;
++    *consumed = 0;
++    value_size = 0;
++
++    /* If there is not enough space to even hold a bare minimum response,
++     then we cannot proceed */
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "VALUE ", sizeof ("VALUE ") - 1))
++    {
++        return ngx_memcache_process_error_line(stream,size,wq,consumed);
++    }
++
++    p += (sizeof ("VALUE ") - 1);
++    *consumed += (sizeof ("VALUE ") - 1);
++    state = rr_value_read;
++
++    for (;(p < stream + size) && (state != rr_end_read); ++p, ++*consumed)
++    {
++        switch (state)
++        {
++            case rr_value_read:
++                /* now we're expecting the key name */
++                /* tokenpos = *consumed; */
++
++                while ((p < stream + size) && (*p != ' '))
++                {
++                    ++p;
++                    ++*consumed;
++                }
++
++                if (p == stream + size)
++                {
++                    /* end of stream */
++                    --p; --*consumed;
++                }
++                else
++                {
++                    /* The key is constructed */
++                    /* key.data = stream + tokenpos; */
++                    /* key.len = *consumed - tokenpos; */
++
++                    state = rr_key_read;
++                }
++
++                break;
++
++            case rr_key_read:
++                /* now we're expecting a flag, which is a short integer
++                   which corresponds to the `flags' argument to mc_add
++                   To avoid looping more than is necessary, we'll play a 
++                   simple trick, which is to initialize the flag to 0, 
++                   and then keep *10 + the current digit encountered
++                 */
++
++                flag = 0;
++
++                while ((p < stream + size) && (*p != ' '))
++                {
++                   flag = (flag * 10) + *p;
++                   ++p;
++                   ++*consumed;
++                }
++
++                if (p == stream + size)
++                {
++                   --p; --*consumed;
++                }
++                else
++                {
++                   /* The flag is constructed */
++
++                   state = rr_flag_read;
++                }
++
++                break;
++
++            case rr_flag_read:
++                /* now we're expecting the size of the data 
++                 */
++                value_size = 0;
++
++                while ((p < stream + size)
++                       && (*p != ' ')      /* wasteful ? */
++                       && (*p != CR)
++                       && (*p != LF)       /* wasteful ? */
++                      )
++                {
++                   value_size = (value_size * 10) + (*p - '0');
++                   ++p;
++                   ++*consumed;
++                }
++
++                if (p == stream + size)
++                {
++                   --p; --*consumed;
++                }
++                else
++                {
++                   /* The size is constructed */
++                   state = rr_size_read;
++                }
++
++                break;
++
++            case rr_size_read:
++                /* now we're looking out for the data
++                   the '\r' has already been consumed in the for loop
++                   so we must look beyond the '\n', and then read 
++                   value_size bytes more from the stream
++                */
++
++                while ((p < stream + size) && (*p != LF))
++                {
++                    ++p; ++*consumed;
++                }
++
++                if (p == stream + size)
++                {
++                    --p; --*consumed;
++                }
++                else
++                {
++                    /* now p is pointing at the line feed preceding the data */
++
++                    ++p; ++*consumed;
++
++                    if (p == stream + size)
++                    {
++                        --p; --*consumed;
++                    }
++                    else
++                    {
++                        minimum_len = 
++                            value_size +
++                            sizeof (CRLF) - 1 +
++                            sizeof ("END") - 1 +
++                            sizeof (CRLF) - 1;
++
++
++                        if (size - *consumed < minimum_len)
++                        {
++                            /* request cannot be completed here */
++                        }
++                        else
++                        {
++                            /* we have the value, starting at p */
++                            value.data = p;
++                            value.len = value_size;
++
++                            /* now just advance in one shot till the end */
++
++                            p+= value_size; *consumed += value_size;
++
++                            /* And now, just consume the following CR too
++                               so that the END context lands bingo at END
++                             */
++
++                            state = rr_data_read;
++
++                            if (*p == CR)     /* this is superfluous */
++                            {
++                                ++p; ++*consumed;
++                            }
++                        }
++                    }
++                }
++
++                break;
++
++            case rr_data_read:
++                /* we know that sufficient bytes are present, and that we
++                   should be looking at "END"
++                 */
++
++                if (ngx_memcmp (p, "END" CRLF, sizeof ("END" CRLF) - 1))
++                {
++                   /* not possible. try logging here */
++                }
++                else
++                {
++                   state = rr_end_read;
++
++                   p += (sizeof ("END") - 1);
++                   *consumed += (sizeof ("END") - 1);
++
++                   /* again, we will consume the CR so that we break out at
++                      once */
++
++                   if (*p == CR)    /* superfluous */
++                   {
++                       ++p;
++                       ++*consumed;
++                   }
++                }
++
++                break;
++
++             default:
++                break;
++        }
++    }
++
++    if (state != rr_end_read)
++    {
++        return NGX_AGAIN;       /* This means there wasn't enough data */
++    }
++
++    /* we've finished processing the get response */
++
++    wq->w.payload.data = ngx_pstrdup (wq->pool, &value);
++    wq->w.payload.len = value.len;
++    wq->w.response_code = mcres_success;
++
++    return NGX_OK;
++}
++
++/* process unsuccessful get response */
++static ngx_int_t ngx_memcache_process_get_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("END") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "END" CRLF, sizeof("END" CRLF) - 1))
++    {
++        return ngx_memcache_process_error_line(stream,size,wq,consumed);
++    }
++
++    *consumed = sizeof ("END" CRLF) - 1;
++    wq->w.response_code = mcres_failure_normal;
++
++    return NGX_OK;
++}
++
++static ngx_int_t ngx_memcache_process_incr_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    u_char *p;
++
++    p = stream;
++
++    while ((p < stream + size) && (*p != CR) && (*p != LF))
++    {
++        if (!(*p >= '0' && *p <= '9')) {
++            return ngx_memcache_process_error_line(stream, size, wq, consumed);
++        }
++
++        ++p;
++        ++*consumed;
++    }
++
++    if (p == stream + size) {
++        return NGX_AGAIN;
++    } else {
++        if (size - *consumed >= 2)
++        {
++            if (*p == CR && *(p + 1) == LF)
++            {
++                *consumed += 2;
++                wq->w.payload.len = p - stream;
++                wq->w.payload.data = ngx_palloc(wq->pool, wq->w.payload.len);
++                ngx_memcpy (wq->w.payload.data,stream, wq->w.payload.len);
++                wq->w.response_code = mcres_success;
++                return NGX_OK;
++            }
++            else
++            {
++                return ngx_memcache_process_error_line(stream, size, wq, consumed);
++            }
++        }
++        else
++        {
++            return NGX_AGAIN;
++        }
++    }
++}
++
++static ngx_int_t ngx_memcache_process_incr_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("NOT_FOUND") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "NOT_FOUND" CRLF, sizeof ("NOT_FOUND" CRLF) - 1))
++    {
++        return ngx_memcache_process_error_line(stream, size, wq, consumed);
++    }
++
++    *consumed = sizeof ("NOT_FOUND" CRLF) - 1;
++    wq->w.response_code = mcres_failure_normal;
++
++    return NGX_OK;
++}
++
++static ngx_int_t ngx_memcache_process_decr_ok
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    u_char *p;
++
++    p = stream;
++
++    while ((p < stream+size) && (*p != CR) && (*p != LF))
++    {
++        if (!(*p>='0' && *p<='9')) {
++            return ngx_memcache_process_error_line(stream, size, wq, consumed);
++        }
++
++        ++p;
++        ++*consumed;
++    }
++
++    if (p == stream + size) {
++        return NGX_AGAIN;
++    } else {
++        if (size - *consumed >= 2)
++        {
++            if (*p == CR && *(p+1) == LF)
++            {
++                *consumed += 2;
++                wq->w.payload.len = p-stream;
++                wq->w.payload.data = ngx_palloc(wq->pool,wq->w.payload.len);
++                ngx_memcpy (wq->w.payload.data,stream,wq->w.payload.len);
++                wq->w.response_code = mcres_success;
++                return NGX_OK;
++            }
++            else
++            {
++                return ngx_memcache_process_error_line(stream, size, wq, consumed);
++            }
++        }
++        else
++        {
++            return NGX_AGAIN;
++        }
++    }
++}
++
++static ngx_int_t ngx_memcache_process_decr_failed
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("NOT_FOUND") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "NOT_FOUND" CRLF, sizeof ("NOT_FOUND" CRLF) - 1))
++    {
++        return ngx_memcache_process_error_line(stream, size, wq, consumed);
++    }
++
++    *consumed = sizeof ("NOT_FOUND" CRLF) - 1;
++    wq->w.response_code = mcres_failure_normal;
++
++    return NGX_OK;
++}
++
++/* process "ERROR\r\n" */
++static ngx_int_t ngx_memcache_process_error
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++
++    minimum_len = sizeof ("ERROR") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "ERROR" CRLF, sizeof ("ERROR" CRLF) - 1))
++    {
++        return NGX_ERROR;
++    }
++
++    *consumed = sizeof ("ERROR" CRLF) - 1;
++
++    ngx_log_error (NGX_LOG_NOTICE, ngx_cycle->log, 0,
++            "memcached return error message: ERROR");
++
++    wq->w.response_code = mcres_failure_input;
++    return NGX_OK;
++}
++
++static ngx_int_t ngx_memcache_process_client_error
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++    u_char *p;
++    minimum_len = sizeof ("CLIENT_ERROR") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "CLIENT_ERROR", sizeof ("CLIENT_ERROR") - 1))
++    {
++        return NGX_ERROR;
++    }
++
++    p = stream + sizeof ("CLIENT_ERROR") - 1;
++    *consumed = sizeof ("CLIENT_ERROR") - 1;
++    while ((p < stream + size) && (*p != LF))
++    {
++        ++p; ++*consumed;
++    }
++
++    if (*p != LF || *(p - 1) != CR)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (p < stream + size)
++    {
++        ++p;
++        ++*consumed;
++    }
++
++    ngx_str_t log_output;
++    log_output.data = stream;
++    log_output.len = *consumed - 2; //chomp the trailing CRLF
++
++    ngx_log_error (NGX_LOG_NOTICE, ngx_cycle->log, 0,
++            "memcached return error message: %V", &log_output);
++
++    wq->w.response_code = mcres_failure_input;
++    return NGX_OK;
++}
++
++static ngx_int_t ngx_memcache_process_server_error
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    size_t minimum_len;
++    u_char *p;
++    minimum_len = sizeof ("SERVER_ERROR") - 1 +
++                  sizeof (CRLF) - 1;
++
++    *consumed = 0;
++
++    if (size < minimum_len)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (ngx_memcmp (stream, "SERVER_ERROR", sizeof ("SERVER_ERROR") - 1))
++    {
++        return NGX_ERROR;
++    }
++
++    p = stream + sizeof ("SERVER_ERROR") - 1;
++    *consumed = sizeof ("SERVER_ERROR") - 1;
++    while ((p < stream + size) && (*p != LF))
++    {
++        ++p; ++*consumed;
++    }
++
++    if (*p != LF || *(p - 1) != CR)
++    {
++        return NGX_AGAIN;
++    }
++
++    if (p < stream + size)
++    {
++        ++p;
++        ++*consumed;
++    }
++
++    ngx_str_t log_output;
++    log_output.data = stream;
++    log_output.len = *consumed - 2; //chomp the trailing CRLF
++
++    ngx_log_error (NGX_LOG_NOTICE, ngx_cycle->log, 0,
++            "memcached return error message: %V", &log_output);
++
++    wq->w.response_code = mcres_failure_again;
++    return NGX_OK;
++}
++
++/* consume a line of error message or unexcepted response,
++ * including ERROR, SERVER_ERROR and CLIENT_ERROR, as well as
++ * other unrecognized ones.
++ * Returns:
++ * NGX_OK: handle correctly and continue the next qork queue entry
++ * NGX_ERROR: server is bad, has to close connection and purge work
++ *            queue
++ * NGX_AGAIN: recv more bytes to complete handling */
++static ngx_int_t ngx_memcache_process_error_line
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    u_char *p;
++    ngx_int_t rc = NGX_ERROR;
++
++    p = stream;
++    *consumed = 0;
++
++    if (*p == 'E') {
++        /* memcached return 'ERROR CRLF' */
++        rc = ngx_memcache_process_error (stream, size, wq, consumed);
++    } else if (*p == 'C' ) {
++        /* memcached return 'CLIENT_ERROR <message> CRLF' */
++        rc = ngx_memcache_process_client_error (stream, size, wq, consumed);
++    } else if (*p == 'S') {
++        /* memcached return 'SERVER_ERROR <message> CRLF'
++         * if it's a valid SERVER_ERROR, we still have
++         * to return NGX_ERROR to close the connection to current
++         * channel and purge the queue. Therefore, all the buffered bytes
++         * has to be chomped here.
++         */
++        rc = ngx_memcache_process_server_error (stream, size, wq, consumed);
++        if (rc == NGX_OK) {
++            /* chomp all the received raw bytes in buffer */
++            *consumed = size;
++            ngx_str_t log_output;
++            log_output.data = stream;
++            log_output.len = *consumed;
++            ngx_log_error (NGX_LOG_ERR, ngx_cycle->log, 0,
++                    "memcached returns SERVER_ERROR, "
++                    "chomp all %d bytes in buffer: %V",
++                    *consumed, &log_output);
++            return NGX_ERROR;
++        }
++    }
++
++    if (rc == NGX_OK || rc == NGX_AGAIN) {
++        return rc;
++    } else  {
++        /* the response is unrecognized,
++         * chomp all the received raw bytes in buffer */
++        *consumed = size;
++
++        ngx_str_t log_output;
++        log_output.data = stream;
++        log_output.len = size;
++        ngx_log_error (NGX_LOG_ERR, ngx_cycle->log, 0,
++                "memcached returns unrecognized response, "
++                "chomp all %d bytes in buffer: %V",
++                *consumed, &log_output);
++        return NGX_ERROR;
++    }
++}
++
++/* process response to any memcached command
++   with the advent of more supported operations, we need more context in
++   order to process the response to a previously submitted command
++   that is because responses to some memcached commands are identical
++
++   see docs/MEMCACHE-PROTOCOL for details
++ */
++ngx_int_t ngx_memcache_process_any_response
++    (u_char *stream, size_t size, mc_workqueue_t *wq, size_t *consumed)
++{
++    mcp_handler         handler;
++    mc_request_code_t   op;
++
++    *consumed = 0;
++    if (size == 0) { return NGX_AGAIN; }
++
++    op = wq->w.request_code;
++
++    switch (op)
++    {
++        case mcreq_add:
++            switch (*stream)
++            {
++                case 'S':   /* STORED */
++                    handler = ngx_memcache_process_add_ok;
++                    break;
++                case 'N':   /* NOT_STORED */
++                    handler = ngx_memcache_process_add_failed;
++                    break;
++                case 'C':   /* CLIENT_ERROR msg<CR><LF>ERROR<CR><LF> */
++                    handler = ngx_memcache_process_add_invalid;
++                    break;
++                default:
++                    handler = ngx_memcache_process_error_line;
++                    break;
++            }
++            break;
++        case mcreq_get:
++            switch (*stream)
++            {
++                case 'V':   /* VALUE */
++                    handler = ngx_memcache_process_get_ok;
++                    break;
++                case 'E':   /* END */
++                    handler = ngx_memcache_process_get_failed;
++                    break;
++                default:
++                    handler = ngx_memcache_process_error_line;
++                    break;
++            }
++            break;
++        case mcreq_delete:
++            switch (*stream)
++            {
++                case 'D':   /* DELETED */
++                    handler = ngx_memcache_process_delete_ok;
++                    break;
++                case 'N':   /* NOT_FOUND */
++                    handler = ngx_memcache_process_delete_failed;
++                    break;
++                default:
++                    handler = ngx_memcache_process_error_line;
++                    break;
++            }
++            break;
++        case mcreq_incr:
++            if (*stream == 'N') /* NOT_FOUND */ {
++                handler = ngx_memcache_process_incr_failed;
++            } else {
++                handler = ngx_memcache_process_incr_ok;
++            }
++            break;
++        case mcreq_decr:
++            if (*stream == 'N') /* NOT_FOUND */ {
++                handler = ngx_memcache_process_decr_failed;
++            } else {
++                handler = ngx_memcache_process_decr_ok;
++            }
++            break;
++        default:
++            handler = ngx_memcache_process_error_line;
++            break;
++    }
++
++    return handler (stream, size, wq, consumed);
++}
++
++static void ngx_memcache_dummy_write_handler (ngx_event_t *wev)
++{
++    ngx_log_debug0(NGX_LOG_DEBUG_CORE, wev->log, 0,
++                   "dummy memcache write-event handler");
++}
++
++/* Generic memcache response event handler (see docs/MEMCACHE-PROTOCOL) */
++static void ngx_memcache_any_read_handler(ngx_event_t *rev)
++{
++    ngx_connection_t                *c;
++    mc_context_t                    *ctx;
++    size_t                           available, consumed;
++    ssize_t                          n;
++    ngx_buf_t                       *readbuffer;
++    /* volatile */ mc_workqueue_t   *wq_head;
++    mc_workqueue_t                  *wq_entry;
++    ngx_int_t                        rc;
++    ngx_flag_t                       reclaim;
++
++    c           = rev->data;
++    ctx         = c->data;
++    readbuffer  = ctx->readbuffer;
++    wq_head     = &ctx->wq_head;
++
++    ngx_log_debug1 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0,
++                "memcached read event:%V", ctx->srvconn->name);
++
++    if (ctx->status == mcchan_bad) {
++        ngx_log_error (NGX_LOG_ERR, ngx_cycle->log, 0,
++                "ngx_memcache_any_read_handler should always be "
++                "callback when channel status is \"good\" or "
++                "\"reconnect\"");
++    }
++
++    /* nginx buffer
++
++       [[s]......[p]......[l].......[e]]
++
++       s = start
++       p = pos
++       l = last
++       e = end
++
++     */
++
++    /* TODO Why here is not locked ??? */
++    available = readbuffer->end - readbuffer->last;
++
++    if (available == 0)
++    {
++        /* no space in circular buffer to read the responses */
++
++        ngx_log_debug1 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0, 
++            "recycle circular buffer:%d bytes", 
++            readbuffer->pos - readbuffer->start
++        );
++
++        memmove (readbuffer->start, readbuffer->pos,
++                    readbuffer->last - readbuffer->pos);
++
++        readbuffer->last -= (readbuffer->pos - readbuffer->start);
++        readbuffer->pos = readbuffer->start;
++
++        available = readbuffer->end - readbuffer->last;
++
++        if (available == 0)
++        {
++            ngx_log_error (NGX_LOG_CRIT, ngx_cycle->log, 0,
++                "cannot recycle circular buffer");
++
++            /* TODO how to recover ? */
++            return;
++        }
++
++        /* note: recursive call has been removed */
++    }
++
++    if (ngx_log_tid && ctx->lock == ngx_log_tid) {
++        ngx_log_error (NGX_LOG_CRIT, ngx_cycle->log, 0,
++            "memcached loop");
++        return;
++    } else {
++        ngx_spinlock(&ctx->lock, ngx_log_tid, 40);
++    }
++
++    if (rev->timedout)
++    {
++        /* read timed out */
++        ngx_log_error (NGX_LOG_INFO, ngx_cycle->log, 0,
++            "memcached channel:%V timed out", ctx->srvconn->name);
++
++        ctx->status = mcchan_bad;
++        ngx_memcache_close_connection (ctx->srvconn);
++        ngx_memcache_purge_connection_workqueue (ctx, mcres_failure_again);
++        ngx_memcache_prepare_reconnection (ctx); // schedule reconnection event
++
++        ngx_unlock(&ctx->lock);
++        return;
++    }
++
++    n = ngx_recv (c, readbuffer->last, available);
++
++    if (rev->eof)
++    {
++        /* recv() zero bytes implies peer orderly shutdown (recv(2)) */
++        ngx_log_error (NGX_LOG_NOTICE, ngx_cycle->log, 0,
++            "memcached channel:%V orderly shutdown", ctx->srvconn->name);
++
++        /* channel was hitherto good, don't reconnect immediately, rather
++           wait for cxn_interval before reconnecting
++         */
++        ctx->status = mcchan_bad;
++        ngx_memcache_close_connection (ctx->srvconn);
++        ngx_memcache_purge_connection_workqueue (ctx, mcres_failure_again);
++        ngx_log_debug2 (NGX_LOG_DEBUG_MAIL, ngx_cycle->log, 0,
++            "bad memcached channel:%V, reconnect:%d ms",
++            ctx->srvconn->name, ctx->cxn_interval);
++        ngx_memcache_prepare_reconnection(ctx);
++
++        if (rev->timer_set) {
++            ngx_del_timer (rev);
++        }
++        ngx_unlock(&ctx->lock);
++        return;
++
++    }
++    else if (n == NGX_AGAIN)
++    {
++        /* EAGAIN should have resulted in a timeout which has been 
++           handled previously
++         */
++        ngx_log_error (NGX_LOG_WARN, ngx_cycle->log, 0, 
++            "ignoring *AGAIN on memcached channel %V", ctx->srvconn->name);
++
++        ngx_unlock(&ctx->lock);
++        return;
++
++    }
++    else if (n == NGX_ERROR)
++    {
++        /* After trying to reconnection, and then reach here, it indicates
++         * that the reconnection fails because target server is not available
++         */
++        if (ctx->status == mcchan_reconnect) {
++            ctx->status = mcchan_bad;
++            ngx_log_error (NGX_LOG_ERR, ngx_cycle->log, 0,
++                    "reconnect to memcached channel %V fails", ctx->srvconn->name);
++            ngx_memcache_close_connection (ctx->srvconn);
++            ngx_memcache_prepare_reconnection(ctx);
++            ngx_unlock(&ctx->lock);
++            return;
++        }
++        /* There was an error reading from this socket */
++        ngx_log_debug1 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0,
++            "memcached channel %V:error in recv, purging queue",
++            ctx->srvconn->name
++            );
++        ctx->status = mcchan_bad;
++        ngx_memcache_close_connection (ctx->srvconn);
++        ngx_memcache_purge_connection_workqueue (ctx, mcres_failure_again);
++        ngx_log_debug2 (NGX_LOG_DEBUG_MAIL, ngx_cycle->log, 0,
++            "bad memcached channel:%V, reconnect:%d ms",
++            ctx->srvconn->name, ctx->cxn_interval);
++        ngx_memcache_prepare_reconnection(ctx);
++        if (rev->timer_set) {
++            ngx_del_timer (rev);
++        }
++        ngx_unlock(&ctx->lock);
++        return;
++    }
++
++    readbuffer->last += n;
++
++    if (rev->timer_set) {
++        ngx_del_timer (rev);
++    }
++
++    if (ngx_memcache_wq_isempty (wq_head))
++    {
++        ctx->readbuffer->pos = ctx->readbuffer->last;
++        ngx_unlock(&ctx->lock);
++        ngx_log_error (NGX_LOG_WARN, ngx_cycle->log, 0, 
++          "memcached channel %V:discard %d bytes(bad data), reset buffer",
++          ctx->srvconn->name, n);
++
++        return;
++    }
++
++    while ((!ngx_memcache_wq_isempty (wq_head)) && ((readbuffer->last - readbuffer->pos) > 0))
++    {
++        wq_entry = ngx_memcache_wq_front (wq_head);
++        consumed = 0;
++
++        rc = ngx_memcache_process_any_response (
++                readbuffer->pos,
++                readbuffer->last - readbuffer->pos,
++                wq_entry,
++                &consumed);
++
++        ngx_log_debug2 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0,
++            "memcache proto-handler consumed:%d,rc:%d", consumed, rc
++            );
++
++        if (rc == NGX_OK)
++        {
++            readbuffer->pos += consumed;
++
++            /* correct response, so dequeue entry */
++            wq_entry = ngx_memcache_wq_dequeue (wq_head);
++
++            reclaim = wq_entry->reclaim;
++            ngx_memcache_callback (&wq_entry->w);
++            if (reclaim) { // free the memory if allocated from memcache request pool
++                ngx_destroy_pool(wq_entry->pool);
++            }
++        }
++        else if (rc == NGX_ERROR)
++        {
++            readbuffer->pos += consumed;
++
++            /* wrong response, purge all the entries (including the current one) */
++            ctx->status = mcchan_bad;
++            ngx_memcache_close_connection (ctx->srvconn);
++            ngx_memcache_purge_connection_workqueue
++                (ctx, mcres_failure_again);
++            ngx_memcache_prepare_reconnection(ctx);
++        }
++        else if (rc == NGX_AGAIN)
++        {
++            /* The response handler has indicated that there isn't sufficient
++               space to read the data, so we must move bytes over to the start
++             */
++
++            ngx_log_debug1 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0, 
++                "proto-handler got partial response, recycling [pos=%d]",
++                readbuffer->pos - readbuffer->start
++            );
++
++            memmove (readbuffer->start, readbuffer->pos,
++                        readbuffer->last - readbuffer->pos);
++
++            readbuffer->last -= (readbuffer->pos - readbuffer->start);
++            readbuffer->pos = readbuffer->start;
++
++            ngx_unlock(&ctx->lock);
++            ngx_memcache_any_read_handler (rev);
++            ngx_spinlock(&ctx->lock, ngx_log_tid, 40);
++
++            break;
++        }
++    } /* while */
++
++    if (!ngx_memcache_wq_isempty (wq_head)) {
++        ngx_add_timer (rev, ctx->timeout);
++    }
++
++    ngx_unlock(&ctx->lock);
++}
++
++/* purge all outstanding connections from memcached work-queue */
++
++static void ngx_memcache_purge_connection_workqueue (mc_context_t *mcctx, mc_response_code_t res)
++{
++    mc_workqueue_t             *head, *entry;
++    ngx_flag_t                  reclaim;
++    ngx_uint_t                  count;
++
++    head = &mcctx->wq_head;
++    if (ngx_memcache_wq_isempty(head))
++        return;
++
++    /*the mcchannel status of current context has to be set as
++      "mcchan_bad" before this function's invoke because the user
++      in the upper layer may retry connection. If status is
++      mcchan_good, the retry may incur an endless recursion */
++    if (mcctx->status == mcchan_good)
++        mcctx->status = mcchan_bad;
++
++    ngx_log_debug1 (NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0,
++        "memcached channel:%V, purging all entries",
++        mcctx->srvconn->name);
++
++    count = 0;
++    while (!ngx_memcache_wq_isempty(head)) {
++        entry = ngx_memcache_wq_dequeue (head);
++        reclaim = entry->reclaim;
++        entry->w.response_code = res;
++        ngx_memcache_callback(&entry->w);
++
++        if (reclaim) {
++            ngx_destroy_pool(entry->pool);
++        }
++        count++;
++    }
++
++    ngx_log_error (NGX_LOG_INFO, ngx_cycle->log, 0,
++        "memcached channel:%V, purged all %d entries",
++        mcctx->srvconn->name, count);
++
++    return;
++}
++
++static inline void ngx_memcache_callback (mc_work_t * w)
++{
++    if (w->ctx != NULL) { //call back only when not ignored
++        if (w->response_code == mcres_success) {
++            w->on_success (w);
++        } else {
++            w->on_failure (w);
++        }
++    }
++}
++
++static inline void ngx_memcache_close_connection (ngx_peer_connection_t * pc) {
++    ngx_close_connection (pc->connection);
++    pc->connection = NULL;
++}
++
++/* This is the routine for re-establishing a memcache connection that has 
++   broken down for some reason. Usually, we *expect* this to happen in 
++   cases when a memcache server crashes.
++
++   There are interesting effects observed on linux how a connected TCP 
++   socket, which is marked in non-blocking mode (as nginx does), behaves 
++   when the peer end goes down. 
++
++   Firstly, when a connect() is invoked on a socket that's non-blocking, 
++   the return code is EINPROGRESS even if the peer is up, or whether it's 
++   down at the time (which is the reason why nginx's connection logic 
++   in ngx_event_connect_peer explicitly checks for EINPROGRESS, and why we
++   explicitly ignore it)
++
++   Now, there are two very distinct fates of the subsequent send() and recv()
++   calls on the socket, in case something goes(or went) wrong with the peer:
++
++   (*) In the case when the peer was down at the time of connect(), then any
++       send() and recv() immediately fails with ECONNREFUSED.
++
++   (*) In the case when the peer went down at some point after the connect(), 
++       then the first send() after this time *appears* to succeed, whereas
++       subsequent send()s fail with EPIPE (broken pipe). recv(), however, as
++       usual, succeeds, but with 0 bytes read
++
++   What this means for us, is that if a memcache connection goes sour because
++   of peer problems, then we can expect ngx_send()s to start failing with 
++   EPIPE, whereas our ngx_recv(), which is indirectly invoked via the event
++   handling mechanism, will receive 0 bytes from ngx_recv()
++
++   In both cases, we need to purge the corresponding work queues ASAP, because
++   these may contain pending cache-get requests. A pending cache-get request
++   corresponds to a email connection freshly initiated by a client, and which 
++   is requesting for upstream server information in order to initiate the proxy.
++   This is a high priority request, because the proxy initiation is waiting for 
++   the result of this operation.
++
++   On the other hand, a pending cache-add request corresponds to a proxy session
++   already initiated (and possibly, already finished), which just needs to cache
++   the upstream info, which was previously retrieved from the http-auth servers.
++   In this situation, no client is really waiting for the add operation to 
++   complete, but the memory still needs to be freed. Hence, it's lower priority.
++
++   So, purging a work queue is an action that is highest priority, and must be
++   triggered whenever anything goes amiss with the ngx_send() or ngx_recv().
++
++   On the other hand, we don't need to be very aggressive in trying to re-
++   establish the connection to a broken peer, as long as we mark that memcache
++   connection as `bad', so that our memcache server hashing algorithm is smart 
++   enough to ignore the bad connection. 
++
++   We can just maintain a counter, which will signify the number of times that 
++   a connection could have been used, but was ignored because the server was
++   down. This counter will start at 0, and will be incremented whenever any 
++   ngx_send() or ngx_recv() failed, or whenever the hashing algorithm
++   originally selected that channel, but selected another because the channel 
++   was marked as `bad'. 
++
++   A channel is `bad' when the counter is greater than zero, and it is good if
++   the counter is 0. 
++
++   The counter is incremented by one (and the channel is marked bad) whenever
++   there is an error on ngx_send and/or ngx_recv, and it is also incremented by
++   one whenever the hashing algorithm elects the channel, but finds it bad. 
++
++   The counter is reset to zero (and the channel marked good), after we re-
++   establish the connection. The re-establishment is attempted when the counter
++   reaches the config-file-defined threshold. A threshold of 1 indicates 
++   aggressive re-connection, whereas larger values signify more lethargic 
++   attempts at re-connection
++
++   (important note)
++   As an alternative to the channel ageing algorithm used above, we can use
++   a simple timeout to indicate how long nginx will do without a bad memcache
++   connection before attempting to reconnect. Therefore, all references to 
++   memcache channel age are superseded by the `reconnect interval'
++
++ */
++static void ngx_memcache_reestablish_connection (mc_context_t *mcctx)
++{
++    ngx_int_t       rc;
++
++    if (mcctx->srvconn->connection) {
++        ngx_memcache_close_connection (mcctx->srvconn);
++    }
++
++    ngx_memzero (mcctx->srvconn, sizeof (ngx_peer_connection_t));
++
++    mcctx->srvconn->sockaddr    =  mcctx->srvaddr->sockaddr;
++    mcctx->srvconn->socklen     =  mcctx->srvaddr->socklen;
++    mcctx->srvconn->name        = &mcctx->srvaddr->name;
++    mcctx->srvconn->get         =  ngx_event_get_peer;
++    mcctx->srvconn->log         =  ngx_cycle->log;
++    mcctx->srvconn->log_error   = NGX_ERROR_ERR;
++
++    rc = ngx_event_connect_peer (mcctx->srvconn);
++
++    if (mcctx->srvconn->connection)
++    {
++        mcctx->srvconn->connection->read->handler = ngx_memcache_any_read_handler;
++        mcctx->srvconn->connection->write->handler = ngx_memcache_dummy_write_handler;
++        mcctx->srvconn->connection->data = mcctx;
++        mcctx->srvconn->connection->log = ngx_cycle->log;
++    }
++
++    if (rc == NGX_ERROR || rc == NGX_BUSY || rc == NGX_DECLINED) {
++        ngx_log_error (NGX_LOG_WARN, ngx_cycle->log, 0, 
++            "cannot re-establish connection to memcached channel %V",
++            mcctx->srvconn->name);
++        mcctx->status = mcchan_bad;
++    } else {
++        /* In this case, the connection may return NGX_AGAIN (-2).
++         * If Then the read event is comming and recv return NGX_ERROR (-1),
++         * the reconnection fails. Otherwise, the reconnection is successful.
++         */
++        ngx_log_error (NGX_LOG_NOTICE, ngx_cycle->log, 0, 
++            "reconnect to memcached channel %V (rc: %d)",
++            mcctx->srvconn->name, rc);
++        mcctx->status = mcchan_reconnect;
++        setsockopt(mcctx->srvconn->connection->fd, SOL_SOCKET, SO_SNDBUF,
++        (void *) &mc_sndbuf_len, sizeof (mc_sndbuf_len));
++    }
++}
++
++/* mc_hash
++ *
++ * hash an opaque key onto an available memcached channel number
++ * if the memcached channel is currently bad, then fail-over to the next 
++ * server in declarative order, until all channels are exhausted
++ * 
++ * return MC_INVALID_HASH on failure
++ */
++static ngx_uint_t ngx_memcache_hash (u_char *key, size_t len)
++{
++    ngx_uint_t               h, r, i;
++    mc_context_t            *mcctx;
++    ngx_memcache_conf_t     *mcf;
++
++    mcf = (ngx_memcache_conf_t*) ngx_get_conf(ngx_cycle->conf_ctx, ngx_memcache_module);
++
++    if (mcf->contexts.nelts == 0) {
++        r = MC_INVALID_HASH;
++    } else {
++        h = ngx_memcache_perl_hash (key, len);
++        r = h % mcf->contexts.nelts;
++        i = r;
++
++        do {
++            mcctx = ((mc_context_t *)mcf->contexts.elts) + i;
++
++            if (mcctx->status == mcchan_bad) {
++                i = (i + 1) % mcf->contexts.nelts;
++            }
++        } while ((mcctx->status == mcchan_bad) && (i != r));
++
++        if (mcctx->status == mcchan_bad)
++            r = MC_INVALID_HASH;
++        else
++            r = i;
++    }
++
++    return r;
++}
++
++static ngx_uint_t ngx_memcache_perl_hash (u_char *key, size_t len)
++{
++    size_t          i;
++    ngx_uint_t      h;
++    u_char          *p;
++
++    p = key;
++    i = len;
++    h = 0;
++
++    while (i--)
++    {
++        h += *p++;
++        h += (h << 10);
++        h ^= (h >> 6);
++    }
++
++    h += (h << 3);
++    h ^= (h >> 11);
++    h += (h << 15);
++
++    return h;
++}
++
++static ngx_str_t ngx_sha256_hash (ngx_pool_t* p, u_char* key, size_t len)
++{
++    ngx_str_t hashed_key;
++    u_char * digest = ngx_pnalloc(p, SHA256_KEY_LENGTH);
++    SHA256(key, len, digest);
++    hashed_key.data = ngx_memcache_hexstr(digest, SHA256_KEY_LENGTH);
++    hashed_key.len = strlen((const char *)hashed_key.data);
++
++    return hashed_key;
++}
++
++static inline void
++ngx_memcache_prepare_reconnection (mc_context_t * mcctx) {
++    ngx_event_t * ev = mcctx->reconnect_ev;
++    ev->data = mcctx;
++
++    if (!ev->timer_set) {
++        ngx_add_timer(ev, mcctx->cxn_interval);
++        ngx_log_error (NGX_LOG_NOTICE, ngx_cycle->log, 0,
++               "memcached channel:%V down, reconnect after:%d ms",
++               mcctx->srvconn->name, mcctx->cxn_interval);
++    }
++}
++
++static void
++ngx_memcache_reconnection_handler (ngx_event_t * ev) {
++    mc_context_t * ctx = (mc_context_t *) ev->data;
++
++    if (ctx->status == mcchan_good) return;
++
++    ev->timedout = 0;
++    //ev->timer_set has been set to 0 before this handler are invoked.
++
++    /* unconditionally re-connect bad channel if this event is fired */
++    ngx_log_debug1 (NGX_LOG_DEBUG_MAIL, ngx_cycle->log, 0,
++        "reconnect to %V right now",
++        ctx->srvconn->name);
++
++    ngx_memcache_reestablish_connection (ctx);
++    ngx_unlock(&ctx->lock);
++
++    if (ctx->status == mcchan_bad) { //schedule next retry
++        ngx_memcache_prepare_reconnection (ctx);
++    }
++
++    return;
++}
++
++static u_char *
++ngx_memcache_hexstr(unsigned char *buf, int len)
++{
++     const char *set = "0123456789abcdef";
++     static u_char str[65], *tmp;
++     unsigned char *end;
++     if (len > 32)
++         len = 32;
++     end = buf + len;
++     tmp = &str[0];
++     while (buf < end)
++     {
++         *tmp++ = set[ (*buf) >> 4 ];
++         *tmp++ = set[ (*buf) & 0xF ];
++         buf ++;
++     }
++     *tmp = '\0';
++     return str;
++}
++
++/*
++ * generate memcache post data unit (pdu)
++ * the value's usage depends on the request command:
++ * 1. for "get", "delete", value is useless. you can set it to null
++ * 2. for "add", value is the value to be added
++ * 3. for "incr" or "decr", value is the number to increase or decrease. You
++ *    have to ensure it's an integer.
++ *
++ * If the ttl is set to "-1", the memcache conf's ttl will be used; otherwise
++ * use the specified one. ttl is only effective for the "add" command.
++ */
++static ngx_str_t ngx_memcache_create_pdu(ngx_pool_t *pool, mc_work_t *w,
++        ngx_str_t key, ngx_str_t value, ngx_str_t ttl, ngx_log_t * log) {
++
++    ngx_str_t                  pdu;
++    size_t                     l, ll, len;
++    u_char                    *p;
++    ngx_memcache_conf_t       *mcf;
++
++    len = 0, ll = 0;
++
++    /* check key validity */
++    if (key.len > NGX_MAX_KEY_LENGTH) {
++        ngx_str_t md5_key;
++        u_char * md5 = ngx_pnalloc(pool, MD5_DIGEST_LENGTH);
++        MD5(key.data, key.len, md5);
++        md5_key.data = ngx_memcache_hexstr(md5, MD5_DIGEST_LENGTH);
++        md5_key.len = strlen((const char *)md5_key.data);
++
++        ngx_log_debug2 (NGX_LOG_DEBUG_ZIMBRA, log, 0,
++                "the memcache request key %V is too long, use "
++                "its MD5 digest string %V as the key",
++                &key, &md5_key);
++
++        key = md5_key;
++    }
++
++    switch (w->request_code) {
++        case mcreq_get:
++            l = sizeof("get ") - 1 + key.len + sizeof(CRLF) - 1;
++            break;
++        case mcreq_add:
++            ll = 0;
++            len = value.len;
++            do {
++                len /= 10;
++                ll++;
++            } while (len != 0);
++
++            mcf = (ngx_memcache_conf_t*) ngx_get_conf(ngx_cycle->conf_ctx, ngx_memcache_module);
++
++            if (ngx_strncmp(ttl.data, "-1", 2) == 0) {
++                ttl = mcf->ttl_text;
++            }
++
++            l = sizeof("add ") - 1 + key.len + sizeof(" ") - 1 +
++                sizeof("0 ") - 1 + ttl.len + sizeof(" ") - 1 +
++                ll + sizeof(CRLF) - 1 + value.len + sizeof(CRLF) - 1;
++            break;
++        case mcreq_incr:
++            l = sizeof("incr ") - 1 + key.len + sizeof(" ") - 1 + value.len + sizeof(CRLF) - 1;
++            break;
++        case mcreq_decr:
++            l = sizeof("decr ") - 1 + key.len + sizeof(" ") - 1 + value.len + sizeof(CRLF) - 1;
++            break;
++        case mcreq_delete:
++            l = sizeof("delete ") - 1 + key.len + sizeof(CRLF) - 1;
++            break;
++        default:
++            ngx_log_error (NGX_LOG_ERR, log, 0,
++                    "unkown command for the memcache key: %V", &key);
++            ngx_str_null(&pdu);
++            return pdu;
++    }
++
++    pdu.data = ngx_palloc(pool, l);
++
++    if (pdu.data == NULL) {
++        ngx_str_null(&pdu);
++        return pdu;
++    }
++
++    p = pdu.data;
++
++    switch (w->request_code) {
++        case mcreq_get:
++            ngx_sprintf(p, "get %V" CRLF, &key);
++            break;
++        case mcreq_add:
++            ngx_sprintf(p, "add %V 0 %V %d" CRLF "%V" CRLF, &key,
++                    &ttl, value.len, &value);
++            break;
++        case mcreq_incr:
++            ngx_sprintf(p, "incr %V %V" CRLF, &key, &value);
++            break;
++        case mcreq_decr:
++            ngx_sprintf(p, "decr %V %V" CRLF, &key, &value);
++            break;
++        case mcreq_delete:
++            ngx_sprintf(p, "delete %V" CRLF, &key);
++            break;
++        default:
++            /* impossible to reach here */
++            return pdu;
++    }
++
++    pdu.len = l;
++
++    ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, log, 0,
++            "generate pdu %V", &pdu);
++
++    return pdu;
++}
+diff -urN nginx/src/core/ngx_memcache.h nginx/src/core/ngx_memcache.h
+--- nginx/src/core/ngx_memcache.h	1970-01-01 05:30:00.000000000 +0530
++++ nginx/src/core/ngx_memcache.h	2023-03-04 13:25:59.825361500 +0530
+@@ -0,0 +1,157 @@
++/*
++ * ***** BEGIN LICENSE BLOCK *****
++ * Zimbra Collaboration Suite Server
++ * Copyright (C) 2011 Zimbra Software, LLC.
++ *
++ * The contents of this file are subject to the Zimbra Public License
++ * Version 1.4 ("License"); you may not use this file except in
++ * compliance with the License.  You may obtain a copy of the License at
++ * http://www.zimbra.com/license.
++ *
++ * Software distributed under the License is distributed on an "AS IS"
++ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
++ * ***** END LICENSE BLOCK *****
++ */
++
++#ifndef _NGX_MEMCACHE_H_INCLUDED_
++#define _NGX_MEMCACHE_H_INCLUDED_
++
++#include <ngx_config.h>
++#include <ngx_core.h>
++#include <ngx_event.h>
++#include <ngx_event_connect.h>
++
++#define NGX_MEMCACHE_CONF        0x02000000
++#define NGX_MAX_KEY_LENGTH       250
++
++typedef struct {
++    ngx_pool_t      *cpool;         /* main pool where self resides */
++    ngx_log_t       *log;
++    ngx_array_t     contexts;       /* mc_context_t[] */
++    ngx_array_t     servers;        /* ngx_addr_t*[] */
++    ngx_msec_t      timeout;
++    ngx_msec_t      reconnect;
++    ngx_msec_t      ttl;
++    ngx_str_t       ttl_text;       /* in second, ttl / 1000 */
++    ngx_flag_t      allow_unqualified;
++} ngx_memcache_conf_t;
++
++/* supported memcache request codes */
++typedef enum {
++    mcreq_noop,
++    mcreq_get,
++    mcreq_add,
++    mcreq_delete,
++    mcreq_incr,
++    mcreq_decr
++} mc_request_code_t;
++
++/* memcache response codes */
++typedef enum {
++    mcres_unknown,
++    mcres_success,
++    mcres_failure_normal,     /* memcached server response with failure info,
++                                 such as NOT_FOUND, NOT_STORED, ...             */
++    mcres_failure_input,      /* failures triggered by the user input, such as
++                                 invalid key or command                         */
++    mcres_failure_again,      /* failures that might be recovered by retry, such as
++                                 one of many memcached servers is down; or the
++                                 message replied can't be parsed correctly      */
++    mcres_failure_unavailable /* failures of no memcache servers are available,
++                                 or other failures that make memcache service
++                                 unavailable                                    */
++} mc_response_code_t;
++
++/* memcache channel status */
++typedef enum {
++    mcchan_good,
++    mcchan_bad,
++    mcchan_reconnect /* temp status in reconnection */
++} mc_channel_status_t;
++
++/* additional data returned by a memcache operation */
++typedef ngx_str_t mc_data_t;
++
++struct mc_work_s;
++/* prototype for sucess/failure handler */
++typedef void (*mc_chain_handler) (struct mc_work_s *w);
++
++/* workqueue entry representing an outstanding memcache request
++ */
++struct mc_work_s
++{
++    mc_request_code_t   request_code;   /* op request code */
++    mc_response_code_t  response_code;  /* op response status */
++    void               *ctx;            /* op context */
++    mc_data_t           payload;        /* op response payload */
++    mc_chain_handler    on_success;     /* success handler */
++    mc_chain_handler    on_failure;     /* failure handler */
++};
++
++typedef struct mc_work_s mc_work_t;
++
++
++/* a queue of memcache entries representing all outstanding memcache 
++   requests for a particular connection to a memcache server
++ */
++
++typedef struct mc_workqueue_s mc_workqueue_t;
++
++struct mc_workqueue_s {
++    mc_work_t           w;              /* payload of the workqueue entry */
++    ngx_pool_t          *pool;          /* pool in which this node resides */
++    ngx_flag_t          reclaim;        /* reclaim the pool? (default:0) */
++    mc_workqueue_t      *prev;          /* previous node in the queue */
++    mc_workqueue_t      *next;          /* next node in the queue */
++};
++
++/* a `memcache context' data structure that completely represents the 
++   state of a particular connection to a memcached server
++ */
++
++typedef struct {
++    ngx_buf_t               *readbuffer;    /* circular buffer for recv() */
++    mc_workqueue_t          wq_head;        /* head of outstanding requests */
++    ngx_addr_t              *srvaddr;       /* address of memcached server */
++    ngx_peer_connection_t   *srvconn;       /* active connection to server */
++    mc_channel_status_t     status;         /* connection status */
++    ngx_msec_t              timeout;        /* read/write timeout */
++    ngx_msec_t              cxn_interval;   /* timeout for reconnection */
++    ngx_event_t             *reconnect_ev;  /* event for reconnection */
++    ngx_atomic_t            lock;           /* concurrent access lock */
++} mc_context_t;
++
++/* Functions to manipulate the memcache work queue */
++mc_workqueue_t *ngx_memcache_wq_enqueue (mc_workqueue_t *head, mc_workqueue_t *wq);
++mc_workqueue_t *ngx_memcache_wq_dequeue (mc_workqueue_t *head);
++
++/* Post a memcache operation request onto an available channel */
++void ngx_memcache_post (
++     mc_work_t      *w,
++     ngx_str_t       key,
++     ngx_str_t       value,
++     ngx_pool_t     *p,
++     ngx_log_t      *l
++    );
++
++/*
++ * Post a memcache operation request onto an available channel
++ * custom ttl. (Only "add" is supported)
++ */
++void ngx_memcache_post_with_ttl (
++     mc_work_t       *w,
++     ngx_str_t        key,
++     ngx_str_t        value,
++     ngx_str_t        ttl,
++     ngx_pool_t      *p,
++     ngx_log_t       *l
++    );
++
++extern ngx_str_t NGX_EMPTY_STR; /* for dummy value */
++
++/* Ignore a work entry in the queue whose ctx is equal to
++ * the specified one.
++ */
++void ngx_memcache_ignore_work_by_ctx (void * ctx);
++
++#endif
+diff -urN nginx/src/core/ngx_palloc.c nginx/src/core/ngx_palloc.c
+--- nginx/src/core/ngx_palloc.c	2023-03-07 16:26:44.281516600 +0530
++++ nginx/src/core/ngx_palloc.c	2023-09-14 18:47:11.690205600 +0530
+@@ -70,9 +70,10 @@
+     }
+ 
+     for (p = pool, n = pool->d.next; /* void */; p = n, n = n->d.next) {
+-        ngx_log_debug2(NGX_LOG_DEBUG_ALLOC, pool->log, 0,
+-                       "free: %p, unused: %uz", p, p->d.end - p->d.last);
+-
++// Zimbra customizations start here (Jira Tickets: )	 
++//        ngx_log_debug2(NGX_LOG_DEBUG_ALLOC, pool->log, 0,
++//                       "free: %p, unused: %uz", p, p->d.end - p->d.last);
++// Zimbra customizations end here
+         if (n == NULL) {
+             break;
+         }
+diff -urN nginx/src/core/ngx_string.c nginx/src/core/ngx_string.c
+--- nginx/src/core/ngx_string.c	2023-07-23 13:21:26.899184500 +0530
++++ nginx/src/core/ngx_string.c	2023-09-14 18:47:11.725602200 +0530
+@@ -85,8 +85,26 @@
+ 
+     return dst;
+ }
++// Zimbra customizations start here (Jira Tickets: )
++ngx_str_t *
++ngx_pstrcpy(ngx_pool_t *pool, ngx_str_t *src) {
++    ngx_str_t * dst;
+ 
++    dst = ngx_pnalloc(pool, sizeof(ngx_str_t));
++    if (dst == NULL) {
++        return NULL;
++    }
+ 
++    dst->data = ngx_pnalloc(pool, src->len);
++    if (dst->data == NULL) {
++        return NULL;
++    }
++
++    ngx_memcpy(dst->data, src->data, src->len);
++    dst->len = src->len;
++    return dst;
++}
++// Zimbra customizations end here
+ /*
+  * supported formats:
+  *    %[0][width][x][X]O        off_t
+diff -urN nginx/src/core/ngx_string.h nginx/src/core/ngx_string.h
+--- nginx/src/core/ngx_string.h	2023-07-23 13:21:26.903174100 +0530
++++ nginx/src/core/ngx_string.h	2023-10-01 22:17:25.661131500 +0530
+@@ -150,6 +150,9 @@
+ 
+ u_char *ngx_cpystrn(u_char *dst, u_char *src, size_t n);
+ u_char *ngx_pstrdup(ngx_pool_t *pool, ngx_str_t *src);
++// Zimbra customizations start here (Jira Tickets: )
++ngx_str_t *ngx_pstrcpy(ngx_pool_t *pool, ngx_str_t *src);
++// Zimbra customizations end here
+ u_char * ngx_cdecl ngx_sprintf(u_char *buf, const char *fmt, ...);
+ u_char * ngx_cdecl ngx_snprintf(u_char *buf, size_t max, const char *fmt, ...);
+ u_char * ngx_cdecl ngx_slprintf(u_char *buf, u_char *last, const char *fmt,
+diff -urN nginx/src/core/ngx_zm_lookup.c nginx/src/core/ngx_zm_lookup.c
+--- nginx/src/core/ngx_zm_lookup.c	1970-01-01 05:30:00.000000000 +0530
++++ nginx/src/core/ngx_zm_lookup.c	2023-03-04 13:25:59.839357600 +0530
+@@ -0,0 +1,2282 @@
++/*
++ * ***** BEGIN LICENSE BLOCK *****
++ * Zimbra Collaboration Suite Server
++ * Copyright (C) 2011 Zimbra Software, LLC.
++ *
++ * The contents of this file are subject to the Zimbra Public License
++ * Version 1.4 ("License"); you may not use this file except in
++ * compliance with the License.  You may obtain a copy of the License at
++ * http://www.zimbra.com/license.
++ *
++ * Software distributed under the License is distributed on an "AS IS"
++ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
++ * ***** END LICENSE BLOCK *****
++ */
++
++#include <ngx_zm_lookup.h>
++#include <ngx_memcache.h>
++
++static char * ngx_zm_lookup_handlers(ngx_conf_t *cf, ngx_command_t *cmd,
++        void *conf);
++
++/* lookup from memcache */
++static void ngx_zm_lookup_account_from_cache(ngx_zm_lookup_ctx_t *ctx);
++static void ngx_zm_lookup_account_from_cache_success_handler(mc_work_t *work);
++static void ngx_zm_lookup_account_from_cache_failure_handler(mc_work_t *work);
++static void ngx_zm_lookup_route_from_cache(ngx_zm_lookup_ctx_t *ctx);
++static void ngx_zm_lookup_route_from_cache_success_handler(mc_work_t *work);
++static void ngx_zm_lookup_route_from_cache_failure_handler(mc_work_t *work);
++static void ngx_zm_lookup_cache_alias(ngx_zm_lookup_ctx_t *ctx,
++        ngx_str_t alias, ngx_str_t account_name);
++static void ngx_zm_lookup_cache_route(ngx_zm_lookup_ctx_t *ctx,
++        ngx_str_t user, ngx_str_t route);
++static void ngx_zm_lookup_cache_dummy_handler(mc_work_t *work);
++static void ngx_zm_lookup_delete_cache_handler(mc_work_t *work);
++
++/* memcache key creation */
++static ngx_str_t
++ngx_zm_lookup_get_user_route_key(ngx_pool_t *pool, ngx_log_t *log,
++        ngx_str_t proto, ngx_str_t account_name, ngx_str_t client_ip);
++static ngx_str_t
++ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool, ngx_log_t *log, ngx_str_t proto,
++        ngx_str_t id, ngx_http_zmauth_t type);
++
++/* lookup from route lookup servlet */
++static void ngx_zm_lookup_dummy_handler(ngx_event_t *ev);
++static void ngx_zm_lookup_connect_handler(ngx_event_t *ev);
++static void ngx_zm_lookup_connect(ngx_zm_lookup_ctx_t * ctx);
++static ngx_int_t ngx_zm_lookup_parse_response_headers(ngx_zm_lookup_ctx_t * ctx);
++static ngx_int_t ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx);
++static ngx_str_t ngx_zm_lookup_get_local_socket_addr_text (ngx_pool_t *pool,
++        ngx_socket_t s);
++static void ngx_zm_lookup_process_response(ngx_zm_lookup_ctx_t *ctx);
++static void ngx_zm_lookup_process_response_headers(ngx_zm_lookup_ctx_t *ctx);
++static void ngx_zm_lookup_send_request_handler(ngx_event_t *wev);
++static void ngx_zm_lookup_recv_response_handler(ngx_event_t *rev);
++static ngx_int_t ngx_zm_lookup_retrieve_route(ngx_pool_t * pool,
++        ngx_str_t * addr_text, ngx_str_t * port_text, ngx_addr_t * route);
++static void ngx_zm_lookup_close_connection(ngx_zm_lookup_ctx_t * ctx);
++
++/* module configuration */
++static void * ngx_zm_lookup_create_conf(ngx_cycle_t *cycle);
++static char * ngx_zm_lookup_init_conf(ngx_cycle_t *cycle, void *conf);
++static char *ngx_zm_lookup_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
++
++/* utility */
++static const u_char * ngx_zm_strchr (ngx_str_t str, int chr);
++
++static ngx_command_t ngx_zm_lookup_commands[] =
++{
++    { ngx_string("zm_lookup"),
++      NGX_MAIN_CONF|NGX_CONF_BLOCK|NGX_CONF_NOARGS,
++      ngx_zm_lookup_block,
++      0,
++      0,
++      NULL },
++
++    { ngx_string("zm_lookup_handlers"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_1MORE,
++      ngx_zm_lookup_handlers,
++      0,
++      0,
++      NULL },
++
++    { ngx_string("zm_lookup_handler_retry_interval"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_msec_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, retry_interval),
++      NULL },
++
++    { ngx_string("zm_lookup_timeout"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_msec_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, timeout),
++      NULL },
++
++    { ngx_string("zm_lookup_buffer_size"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_size_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, buffer_size),
++      NULL },
++
++    { ngx_string("zm_lookup_master_auth_username"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_str_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, master_auth_username),
++      NULL },
++
++    { ngx_string("zm_lookup_master_auth_password"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_str_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, master_auth_password),
++      NULL },
++
++    { ngx_string("zm_lookup_caching"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_flag_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, caching),
++      NULL },
++
++    { ngx_string("zm_lookup_allow_unqualified"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_flag_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, allow_unqualified),
++      NULL },
++
++    { ngx_string("zm_prefix_url"),
++      NGX_ZM_LOOKUP_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_str_slot,
++      0,
++      offsetof(ngx_zm_lookup_conf_t, url),
++      NULL },
++
++    ngx_null_command
++};
++
++static ngx_core_module_t ngx_zm_lookup_module_ctx =
++{
++    ngx_string("ngx_zm_lookup"),
++    ngx_zm_lookup_create_conf,
++    ngx_zm_lookup_init_conf
++};
++
++/*static const u_char * LOGIN_FAILED = (u_char *)"login failed";*/
++
++static const ngx_str_t ZM_PROTO[] = {
++        ngx_string("unknown"),
++        ngx_string("http"),
++        ngx_string("httpssl"),
++        ngx_string("pop3"),
++        ngx_string("pop3ssl"),
++        ngx_string("imap"),
++        ngx_string("imapssl")
++};
++
++static const ngx_str_t ZM_AUTHMETH[] = {
++        ngx_string("username"),
++        ngx_string("gssapi"),
++        ngx_string("zimbraId"),
++        ngx_string("certauth")
++};
++
++static const ngx_str_t ERRMSG[] = {
++        ngx_string("success"),
++        ngx_string("mem alloc err"),
++        ngx_string("error occurs when writing lookup request to handler"),
++        ngx_string("error occurs when reading lookup response from handler"),
++        ngx_string("timeout occurs when writing lookup request to handler"),
++        ngx_string("timeout occurs when reading lookup response from handler"),
++        ngx_string("no valid lookup handlers"),
++        ngx_string("invalid route is returned"),
++        ngx_string("LOGIN failed"),
++        ngx_string("invalid response from lookup handler"),
++        ngx_string("client connection is closed"),
++        ngx_string("dummy")
++};
++
++/*There is no need to send real password for now */
++static const ngx_str_t
++ngx_zm_lookup_password_placeholder = ngx_string("_password_");
++
++static const ngx_str_t
++ngx_zm_prefix_url = ngx_string("/");
++
++ngx_module_t ngx_zm_lookup_module =
++{
++    NGX_MODULE_V1,
++    &ngx_zm_lookup_module_ctx,          /* module context */
++    ngx_zm_lookup_commands,             /* module directives */
++    NGX_CORE_MODULE,                    /* module type */
++    NULL,                               /* init master */
++    NULL,                               /* init module */
++    NULL,                               /* init process */
++    NULL,                               /* init thread */
++    NULL,                               /* exit thread */
++    NULL,                               /* exit process */
++    NULL,                               /* exit master */
++    NGX_MODULE_V1_PADDING
++};
++
++static char *ngx_zm_lookup_block(ngx_conf_t *cf, ngx_command_t *cmd,
++        void *conf)
++{
++    ngx_conf_t  ocf;
++    char        *rc;
++
++    ocf = *cf;
++
++    cf->ctx = cf->cycle->conf_ctx;
++    cf->module_type = NGX_CORE_MODULE;
++    cf->cmd_type = NGX_ZM_LOOKUP_CONF;
++
++    rc = ngx_conf_parse(cf, NULL);
++
++    *cf = ocf;
++
++    return rc;
++}
++
++static void *
++ngx_zm_lookup_create_conf(ngx_cycle_t *cycle)
++{
++    ngx_zm_lookup_conf_t *zlcf;
++    ngx_pool_t          *pool;
++    ngx_log_t           *log;
++
++    log = cycle->log;
++    pool = ngx_create_pool (8 * ngx_pagesize, cycle->log);
++
++    zlcf = ngx_pcalloc (pool, sizeof(ngx_zm_lookup_conf_t));
++    if (zlcf == NULL) {
++        return NGX_CONF_ERROR;
++    }
++
++    zlcf->pool = pool;
++    zlcf->log = log;
++
++#if (NGX_SSL)
++
++    ngx_pool_cleanup_t    *cln;
++    zlcf->ssl = ngx_pcalloc(pool, sizeof(ngx_ssl_t));
++
++    if (zlcf->ssl == NULL) {
++        return NGX_CONF_ERROR;
++    }
++
++    zlcf->ssl->log = log;
++
++    // don't support SSLv2 anymore
++    if (ngx_ssl_create(zlcf->ssl, ~(NGX_SSL_SSLv2|NGX_SSL_SSLv3), NULL)
++            != NGX_OK) {
++        return NGX_CONF_ERROR;
++    }
++
++    cln = ngx_pool_cleanup_add(zlcf->pool, 0);
++    if (cln == NULL) {
++        return NGX_CONF_ERROR;
++    }
++
++    cln->handler = ngx_ssl_cleanup_ctx;
++    cln->data = zlcf->ssl;
++
++#endif
++
++    if(ngx_array_init (&zlcf->handlers, zlcf->pool, 4,
++            sizeof(ngx_zm_lookup_handler_t)) != NGX_OK) {
++        return NGX_CONF_ERROR;
++    }
++
++    zlcf->retry_interval = NGX_CONF_UNSET;
++    zlcf->buffer_size = NGX_CONF_UNSET_SIZE;
++    zlcf->timeout = NGX_CONF_UNSET;
++    zlcf->caching = NGX_CONF_UNSET;
++    zlcf->allow_unqualified = NGX_CONF_UNSET;
++    ngx_str_null(&zlcf->master_auth_username);
++    ngx_str_null(&zlcf->master_auth_password);
++    ngx_str_null(&zlcf->url);
++    ngx_log_error(NGX_LOG_DEBUG_ZIMBRA, cycle->log, 0,
++        "zm lookup configuration created");
++    return zlcf;
++}
++
++static char *
++ngx_zm_lookup_init_conf(ngx_cycle_t *cycle, void *conf)
++{
++    ngx_zm_lookup_conf_t *zlcf = conf;
++
++    // set default value of timeout
++    if (zlcf->retry_interval == NGX_CONF_UNSET_UINT) {
++        zlcf->retry_interval = 60000;
++    }
++
++    if (zlcf->caching == NGX_CONF_UNSET) {
++        zlcf->caching = 1;
++    }
++
++    if (zlcf->allow_unqualified == NGX_CONF_UNSET) {
++        zlcf->allow_unqualified = 0;
++    }
++
++    if (zlcf->buffer_size == NGX_CONF_UNSET_SIZE) {
++        zlcf->buffer_size = 1024;
++    }
++
++    if (zlcf->timeout == NGX_CONF_UNSET_UINT) {
++        zlcf->timeout = 15000;
++    }
++
++    if (zlcf->master_auth_username.data == NULL) {
++        zlcf->master_auth_username = ngx_zm_lookup_password_placeholder;
++    }
++
++    if (zlcf->master_auth_password.data == NULL) {
++        zlcf->master_auth_password = ngx_zm_lookup_password_placeholder;
++    }
++
++    if (zlcf->url.data == NULL) {
++        zlcf->url = ngx_zm_prefix_url;
++    }
++
++    ngx_log_error(NGX_LOG_DEBUG_ZIMBRA,cycle->log, 0,
++        "zm lookup - initialized config defaults");
++    return NGX_CONF_OK;
++}
++
++static char *
++ngx_zm_lookup_handlers(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    ngx_zm_lookup_conf_t       *zlcf = conf;
++    ngx_zm_lookup_handler_t    *handler;
++    ngx_url_t                   u;
++    ngx_uint_t                  i;
++    ngx_uint_t                  add;
++
++    /* parse each url specified against directive "zm_lookup_handlers" */
++    for(i = 1; i < cf->args->nelts; ++i)
++    {
++        ngx_memzero(&u, sizeof(ngx_url_t));
++        u.url = ((ngx_str_t*)cf->args->elts)[i];
++        u.default_port = 7072;
++        u.uri_part = 1;
++        add = 0;
++
++        if (ngx_strncasecmp(u.url.data, (u_char *) "http://", 7) == 0) {
++            add = 7;
++        } else if (ngx_strncasecmp(u.url.data, (u_char *) "https://", 8) == 0) {
++#if (NGX_SSL)
++            add = 8;
++#else
++            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                               "https protocol requires SSL support");
++            return NGX_CONF_ERROR;
++#endif
++        } else {
++            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "invalid URL prefix");
++            return NGX_CONF_ERROR;
++        }
++        u.url.len -= add;
++        u.url.data += add;
++
++        if (ngx_parse_url(cf->pool, &u) != NGX_OK) {
++            if (u.err) {
++                ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                    "%s in zm lookup handlers \"%V\"", u.err, &u.url);
++            }
++            return NGX_CONF_ERROR;
++        }
++
++        handler = ngx_array_push(&zlcf->handlers);
++        if (handler == NULL) {
++            return NGX_CONF_ERROR;
++        }
++
++        handler->peer = u.addrs;
++        handler->host = u.host;
++        handler->uri = u.uri;
++        handler->failure_time = 0;
++        if (add == 7) {
++            handler->ssl = 0;
++        } else if (add == 8) {
++            handler->ssl = 1;
++        }
++
++        ngx_conf_log_error(NGX_LOG_INFO, cf, 0,
++                    "add zimbra route lookup handler %V", &u.url);
++    }
++
++    if (zlcf->handlers.nelts == 0) {
++        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++            "zero valid zmauth route handlers");
++        return NGX_CONF_ERROR;
++    }
++
++    return NGX_CONF_OK;
++}
++
++static ngx_int_t
++ngx_zm_lookup_elect_handler(ngx_zm_lookup_ctx_t *ctx, ngx_zm_lookup_conf_t *zlcf)
++{
++    ngx_zm_lookup_handler_t * handler;
++    time_t now = time(NULL);
++
++    if (zlcf->handlers.nelts == 0) {
++        return NGX_ERROR;
++    }
++    /* so the loop below can start from zlcf->handler_index rather than
++       zlcf->handler_index + 1
++     */
++    ctx->handler_index = zlcf->handler_index - 1;
++    zlcf->handler_index = (zlcf->handler_index + 1) % zlcf->handlers.nelts;
++    do {
++        if (ctx->tries >= zlcf->handlers.nelts) {
++           ngx_log_error (NGX_LOG_ERR, ctx->log, 0,
++                   "All nginx lookup handlers are unavailable");
++           return NGX_ERROR;
++
++        } else {
++            ctx->handler_index = (ctx->handler_index + 1) % zlcf->handlers.nelts;
++            ctx->tries ++;
++
++            handler = ((ngx_zm_lookup_handler_t*)zlcf->handlers.elts) + ctx->handler_index;
++            if (handler->failure_time != 0) {
++                if((now < handler->failure_time ||
++                (now - handler->failure_time) < (time_t)(zlcf->retry_interval / 1000))) {
++                    continue;
++                } else {
++                    handler->failure_time = 0; // mark it as available and try to connect it
++                }
++            }
++            ctx->handler = handler;
++            break;
++        }
++    } while (1);
++
++    return NGX_OK;
++}
++
++/* portal API */
++void
++ngx_zm_lookup(ngx_zm_lookup_work_t * work)
++{
++    ngx_zm_lookup_ctx_t          *ctx;
++    ngx_zm_lookup_conf_t         *zlcf;
++
++    zlcf = (ngx_zm_lookup_conf_t *)
++            ngx_get_conf (ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++
++    ctx = ngx_pcalloc(work->pool, sizeof(ngx_zm_lookup_ctx_t));
++    if (ctx == NULL) {
++        work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++        work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++        work->on_failure(work);
++        return;
++    }
++    ctx->pool = work->pool;
++    ctx->log = work->log;
++    ctx->work = work;
++    ctx->tries = 0;
++    ctx->handler = NULL;
++    ctx->state = 0;
++    work->ctx = ctx;
++
++    if (ctx->work->auth_method == ZM_AUTHMETH_GSSAPI ||
++        ctx->work->auth_method == ZM_AUTHMETH_CERTAUTH) {
++        /* These methods should never be cached */
++        ngx_zm_lookup_connect(ctx);
++        return;
++    }
++
++    if (zlcf->caching) {
++
++        if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
++            ngx_zm_lookup_route_from_cache(ctx);
++            return;
++        }
++
++        if (work->alias_check_stat == ZM_ALIAS_NOT_CHECKED) {
++            ngx_zm_lookup_account_from_cache(ctx);
++        } else {
++            ngx_zm_lookup_route_from_cache(ctx);
++        }
++
++    } else {
++        ngx_zm_lookup_connect(ctx);
++    }
++}
++
++/*
++ * Consider current user name is an alias and lookup its
++ * corresponding account name, such 'john' --> 'john@test.com'
++ */
++static void
++ngx_zm_lookup_account_from_cache (ngx_zm_lookup_ctx_t * ctx)
++{
++    ngx_zm_lookup_work_t                    *work;
++    ngx_str_t                                key;
++    ngx_log_t                               *log;
++    mc_work_t                                mc;
++    ngx_pool_t                              *pool;
++
++    log = ctx->log;
++    pool = ctx->pool;
++    work = ctx->work;
++
++    if (work->alias_key.len > 0) {
++        key = work->alias_key;
++    } else {
++        if (IS_PROTO_WEB(work->protocol)) {
++            key = ngx_zm_lookup_get_http_alias_key
++                    (pool, log, work->username, work->virtual_host);
++        } else {
++            key = ngx_zm_lookup_get_mail_alias_key
++                    (pool, log, work->username, work->connection->addr_text);
++        }
++
++        if (key.len == 0) {    /* NOMEM */
++            work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++            work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++            work->on_failure(work);
++            return;
++        }
++
++        work->alias_key = key;
++    }
++
++    mc.ctx = ctx;
++    mc.request_code = mcreq_get;
++    mc.response_code = mcres_unknown;
++    mc.on_success = ngx_zm_lookup_account_from_cache_success_handler;
++    mc.on_failure = ngx_zm_lookup_account_from_cache_failure_handler;
++
++    ctx->wait_memcache = 1;
++    ngx_memcache_post(&mc, key, NGX_EMPTY_STR,/* pool */ NULL, log);
++}
++
++static void
++ngx_zm_lookup_account_from_cache_success_handler (mc_work_t *mc)
++{
++    ngx_zm_lookup_ctx_t          *ctx;
++    ngx_str_t                     account_name;
++
++    ctx = (ngx_zm_lookup_ctx_t *)mc->ctx;
++    ctx->wait_memcache = 0;
++
++    account_name.data = ngx_pstrdup(ctx->pool, &mc->payload);
++    if (account_name.data != NULL)
++    {
++        account_name.len = mc->payload.len;
++        ctx->work->account_name = account_name;
++
++        ngx_log_debug2 (NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++            "zm lookup: user:%V aliased to account name:%V",
++            &ctx->work->username, &account_name
++            );
++
++        ctx->work->alias_check_stat = ZM_ALIAS_FOUND;
++        ngx_zm_lookup_route_from_cache(ctx);
++    }
++}
++
++static void
++ngx_zm_lookup_account_from_cache_failure_handler(mc_work_t *work)
++{
++    ngx_zm_lookup_ctx_t          *ctx;
++
++    ctx = (ngx_zm_lookup_ctx_t *)work->ctx;
++    ctx->wait_memcache = 0;
++    ctx->work->alias_check_stat = ZM_ALIAS_NOT_FOUND;
++    /* If account name is not found, take username as the account name */
++    ctx->work->account_name = ctx->work->username;
++
++    ngx_zm_lookup_route_from_cache(ctx);
++}
++
++/* lookup route by zimbra id/account name in memcache */
++static void
++ngx_zm_lookup_route_from_cache (ngx_zm_lookup_ctx_t *ctx)
++{
++    ngx_pool_t                     *pool;
++    ngx_log_t                      *log;
++    ngx_str_t                       key;
++    mc_work_t                       mc;
++    ngx_zm_lookup_work_t           *work;
++    ngx_zm_lookup_conf_t           *zlcf;
++    ngx_str_t                       username;
++
++    zlcf = (ngx_zm_lookup_conf_t *)
++            ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++
++    pool = ctx->pool;
++    log = ctx->log;
++    work = ctx->work;
++
++    if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
++        key = ngx_zm_lookup_get_id_route_key(
++                pool, log, ZM_PROTO[work->protocol], work->username,
++                work->type);
++    } else {
++        if (work->alias_check_stat == ZM_ALIAS_FOUND) {
++            username = work->account_name;
++        } else {
++            username = work->username;
++        }
++
++        if (zlcf->allow_unqualified == 0 && !is_login_qualified(username)) {
++            key = ngx_zm_lookup_get_user_route_key(pool, log, ZM_PROTO[work->protocol],
++                    username, work->connection->addr_text);
++        } else {
++            key = ngx_zm_lookup_get_user_route_key(pool, log, ZM_PROTO[work->protocol],
++                    username, NGX_EMPTY_STR);
++        }
++    }
++
++    if (key.len == 0) {   /* NOMEM */
++        work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++        work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++        work->on_failure(work);
++        return;
++    }
++
++    ctx->work->route_key = key;
++
++    mc.ctx = ctx;
++    mc.request_code = mcreq_get;
++    mc.response_code = mcres_unknown;
++    mc.on_success = ngx_zm_lookup_route_from_cache_success_handler;
++    mc.on_failure = ngx_zm_lookup_route_from_cache_failure_handler;
++
++    ctx->wait_memcache = 1;
++    ngx_memcache_post(&mc, key, NGX_EMPTY_STR,/* pool */ NULL, log);
++}
++
++static void
++ngx_zm_lookup_route_from_cache_success_handler (mc_work_t *mc)
++{
++    ngx_zm_lookup_ctx_t                     *ctx;
++    ngx_str_t                                route_text;
++    ngx_url_t                                u;
++
++    ctx = (ngx_zm_lookup_ctx_t *)mc->ctx;
++    ctx->wait_memcache = 0;
++
++    route_text.data = ngx_pstrdup(ctx->pool, &mc->payload);
++
++    if (route_text.data == NULL) {
++        ctx->work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++        ctx->work->on_failure(ctx->work);
++        return;
++    } else {
++        route_text.len = mc->payload.len;
++
++        ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, ctx->log,0,
++            "zm lookup: fetch cached route:%V for user:%V",
++            &route_text, &ctx->work->username
++            );
++
++        ngx_memzero(&u, sizeof(u));
++        u.url = route_text;
++        u.listen = 1;
++
++        if (ngx_parse_url(ctx->pool, &u) != NGX_OK) {
++            ctx->work->result = ZM_LOOKUP_INVALID_ROUTE;
++            ctx->work->on_failure(ctx->work);
++            return;
++        }
++
++        ctx->work->route = ngx_palloc(ctx->pool, sizeof(ngx_addr_t));
++        if (ctx->work->route == NULL) {
++            ctx->work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++            ctx->work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++            ctx->work->on_failure(ctx->work);
++            return;
++        }
++        ctx->work->route->name = route_text;
++        ctx->work->route->socklen = u.socklen;
++        ctx->work->route->sockaddr = ngx_palloc(ctx->pool, u.socklen);
++        if(ctx->work->route->sockaddr == NULL) {
++            ctx->work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++            ctx->work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++            ctx->work->on_failure(ctx->work);
++            return;
++        }
++        ngx_memcpy(ctx->work->route->sockaddr, &u.sockaddr, u.socklen);
++        ctx->work->result = ZM_LOOKUP_SUCCESS;
++        ctx->work->on_success(ctx->work);
++        return;
++    }
++}
++
++static void
++ngx_zm_lookup_route_from_cache_failure_handler(mc_work_t *mc)
++{
++    ngx_zm_lookup_ctx_t          *ctx;
++    ctx = (ngx_zm_lookup_ctx_t *) mc->ctx;
++    ctx->wait_memcache = 0;
++
++    /* if alias-->account lookup succeeds, but route lookup fails,
++     * ignore the found account. Still use what user initial input
++     * do the route lookup. (bug 49283)
++     */
++    if (ctx->work->alias_check_stat == ZM_ALIAS_FOUND) {
++        ctx->work->alias_check_stat = ZM_ALIAS_IGNORED;
++    }
++
++    ngx_zm_lookup_connect (ctx);
++}
++
++#if (NGX_SSL)
++
++static void
++ngx_zm_lookup_ssl_handshake(ngx_connection_t *c)
++{
++    ngx_zm_lookup_ctx_t *ctx = c->data;
++
++    if (c->ssl->handshaked) {
++        c->read->handler = ngx_zm_lookup_dummy_handler;
++        c->write->handler = ngx_zm_lookup_connect_handler;
++        ngx_reusable_connection(c, 1);
++        c->write->handler(c->write);
++        ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++                 "zm lookup: ngx_zm_lookup_ssl_handshake set fd:%d", c->fd);
++    } else {
++        /* when handshake fails, we should close the session */
++        ngx_zm_lookup_close_connection(ctx);
++        ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++                         "zm lookup: ngx_zm_lookup_ssl_handshake unset fd:%d", c->fd);
++    }
++}
++
++static ngx_flag_t
++ngx_zm_lookup_ssl_init_connection(ngx_ssl_t* ssl, ngx_connection_t *c)
++{
++    ngx_int_t   rc;
++    ngx_int_t   marker = 20;
++    ngx_zm_lookup_ctx_t *ctx = c->data;
++
++    if (ngx_ssl_create_connection(ssl, c,
++                                  NGX_SSL_BUFFER|NGX_SSL_CLIENT)
++        != NGX_OK)
++    {
++        ngx_zm_lookup_close_connection(ctx);
++        return;
++    }
++
++    c->log->action = "SSL handshaking to lookup handler";
++
++    do {
++        rc = ngx_ssl_handshake(c);
++        if(rc == NGX_AGAIN)
++        {
++            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
++                    "zm lookup: ngx_zm_lookup_ssl_init_connection ngx_ssl_handshake returned NGX_AGAIN");
++            ngx_msleep(5);
++        }
++        else if (rc == NGX_ERROR)
++        {
++            ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
++                    "zm lookup: ngx_zm_lookup_ssl_init_connection ssl event failed with NGX_ERROR");
++            ngx_zm_lookup_ssl_handshake(c);
++            return ZM_LOOKUP_SSL_EVENT_FAILED;
++        }
++    }while (rc == NGX_AGAIN && --marker > 0);
++
++    if( 0 == marker )
++    {
++        ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
++                "zm lookup: ngx_zm_lookup_ssl_init_connection marker reached");
++        ngx_zm_lookup_ssl_handshake(c);
++        return ZM_LOOKUP_SSL_EVENT_FAILED;
++    }
++
++    ngx_log_debug0 (NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
++            "zm lookup: ngx_zm_lookup_ssl_init_connection before call to ngx_zm_lookup_ssl_handshake");
++    ngx_zm_lookup_ssl_handshake(c);
++    return ZM_LOOKUP_SSL_EVENT_SUCCESS;
++}
++
++#endif
++
++static void
++ngx_zm_lookup_connect (ngx_zm_lookup_ctx_t * ctx)
++{
++    ngx_zm_lookup_conf_t         *zlcf;
++    ngx_zm_lookup_handler_t      *handler;
++    ngx_int_t                     rc;
++
++    zlcf = (ngx_zm_lookup_conf_t *)ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++
++    ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++         "zm lookup: elected route handler #%d", ctx->handler_index);
++     if (ngx_zm_lookup_elect_handler(ctx, zlcf) != NGX_OK) {
++         ngx_log_error(NGX_LOG_ERR, ctx->log, 0,
++              "zm lookup: all lookup handlers exhausted");
++         ctx->work->result = ZM_LOOKUP_NO_VALID_HANDLER;
++         ctx->work->err = ERRMSG[ZM_LOOKUP_NO_VALID_HANDLER];
++         ctx->work->on_failure(ctx->work);
++         return;
++     }
++
++     handler = ctx->handler;
++     ctx->peer.sockaddr = handler->peer->sockaddr;
++     ctx->peer.socklen = handler->peer->socklen;
++     ctx->peer.name = &handler->peer->name;
++     ctx->peer.get = ngx_event_get_peer;
++     ctx->peer.log = ctx->log;
++     ctx->peer.log_error = NGX_ERROR_ERR;
++
++     rc = ngx_event_connect_peer(&ctx->peer);
++
++     if (rc == NGX_ERROR || rc == NGX_BUSY || rc == NGX_DECLINED) {
++         ngx_log_debug2(NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++             "zm lookup: connect to lookup handler failed, host:%V, uri:%V",
++             ctx->peer.name, &handler->uri);
++         ngx_zm_lookup_close_connection(ctx);
++
++         /* try again */
++         ngx_log_error(NGX_LOG_WARN, ctx->log, 0, "zm lookup: "
++                       "connect lookup handle error, fail over to the next one");
++         ngx_zm_lookup_connect(ctx);
++         return;
++
++     }
++
++     ctx->peer.connection->data = ctx;
++     ctx->peer.connection->pool = ctx->pool;
++     ctx->peer.connection->log = ctx->log;
++     ngx_add_timer(ctx->peer.connection->read, zlcf->timeout);
++     ngx_add_timer(ctx->peer.connection->write, zlcf->timeout);
++
++#if (NGX_SSL)
++
++    if (ctx->handler->ssl && ctx->peer.connection->ssl == NULL) {
++        if(ngx_zm_lookup_ssl_init_connection(zlcf->ssl, ctx->peer.connection) == ZM_LOOKUP_SSL_EVENT_FAILED)
++        {
++            ngx_log_error(NGX_LOG_WARN, ctx->log, 0, "zm lookup: ngx_zm_lookup_connect "
++                    "connect lookup handle error for host:%V, uri:%V, fail over to the next one",ctx->peer.name, &handler->uri);
++            ngx_zm_lookup_connect(ctx);
++        }
++        return;
++    }
++
++#endif
++
++    ctx->peer.connection->read->handler = ngx_zm_lookup_dummy_handler;
++    ctx->peer.connection->write->handler = ngx_zm_lookup_connect_handler;
++}
++
++static void
++ngx_zm_lookup_dummy_handler(ngx_event_t *ev)
++{
++    ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, ev->log, 0,
++        "ngx_zm_lookup_dummy_handler()");
++}
++
++static void
++ngx_zm_lookup_connect_handler(ngx_event_t *ev)
++{
++    ngx_connection_t                    *c;
++    ngx_zm_lookup_ctx_t                 *ctx;
++    int                                  sockerr;
++    socklen_t                            sockerr_len;
++    struct timeval                       tv;
++
++    c = ev->data;
++    ctx = c->data;
++
++    /* Add health checked as auth http? */
++
++    sockerr = 0;
++    sockerr_len = sizeof(sockerr);
++    getsockopt(c->fd, SOL_SOCKET, SO_ERROR, &sockerr, &sockerr_len);
++
++    if(sockerr == EINPROGRESS) {
++        /* expect to be reinvoked */
++        ngx_log_debug0(NGX_LOG_DEBUG_HTTP, c->log, 0,
++            "zm lookup: connect to route handler in progress");
++        return;
++    } else if (sockerr != 0) {
++        ngx_log_debug1(NGX_LOG_DEBUG_HTTP, c->log, 0,
++            "zm lookup: connect to route handler error:%d, will re-elect",
++            sockerr);
++        ngx_gettimeofday(&tv);
++        ctx->handler->failure_time = tv.tv_sec;
++        ngx_close_connection(c);
++        ctx->peer.connection = NULL;
++
++        /* try again */
++        ngx_log_error(NGX_LOG_WARN, c->log, sockerr, "zm lookup: "
++                      "connect lookup handle error, fail over to the next one");
++        ngx_zm_lookup_connect(ctx);
++        return;
++    } else {
++
++       if (ngx_zm_lookup_create_request(ctx) != NGX_OK) {
++           ctx->work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++           ctx->work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++           ctx->work->on_failure(ctx->work);
++           return;
++       }
++
++        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, c->log, 0,
++            "zm lookup: begin zm lookup");
++        ctx->peer.connection->write->handler = ngx_zm_lookup_send_request_handler;
++        ctx->peer.connection->read->handler = ngx_zm_lookup_recv_response_handler;
++        ctx->lookup_response_handler = ngx_zm_lookup_process_response;
++        ctx->peer.connection->write->handler(ctx->peer.connection->write);
++        return;
++    }
++}
++
++static void
++ngx_zm_lookup_send_request_handler(ngx_event_t *wev)
++{
++    ngx_connection_t             *c;
++    ngx_zm_lookup_ctx_t          *ctx;
++    ngx_zm_lookup_work_t         *work;
++    ngx_zm_lookup_conf_t         *zlcf;
++    ssize_t                       size, n;
++
++    c = wev->data;
++    ctx = c->data;
++    work = ctx->work;
++    zlcf = (ngx_zm_lookup_conf_t *)ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++
++    if (wev->timedout) {
++    	ngx_log_error(NGX_LOG_ERR, wev->log, NGX_ETIMEDOUT,
++    	    "zm lookup: route handler timed out, failing over to the next one");
++    	ngx_zm_lookup_close_connection(ctx);
++
++    	/* try again */
++    	ngx_zm_lookup_connect(ctx);
++        return;
++    }
++
++    size = ctx->lookup_req->last - ctx->lookup_req->pos;
++
++    n = c->send(c, ctx->lookup_req->pos, size);
++
++    if (n == NGX_ERROR) {
++        work->result = ZM_LOOKUP_WRITE_ERROR;
++        ngx_zm_lookup_close_connection(ctx);
++        work->on_failure(work);
++        return;
++    }
++    if (n > 0) {
++        ctx->lookup_req->pos += n;
++        if (n == size) {
++            wev->handler = ngx_zm_lookup_dummy_handler;
++            if (wev->timer_set) {
++                ngx_del_timer(wev);
++            }
++            if (ngx_handle_write_event(wev, 0) == NGX_ERROR) {
++                work->result = ZM_LOOKUP_WRITE_ERROR;
++                ngx_zm_lookup_close_connection(ctx);
++                work->on_failure(work);
++                return;
++            }
++        }
++    }
++    if (!wev->timer_set) {
++        ngx_add_timer(wev, zlcf->timeout);
++    }
++}
++
++static ngx_int_t
++ngx_zm_lookup_create_request(ngx_zm_lookup_ctx_t *ctx)
++{
++    ngx_buf_t                           *b;
++    size_t                               len;
++    ngx_pool_t                          *pool;
++    ngx_zm_lookup_conf_t                *zlcf;
++    ngx_zm_lookup_work_t                *work;
++    ngx_str_t                            proxy_ip, username;
++    zlcf = (ngx_zm_lookup_conf_t *)ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++    pool = ctx->pool;
++    work = ctx->work;
++
++    if(work->alias_check_stat == ZM_ALIAS_FOUND) {
++        username = work->account_name;
++    } else {
++        username = work->username;
++    }
++
++    proxy_ip = ngx_zm_lookup_get_local_socket_addr_text (pool, work->connection->fd);
++
++    len = sizeof("GET ") - 1 + ctx->handler->uri.len + sizeof(" HTTP/1.0" CRLF) - 1
++        + sizeof("Host: ") - 1 + ctx->handler->host.len + sizeof(CRLF) - 1
++        + sizeof("Auth-Method: ") - 1 + ZM_AUTHMETH[work->auth_method].len + sizeof(CRLF) - 1
++        + sizeof("Auth-User: ") - 1 + username.len + sizeof(CRLF) - 1
++        + sizeof("Auth-Pass: ") - 1 + ngx_zm_lookup_password_placeholder.len + sizeof(CRLF) - 1
++        + sizeof("Auth-Protocol: ") - 1 + ZM_PROTO[work->protocol].len + sizeof(CRLF) - 1
++        + sizeof("Auth-Login-Attempt: ") - 1 + NGX_INT_T_LEN + sizeof(CRLF) - 1
++        + sizeof ("X-Proxy-IP: ") - 1 + proxy_ip.len + sizeof(CRLF) - 1
++        + sizeof ("Client-IP: ") - 1 + work->connection->addr_text.len + sizeof(CRLF) - 1;
++
++    if (work->type == zmauth_admin_console) {
++        len += sizeof ("Auth-Zimbra-Admin: True" CRLF) - 1;
++    } else if (work->type == zmauth_zx) {
++        len += sizeof ("Auth-Zimbra-Zx: True" CRLF) - 1;
++    }
++
++    if (IS_PROTO_WEB(work->protocol)) {
++        len += sizeof("X-Proxy-Host: ") - 1 + work->virtual_host.len + sizeof(CRLF) - 1;
++    }
++
++    if (work->auth_method == ZM_AUTHMETH_CERTAUTH ||
++        work->auth_method == ZM_AUTHMETH_GSSAPI) {
++        len += sizeof ("Auth-Admin-User: ") - 1 + zlcf->master_auth_username.len + sizeof(CRLF) - 1;
++        len += sizeof ("Auth-Admin-User: ") - 1 + zlcf->master_auth_password.len + sizeof(CRLF) - 1;
++
++        if (work->auth_method == ZM_AUTHMETH_GSSAPI) {
++            len += sizeof ("Auth-ID: ") - 1 + work->auth_id.len + sizeof(CRLF) - 1;
++        }
++    }
++
++    len += sizeof(CRLF) - 1;
++
++    b = ngx_create_temp_buf(pool, len);
++
++    if (b == NULL) {
++        return NGX_ERROR;
++    }
++
++    b->last = ngx_sprintf(b->last, "GET %V HTTP/1.0" CRLF, &ctx->handler->uri);
++    b->last = ngx_sprintf(b->last, "Host: %V" CRLF, &ctx->handler->host);
++    b->last = ngx_sprintf(b->last, "Auth-Method: %V" CRLF, &ZM_AUTHMETH[work->auth_method]);
++    b->last = ngx_sprintf(b->last, "Auth-User: %V" CRLF, &username);
++    b->last = ngx_sprintf(b->last, "Auth-Pass: %V" CRLF, &ngx_zm_lookup_password_placeholder);
++    b->last = ngx_sprintf(b->last, "Auth-Protocol: %V" CRLF, &ZM_PROTO[work->protocol]);
++    if (IS_PROTO_WEB(work->protocol)) {
++        work->login_attempts = 0; /* for web, login attempts is always 0 */
++    }
++    b->last = ngx_sprintf(b->last, "Auth-Login-Attempt: %d" CRLF, work->login_attempts);
++    b->last = ngx_sprintf(b->last, "X-Proxy-IP: %V" CRLF, &proxy_ip);
++    b->last = ngx_sprintf(b->last, "Client-IP: %V" CRLF, &work->connection->addr_text);
++    if (work->type == zmauth_admin_console) {
++       b->last = ngx_cpymem(b->last, "Auth-Zimbra-Admin: True" CRLF, sizeof("Auth-Zimbra-Admin: True" CRLF) - 1);
++    } else if (work->type == zmauth_zx) {
++        b->last = ngx_cpymem(b->last, "Auth-Zimbra-Zx: True" CRLF, sizeof("Auth-Zimbra-Zx: True" CRLF) - 1);
++    }
++
++    if (IS_PROTO_WEB(work->protocol)) {
++        b->last = ngx_sprintf(b->last, "X-Proxy-Host: %V" CRLF, &work->virtual_host);
++    }
++
++    if (work->auth_method == ZM_AUTHMETH_CERTAUTH||
++        work->auth_method == ZM_AUTHMETH_GSSAPI) {
++        b->last = ngx_sprintf(b->last, "Auth-Admin-User: %V" CRLF, &zlcf->master_auth_username);
++        b->last = ngx_sprintf(b->last, "Auth-Admin-Pass: %V" CRLF, &zlcf->master_auth_password);
++
++        if (work->auth_method == ZM_AUTHMETH_GSSAPI) {
++            b->last = ngx_sprintf(b->last, "Auth-ID: %V" CRLF, &work->auth_id);
++        }
++    }
++
++    b->last = ngx_cpymem(b->last, CRLF, sizeof(CRLF) - 1);
++
++    ctx->lookup_req = b;
++
++#if (NGX_DEBUG)
++    ngx_str_t temp;
++    temp.data = b->pos;
++    temp.len = b->last - b->pos;
++
++    ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++            "send lookup request:\n%V", &temp);
++#endif
++
++    return NGX_OK;
++}
++
++static void
++ngx_zm_lookup_recv_response_handler(ngx_event_t *rev)
++{
++    ngx_connection_t         *c;
++    ngx_zm_lookup_ctx_t      *ctx;
++    ngx_zm_lookup_work_t     *work;
++    ngx_zm_lookup_conf_t     *zlcf;
++    ssize_t                   n, size;
++
++    c = rev->data;
++    ctx = c->data;
++    work = ctx->work;
++    zlcf = (ngx_zm_lookup_conf_t *)ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++
++    if(rev->timedout) {
++        ngx_log_debug2(NGX_LOG_DEBUG_ZIMBRA, rev->log, 0,
++            "zm_route_lookup_module: lookup handler timed out, host:%V, uri:%V",
++            &ctx->handler->peer->name, &ctx->handler->uri);
++
++        ngx_zm_lookup_close_connection(ctx);
++        work->result = ZM_LOOKUP_READ_TIMEOUT;
++        work->err = ERRMSG[ZM_LOOKUP_READ_TIMEOUT];
++        work->on_failure(work);
++        return;
++    }
++
++    if(ctx->lookup_resp == NULL) {
++        ctx->lookup_resp = ngx_create_temp_buf(ctx->pool, zlcf->buffer_size);
++
++        if (ctx->lookup_resp == NULL) {
++            ngx_zm_lookup_close_connection(ctx);
++            work->ctx = NULL;
++            work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++            work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++            work->on_failure(work);
++            return;
++        }
++    }
++
++    size = ctx->lookup_resp->end - ctx->lookup_resp->last;
++    n = c->recv(c, ctx->lookup_resp->pos, size);
++
++    ngx_log_debug1(NGX_LOG_DEBUG_ZIMBRA, rev->log, 0,
++            "zm lookup: ngx_recv() returned %d bytes", n);
++    if(n > 0) {
++        ctx->lookup_resp->last += n;
++        ctx->lookup_response_handler (ctx);
++        return;
++    }
++
++    if(n == NGX_AGAIN) {
++        ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, rev->log, 0,
++                    "zm lookup: ngx_recv() returned NGX_AGAIN");
++        return;
++    }
++
++    ngx_zm_lookup_close_connection(ctx);
++    work->ctx = NULL;
++    work->result = ZM_LOOKUP_READ_ERROR;
++    work->err = ERRMSG[ZM_LOOKUP_READ_ERROR];
++    work->on_failure(work);
++}
++
++static void
++ngx_zm_lookup_process_response(ngx_zm_lookup_ctx_t *ctx)
++{
++    u_char                              *p, ch, *code_start;
++    ngx_int_t                           code;
++    ngx_flag_t                          error;
++    ngx_str_t                           errmsg;
++
++    enum  {
++        sw_start = 0,
++        sw_H,
++        sw_HT,
++        sw_HTT,
++        sw_HTTP,
++        sw_HTTPVER,
++        sw_code,
++        sw_skip,
++        sw_almost_done
++    } state;
++
++    ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++                   "zm lookup: process route discovery HTTP status");
++
++    state = ctx->state;
++
++    error = 0;
++
++    for (p = ctx->lookup_resp->pos; p < ctx->lookup_resp->last; p++)
++    {
++        ch = *p;
++
++        switch (state) {
++
++        /* "HTTP/" */
++        case sw_start:
++            if (ch == 'H') {
++                state = sw_H;
++                break;
++            }
++            goto next;
++
++        case sw_H:
++            if (ch == 'T') {
++                state = sw_HT;
++                break;
++            }
++            goto next;
++
++        case sw_HT:
++            if (ch == 'T') {
++                state = sw_HTT;
++                break;
++            }
++            goto next;
++
++        case sw_HTT:
++            if (ch == 'P') {
++                state = sw_HTTP;
++                break;
++            }
++            goto next;
++
++        case sw_HTTP:
++            if (ch == '/') {
++                state = sw_HTTPVER;
++                break;
++            }
++            goto next;
++
++        case sw_HTTPVER:
++            if (ch == ' ') {
++                state = sw_code;
++                code_start = p + 1;
++                break;
++            }
++
++            if ((ch >= '0' && ch <= '9') || ch == '.') {
++                break;
++            }
++            goto next;
++
++        case sw_code:
++            switch (ch)  {
++            case ' ':
++               code = ngx_atoi(code_start, p - code_start);
++               if (code != 200) {
++                   error = 1;
++               }
++               state = sw_skip;
++               break;
++            case CR:
++                state = sw_almost_done;
++                break;
++            case LF:
++                goto done;
++            }
++            break;
++
++        /* any text until end of line */
++        case sw_skip:
++            switch (ch) {
++            case CR:
++                state = sw_almost_done;
++                break;
++            case LF:
++                goto done;
++            }
++            break;
++
++        /* end of status line */
++        case sw_almost_done:
++            if (ch == LF) {
++                goto done;
++            }
++
++            ngx_log_error(NGX_LOG_ERR, ctx->log, 0,
++                          "zm lookup: lookup handler %V sent invalid response",
++                          ctx->peer.name);
++            ngx_zm_lookup_close_connection(ctx);
++            ctx->work->result = ZM_LOOKUP_INVALID_RESPONSE;
++            ctx->work->on_failure(ctx->work);
++            return;
++        }
++    }
++
++    ctx->lookup_resp->pos = p;
++    ctx->state = state;
++
++    return;
++
++next:
++
++    p = ctx->lookup_resp->start - 1;
++
++done:
++
++    if (error) {
++        errmsg.data = code_start;
++        errmsg.len = p - code_start + 1;
++        /* trim the trailing CR LF */
++        while (((*p) == CR || (*p) == LF) && p >= ctx->lookup_resp->start) {
++            errmsg.len--;
++            p--;
++        }
++
++        ngx_log_error(NGX_LOG_ERR, ctx->log, 0,
++                      "zm lookup: lookup handler %V sent error response: %V",
++                      ctx->peer.name, &errmsg);
++        ngx_zm_lookup_close_connection(ctx);
++        ctx->work->result = ZM_LOOKUP_INVALID_RESPONSE;
++        ctx->work->on_failure(ctx->work);
++        return;
++    }
++
++    ctx->lookup_resp->pos = p + 1;
++    ctx->state = 0;
++    ctx->lookup_response_handler = ngx_zm_lookup_process_response_headers;
++    ctx->lookup_response_handler (ctx);
++}
++
++static ngx_int_t
++ngx_zm_lookup_parse_response_headers(ngx_zm_lookup_ctx_t *ctx)
++{
++    u_char      c, ch, *p;
++    enum {
++        sw_start = 0,
++        sw_name,
++        sw_space_before_value,
++        sw_value,
++        sw_space_after_value,
++        sw_almost_done,
++        sw_header_almost_done
++    } state;
++
++    state = ctx->state;
++
++    for (p = ctx->lookup_resp->pos; p < ctx->lookup_resp->last; p++) {
++        ch = *p;
++
++        switch (state) {
++
++        /* first char */
++        case sw_start:
++
++            switch (ch) {
++            case CR:
++                ctx->header_end = p;
++                state = sw_header_almost_done;
++                break;
++            case LF:
++                ctx->header_end = p;
++                goto header_done;
++            default:
++                state = sw_name;
++                ctx->header_name_start = p;
++
++                c = (u_char) (ch | 0x20);
++                if (c >= 'a' && c <= 'z') {
++                    break;
++                }
++
++                if (ch >= '0' && ch <= '9') {
++                    break;
++                }
++
++                return NGX_ERROR;
++            }
++            break;
++
++        /* header name */
++        case sw_name:
++            c = (u_char) (ch | 0x20);
++            if (c >= 'a' && c <= 'z') {
++                break;
++            }
++
++            if (ch == ':') {
++                ctx->header_name_end = p;
++                state = sw_space_before_value;
++                break;
++            }
++
++            if (ch == '-') {
++                break;
++            }
++
++            if (ch >= '0' && ch <= '9') {
++                break;
++            }
++
++            if (ch == CR) {
++                ctx->header_name_end = p;
++                ctx->header_start = p;
++                ctx->header_end = p;
++                state = sw_almost_done;
++                break;
++            }
++
++            if (ch == LF) {
++                ctx->header_name_end = p;
++                ctx->header_start = p;
++                ctx->header_end = p;
++                goto done;
++            }
++
++            return NGX_ERROR;
++
++        /* space* before header value */
++        case sw_space_before_value:
++            switch (ch) {
++            case ' ':
++                break;
++            case CR:
++                ctx->header_start = p;
++                ctx->header_end = p;
++                state = sw_almost_done;
++                break;
++            case LF:
++                ctx->header_start = p;
++                ctx->header_end = p;
++                goto done;
++            default:
++                ctx->header_start = p;
++                state = sw_value;
++                break;
++            }
++            break;
++
++        /* header value */
++        case sw_value:
++            switch (ch) {
++            case ' ':
++                ctx->header_end = p;
++                state = sw_space_after_value;
++                break;
++            case CR:
++                ctx->header_end = p;
++                state = sw_almost_done;
++                break;
++            case LF:
++                ctx->header_end = p;
++                goto done;
++            }
++            break;
++
++        /* space* before end of header line */
++        case sw_space_after_value:
++            switch (ch) {
++            case ' ':
++                break;
++            case CR:
++                state = sw_almost_done;
++                break;
++            case LF:
++                goto done;
++            default:
++                state = sw_value;
++                break;
++            }
++            break;
++
++        /* end of header line */
++        case sw_almost_done:
++            switch (ch) {
++            case LF:
++                goto done;
++            default:
++                return NGX_ERROR;
++            }
++
++        /* end of header */
++        case sw_header_almost_done:
++            switch (ch) {
++            case LF:
++                goto header_done;
++            default:
++                return NGX_ERROR;
++            }
++        }
++    }
++
++    ctx->lookup_resp->pos = p;
++    ctx->state = state;
++
++    return NGX_AGAIN;
++
++done:
++
++    ctx->lookup_resp->pos = p + 1;
++    ctx->state = sw_start;
++
++    return NGX_OK;
++
++header_done:
++
++    ctx->lookup_resp->pos = p + 1;
++    ctx->state = sw_start;
++
++    return NGX_DONE;
++}
++
++static void
++ngx_zm_lookup_process_response_headers(ngx_zm_lookup_ctx_t *ctx)
++{
++    ngx_zm_lookup_conf_t         *zlcf;
++
++    size_t                        len;
++    ngx_int_t                     rc, n;
++    ngx_zm_lookup_work_t         *work;
++    ngx_str_t                     addr; /* route ipaddr */
++    ngx_str_t                     port; /* route port   */
++    ngx_flag_t                    isCacheAlias;  /* whether to cache alias for the auth account */
++
++    zlcf = (ngx_zm_lookup_conf_t *)ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++
++    work = ctx->work;
++
++    ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++                   "zm lookup: process route discovery HTTP headers");
++
++    for (;;)
++    {
++        rc = ngx_zm_lookup_parse_response_headers(ctx);
++
++        if (rc == NGX_OK)
++        {
++
++#if (NGX_DEBUG)
++            {
++            ngx_str_t  key, value;
++
++            key.len = ctx->header_name_end - ctx->header_name_start;
++            key.data = ctx->header_name_start;
++            value.len = ctx->header_end - ctx->header_start;
++            value.data = ctx->header_start;
++
++            ngx_log_debug2(NGX_LOG_DEBUG_HTTP, ctx->log, 0,
++                           "zm_ngx_lookup_module: zm lookup http header: \"%V: %V\"",
++                           &key, &value);
++            }
++#endif
++
++            len = ctx->header_name_end - ctx->header_name_start;
++
++            if (len == sizeof("Auth-Status") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-Status",
++                                   sizeof("Auth-Status") - 1)
++                   == 0)
++            {
++                len = ctx->header_end - ctx->header_start;
++
++                if (len == 2
++                    && ctx->header_start[0] == 'O'
++                    && ctx->header_start[1] == 'K')
++                {
++                    continue;
++                }
++
++                if (len == 4
++                    && ctx->header_start[0] == 'W'
++                    && ctx->header_start[1] == 'A'
++                    && ctx->header_start[2] == 'I'
++                    && ctx->header_start[3] == 'T')
++                {
++                    /* NginxLookup never return "Auth-Status: WAIT" */
++                    continue;
++                }
++
++                /* Accept error msg like "Auth-Status: login failed" */
++                work->err.len = len;
++                work->err.data = ctx->header_start;
++
++                continue;
++            }
++
++            if (len == sizeof("Auth-Server") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-Server",
++                                   sizeof("Auth-Server") - 1)
++                    == 0)
++            {
++                addr.len = ctx->header_end - ctx->header_start;
++                addr.data = ctx->header_start;
++
++                continue;
++            }
++
++            if (len == sizeof("Auth-Port") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-Port",
++                                   sizeof("Auth-Port") - 1)
++                   == 0)
++            {
++                port.len = ctx->header_end - ctx->header_start;
++                port.data = ctx->header_start;
++
++                continue;
++            }
++
++            if (len == sizeof("Auth-Cache-Alias") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-Cache-Alias",
++                                   sizeof("Auth-Cache-Alias") - 1)
++                   == 0)
++            {
++                len = ctx->header_end - ctx->header_start;
++
++                if (len == 4
++                    && ctx->header_start[0] == 'T'
++                    && ctx->header_start[1] == 'R'
++                    && ctx->header_start[2] == 'U'
++                    && ctx->header_start[3] == 'E')
++                {
++                    /* cache the alias if True*/
++                    isCacheAlias = 1;
++                } else {
++                    isCacheAlias = 0;
++                }
++                continue;
++            }
++            if (len == sizeof("Auth-User") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-User",
++                                   sizeof("Auth-User") - 1)
++                   == 0)
++            {
++                work->account_name.len = ctx->header_end - ctx->header_start;
++                work->account_name.data = ctx->header_start;
++
++                continue;
++            }
++
++            if (len == sizeof("Auth-Pass") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-Pass",
++                                   sizeof("Auth-Pass") - 1)
++                   == 0)
++            {
++                /* client cert auth will return zm_auth_token in
++                   Auth-Pass
++                 */
++                if (work->auth_method == ZM_AUTHMETH_GSSAPI ||
++                    work->auth_method == ZM_AUTHMETH_CERTAUTH) {
++                    work->zm_auth_token.len = ctx->header_end - ctx->header_start;
++                    work->zm_auth_token.data = ctx->header_start;
++                }
++
++                continue;
++            }
++
++            if (len == sizeof("Auth-ID") - 1
++                    && ngx_strncasecmp(ctx->header_name_start,
++                                 (u_char *) "Auth-ID",
++                                 sizeof("Auth-ID") - 1)
++                 == 0)
++            {
++                /* just for GSSAPI */
++                if (work->auth_method == ZM_AUTHMETH_GSSAPI) {
++                    work->auth_id.len = ctx->header_end - ctx->header_start;
++                    work->auth_id.data = ctx->header_start;
++                }
++
++                continue;
++            }
++
++
++            if (len == sizeof("Auth-Wait") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-Wait",
++                                   sizeof("Auth-Wait") - 1)
++                   == 0)
++            {
++                n = ngx_atoi(ctx->header_start,
++                             ctx->header_end - ctx->header_start);
++
++                if (n != NGX_ERROR) {
++                    work->wait_time = n;
++                }
++
++                continue;
++            }
++
++
++            if (len == sizeof("Auth-Error-Code") - 1
++                && ngx_strncasecmp(ctx->header_name_start,
++                                   (u_char *) "Auth-Error-Code",
++                                   sizeof("Auth-Error-Code") - 1)
++                   == 0)
++            {
++               /* NginxLookup never return this header */
++            }
++
++            continue;
++        }
++
++        if (rc == NGX_AGAIN ) {
++            return;
++        }
++
++        /* close connection to the lookup handler */
++        ngx_zm_lookup_close_connection(ctx);
++        work->ctx = NULL; /* avoid duplicate clean up */
++
++        if (rc == NGX_DONE){
++            ngx_log_debug0(NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++                           "zm lookup: done processing lookup headers");
++            if (work->err.len) {
++                /* Login failed */
++                ngx_log_error(NGX_LOG_ERR, ctx->log, 0, "zm lookup: an error is "
++                                       "returned by zimbra lookup handler: %V", &work->err);
++                work->result = ZM_LOOKUP_LOGIN_FAILED;
++                work->on_failure(work);
++                return;
++
++            } else {
++                if (IS_LOOKUP_ROUTE(work->auth_method)) {
++
++                    ngx_log_debug3(NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++                             "zm lookup: lookup handler %V sent route %V:%V",
++                             ctx->peer.name, &addr, &port);
++                   if (addr.len == 0 || port.len == 0) {
++                       work->result = ZM_LOOKUP_INVALID_ROUTE;
++                       work->on_failure(work);
++                       return;
++                   } else {
++                       /* retrieve route */
++                       work->route = ngx_palloc(ctx->pool, sizeof(ngx_addr_t));
++                       if (work->route == NULL) { /* NO MEM */
++                           work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++                           work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++                           work->on_failure(work);
++                           return;
++                       }
++                       if (ngx_zm_lookup_retrieve_route (ctx->pool,
++                              &addr, &port, work->route) == NGX_ERROR) {
++
++                           /* route retrival error */
++                           ngx_log_error(NGX_LOG_ERR, ctx->log, 0,
++                                  "Error occurs when retrieve route info from lookup handler, "
++                                  "addr=%V, port=%V", &addr, &port);
++                           work->result = ZM_LOOKUP_INVALID_ROUTE;
++                           work->err = ERRMSG[ZM_LOOKUP_INVALID_ROUTE];
++                           work->on_failure(work);
++                           return;
++                       } else {
++
++                           /* route retrival succeed */
++                           if (zlcf->caching &&
++                               ctx->work->auth_method != ZM_AUTHMETH_GSSAPI &&
++                               ctx->work->auth_method != ZM_AUTHMETH_CERTAUTH) {
++                               /* add alias-->account && account-->route caching */
++                               if (ctx->work->alias_check_stat != ZM_ALIAS_FOUND &&
++                                   ctx->work->alias_check_stat != ZM_ALIAS_IGNORED && isCacheAlias) {
++                                   /* only cache alias-->account when the account is unavailable from cache */
++                                   /* cache alias-->account with default domain */
++                                   ngx_zm_lookup_cache_alias(ctx, work->username, work->account_name);
++                               }
++
++                               if (work->account_name.len > 0) {
++                                   ngx_zm_lookup_cache_route(ctx, work->account_name, work->route->name);
++                               } else {
++                                   ngx_zm_lookup_cache_route(ctx, work->username, work->route->name);
++                               }
++                           }
++                           work->result = ZM_LOOKUP_SUCCESS;
++                           work->on_success(work);
++                           return;
++                       }
++                   }
++                } else {
++                    /* non-route lookup, such as certauth */
++                    work->result = ZM_LOOKUP_SUCCESS;
++                    work->on_success(work);
++                    return;
++                }
++            }
++        }
++
++        /* rc == NGX_ERROR */
++        ngx_log_error(NGX_LOG_ERR, ctx->log, 0,
++              "zm lookup: route handler %V sent invalid header in response",
++              ctx->peer.name);
++
++        return;
++    }
++}
++
++
++static ngx_int_t
++ngx_zm_lookup_retrieve_route (ngx_pool_t * pool, ngx_str_t * addr_text,
++            ngx_str_t * port_text, ngx_addr_t * route)
++{
++    ngx_int_t                rc;
++    size_t                   i;
++    ngx_flag_t               ipv6, domainName;
++    ngx_url_t                u;
++    u_char                   c;
++
++    ipv6 = 0, domainName = 0;
++    for (i = 0; i < addr_text->len; i++) {
++        c = addr_text->data[i];
++        if (c == ':') {
++            /* an addr containing ":" may be IPv6 */
++            domainName = 0;
++            ipv6 = 1;
++            break;
++        } else if (c >= 'A' && c != '.') {
++            domainName = 1;
++            // try to look for ":". if found it must be ipv6
++        }
++    }
++
++    ngx_memzero(&u, sizeof(ngx_url_t));
++    u.uri_part = 0;
++
++    if(ipv6) {
++        u.url.len = addr_text->len + port_text->len + 3;
++        u.url.data = ngx_palloc(pool, u.url.len);
++        ngx_sprintf(u.url.data, "[%V]:%V", addr_text, port_text);
++    } else { /* ipv4 or domain name */
++        u.url.len = addr_text->len + port_text->len + 1;
++        u.url.data = ngx_palloc(pool, u.url.len);
++        ngx_sprintf(u.url.data, "%V:%V", addr_text, port_text);
++    }
++
++    if(!domainName) {
++        u.listen = 1; // set this will only parse the IP but not resolve addr
++    }
++
++    rc = ngx_parse_url(pool, &u);
++
++    if(rc != NGX_OK) {
++        return rc;
++    }
++
++    route->name = u.url;
++    route->socklen = u.socklen;
++    route->sockaddr = ngx_palloc(pool, route->socklen);
++    ngx_memcpy(route->sockaddr, &u.sockaddr, route->socklen);
++
++    return NGX_OK;
++}
++
++static void
++ngx_zm_lookup_close_connection(ngx_zm_lookup_ctx_t * ctx) {
++    if (ctx->peer.connection) {
++        ngx_log_debug2 (NGX_LOG_DEBUG_ZIMBRA, ctx->log, 0,
++               "close connection %p to nginx lookup handler %V",
++               ctx->peer.connection, ctx->peer.name);
++#if (NGX_SSL)
++
++        if (ctx->handler->ssl && ctx->peer.connection->ssl) {
++            ctx->peer.connection->ssl->no_wait_shutdown = 1;
++            ngx_ssl_shutdown(ctx->peer.connection);
++        }
++
++#endif
++        ngx_close_connection(ctx->peer.connection);
++        ctx->peer.connection = NULL;
++    }
++}
++
++void
++ngx_zm_lookup_finalize(ngx_zm_lookup_work_t * work)
++{
++    ngx_zm_lookup_ctx_t  *ctx;
++
++    if (work == NULL) {
++        return;
++    }
++
++    ctx = work->ctx;
++
++    if(ctx != NULL) {
++        if(ctx->wait_memcache) {
++            ngx_memcache_ignore_work_by_ctx(ctx);
++            work->ctx = NULL;
++            return;
++        }
++
++        ngx_zm_lookup_close_connection(ctx);
++        work->ctx = NULL;
++        return;
++    }
++}
++
++/*
++ * Giving a socket, return its local addr string representation IP. The
++ * string will be allocated on "pool".
++ */
++ngx_str_t
++ngx_zm_lookup_get_local_socket_addr_text (ngx_pool_t *pool, ngx_socket_t s)
++{
++    int family;
++    static ngx_str_t     res;
++    struct sockaddr_in  *sin;
++#if (NGX_HAVE_INET6)
++    struct sockaddr_in6 *sin6;
++#endif
++    u_char              *p;
++    socklen_t            len, strlen;
++    u_char               sockaddr[NGX_SOCKADDRLEN];
++
++    len = NGX_SOCKADDRLEN;
++    ngx_memzero(sockaddr, len);
++    getsockname(s, (struct sockaddr*)sockaddr, &len);
++
++    family = ((struct sockaddr *)sockaddr)->sa_family;
++    if (family == AF_INET) {
++        sin = (struct sockaddr_in *)sockaddr;
++        p = ngx_palloc(pool, NGX_INET_ADDRSTRLEN);
++        strlen = ngx_inet_ntop (family, &(sin->sin_addr.s_addr), p,
++                NGX_INET_ADDRSTRLEN);
++
++#if (NGX_HAVE_INET6)
++    } else {
++        sin6 = (struct sockaddr_in6 *)sockaddr;
++        p = ngx_palloc(pool, NGX_INET6_ADDRSTRLEN);
++        strlen = ngx_inet_ntop (family, &(sin6->sin6_addr.s6_addr),
++                p, NGX_INET6_ADDRSTRLEN);
++#endif
++
++    }
++
++    res.data = p;
++    res.len = strlen;
++
++    return res;
++}
++
++/* make the cache "alias-->account" */
++static void
++ngx_zm_lookup_cache_alias(ngx_zm_lookup_ctx_t *ctx, ngx_str_t alias,
++        ngx_str_t account_name) {
++    mc_work_t                                mc;
++    ngx_str_t                                key;
++    ngx_log_t                               *log;
++    ngx_zm_lookup_work_t                    *work;
++    ngx_pool_t                              *pool;
++    const u_char                            *p;
++
++    log = ctx->log;
++    work = ctx->work;
++    pool = ctx->pool;
++
++    if (alias.len == account_name.len &&
++        ngx_memcmp(alias.data, account_name.data, alias.len) == 0
++       ) {
++        /* bug 66469, try to take the part before '@' as alias */
++        p = ngx_zm_strchr(alias, '@');
++        if (p == NULL) {
++            return;
++        }
++
++        alias.len = p - alias.data;
++
++        if (work->alias_key.len > 0) {
++            ngx_str_null(&work->alias_key); /* reset it and force regeneration later */
++        }
++    }
++
++    if (work->alias_key.len > 0) {
++            key = work->alias_key;
++
++    } else {
++        if (IS_PROTO_WEB(work->protocol)) {
++            key = ngx_zm_lookup_get_http_alias_key
++                    (pool, log, alias, work->virtual_host);
++        } else {
++            key = ngx_zm_lookup_get_mail_alias_key
++                    (pool, log, alias, work->connection->addr_text);
++        }
++
++        if (key.len == 0) {    /* NOMEM */
++            work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++            work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++            work->on_failure(work);
++            return;
++        }
++
++        work->alias_key = key;
++    }
++
++    mc.ctx = ctx;
++    mc.request_code = mcreq_add;
++    mc.response_code = mcres_unknown;
++    mc.on_success = ngx_zm_lookup_cache_dummy_handler;
++    mc.on_failure = ngx_zm_lookup_cache_dummy_handler;
++
++    //no need to set ctx->wait_memcache_response since w.ctx won't be
++    //destroyed before response comes
++    ngx_memcache_post(&mc, key, account_name, NULL, log);
++}
++
++/*
++ * make the cache account-->route/id-->route
++ * user: account_name/zimbra id
++ */
++static void
++ngx_zm_lookup_cache_route(ngx_zm_lookup_ctx_t *ctx, ngx_str_t user, ngx_str_t route)
++{
++    mc_work_t                 mc;
++    ngx_log_t                *log;
++    ngx_str_t                 key;
++    ngx_zm_lookup_work_t    *work;
++    ngx_zm_lookup_conf_t    *zlcf;
++
++    zlcf = (ngx_zm_lookup_conf_t *)
++              ngx_get_conf(ngx_cycle->conf_ctx, ngx_zm_lookup_module);
++
++    log = ctx->log;
++    work = ctx->work;
++
++    if (work->auth_method == ZM_AUTHMETH_ZIMBRAID) {
++            key = ngx_zm_lookup_get_id_route_key(
++                    ctx->pool, log,
++                    ZM_PROTO[work->protocol], user, work->type);
++    } else {
++        if (zlcf->allow_unqualified == 0 && !is_login_qualified(user)) {
++            key = ngx_zm_lookup_get_user_route_key(ctx->pool, log,
++                    ZM_PROTO[work->protocol], user, work->connection->addr_text);
++        } else {
++            key = ngx_zm_lookup_get_user_route_key(ctx->pool, log,
++                    ZM_PROTO[work->protocol], user, NGX_EMPTY_STR);
++        }
++    }
++
++    if (key.len == 0) {   /* NOMEM */
++        work->result = ZM_LOOKUP_MEM_ALLOC_ERROR;
++        work->err = ERRMSG[ZM_LOOKUP_MEM_ALLOC_ERROR];
++        work->on_failure(work);
++        return;
++    }
++
++    ctx->work->route_key = key;
++
++    mc.ctx = ctx;
++    mc.request_code = mcreq_add;
++    mc.response_code = mcres_unknown;
++    mc.on_success = ngx_zm_lookup_cache_dummy_handler;
++    mc.on_failure = ngx_zm_lookup_cache_dummy_handler;
++
++    //no need to set ctx->wait_memcache_response because nothing
++    //will be disposed
++    ngx_memcache_post(&mc, key, route, NULL, log);
++}
++
++static void
++ngx_zm_lookup_cache_dummy_handler (mc_work_t *work)
++{
++    /* do nothing */
++}
++
++static ngx_str_t
++ngx_zm_lookup_get_user_route_key(ngx_pool_t *pool, ngx_log_t *log,
++        ngx_str_t proto, ngx_str_t account_name, ngx_str_t client_ip)
++{
++    ngx_str_t        key;
++    size_t           len;
++    u_char          *p;
++
++    len = sizeof("route:") - 1 +
++    sizeof("proto=") - 1 +
++    proto.len +
++    sizeof(";") - 1 +
++    sizeof("user=") - 1 +
++    account_name.len;
++
++    if (client_ip.len > 0) {
++        len += sizeof("@") - 1 + client_ip.len;
++    }
++
++    key.data = ngx_palloc(pool, len);
++    if (key.data == NULL) {
++        key.len = 0;
++        return key;
++    }
++
++    p = key.data;
++    p = ngx_cpymem(p, "route:", sizeof("route:") - 1);
++    p = ngx_cpymem(p, "proto=", sizeof("proto=") - 1);
++    p = ngx_cpymem(p, proto.data, proto.len);
++   *p++ = ';';
++    p = ngx_cpymem(p, "user=", sizeof("user=") - 1);
++    p = ngx_cpymem(p, account_name.data, account_name.len);
++
++    if (client_ip.len > 0) {
++        *p++ = '@';
++        p = ngx_cpymem(p, client_ip.data, client_ip.len);
++    }
++
++    key.len = p - key.data;
++
++    return key;
++}
++
++ngx_str_t
++ngx_zm_lookup_get_mail_alias_key (ngx_pool_t  *pool, ngx_log_t *log,
++    ngx_str_t alias, ngx_str_t ip)
++{
++    ngx_str_t       key;
++    size_t          len;
++    u_char         *p;
++
++    len = sizeof("alias:") - 1 +
++        sizeof("user=") - 1 +
++        alias.len +
++        sizeof(";") - 1 +
++        sizeof("ip=") - 1 +
++        ip.len;
++
++    key.data = ngx_palloc(pool, len);
++    if (key.data == NULL) {
++        key.len = 0;
++        return key;
++    }
++
++    p = key.data;
++    p = ngx_cpymem(p, "alias:", sizeof("alias:") - 1);
++    p = ngx_cpymem(p, "user=", sizeof("user=") - 1);
++    p = ngx_cpymem(p, alias.data, alias.len);
++    *p++ = ';';
++    p = ngx_cpymem(p,"ip=", sizeof("ip=") - 1);
++    p = ngx_cpymem(p, ip.data, ip.len);
++
++    key.len = p - key.data;
++
++    return key;
++}
++
++ngx_str_t
++ngx_zm_lookup_get_http_alias_key (ngx_pool_t *pool, ngx_log_t *log,
++    ngx_str_t alias, ngx_str_t vhost)
++{
++    ngx_str_t       key;
++    size_t          len;
++    u_char         *p;
++
++    len = sizeof("alias:") - 1 +
++        sizeof("user=") - 1 +
++        alias.len +
++        sizeof(";") - 1 +
++        sizeof("vhost=") - 1 +
++        vhost.len;
++
++    key.data = ngx_palloc(pool, len);
++    if (key.data == NULL) {
++        key.len = 0;
++        return key;
++    }
++
++    p = key.data;
++    p = ngx_cpymem(p, "alias:", sizeof("alias:") - 1);
++    p = ngx_cpymem(p, "user=", sizeof("user=") - 1);
++    p = ngx_cpymem(p, alias.data, alias.len);
++    *p++ = ';';
++    p = ngx_cpymem(p, "vhost=", sizeof("vhost=") - 1);
++    p = ngx_cpymem(p, vhost.data, vhost.len);
++
++    key.len = p - key.data;
++
++    return key;
++}
++
++static ngx_str_t
++ngx_zm_lookup_get_id_route_key(ngx_pool_t *pool, ngx_log_t *log,
++        ngx_str_t proto, ngx_str_t id, ngx_http_zmauth_t type)
++{
++    ngx_str_t       key;
++    size_t          len;
++    u_char         *p;
++
++    len = sizeof("route:") - 1 +
++        sizeof("proto=") - 1 +
++        proto.len +
++        sizeof(";") - 1 +
++        sizeof("id=") - 1 +
++        id.len;
++
++    if (type == zmauth_admin_console) {
++        len += sizeof("admin=1;") - 1;
++    } else if (type == zmauth_zx) {
++        len += sizeof("zx=1;") - 1;
++    }
++
++    key.data = ngx_palloc(pool, len);
++    if (key.data == NULL) {
++        key.len = 0;
++        return key;
++    }
++
++    p = key.data;
++    p = ngx_cpymem(p, "route:", sizeof("route:") - 1);
++    p = ngx_cpymem(p, "proto=", sizeof("proto=") - 1);
++    p = ngx_cpymem(p, proto.data, proto.len);
++    *p++ = ';';
++    if (type == zmauth_admin_console) {
++        p = ngx_cpymem(p, "admin=1;", sizeof("admin=1;") - 1);
++    } else if (type == zmauth_zx) {
++        p = ngx_cpymem(p, "zx=1;", sizeof("zx=1;") - 1);
++    }
++    p = ngx_cpymem(p, "id=", sizeof("id=") - 1);
++    p = ngx_cpymem(p, id.data, id.len);
++
++    key.len = p - key.data;
++
++    return key;
++}
++
++/*
++ * delete alias-->account & account-->route cache from memcache
++ * after auth failure
++ */
++void
++ngx_zm_lookup_delete_cache(ngx_str_t alias_key, ngx_str_t route_key)
++{
++    mc_work_t              w;
++    ngx_log_t             *log;
++    ngx_flag_t             delete_alias_cache, delete_route_cache;
++
++    delete_alias_cache = 0;
++    delete_route_cache = 0;
++
++    if (alias_key.len > 0) {
++        delete_alias_cache = 1;
++    }
++
++    if (route_key.len > 0) {
++        delete_route_cache = 1;
++    }
++
++    if (delete_alias_cache == 0 && delete_route_cache == 0) {
++        return;
++    }
++
++    log = ngx_cycle->log;
++
++    w.request_code = mcreq_delete;
++    w.response_code = mcres_unknown;
++    w.on_success = ngx_zm_lookup_delete_cache_handler;
++    w.on_failure = ngx_zm_lookup_delete_cache_handler;
++
++    if (delete_alias_cache) {
++        ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, log, 0,
++              "delete cached alias, key:%V", &alias_key);
++        ngx_memcache_post(&w, alias_key, NGX_EMPTY_STR, /* pool */ NULL, log);
++    }
++
++    if (delete_route_cache) {
++        ngx_log_debug1 (NGX_LOG_DEBUG_ZIMBRA, log, 0,
++            "delete cached route, key:%V", &route_key);
++
++        ngx_memcache_post (&w, route_key, NGX_EMPTY_STR, /* pool */ NULL, log);
++    }
++}
++
++static void
++ngx_zm_lookup_delete_cache_handler (mc_work_t *work)
++{
++    /* do nothing */
++}
++
++/* Utility function to check whether a login name is fully qualified
++   Return value is boolean (ngx_flag_t for portability)
++ */
++ngx_flag_t
++is_login_qualified (ngx_str_t login)
++{
++    /* we cannot use the crt strchr because login is not 0 terminated,
++     * neither we have no strnchr to use
++     */
++
++    size_t      i, len;
++    len = login.len - 1; /* if the last symbol is @, it's not qualified */
++
++    for (i = 0; i < len; ++i) {
++        if (login.data[i] == '@') {
++            return 1;
++        }
++    }
++
++    return 0;
++}
++
++static const u_char *
++ngx_zm_strchr (ngx_str_t str, int chr) {
++    const u_char *end;
++    u_char       *p;
++    u_char        c;
++
++    end = str.data + str.len;
++    p = str.data;
++    c = (u_char)chr;
++    do {
++        if (*p == c) {
++            return p;
++        }
++    } while (++p <= end);
++
++    return NULL;
++}
+diff -urN nginx/src/core/ngx_zm_lookup.h nginx/src/core/ngx_zm_lookup.h
+--- nginx/src/core/ngx_zm_lookup.h	1970-01-01 05:30:00.000000000 +0530
++++ nginx/src/core/ngx_zm_lookup.h	2023-03-04 13:25:59.843350100 +0530
+@@ -0,0 +1,207 @@
++/*
++ * ***** BEGIN LICENSE BLOCK *****
++ * Zimbra Collaboration Suite Server
++ * Copyright (C) 2011 Zimbra Software, LLC.
++ *
++ * The contents of this file are subject to the Zimbra Public License
++ * Version 1.4 ("License"); you may not use this file except in
++ * compliance with the License.  You may obtain a copy of the License at
++ * http://www.zimbra.com/license.
++ *
++ * Software distributed under the License is distributed on an "AS IS"
++ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
++ * ***** END LICENSE BLOCK *****
++ */
++
++#ifndef _NGX_ZM_LOOKUP_H_INCLUDED_
++#define _NGX_ZM_LOOKUP_H_INCLUDED_
++
++#include <ngx_config.h>
++#include <ngx_core.h>
++#include <ngx_event.h>
++#include <ngx_event_connect.h>
++
++#define NGX_ZM_LOOKUP_CONF        0x02000000
++
++typedef struct {
++    ngx_addr_t  *peer;
++    ngx_str_t    host;
++    ngx_str_t    uri;
++    time_t       failure_time;     /* the time of last connection failure
++                                      to this handler peer, 0 means the
++                                      peer is now available */
++    ngx_uint_t   ssl;              /* whether handler talks SSL or plain http */
++} ngx_zm_lookup_handler_t;
++
++typedef struct {
++    ngx_pool_t     *pool;           /* main pool where self resides */
++    ngx_log_t      *log;
++    ngx_array_t     handlers;       /* ngx_zm_lookup_handler_t*[] */
++    ngx_uint_t      handler_index;  /* current index of round robin */
++    ngx_msec_t      retry_interval; /* time to retry to connect a handler after a failure (in ms) */
++    ngx_msec_t      timeout;        /* timeout to fetch the result from nginx lookup handler (in ms) */
++    ngx_str_t       master_auth_username;
++    ngx_str_t       master_auth_password;
++    ngx_str_t       url;
++    ngx_flag_t      caching;        /* whether to add and check the alias/route in memcache */
++    ngx_flag_t      allow_unqualified; /* whether to append client ip to the "account-->route" caching key,
++                                          when the alias part is an unqualified name*/
++    size_t          buffer_size;
++    ngx_ssl_t      *ssl;
++} ngx_zm_lookup_conf_t;
++
++struct ngx_zm_lookup_work_s;
++
++typedef void (*ngx_zm_lookup_callback)(struct ngx_zm_lookup_work_s *);
++
++/* zmauth type */
++typedef enum {
++    zmauth_web_client,
++    zmauth_admin_console,
++    zmauth_zx
++} ngx_http_zmauth_t;
++
++
++struct ngx_zm_lookup_work_s {
++    ngx_pool_t    *pool;
++    ngx_log_t     *log;
++
++    /* input */
++    ngx_str_t      username;        /* the original username given by user */
++    ngx_str_t      auth_id;         /* GSSAPI auth id (principal) */
++
++    ngx_http_zmauth_t    type;     /* whether is web, admin or /zx/ */
++
++    ngx_uint_t     protocol:3;      /* protocol               */
++    ngx_uint_t     auth_method:4;   /* auth method            */
++    ngx_uint_t     alias_check_stat:2; /* the alias-->account caching lookup status */
++    ngx_uint_t     login_attempts;  /* only used for mail     */
++    ngx_str_t      virtual_host;    /* only used for web      */
++    ngx_connection_t * connection;  /* client connection      */
++    ngx_str_t      salt;            /* only used for mail     */
++    ngx_str_t      route_key;       /* the key for "account-->route" cache */
++
++    /* output */
++    ngx_addr_t    *route;           /* fetched route */
++    ngx_str_t      err;             /* error message */
++    time_t         wait_time;       /* wait time if login failed */
++
++    /* input & output */
++    ngx_str_t      zm_auth_token;   /* for web route lookup, this will be input;
++                                       for client cert auth, this will be output
++                                     */
++    ngx_str_t      account_name;    /* for mail route lookup, account name is
++                                       always returned
++                                     */
++    ngx_str_t      alias_key;       /* the key for "alias-->account" cache */
++
++    ngx_zm_lookup_callback   on_success;
++    ngx_zm_lookup_callback   on_failure;
++
++    ngx_int_t     result;
++
++    void          *data;            /* context such as http request or mail session */
++    void          *ctx;             /* zm_lookup_ctx */
++};
++
++typedef struct ngx_zm_lookup_work_s ngx_zm_lookup_work_t;
++
++extern ngx_module_t ngx_zm_lookup_module;
++
++struct ngx_zm_lookup_ctx_s;
++
++typedef void (*ngx_zm_lookup_response_handler_t) (struct ngx_zm_lookup_ctx_s * ctx);
++
++struct ngx_zm_lookup_ctx_s {
++    ngx_pool_t              *pool;
++    ngx_log_t               *log;
++
++    /* for lookup handler elect */
++    ngx_uint_t               tries;
++    ngx_uint_t               handler_index;
++
++    ngx_zm_lookup_handler_t *handler; /*current handler to be used */
++    ngx_peer_connection_t    peer;
++
++    /* for request send & response processing */
++    ngx_buf_t               *lookup_req;     /* lookup request buffer  */
++    ngx_buf_t               *lookup_resp;    /* lookup response buffer */
++    ngx_uint_t               state;          /* response parse state   */
++    u_char                  *header_name_start;
++    u_char                  *header_name_end;
++    u_char                  *header_start;
++    u_char                  *header_end;
++    ngx_zm_lookup_response_handler_t  lookup_response_handler;
++
++    ngx_zm_lookup_work_t    *work;
++
++    ngx_uint_t               wait_memcache; /* whether memcache request is
++                                               posted but response doesn't come */
++    ngx_event_t             *wait_ev;
++};
++
++typedef struct ngx_zm_lookup_ctx_s ngx_zm_lookup_ctx_t;
++
++/* lookup result */
++#define ZM_LOOKUP_SUCCESS                 0
++#define ZM_LOOKUP_MEM_ALLOC_ERROR         1
++#define ZM_LOOKUP_WRITE_ERROR             2
++#define ZM_LOOKUP_READ_ERROR              3
++#define ZM_LOOKUP_WRITE_TIMEOUT           4
++#define ZM_LOOKUP_READ_TIMEOUT            5
++#define ZM_LOOKUP_NO_VALID_HANDLER        6
++#define ZM_LOOKUP_INVALID_ROUTE           7
++#define ZM_LOOKUP_LOGIN_FAILED            8
++#define ZM_LOOKUP_INVALID_RESPONSE        9
++#define ZM_LOOKUP_CLIENT_CONNECTION_CLOSE 10
++#define ZM_LOOKUP_OTHER_ERROR             50
++#define ZM_LOOKUP_SSL_EVENT_SUCCESS       0
++#define ZM_LOOKUP_SSL_EVENT_FAILED        1
++
++/* the protocols nginx lookup can serve for */
++#define ZM_PROTO_UNKNOWN 0
++#define ZM_PROTO_HTTP    1
++#define ZM_PROTO_HTTPS   2
++#define ZM_PROTO_POP3    3
++#define ZM_PROTO_POP3S   4
++#define ZM_PROTO_IMAP    5
++#define ZM_PROTO_IMAPS   6
++
++#define IS_PROTO_MAIL(proto) (proto == ZM_PROTO_POP3  || \
++                              proto == ZM_PROTO_POP3S || \
++                              proto == ZM_PROTO_IMAP  || \
++                              proto == ZM_RPOTO_IMAPS)
++
++#define IS_PROTO_WEB(proto) (proto == ZM_PROTO_HTTP || \
++                             proto == ZM_PROTO_HTTPS)
++
++/* alias-->account caching check state */
++#define ZM_ALIAS_NOT_CHECKED 0  /* need to be checked but not done yet     */
++#define ZM_ALIAS_FOUND       1  /* has been checked and found              */
++#define ZM_ALIAS_NOT_FOUND   2  /* has been checked and not found          */
++#define ZM_ALIAS_IGNORED     3  /* has been checked and found, but ignored */
++
++/* the auth method supported */
++#define ZM_AUTHMETH_USERNAME 0  /* get route by user name                  */
++#define ZM_AUTHMETH_GSSAPI   1  /* get route and account id by kerberos v5 */
++#define ZM_AUTHMETH_ZIMBRAID 2  /* get route by zimbra account id          */
++#define ZM_AUTHMETH_CERTAUTH 3  /* get account id by client certificate    */
++
++#define IS_LOOKUP_ROUTE(auth_meth) (!(auth_meth == ZM_AUTHMETH_CERTAUTH))
++
++void ngx_zm_lookup(ngx_zm_lookup_work_t * work);
++void ngx_zm_lookup_delete_cache(ngx_str_t alias_key, ngx_str_t route_key);
++void ngx_zm_lookup_finalize(ngx_zm_lookup_work_t * work);
++ngx_flag_t ngx_zm_lookup_check_broken_connection(ngx_event_t *ev,
++        ngx_zm_lookup_work_t *work);
++
++/* utility */
++ngx_flag_t is_login_qualified (ngx_str_t login);
++
++/* memcache key create */
++ngx_str_t ngx_zm_lookup_get_http_alias_key(ngx_pool_t *pool,
++        ngx_log_t *log, ngx_str_t alias, ngx_str_t vhost);
++ngx_str_t ngx_zm_lookup_get_mail_alias_key(ngx_pool_t *pool,
++        ngx_log_t *log, ngx_str_t user, ngx_str_t ip);
++
++#endif
