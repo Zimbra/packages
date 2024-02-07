@@ -1,0 +1,15 @@
+diff -urN nginx/auto/cc/gcc nginx/auto/cc/gcc
+--- nginx/auto/cc/gcc	2023-03-07 16:26:44.050300500 +0530
++++ nginx/auto/cc/gcc	2023-09-14 18:47:11.398148600 +0530
+@@ -50,7 +50,10 @@
+ 
+ #NGX_GCC_OPT="-O2"
+ #NGX_GCC_OPT="-Os"
+-NGX_GCC_OPT="-O"
++# Zimbra customizations start here (Jira Tickets: )
++#NGX_GCC_OPT="-O"
++NGX_GCC_OPT="-O0"
++# Zimbra customizations end here
+ 
+ #CFLAGS="$CFLAGS -fomit-frame-pointer"
+ 

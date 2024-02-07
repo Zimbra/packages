@@ -1,3 +1,9 @@
+zimbra-proxy-components (1.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Upgraded zimbra-nginx to 1.24.0
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 05 Feb 2024 05:12:55 +0000
+
 zimbra-proxy-components (1.0.11-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Updated zimbra-nginx

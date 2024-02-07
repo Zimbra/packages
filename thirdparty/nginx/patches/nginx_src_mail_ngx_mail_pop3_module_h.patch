@@ -1,0 +1,24 @@
+--- nginx/src/mail/ngx_mail_pop3_module.h	2023-03-07 16:26:44.730781700 +0530
++++ nginx/src/mail/ngx_mail_pop3_module.h	2023-09-14 18:47:12.657858600 +0530
+@@ -15,6 +15,10 @@
+ 
+ 
+ typedef struct {
++    // Zimbra customizations start here (Jira Tickets: )
++    size_t       client_buffer_size;
++    // Zimbra customizations end here
++
+     ngx_str_t    capability;
+     ngx_str_t    starttls_capability;
+     ngx_str_t    starttls_only_capability;
+@@ -23,6 +27,10 @@
+     ngx_uint_t   auth_methods;
+ 
+     ngx_array_t  capabilities;
++
++    // Zimbra customizations start here (Jira Tickets: )
++    ngx_str_t    greeting;
++    // Zimbra end start here
+ } ngx_mail_pop3_srv_conf_t;
+ 
+ 

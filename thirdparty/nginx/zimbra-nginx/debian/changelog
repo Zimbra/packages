@@ -1,5 +1,11 @@
 zimbra-nginx (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
 
+  * Upgraded zimbra-nginx to 1.24.0
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 05 Feb 2024 05:12:55 +0000
+
+zimbra-nginx (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
+
   * ZBUG-3355, Upgraded OpenSSL to 3.0.9
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000

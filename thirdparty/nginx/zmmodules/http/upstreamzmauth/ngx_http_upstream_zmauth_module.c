@@ -82,8 +82,12 @@ static ngx_flag_t ngx_get_authheader_bearer(ngx_log_t *log, ngx_pool_t *pool,
         ngx_http_headers_in_t *headers_in, ngx_str_t *value);
 static ngx_flag_t ngx_claimdata_from_payload(ngx_log_t *log, ngx_pool_t *pool,
         ngx_str_t *payload, ngx_str_t *value);
+/*
+AMB : Function ngx_get_cookie_value changed to receive the ngx_table_elt_t* instead of ngx_array_t. As the type ngx_table_elt_t don't have  members elts & nelts
+This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0
+*/		
 static ngx_flag_t ngx_get_cookie_value(ngx_log_t *log,
-        ngx_table_elt_t **cookies, ngx_uint_t ncookies, ngx_str_t *name,
+        ngx_table_elt_t *cookies, ngx_uint_t ncookies, ngx_str_t *name,
         ngx_str_t *value);
 static ngx_flag_t ngx_get_query_string_arg(ngx_log_t *log, ngx_str_t *args,
         ngx_str_t *name, ngx_str_t *value);
@@ -845,53 +849,65 @@ static ngx_flag_t ngx_http_upstream_zmserver_from_cookie
 
 static ngx_flag_t
 ngx_get_cookie_value(ngx_log_t *log,
-        ngx_table_elt_t **cookies, ngx_uint_t ncookies, ngx_str_t *name,
+        ngx_table_elt_t *cookies, ngx_uint_t ncookies, ngx_str_t *name,
         ngx_str_t *value) {
-    ngx_table_elt_t **c;
+    ngx_table_elt_t *c;
     u_char *s, *p, *e;
     ngx_str_t V, n, v;
-    ngx_flag_t f;
+    ngx_flag_t f = 0;
+	
+	if (cookies && cookies->value.len)
+	{
+		ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
+				"zmauth: printing cookie value:(AMB)%V",&cookies->value);
+		// AMB : changed cookies from ngx_array_t to ngx_table_elt_t when upgrading the nginx library from version 1.20.0 to 1.24.0
+		for (c = cookies, f = 0; /*c < cookies + ncookies && f == 0*/;/* ++c*/) {
+			V = c->value;
+			/* v is of the form "name=value; name=value;" */
+			s = V.data;
+			e = s + V.len;
+			p = s;
 
-    for (c = cookies, f = 0; c < cookies + ncookies && f == 0; ++c) {
-        V = (*c)->value;
-        /* v is of the form "name=value; name=value;" */
-        s = V.data;
-        e = s + V.len;
-        p = s;
+			ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
+					"zmauth: examining cookie value:(AMB)%V",&V);
 
-        ngx_log_debug1(NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: examining cookie value:%V",&V);
-
-        while (p < e) {
-            n.data = p;
-            while (p < e && *p != '=') {
-                ++p;
-            }
-            if (p == e) {
-                break;
-            }
-            n.len = p - n.data;
-            ++p; // consume =
-            v.data = p;
-            while (p < e && *p != ';') {
-                ++p;
-            }
-            v.len = p - v.data;
-            if (n.len == name->len && ngx_memcmp(n.data, name->data, n.len)
-                    == 0) {
-                *value = v;
-                f = 1;
-                break;
-            }
-            if (p == e) {
-                break;
-            }
-            ++p; // consume ;
-            while (p < e && (*p == ' ' || *p == '\t')) {
-                ++p;
-            }
-        }
-    }
+			while (p < e) {
+				n.data = p;
+				while (p < e && *p != '=') {
+					++p;
+				}
+				if (p == e) {
+					break;
+				}
+				n.len = p - n.data;
+				++p; // consume =
+				v.data = p;
+				while (p < e && *p != ';') {
+					++p;
+				}
+				v.len = p - v.data;
+				if (n.len == name->len && ngx_memcmp(n.data, name->data, n.len)
+						== 0) {
+					*value = v;
+					f = 1;
+					break;
+				}
+				if (p == e) {
+					break;
+				}
+				++p; // consume ;
+				while (p < e && (*p == ' ' || *p == '\t')) {
+					++p;
+				}
+			}
+			break; // AMB : change done as part of cookie handling as per new type "ngx_table_elt_t"
+		}
+	}
+	else
+	{
+		ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
+		"zmauth: exiting get cookie without value:(AMB)");
+	}
 
     return f;
 }
@@ -1648,12 +1664,13 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
     log = r->connection->log;
 
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
-            "zmauth: search for ZM_AUTH_TOKEN");
+            "zmauth: search for ZM_AUTH_TOKEN(AMB)");
 
-    /* look for auth token in the request cookie(s) */
+    /* look for auth token in the request cookie(s) 
+	AMB - There appears that in version 1.24.0 request member "cookie" has changed. This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0 (Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts).*/ 
     f = ngx_get_cookie_value(log,
-            (ngx_table_elt_t **) r->headers_in.cookies.elts,
-            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN, &token);
+            (ngx_table_elt_t *) r->headers_in.cookie,
+            (ngx_uint_t)r->headers_in.cookie, &NGX_ZMAUTHTOKEN, &token);
 
     if (!f) {
         /* if not found, then look in the zauthtoken= query string arg */
@@ -1662,13 +1679,13 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
 
     if (f) {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: found ZM_AUTH_TOKEN:%V",
+                "zmauth: found ZM_AUTH_TOKEN(AMB):%V",
                 &token);
 
         f = ngx_field_from_zmauthtoken(log, pool, &token, field, &value);
         if (f) {
             ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
-                    "zmauth: got %V:%V from ZM_AUTH_TOKEN",
+                    "zmauth: got %V:%V from ZM_AUTH_TOKEN(AMB)",
                     field, &value);
             if (value.len > 0) {
                 pvalue = ngx_palloc(pool, sizeof(ngx_str_t));
@@ -1688,12 +1705,12 @@ zmauth_check_authtoken(ngx_http_request_t *r, ngx_str_t* field,
             }
         } else {
             ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                    "zmauth: no %V in ZM_AUTH_TOKEN", field);
+                    "zmauth: no %V in ZM_AUTH_TOKEN(AMB)", field);
         }
 
     } else {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: no ZM_AUTH_TOKEN",
+                "zmauth: no ZM_AUTH_TOKEN(AMB)",
                 &token);
     }
 
@@ -1781,22 +1798,23 @@ zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
     log = r->connection->log;
 
     ngx_log_debug0 (NGX_LOG_DEBUG_HTTP, log, 0,
-            "zmauth: search for ZM_ADMIN_AUTH_TOKEN");
+            "zmauth: search for ZM_ADMIN_AUTH_TOKEN(AMB)");
 
-    /* look for auth token in the request cookie(s) */
+    /* look for auth token in the request cookie(s) 
+	AMB - There appears that in version 1.24.0 request member "cookie" has changed. This change occurs from upgrading the nginx library from version 1.20.0 to 1.24.0 (Previously it was ngx_array_t and now its changed to ngx_table_elt_t which don't have  members elts & nelts).*/  
     f = ngx_get_cookie_value(log,
-            (ngx_table_elt_t **) r->headers_in.cookies.elts,
-            r->headers_in.cookies.nelts, &NGX_ZMAUTHTOKEN_ADMIN, &token);
+            (ngx_table_elt_t *) r->headers_in.cookie,
+            (ngx_uint_t)r->headers_in.cookie, &NGX_ZMAUTHTOKEN_ADMIN, &token);
 
     if (f) {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: found ZM_AUTH_TOKEN:%V",
+                "zmauth: found ZM_AUTH_TOKEN:(AMB)%V",
                 &token);
 
         f = ngx_field_from_zmauthtoken(log, pool, &token, field, &value);
         if (f) {
         	ngx_log_debug2 (NGX_LOG_DEBUG_HTTP, log, 0,
-        			"zmauth: got %V:%V from ZM_AUTH_TOKEN",
+        			"zmauth: got %V:%V from ZM_AUTH_TOKEN(AMB)",
         			field, &value);
 
             if (value.len > 0) {
@@ -1817,12 +1835,12 @@ zmauth_check_admin_authtoken(ngx_http_request_t *r, ngx_str_t* field,
             }
         } else {
             ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                    "zmauth: no %V in ZM_ADMIN_AUTH_TOKEN", field);
+                    "zmauth: no %V in ZM_ADMIN_AUTH_TOKEN(AMB)", field);
         }
 
     } else {
         ngx_log_debug1 (NGX_LOG_DEBUG_HTTP, log, 0,
-                "zmauth: no ZM_ADMIN_AUTH_TOKEN",
+                "zmauth: no ZM_ADMIN_AUTH_TOKEN(AMB)",
                 &token);
     }
 
