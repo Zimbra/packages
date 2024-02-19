@@ -1,0 +1,3 @@
+perldeps.RHEL9_64 := zimbra-perl-net-libidn2
+perldeps.RHEL8_64 := zimbra-perl-net-libidn
+perldeps.RHEL7_64 := zimbra-perl-net-libidn
