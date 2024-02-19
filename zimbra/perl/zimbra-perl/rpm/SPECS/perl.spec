@@ -34,7 +34,7 @@ Requires:       zimbra-perl-mime-lite
 Requires:       zimbra-perl-mime-tools, zimbra-perl-mime-types, zimbra-perl-mozilla-ca, zimbra-perl-netaddr-ip
 Requires:       zimbra-perl-net-cidr, zimbra-perl-net-cidr-lite, zimbra-perl-net-dns, zimbra-perl-net-dns-resolver-programmable
 Requires:       zimbra-perl-net-http >= 6.09-1zimbra8.7b5ZAPPEND, zimbra-perl-net-ldap, zimbra-perl-net-ldapapi >= 3.0.3-1zimbra8.7b3ZAPPEND
-Requires:       zimbra-perl-net-libidn
+Requires:       PERLDEPS
 Requires:       zimbra-perl-net-server >= 2.009-1zimbra8.7b1ZAPPEND
 Requires:       zimbra-perl-net-ssleay >= 1.92-1zimbra8.8b1ZAPPEND, zimbra-perl-parent, zimbra-perl-proc-processtable
 Requires:       zimbra-perl-soap-lite >= 1.19-1zimbra8.7b5ZAPPEND, zimbra-perl-socket
