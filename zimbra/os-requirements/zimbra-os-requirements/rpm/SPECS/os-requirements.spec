@@ -5,7 +5,7 @@ Release:            1zimbra8.7b1ZAPPEND
 License:            GPL-2
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-Requires:           coreutils, expat, file, gmp, libaio, libidn, libstdc++, pcre
+Requires:           coreutils, expat, file, gmp, libaio, libstdc++, pcre
 Requires:           perl, perl-core, sudo, sysstat, unzip, zimbra-base
 Requires:           perl-Socket6, rsyslog, net-tools, libcap, OSDEPS
 AutoReqProv:        no
