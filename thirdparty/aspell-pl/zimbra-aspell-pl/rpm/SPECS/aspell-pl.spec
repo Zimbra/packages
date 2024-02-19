@@ -1,16 +1,20 @@
 Summary:            Zimbra's Aspell Polish dictionary
 Name:               zimbra-aspell-pl
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-2.0
 Source:             %{name}-%{version}.tar.bz2
-BuildRequires:      zimbra-aspell
-Requires:           zimbra-aspell
+BuildRequires:      zimbra-aspell >= 0.60.8-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-aspell >= 0.60.8-1zimbra8.7b1ZAPPEND
 AutoReqProv:        no
 URL:                http://aspell.net/
 
 %description
 The Zimbra Aspell Polish dictionary
+
+%changelog
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Upgraded dependency aspell to 0.60.8
 
 %define debug_package %{nil}
 

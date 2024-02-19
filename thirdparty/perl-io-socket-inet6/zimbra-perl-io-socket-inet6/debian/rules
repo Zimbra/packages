@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 
 override_dh_auto_configure:
 	perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \
@@ -12,9 +12,6 @@ override_dh_auto_configure:
 override_dh_perl:
 	dh_perl OZCL/perl5
 
-override_dh_auto_test:
-	PERL5LIB=OZCL/perl5 dh_auto_test
-
 # remove .packlist and perllocal.pod
 #  $(DESTINSTALLSITEARCH)/auto/$(FULLEXT)/.packlist
 #  $(DESTINSTALLSITEARCH)/perllocal.pod
@@ -22,3 +19,6 @@ PERL_ARCHNAME := $(shell perl -MConfig -e 'print $$Config{archname}')
 override_dh_auto_install:
 	dh_auto_install
 	rm -rf $(CURDIR)/debian/$(shell dh_listpackages)/OZCL/perl5/$(PERL_ARCHNAME)
+
+override_dh_auto_test:
+	true

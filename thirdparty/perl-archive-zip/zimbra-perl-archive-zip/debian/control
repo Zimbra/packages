@@ -2,12 +2,12 @@ Source: zimbra-perl-MODNORMNAME
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-compress-raw-zlib
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-compress-raw-zlib (>= 2.093-1zimbra8.7b1ZAPPEND)
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/MODNAME
 
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-compress-raw-zlib
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-compress-raw-zlib (>= 2.093-1zimbra8.7b1ZAPPEND)
 Description: Archive::Zip - Provide an interface to ZIP archive files
  Perl interface to Zip archive files

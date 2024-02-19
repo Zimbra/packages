@@ -23,6 +23,10 @@ based on server load (Net::Server::PreFork).
 
 %define debug_package %{nil}
 
+%changelog
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded Net-Server to 2.009
+
 %prep
 %setup -n Net-Server-%{version}
 

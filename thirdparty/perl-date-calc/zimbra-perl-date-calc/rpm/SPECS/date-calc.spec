@@ -1,18 +1,22 @@
 Summary:            Date::Calc - Gregorian calendar date calculations
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-bit-vector
-Requires:           zimbra-perl-base, zimbra-perl-bit-vector
+BuildRequires:      zimbra-perl-base, zimbra-perl-bit-vector >= 7.4-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-bit-vector >= 7.4-1zimbra8.7b2ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
 %description
 Gregorian calendar date calculations
+
+%changelog
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependency zimbra-perl-bit-vector
 
 %define debug_package %{nil}
 

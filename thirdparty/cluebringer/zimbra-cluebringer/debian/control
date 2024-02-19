@@ -11,9 +11,9 @@ Package: zimbra-cluebringer
 Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-mta-base,
- zimbra-perl-base, zimbra-perl-cache-fastmmap, zimbra-perl-config-inifiles,
+ zimbra-perl-base, zimbra-perl-cache-fastmmap, zimbra-perl-config-inifiles (>= 2.86-1zimbra8.7b2ZAPPEND),
  zimbra-perl-dbi, zimbra-perl-dbd-sqlite, zimbra-perl-mail-spf,
- zimbra-perl-net-cidr, zimbra-perl-net-dns, zimbra-perl-net-server, zimbra-perl-timedate
+ zimbra-perl-net-cidr, zimbra-perl-net-dns, zimbra-perl-net-server (>= 2.009-1zimbra8.7b1ZAPPEND), zimbra-perl-timedate
 Description: ClueBringer Policy Daemon
  PolicyD v2 (codenamed "cluebringer") is a multi-platform policy server for popular
  MTAs. This policy daemon is designed mostly for large scale mail hosting environments.

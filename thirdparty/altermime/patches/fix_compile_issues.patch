@@ -1,0 +1,164 @@
+From 4f89cd2aa95a553f1a84c00f0a83c98fc7867ae3 Mon Sep 17 00:00:00 2001
+From: Paul L Daniels <pldaniels@gmail.com>
+Date: Wed, 24 May 2023 22:11:46 +1000
+Subject: [PATCH] Modernisation of code; fixed up various compile issues.
+
+---
+ MIME_headers.c | 10 +++++-----
+ altermime.c    |  2 +-
+ mime_alter.c   | 15 ++++++++-------
+ mime_alter.h   |  6 ++++--
+ pldstr.c       |  2 +-
+ qpe.c          |  2 +-
+ 6 files changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/MIME_headers.c b/MIME_headers.c
+index db294d9..d2b9c77 100644
+--- a/MIME_headers.c
++++ b/MIME_headers.c
+@@ -785,7 +785,7 @@ int MIMEH_save_doubleCR( FFGET_FILE *f )
+ 
+ 	do {
+ 		glb.doubleCR_count++;
+-		snprintf(glb.doubleCRname,_MIMEH_STRLEN_MAX,"%s/doubleCR.%d",glb.output_dir,glb.doubleCR_count);
++		snprintf(glb.doubleCRname,_MIMEH_STRLEN_MAX,"%.*s/doubleCR.%d", _MIMEH_STRLEN_MAX -40, glb.output_dir,glb.doubleCR_count);
+ 	}
+ 	while (stat(glb.doubleCRname, &st) == 0);
+ 
+@@ -2012,7 +2012,7 @@ int MIMEH_parse_contenttype( char *header_name, char *header_value, struct MIMEH
+ 			{
+ 				if (strlen(glb.appledouble_filename)>0)
+ 				{
+-					snprintf(hinfo->filename, sizeof(hinfo->filename), "%s.applemeta", glb.appledouble_filename );
++					snprintf(hinfo->filename, sizeof(hinfo->filename), "%.*s.applemeta", _MIMEH_FILENAMELEN_MAX -12, glb.appledouble_filename );
+ 				} else {
+ 					snprintf(hinfo->filename, sizeof(hinfo->filename), "applefile");
+ 				}
+@@ -2921,8 +2921,8 @@ int MIMEH_headers_process( struct MIMEH_header_info *hinfo, char *headers )
+ 	// Final analysis on our headers:
+ 	if ( hinfo->content_type == _CTYPE_MULTIPART_APPLEDOUBLE )
+ 	{
+-		char tmp[128];
+-		snprintf( tmp, sizeof(tmp), "mac-%s", hinfo->filename );
++		char tmp[_MIMEH_FILENAMELEN_MAX +1];
++		snprintf( tmp, sizeof(tmp), "mac-%.*s", _MIMEH_FILENAMELEN_MAX -4, hinfo->filename );
+ 		snprintf( hinfo->filename, sizeof(hinfo->filename), "%s", tmp );
+ 		snprintf( hinfo->name, sizeof(hinfo->name), "%s", tmp );
+ 	}
+@@ -3034,7 +3034,7 @@ int MIMEH_headers_get( struct MIMEH_header_info *hinfo, FFGET_FILE *f )
+ 
+ 	// Initialise header defects array.
+ 	hinfo->header_defect_count = 0;
+-	memset(hinfo->defects, 0, _MIMEH_DEFECT_ARRAY_SIZE);
++	memset(hinfo->defects, 0, _MIMEH_DEFECT_ARRAY_SIZE *sizeof(int));
+ 
+ 	snprintf( hinfo->content_type_string, _MIMEH_CONTENT_TYPE_MAX , "text/plain" ); 
+ 
+diff --git a/altermime.c b/altermime.c
+index 49b46e8..dcbd599 100644
+--- a/altermime.c
++++ b/altermime.c
+@@ -375,7 +375,7 @@ int main( int argc, char **argv )
+ 
+ 		glb.input_is_stdin = 1;
+ 
+-		snprintf(scratch,sizeof(scratch),"%s/%ld%d.amtmp", glb.tmpdir, time(NULL), getpid());
++		snprintf(scratch,sizeof(scratch),"%.*s/%ld%d.amtmp", (int)(sizeof(scratch) -20), glb.tmpdir, time(NULL), getpid());
+ 		//		free(glb.input_file);
+ 
+ 		glb.input_file = strdup(scratch);
+diff --git a/mime_alter.c b/mime_alter.c
+index 01db5f7..1e638b4 100644
+--- a/mime_alter.c
++++ b/mime_alter.c
+@@ -1543,7 +1543,7 @@ int AM_add_disclaimer_insert_html( 	struct AM_disclaimer_details *dd, FFGET_FILE
+ 
+ 	if (dd->boundary_found == 1)
+ 	{
+-		snprintf(boundary, sizeof(boundary), "--%s", dd->boundary);
++		snprintf(boundary, sizeof(boundary), "--%.*s", AM_BOUNDARY_BUFFER_SIZE -2, dd->boundary);
+ 		boundary_length = strlen(boundary);
+ 	}
+ 
+@@ -3378,13 +3378,13 @@ int AM_insert_Xheader( char *fname, char *xheader)
+ 	snprintf(tpn, sizeof(tpn), "%s",fname);
+ 
+ 	do {
+-		if (strlen(tpn) < (sizeof(tpn) -2))
++		size_t tpn_len = strlen(tpn);
++		if (tpn_len < (sizeof(tpn) -2))
+ 		{
+ 			/** Changed the temp filename suffix chat to a hypen because under
+ 			 ** windows appending multiple .'s results in a filename that isn't
+ 			 ** acceptable - Thanks to Nico for bringing this to my attention **/
+-			//			LOGGER_log("%s:%d:AM_insert_Xheader:NOTICE: Adjusting temp file name for header insert",FL);
+-			snprintf(tpn, sizeof(tpn),"%sX", tpn);
++			strncat(tpn, "X", sizeof(tpn) -2);
+ 
+ 		} else {
+ 			LOGGER_log("%s:%d:AM_insert_Xheader:ERROR: Temporary file name string buffer out of space!",FL);
+@@ -3516,9 +3516,10 @@ int AM_alter_header( char *filename, char *header, char *change, int change_mode
+ 	snprintf(tpn, sizeof(tpn), "%s",filename);
+ 
+ 	do {
+-		if (strlen(tpn) < (sizeof(tpn) -2))
+-		{
+-			snprintf(tpn, sizeof(tpn),"%sX", tpn);
++		size_t tpn_len = strlen(tpn);
++
++		if (tpn_len < (sizeof(tpn) -2)) {
++			strncat(tpn, "X", sizeof(tpn) -2);
+ 		}
+ 		else
+ 		{
+diff --git a/mime_alter.h b/mime_alter.h
+index 933c657..c7e121b 100644
+--- a/mime_alter.h
++++ b/mime_alter.h
+@@ -23,6 +23,8 @@
+ #define AM_NULLIFY_MATCH_MODE_FILENAME 1
+ #define AM_NULLIFY_MATCH_MODE_CONTENT_TYPE 2
+ 
++#define AM_BOUNDARY_BUFFER_SIZE 1024
++
+ struct AM_disclaimer_details {
+ 
+ 	// File details
+@@ -33,7 +35,7 @@ struct AM_disclaimer_details {
+ 	int content_type;
+ 	int content_encoding;
+ 	int boundary_found;
+-	char boundary[1024];
++	char boundary[AM_BOUNDARY_BUFFER_SIZE];
+ 
+ 	//
+ 
+diff --git a/pldstr.c b/pldstr.c
+index fdacdd2..ca29de3 100644
+--- a/pldstr.c
++++ b/pldstr.c
+@@ -297,7 +297,7 @@ char *PLD_strtok( struct PLD_strtok *st, char *line, char *delimeters )
+ 
+ 	result = st->start;
+ 
+-	if ((st->start)&&(st->start != '\0'))
++	if ((st->start)&&(*(st->start) != '\0'))
+ 	{
+ 		stop = strpbrk( st->start, delimeters ); /* locate our next delimeter */
+ 
+diff --git a/qpe.c b/qpe.c
+index 249fb9d..8c2f461 100644
+--- a/qpe.c
++++ b/qpe.c
+@@ -106,7 +106,7 @@ int qp_encode( char *out, size_t out_size, char *in, size_t in_size, char *line_
+ 		char charout[4];
+ 		int charout_size=0;
+ 
+-		if (lineend != '\0') {
++		if (*lineend != '\0') {
+ 			if (linestart == NULL) {
+ 				linestart = in;
+ 			} else {
+-- 
+2.34.1
+
