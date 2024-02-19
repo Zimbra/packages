@@ -9,7 +9,7 @@ Requires:           zimbra-cluebringer >= 2.1.0.0.cf484f1b93cf9965886cc89d33bdee
 Requires:           zimbra-mariadb >= 10.1.25-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-opendkim >= 2.10.3-1zimbra8.7b7ZAPPEND, zimbra-perl-mail-spamassassin >= 3.4.6-1zimbra8.8b5ZAPPEND
 Requires:           zimbra-postfix >= 3.6.1-1zimbra8.7b5ZAPPEND
-Requires:           zimbra-spamassassin-rules >= 1.0.0-1zimbra8.8b7ZAPPEND
+Requires:           zimbra-spamassassin-rules >= 1.0.0-1zimbra8.8b7ZAPPEND, OSDEPS
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
