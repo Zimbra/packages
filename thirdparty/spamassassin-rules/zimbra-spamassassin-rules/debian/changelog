@@ -1,15 +1,18 @@
-zimbra-spamassassin-rules (1.0.0-1zimbra8.8b6ZAPPEND) unstable; urgency=low
+zimbra-spamassassin-rules (1.0.0-1zimbra8.8b7ZAPPEND) unstable; urgency=low
 
   * Updated spamassassin
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
-
-zimbra-spamassassin-rules (1.0.0-1zimbra8.8b5ZAPPEND) unstable; urgency=low
+zimbra-spamassassin-rules (1.0.0-1zimbra8.8b6ZAPPEND) unstable; urgency=low
 
   * Fix ZCS-11117, Upgraded spamassassin to 3.4.6
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 28 Mar 2022 22:26:24 +0000
+zimbra-spamassassin-rules (1.0.0-1zimbra8.8b5ZAPPEND) unstable; urgency=low
+  
+  * Updated dependency zimbra-perl-mail-spamassassin
 
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com> Tue, 10 Aug 2021 00:00:00 +0000
 zimbra-spamassassin-rules (1.0.0-1zimbra8.8b4ZAPPEND) unstable; urgency=low
 
   * Upgraded spamAssasin to 3.4.5
