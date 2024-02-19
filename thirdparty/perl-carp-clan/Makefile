@@ -8,7 +8,7 @@ pname_lc := carp-clan
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://cpan.metacpan.org/authors/id/S/ST/STBEY/$(pfile)
+purl := https://www.cpan.org/modules/by-module/Carp/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 

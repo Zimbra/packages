@@ -6,14 +6,18 @@ License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-perl-compress-raw-bzip2, zimbra-perl-compress-raw-zlib
-Requires:           zimbra-perl-base, zimbra-perl-compress-raw-bzip2, zimbra-perl-compress-raw-zlib
+BuildRequires:      zimbra-perl-base, zimbra-perl-compress-raw-bzip2 >= 2.093-1zimbra8.7b1ZAPPEND, zimbra-perl-compress-raw-zlib >= 2.093-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-perl-base, zimbra-perl-compress-raw-bzip2 >= 2.093-1zimbra8.7b1ZAPPEND, zimbra-perl-compress-raw-zlib >= 2.093-1zimbra8.7b1ZAPPEND
 AutoReqProv:        no
 URL:                https://metacpan.org/release/IO-Compress
 
 %description
 This distribution provides a Perl interface to allow reading and writing of
 compressed data created with the zlib and bzip2 libraries.
+
+%changelog
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded IO-Compress to 2.093
 
 %define debug_package %{nil}
 

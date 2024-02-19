@@ -4,6 +4,7 @@ Version:            VERSION
 Release:            ITERATIONZAPPEND
 License:            SENDMAIL
 Patch0:             ipv6.patch
+Patch1:             libmilter-8.15.2.patch
 Source:             %{name}-%{version}.tar.gz
 URL:                https://www.sendmail.com/
 
@@ -15,6 +16,7 @@ The Zimbra libmilter build
 %prep
 %setup -n sendmail-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \

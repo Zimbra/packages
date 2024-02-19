@@ -18,6 +18,10 @@ it a number of levels to skip on the calling stack, you give it a
 pattern to characterize the package names of the "clan" of modules
 which shall never be blamed for any error.
 
+%changelog
+* Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-ITERATIONZAPPEND
+- Upgraded carp-clan to 6.08
+
 %define debug_package %{nil}
 
 %prep

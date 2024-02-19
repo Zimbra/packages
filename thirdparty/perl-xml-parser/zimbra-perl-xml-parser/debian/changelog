@@ -1,8 +1,14 @@
-zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=low
 
   * Updated dependency zimbra-perl-libwww
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
+
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=low
+
+  * Updated dependency zimbra-perl-libwww
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 10 Aug 2021 00:00:00 +0000
 
 zimbra-perl-MODNORMNAME (VERSION-1zimbra8.7b3ZAPPEND) unstable; urgency=medium
 

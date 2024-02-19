@@ -1,4 +1,4 @@
-zimbra-perl (1.0.8-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+zimbra-perl (1.0.9-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Updated perl-net-ssleay, perl-dbd-mysql, perl-crypt-openssl-random
   * Updated perl-crypt-openssl-rsa, perl-io-socket-ssl, perl-net-http
@@ -7,17 +7,26 @@ zimbra-perl (1.0.8-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
 
-zimbra-perl (1.0.7-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+zimbra-perl (1.0.8-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded Date-Manip to 6.90
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 7 Feb 2023 00:00:00 +0000
 
-zimbra-perl (1.0.6-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+zimbra-perl (1.0.7-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded Compress::Raw::Zlib to 2.103
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 19 Jan 2023 00:00:00 +0000
+
+zimbra-perl (1.0.6-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * Updated archive-zip,bit-vector,carp-clan,compress-raw-bzip2,compress-raw-zlib,config-inifiles,date-calc
+  * Updated dbd-mysql,http-cookies,http-daemon,http-message,http-negotiate,innotop
+  * Updated io-compress,io-socket-ssl,libwww,list-moreutils,lwp-protocol-https
+  * Updated net-http,net-server,soap-lite,swatchdog,xml-parser,xml-sax-expat,xml-simple
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 10 Aug 2021 00:00:00 +0000
 
 zimbra-perl (1.0.5-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 

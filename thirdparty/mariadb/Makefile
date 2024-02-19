@@ -6,7 +6,7 @@ pvers := $(MARIADB_VERSION)
 pname := mariadb
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://ftp.hosteurope.de/mirror/archive.mariadb.org/$(pname)-$(pvers)/source/$(pfile)
+purl := https://archive.mariadb.org/$(pname)-$(pvers)/source/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
@@ -38,6 +38,7 @@ build_rpm:
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz

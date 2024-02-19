@@ -1,0 +1,1 @@
+osdeps.RHEL9_64 := libnsl2
