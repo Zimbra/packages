@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.23-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded postfix to 3.6.14
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 26 Jan 2024 00:00:00 +0000
+
 zimbra-mta-components (1.0.22-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * ZCS-13605, Upgraded ClamAV to 1.0.1 and updated clamav-db for ClamAV-1.0.1
