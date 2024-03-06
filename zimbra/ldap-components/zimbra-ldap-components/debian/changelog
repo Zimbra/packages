@@ -1,3 +1,9 @@
+zimbra-ldap-components (3.0.3-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded openldap to 2.5.17
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 04 Mar 2024 00:00:00 +0000
+
 zimbra-ldap-components (3.0.2-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
   * ZBUG-3696, Updated core-components for openjdk, openjdk-cacerts
