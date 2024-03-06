@@ -1,3 +1,9 @@
+zimbra-perl-zmq-libzmq3 (VERSION-1zimbra8.7b2ZAPPEND) unstable; urgency=low
+
+  * Updated zeromq and Upgraded libsodium to 1.0.19
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 04 Mar 2024 00:00:00 +0000
+
 zimbra-perl-zmq-libzmq3 (VERSION-ITERATIONZAPPEND) unstable; urgency=low
 
   * Initial Release.
