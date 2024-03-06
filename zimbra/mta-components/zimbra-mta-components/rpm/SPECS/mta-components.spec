@@ -6,7 +6,7 @@ License:            GPL-2
 Requires:           sqlite, zimbra-mta-base, zimbra-altermime, zimbra-amavisd >= 2.13.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-clamav >= 1.0.1-1zimbra8.8b4ZAPPEND, zimbra-clamav-db >= 1.0.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-cluebringer, zimbra-mariadb >= 10.1.25-1zimbra8.7b3ZAPPEND
-Requires:           zimbra-opendkim >= 2.10.3-1zimbra8.7b6ZAPPEND, zimbra-perl-mail-spamassassin >= 3.4.6-1zimbra8.8b4ZAPPEND
+Requires:           zimbra-opendkim >= 2.10.3-1zimbra8.7b7ZAPPEND, zimbra-perl-mail-spamassassin >= 3.4.6-1zimbra8.8b4ZAPPEND
 Requires:           zimbra-postfix >= 3.6.14-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-spamassassin-rules >= 1.0.0-1zimbra8.8b6ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
