@@ -4,16 +4,16 @@ Version:            VERSION
 Release:            1zimbra8.7b4ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-openldap-devel >= 2.4.59-1zimbra8.8b6ZAPPEND
+BuildRequires:      zimbra-openldap-devel >= 2.5.17-1zimbra10.0b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
 BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-mariadb-devel
-BuildRequires:      zimbra-lmdb-devel >= 2.4.59-1zimbra8.8b6ZAPPEND
+BuildRequires:      zimbra-lmdb-devel >= 2.5.17-1zimbra10.0b1ZAPPEND
 BuildRequires:      pcre-devel
 Requires:           pcre, libicu
-Requires:           zimbra-openldap-libs >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-mta-base
+Requires:           zimbra-openldap-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-mta-base
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND, zimbra-mariadb
-Requires:           zimbra-lmdb-libs >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
+Requires:           zimbra-lmdb-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
 Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
