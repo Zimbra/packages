@@ -18,15 +18,14 @@ override_dh_auto_configure:
 	--enable-slapd \
 	--enable-modules \
 	--enable-backends=mod \
-		--disable-shell \
+		--disable-wt \
 		--disable-sql \
-		--disable-bdb \
-		--disable-hdb \
 		--disable-ndb \
 		--disable-perl \
 	--enable-overlays=mod \
 	--enable-debug \
 	--enable-spasswd \
+	--enable-argon2 \
 	--localstatedir=/opt/zimbra/data/ldap/state \
 	--enable-crypt
 	

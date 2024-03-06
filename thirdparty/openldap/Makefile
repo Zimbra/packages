@@ -6,7 +6,7 @@ pvers := $(LDAP_VERSION)
 pname := openldap
 pfile := $(pname)-$(pvers).tgz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(pfile)
+purl := https://www.openldap.org/software/download/OpenLDAP/openldap-release/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 DEB_TEST ?= nocheck
@@ -22,7 +22,8 @@ $(psrc_file):
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV) \
-	zimbra-libltdl-$(PKG_DEV)
+	zimbra-libltdl-$(PKG_DEV) zimbra-curl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
+	zimbra-libsodium-$(PKG_DEV)
 
 pkgrm: pkgrm%
 pkgrm%:
