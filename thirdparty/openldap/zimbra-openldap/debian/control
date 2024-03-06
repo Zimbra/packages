@@ -1,6 +1,6 @@
 Source: zimbra-openldap
 Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev (>= 3.0.9-1zimbra8.8b1ZAPPEND),
- zimbra-cyrus-sasl-dev (>= 2.1.28-1zimbra8.7b4ZAPPEND), zimbra-libltdl-dev
+ zimbra-cyrus-sasl-dev (>= 2.1.28-1zimbra8.7b4ZAPPEND), zimbra-libltdl-dev, zimbra-curl-dev, zimbra-heimdal-dev, zimbra-libxml2-dev, zimbra-libsodium-dev (>= 1.0.19-1zimbra10.0b1ZAPPEND)
 Section: utils
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -12,7 +12,7 @@ Package: zimbra-openldap-server
 Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-openldap-lib (= ${binary:Version}),
- zimbra-ldap-base
+ zimbra-ldap-base, zimbra-libsodium-dev (>= 1.0.19-1zimbra10.0b1ZAPPEND)
 Description: OpenLDAP Server Binaries
 
 Package: zimbra-openldap-server-dbg
