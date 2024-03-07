@@ -1,3 +1,9 @@
+zimbra-openldap (VERSION-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * Upgraded openldap to 2.5.17
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 04 Mar 2024 00:00:00 +0000
+
 zimbra-openldap (VERSION-1zimbra8.8b6ZAPPEND) unstable; urgency=medium
 
   * ZBUG-3355, Upgraded OpenSSL to 3.0.9

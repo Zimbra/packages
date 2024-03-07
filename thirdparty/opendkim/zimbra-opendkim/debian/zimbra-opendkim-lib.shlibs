@@ -1,2 +1,2 @@
-libopendkim 10 zimbra-opendkim-lib (>= VERSION-ITERATION)
-libvbr 2 zimbra-opendkim-lib (>= VERSION-ITERATION)
+libopendkim 10 zimbra-opendkim-lib (>= VERSION-1zimbra8.7b7ZAPPEND)
+libvbr 2 zimbra-opendkim-lib (>= VERSION-1zimbra8.7b7ZAPPEND)
