@@ -19,7 +19,7 @@ Section: libs
 Priority: important
 Architecture: any
 Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base, zimbra-libsodium-lib (>= 1.0.19-1zimbra10.0b1ZAPPEND)
 Description: 0MQ Libraries
 
 Package: zimbra-zeromq-lib-dbg
