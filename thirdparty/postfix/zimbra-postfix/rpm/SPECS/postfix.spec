@@ -1,7 +1,7 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            1zimbra8.7b4ZAPPEND
+Release:            1zimbra8.7b5ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-openldap-devel >= 2.5.17-1zimbra10.0b1ZAPPEND
@@ -27,6 +27,8 @@ The Zimbra Postfix build
 %define debug_package %{nil}
 
 %changelog
+* Sat May 11 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
+- Updated postfix for openldap-2.5.17
 * Fri Jan 26 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - Upgraded postfix to 3.6.14
 * Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
