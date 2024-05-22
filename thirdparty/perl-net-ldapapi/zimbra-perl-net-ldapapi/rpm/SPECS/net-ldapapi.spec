@@ -1,14 +1,14 @@
 Summary:            Net::LDAPapi - Perl5 Module Supporting LDAP API
 Name:               zimbra-perl-MODNORMNAME
 Version:            VERSION
-Release:            1zimbra8.7b2ZAPPEND
+Release:            1zimbra8.7b3ZAPPEND
 License:            GPL+ or Artistic
 Source:             %{name}-%{version}.tar.gz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
-BuildRequires:      zimbra-perl-base, zimbra-openldap-devel >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
+BuildRequires:      zimbra-perl-base, zimbra-openldap-devel >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
 BuildRequires:      zimbra-perl-convert-asn1
-Requires:           zimbra-perl-base, zimbra-openldap-libs >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-perl-convert-asn1
+Requires:           zimbra-perl-base, zimbra-openldap-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-perl-convert-asn1
 AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
@@ -18,6 +18,8 @@ based Directory.
 
 %define debug_package %{nil}
 %changelog
+* Mon Mar 04 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+- Updated perl-net-ldapapi, Upgraded openldap to 2.5.17
 * Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Updated openldap, cyrus-sasl
 

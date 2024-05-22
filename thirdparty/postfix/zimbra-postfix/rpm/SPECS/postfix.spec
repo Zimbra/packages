@@ -1,19 +1,19 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            1zimbra8.7b4ZAPPEND
+Release:            1zimbra8.7b5ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      zimbra-openldap-devel >= 2.4.59-1zimbra8.8b6ZAPPEND
+BuildRequires:      zimbra-openldap-devel >= 2.5.17-1zimbra10.0b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
 BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-mariadb-devel
-BuildRequires:      zimbra-lmdb-devel >= 2.4.59-1zimbra8.8b6ZAPPEND
+BuildRequires:      zimbra-lmdb-devel >= 2.5.17-1zimbra10.0b1ZAPPEND
 BuildRequires:      pcre-devel
 Requires:           pcre, libicu
-Requires:           zimbra-openldap-libs >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-mta-base
+Requires:           zimbra-openldap-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-mta-base
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND, zimbra-mariadb
-Requires:           zimbra-lmdb-libs >= 2.4.59-1zimbra8.8b6ZAPPEND, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
+Requires:           zimbra-lmdb-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
 Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
@@ -27,6 +27,8 @@ The Zimbra Postfix build
 %define debug_package %{nil}
 
 %changelog
+* Sat May 11 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
+- Updated postfix for openldap-2.5.17
 * Fri Jan 26 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - Upgraded postfix to 3.6.14
 * Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND

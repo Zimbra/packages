@@ -1,20 +1,15 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra8.8b6ZAPPEND
+Release:            1zimbra10.0b1ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
-Patch0:             ITS5037.patch
-Patch1:             writers.patch
-Patch2:             ITS7683.patch
-Patch3:             ITS8054.patch
-Patch4:             liblmdb-soname.patch
-Patch5:             multival.patch
-Patch6:             liblmdb-keysize.patch
-Patch7:             ITS9608.patch
+Patch0:             liblmdb-soname.patch
+Patch1:             liblmdb-keysize.patch
 BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
-BuildRequires:      zimbra-libltdl-devel
+BuildRequires:      zimbra-libltdl-devel, zimbra-curl-devel, zimbra-heimdal-devel, zimbra-libxml2-devel
+BuildRequires:      zimbra-libsodium-devel >= 1.0.19-1zimbra10.0b1ZAPPEND
 AutoReqProv:        no
 URL:                http://www.openldap.org
 
@@ -24,6 +19,8 @@ The Zimbra openldap build
 %define debug_package %{nil}
 
 %changelog
+* Mon Mar 04 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b1ZAPPEND
+- Upgraded openldap to 2.5.17
 * Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b6ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Tue Jul 07 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b5ZAPPEND
@@ -41,12 +38,6 @@ The Zimbra openldap build
 %setup -n openldap-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
@@ -61,15 +52,14 @@ PATH=/opt/zimbra/common/bin:$PATH; export PATH;
   --enable-slapd \
   --enable-modules \
   --enable-backends=mod \
-    --disable-shell \
     --disable-sql \
-    --disable-bdb \
-    --disable-hdb \
     --disable-ndb \
     --disable-perl \
+    --disable-wt \
   --enable-overlays=mod \
   --enable-debug \
   --enable-spasswd \
+  --enable-argon2 \
   --localstatedir=/opt/zimbra/data/ldap/state \
   --enable-crypt
 LD_RUN_PATH=/opt/zimbra/common/lib make depend
@@ -87,6 +77,8 @@ rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/data
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.a
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.a
 rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/etc/openldap/DB_CONFIG.example
+rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/pkgconfig/lber.pc
+rm -f ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/pkgconfig/ldap.pc
 chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/pw-sha2.la ${RPM_BUILD_ROOT}/opt/zimbra/common/libexec/openldap/noopsrch.la
 chmod 755 ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/libldap* ${RPM_BUILD_ROOT}/opt/zimbra/common/lib/liblber*
 
@@ -109,7 +101,7 @@ The zimbra-openldap-devel package contains the linking libraries and include fil
 %package server
 Summary:        openldap server binaries
 Requires: zimbra-openldap-libs = %{version}-%{release}, zimbra-cyrus-sasl-libs
-Requires: zimbra-libltdl-libs, zimbra-ldap-base
+Requires: zimbra-libltdl-libs, zimbra-ldap-base, zimbra-libsodium-libs >= 1.0.19-1zimbra10.0b1ZAPPEND
 AutoReqProv:        no
 
 %description server
@@ -216,3 +208,10 @@ The zimbra-lmdb-devel package contains the linking libraries and include files
 /opt/zimbra/common/include/lmdb.h
 /opt/zimbra/common/lib/liblmdb.a
 /opt/zimbra/common/lib/liblmdb.so
+
+%post -p /bin/bash -n zimbra-openldap-server
+if [ -x /opt/zimbra/common/libexec/slapd ]; then
+  chown root:zimbra /opt/zimbra/common/libexec/slapd
+  chmod 750 /opt/zimbra/common/libexec/slapd
+  setcap CAP_NET_BIND_SERVICE=+ep /opt/zimbra/common/libexec/slapd
+fi
