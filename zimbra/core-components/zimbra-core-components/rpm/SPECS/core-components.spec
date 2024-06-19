@@ -1,6 +1,6 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            4.0.3
+Version:            4.0.4
 Release:            1zimbra10.0b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements >= 1.0.3-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.9-1zimbra8.7b1ZAPPEND
@@ -8,7 +8,7 @@ Requires:           zimbra-pflogsumm
 Requires:           zimbra-openssl >= 3.0.9-1zimbra8.8b1ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-rsync
-Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.5.17-1zimbra10.0b1ZAPPEND
+Requires:           zimbra-mariadb-libs >= 11.4.2-1zimbra10.0b1ZAPPEND, zimbra-openldap-client >= 2.5.17-1zimbra10.0b1ZAPPEND
 Requires:           zimbra-osl >= 3.0.0-1zimbra10.0b1ZAPPEND
 Requires:           zimbra-prepflog, zimbra-tcmalloc-libs, zimbra-perl-innotop >= 1.9.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-openjdk >= 17.0.8-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.10-1zimbra8.7b1ZAPPEND
@@ -21,6 +21,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Fri Jun 14 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.4
+- Upgraded mariadb to 11.4.2
 * Mon Mar 04 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.3
 - Updated openldap, perl
 * Wed Nov 29 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.2
