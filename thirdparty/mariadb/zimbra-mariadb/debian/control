@@ -1,5 +1,5 @@
 Source: zimbra-mariadb
-Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev (>= 1.0.2t-1zimbra8.7b2ZAPPEND), libaio-dev, libncurses5-dev
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev (>= 3.0.9-1zimbra8.8b1ZAPPEND), libaio-dev, libncurses5-dev
 Section: utils
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>

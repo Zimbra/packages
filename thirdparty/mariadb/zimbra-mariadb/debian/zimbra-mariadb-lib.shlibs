@@ -1,1 +1,1 @@
-libmysqlclient 18 zimbra-mariadb-lib (>= VERSION-ITERATION)
+libmysqlclient 18 zimbra-mariadb-lib (>= VERSION-1zimbra10.0b1ZAPPEND)

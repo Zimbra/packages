@@ -2,13 +2,15 @@
 export DEB_BUILD_OPTIONS=nocheck
 export DEB_CFLAGS_MAINT_STRIP=-O2
 export DEB_CFLAGS_MAINT_APPEND=-O3 -fno-omit-frame-pointer -pipe -Wall -Wno-uninitialized -DNDEBUG
-export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL:OZCL/mysql
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
 
 %:
 	dh $@
 override_dh_auto_configure:
-	/usr/bin/cmake . \
-	-DBUILD_CONFIG=mysql_release \
+	cmake . \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DPLUGIN_AUTH_PAM=NO \
+	-DPLUGIN_AUTH_PAM_V1=NO \
 	-DCOMPILATION_COMMENT="Zimbra MariaDB binary distribution" \
 	-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE  \
 	-DCMAKE_INSTALL_PREFIX="OZC" \
@@ -50,14 +52,12 @@ override_dh_strip:
 override_dh_auto_install:
 	$(MAKE) install DESTDIR=$$(pwd)/debian/tmp
 	rm -f $$(pwd)/debian/tmpOZC/sbin/rcmysql
-	rm -f $$(pwd)/debian/tmpOZCL/libmysqlclient_r.so.18
-	rm -f $$(pwd)/debian/tmpOZCL/libmysqlclient_r.so.18.0.0
 	cd $$(pwd)/debian/tmpOZCL && \
+	cp libmysqlclient.so libmysqlclient.so.18 && \
+	cp libmysqlclient.so libmysqlclient.so.18.0.0 && \
 	ln -s libmysqlclient.so.18.0.0 libmysqlclient_r.so.18.0.0 && \
-	ln -s libmysqlclient.so.18 libmysqlclient_r.so.18
-	mkdir -p $$(pwd)/debian/tmpOZCL/mysql && sudo chmod 755 -R $$(pwd)/debian/tmpOZCL/mysql
-	cp -r /opt/zimbra/common/lib/libssl.so.1.0.0 /opt/zimbra/common/lib/libcrypto.so.1.0.0 $$(pwd)/debian/tmpOZCL/mysql/
-	sudo chmod 755 -R $$(pwd)/debian/tmpOZCL/mysql/
+	ln -s libmysqlclient.so.18 libmysqlclient_r.so.18 && \
+	mv libmariadb.so.3 libmariadb_r.so.3
 
 override_dh_install:
 	dh_install
