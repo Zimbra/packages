@@ -6,7 +6,7 @@ pvers := $(HEIMDAL_VERSION)
 pname := heimdal
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://github.com/heimdal/heimdal/releases/download/$(pname)-$(pvers)/$(pfile)
+purl := http://ftp.st.ryukoku.ac.jp/pub/security/tool/heimdal/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

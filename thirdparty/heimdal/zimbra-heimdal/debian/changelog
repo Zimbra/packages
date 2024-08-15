@@ -1,11 +1,5 @@
 zimbra-heimdal (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
 
-  * Upgraded heimdal to 7.8.0
-
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 24 Jan 2024 00:00:00 +0000
-
-zimbra-heimdal (VERSION-1zimbra8.7b4ZAPPEND) unstable; urgency=medium
-
   * ZBUG-3355, Upgraded OpenSSL to 3.0.9
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 12 Jun 2023 05:12:55 +0000

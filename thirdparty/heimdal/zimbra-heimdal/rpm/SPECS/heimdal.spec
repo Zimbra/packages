@@ -34,36 +34,35 @@ CPPFLAGS="-IOZCI"; export CPPFLAGS; \
   --without-hesiod \
   --enable-static=no
 make -C include
+make -C base
 make -C lib/roken
 make -C lib/vers
 make -C lib/com_err
-make -C lib/base
+make -C lib/asn1
 make -C lib/libedit
 make -C lib/sl
-make -C lib/wind
-make -C lib/asn1
-make -C lib/sqlite
 make -C lib/hcrypto
-make -C lib/ipc
+make -C lib/wind
 make -C lib/hx509
+make -C lib/sqlite
+make -C lib/ipc
 make -C lib/krb5
 make -C lib/ntlm
 make -C lib/gssapi
 
 %install
 make -C include install DESTDIR=${RPM_BUILD_ROOT}
+make -C base install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/roken install DESTDIR=${RPM_BUILD_ROOT}
-make -C lib/vers install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/com_err install DESTDIR=${RPM_BUILD_ROOT}
-make -C lib/base install DESTDIR=${RPM_BUILD_ROOT}
+make -C lib/asn1 install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/libedit install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/sl install DESTDIR=${RPM_BUILD_ROOT}
-make -C lib/wind install DESTDIR=${RPM_BUILD_ROOT}
-make -C lib/asn1 install DESTDIR=${RPM_BUILD_ROOT}
-make -C lib/sqlite install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/hcrypto install DESTDIR=${RPM_BUILD_ROOT}
-make -C lib/ipc install DESTDIR=${RPM_BUILD_ROOT}
+make -C lib/wind install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/hx509 install DESTDIR=${RPM_BUILD_ROOT}
+make -C lib/sqlite install DESTDIR=${RPM_BUILD_ROOT}
+make -C lib/ipc install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/krb5 install DESTDIR=${RPM_BUILD_ROOT}
 make -C lib/ntlm install DESTDIR=${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}OZCS/man/cat5/mech
@@ -103,11 +102,9 @@ OZCL/*.so
 OZCI
 
 %changelog
-* Wed Jan 24 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
-- Upgraded heimdal to 7.8.0
 * Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
-* Tue Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+* Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded dependency openssl to 1.1.1h
 * Thu Sep 10 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Upgraded dependency openssl to 1.1.1g
