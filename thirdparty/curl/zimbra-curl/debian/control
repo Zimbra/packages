@@ -1,5 +1,6 @@
 Source: zimbra-curl
-Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), curl, libcurl4
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), zimbra-openssl-dev (>= 3.0.9-1zimbra8.8b1ZAPPEND),
+ zimbra-heimdal-dev (>= 1.5.3-1zimbra8.7b4ZAPPEND), libz-dev
 Section: utils
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -10,7 +11,7 @@ Homepage: http://curl.haxx.se/
 Package: zimbra-curl
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-curl-lib (= ${binary:Version}), curl
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-curl-lib (= ${binary:Version})
 Description: Curl Binaries
 
 Package: zimbra-curl-lib
@@ -18,7 +19,7 @@ Section: libs
 Priority: important
 Architecture: any
 Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base, libcurl4
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
 Description: Curl Libraries
 
 Package: zimbra-curl-lib-dbg
@@ -34,7 +35,7 @@ Section: libdevel
 Priority: optional
 Architecture: any
 Multi-Arch: same
-Depends: zimbra-curl-lib (= ${binary:Version}), ${misc:Depends}, libcurl4-openssl-dev
+Depends: zimbra-curl-lib (= ${binary:Version}), ${misc:Depends}
 Description: Curl development pieces
 
 Package: zimbra-curl-dbg
@@ -44,3 +45,4 @@ Architecture: any
 Multi-Arch: same
 Depends: zimbra-curl (= ${binary:Version}), ${misc:Depends}
 Description: Curl binary debug information
+
