@@ -6,7 +6,7 @@ pvers := $(OPENSSL_VERSION)
 pname := openssl
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://www.openssl.org/source/$(pfile)
+purl := https://github.com/openssl/openssl/releases/download/$(pname)-$(pvers)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
