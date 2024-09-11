@@ -1,3 +1,9 @@
+zimbra-apache-components (2.0.13-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * ZCS-15706, Upgraded Apache to 2.4.62
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 23 Aug 2024 22:26:24 +0000
+
 zimbra-apache-components (2.0.12-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Upgraded PHP to 8.3.0  (ZBUG-3082)
