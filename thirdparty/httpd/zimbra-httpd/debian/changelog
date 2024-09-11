@@ -1,5 +1,11 @@
 zimbra-httpd (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=medium
 
+  * ZCS-15706, Upgraded Apache to 2.4.62
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 23 Aug 2024 22:26:24 +0000
+
+zimbra-httpd (VERSION-1zimbra8.7b5ZAPPEND) unstable; urgency=medium
+
   * Updated dependency zimbra-apr-util
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
