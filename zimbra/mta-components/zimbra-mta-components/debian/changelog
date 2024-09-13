@@ -1,3 +1,9 @@
+zimbra-mta-components (1.0.26-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Enable EAI support in postfix
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 13 Sep 2024 00:00:00 +0000
+
 zimbra-mta-components (1.0.25-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * ZCS-15540, Upgraded ClamAV to 1.0.6
