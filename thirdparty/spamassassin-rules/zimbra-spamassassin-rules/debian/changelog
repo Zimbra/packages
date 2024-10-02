@@ -1,3 +1,9 @@
+zimbra-spamassassin-rules (1.0.0-1zimbra8.8b7ZAPPEND) unstable; urgency=low
+
+  * Upgraded spamassassin to 4.0.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 01 Oct 2024 05:12:55 +0000
+
 zimbra-spamassassin-rules (1.0.0-1zimbra8.8b6ZAPPEND) unstable; urgency=low
 
   * Updated spamassassin
