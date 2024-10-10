@@ -1,6 +1,6 @@
 Summary:            CA Certs keystore for OpenJDK
 Name:               zimbra-openjdk-cacerts
-Version:            1.0.10
+Version:            1.0.11
 Release:            1zimbra8.7b1ZAPPEND
 License:            MPL-2
 Requires:           zimbra-base, zimbra-openjdk
@@ -14,6 +14,8 @@ AutoReqProv:        no
 CA certs keystore for use with OpenJDK
 
 %changelog
+* Mon Jul 22 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.11-1zimbra8.7b1ZAPPEND
+- Updated zimbra-openjdk-cacerts CA root store
 * Thu Nov 23 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.10-1zimbra8.7b1ZAPPEND
 - ZBUG-3696, Update zimbra-openjdk-cacerts CA root store
 * Fri Oct 06 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.9-1zimbra8.7b1ZAPPEND
@@ -64,7 +66,7 @@ if [ "$1" -ge "2" ]; then
     if [ $mailboxd_truststore_password != "changeit" ]; then
        /bin/su - zimbra -c "/opt/zimbra/common/bin/keytool -storepasswd -keystore /opt/zimbra/common/etc/java/cacerts -storepass changeit -new $mailboxd_truststore_password"
     fi
-    for dir in /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-1.0.[5-9]*; do
+    for dir in /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-1.0.{5..10}*; do
         if [ -d "$dir" ]; then
         /bin/chown zimbra:zimbra $dir/cacerts.*
         /bin/chmod 644 $dir/cacerts.*

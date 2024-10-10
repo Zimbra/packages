@@ -12,8 +12,8 @@ Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
  zimbra-openssl (>= 3.0.9-1zimbra8.8b1ZAPPEND), zimbra-curl (>= 7.49.1-1zimbra8.7b4ZAPPEND), zimbra-cyrus-sasl (>= 2.1.28-1zimbra8.7b4ZAPPEND),
  zimbra-rsync,
  zimbra-mariadb-lib (>= 10.1.25-1zimbra8.7b3ZAPPEND), zimbra-openldap-client (>= 2.5.17-1zimbra10.0b1ZAPPEND), zimbra-prepflog,
- zimbra-tcmalloc-lib, zimbra-perl-innotop (>= 1.9.1-1zimbra8.7b4ZAPPEND), zimbra-openjdk (>= 17.0.8-1zimbra8.8b1ZAPPEND),
- zimbra-openjdk-cacerts (>= 1.0.10-1zimbra8.7b1ZAPPEND), zimbra-osl (>= 3.0.0-1zimbra10.0b1ZAPPEND), zimbra-amavis-logwatch,
+ zimbra-tcmalloc-lib, zimbra-perl-innotop (>= 1.9.1-1zimbra8.7b4ZAPPEND), zimbra-openjdk (>= 17.0.12-1zimbra8.8b1ZAPPEND),
+ zimbra-openjdk-cacerts (>= 1.0.11-1zimbra8.7b1ZAPPEND), zimbra-osl (>= 3.0.0-1zimbra10.0b1ZAPPEND), zimbra-amavis-logwatch,
  zimbra-postfix-logwatch (>= 1.40.03-1zimbra8.7b1ZAPPEND), zimbra-rrdtool
 Description: Zimbra components for core package
  Zimbra core components pulls in all the packages used by
