@@ -12,7 +12,7 @@ if [ "$1" = configure ]; then
       if [ $mailboxd_truststore_password != "changeit" ]; then
 	      /bin/su - zimbra -c "/opt/zimbra/common/bin/keytool -storepasswd -keystore /opt/zimbra/common/etc/java/cacerts -storepass changeit -new $mailboxd_truststore_password"
       fi
-      for dir in /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-1.0.[5-9]*; do
+      for dir in /opt/zimbra/.saveconfig/zimbra-openjdk-cacerts-1.0.{5..10}*; do
           if [ -d "$dir" ]; then
              /bin/chown zimbra:zimbra $dir/cacerts.*
              /bin/chmod 644 $dir/cacerts.*
