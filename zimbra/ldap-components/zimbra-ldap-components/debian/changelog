@@ -1,3 +1,9 @@
+zimbra-ldap-components (10.0.0-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * Upgrade Openjdk to 17.0.12, Updated core-components for openjdk
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 22 Jul 2024 00:00:00 +0000
+
 zimbra-ldap-components (3.0.2-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
   * ZBUG-3696, Updated core-components for openjdk, openjdk-cacerts
