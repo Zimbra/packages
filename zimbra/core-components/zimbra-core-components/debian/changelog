@@ -1,3 +1,9 @@
+zimbra-core-components (10.1.0-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * Bumped-up version to differentiate from ZCS 10
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 22 Jul 2024 00:00:00 +0000
+
 zimbra-core-components (4.0.4-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
   * Upgrade Openjdk to 17.0.12
