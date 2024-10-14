@@ -49,3 +49,7 @@ OZCL/*.so
 OZCI
 OZCL/*.la
 OZCL/pkgconfig
+
+%changelog
+* Tue Sep 26 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Upgraded tcmalloc to 2.13

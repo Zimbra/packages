@@ -6,6 +6,8 @@ pname_lc := perl
 zname := zimbra-$(pname_lc)
 zspec := $(pname_lc).spec
 
+perldeps = $(perldeps.$(BUILD_PLATFORM))
+
 .PHONY: all clean build setup
 
 all: clean build
@@ -19,6 +21,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(PERL) -pi -e 's/PERLDEPS/$(perldeps)/' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(PKG_BUILD) $(specfile)
 

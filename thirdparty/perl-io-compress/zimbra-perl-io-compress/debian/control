@@ -2,13 +2,13 @@ Source: zimbra-perl-io-compress
 Section: perl
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
-Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-compress-raw-bzip2, zimbra-perl-compress-raw-zlib
+Build-Depends: debhelper (>= 9), zimbra-perl-base, zimbra-perl-compress-raw-bzip2 (>= 2.093-1zimbra8.7b1ZAPPEND), zimbra-perl-compress-raw-zlib (>= 2.093-1zimbra8.7b1ZAPPEND)
 Standards-Version: 3.9.5
 Homepage: https://metacpan.org/release/IO-Compress
 
 Package: zimbra-perl-io-compress
 Architecture: all
-Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-compress-raw-bzip2, zimbra-perl-compress-raw-zlib
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base, zimbra-perl-compress-raw-bzip2 (>= 2.093-1zimbra8.7b1ZAPPEND), zimbra-perl-compress-raw-zlib (>= 2.093-1zimbra8.7b1ZAPPEND)
 Description: IO-Compress
  This distribution provides a Perl interface to allow reading and writing of
  compressed data created with the zlib and bzip2 libraries.
