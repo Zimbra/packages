@@ -5,10 +5,10 @@ export DEB_BUILD_OPTIONS=nocheck
 export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 
 override_dh_auto_configure:
-	./configure --prefix=OZC \
+	./configure --prefix=OZC  --disable-gcc-global-regs \
 	--with-apxs2=OZCB/apxs \
 	--with-config-file-path=/opt/zimbra/conf \
 	--with-pspell=OZC \

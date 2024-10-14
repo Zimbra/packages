@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 
 override_dh_auto_configure:
 	perl -I OZCL/perl5 Makefile.PL INSTALL_BASE=OZC \

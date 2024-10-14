@@ -5,9 +5,10 @@ export DEB_CFLAGS_MAINT_APPEND=-O3 -fno-omit-frame-pointer -pipe -Wall -Wno-unin
 export DEB_LDFLAGS_MAINT_APPEND=-Wl,-rpath,OZCL:OZCL/mysql
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 override_dh_auto_configure:
 	/usr/bin/cmake . \
+	-DCMAKE_CXX_STANDARD=11 \
 	-DBUILD_CONFIG=mysql_release \
 	-DCOMPILATION_COMMENT="Zimbra MariaDB binary distribution" \
 	-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE  \
