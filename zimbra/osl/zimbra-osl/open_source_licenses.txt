@@ -201,6 +201,29 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> preact-i18n@^2.0.0-preactx.2
    >>> dropbox@4.0.30
    >>> rc-time-picker@3.7.3
+   >>> source-map-js@1.2.1 
+   >>> marked@4.3.0
+   >>> react-html-parser@2.0.2
+   >>> sanitize-html@2.14.0
+   >>> htmlparser2@3.10.1
+   >>> htmlparser2@^8.0.0
+   >>> readable-stream@3.6.2
+   >>> dom-serializer@0.2.2
+   >>> string_decoder@1.3.0
+   >>> util-deprecate@1.0.2
+   >>> safe-buffer@5.2.1
+   >>> deepmerge@4.3.1
+   >>> escape-string-regexp@4.0.0
+   >>> is-plain-object@5.0.0
+   >>> parse-srcset@1.0.2
+   >>> postcss@8.5.1
+   >>> nanoid@3.3.8
+   >>> domelementtype@1.3.1
+   >>> domelementtype@^2.0.1
+   >>> domhandler@2.4.2
+   >>> domutils@1.7.0
+   >>> entities@1.1.2
+   >>> entities@^2.0.0
 
 SECTION 2: Apache License, V2.0
 
@@ -272,10 +295,12 @@ SECTION 2: Apache License, V2.0
    >>> zkclient-0.1.0
    >>> zookeeper-3.4.5
    >>> gson-2.9.1
+   >>> gson-2.8.2
    >>> json-simple-1.1.1
    >>> dompurify@3.0.11
    >>> idb-keyval@6.2.1
    >>> mixpanel-browser@2.47.0
+   >>> zulip-9.2
 
 
 SECTION 3: Artistic License, V2.0
@@ -478,6 +503,8 @@ SECTION 16: ISC (Internet Systems Consortium) License
    >>> auto-archive@1.0.0
    >>> sync@1.0.0
    >>> tar@6.2.1
+   >>> inherits@2.0.4
+   >>> picocolors@1.1.1 
 
 
 APPENDIX. Standard License Files
@@ -2234,6 +2261,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+>>> json-20200518
 >>> json-1.0
 
 Copyright (c) 2002 JSON.org
@@ -13145,6 +13173,10 @@ jackson-core-asl-1.9.2.jar
 jackson-mapper-asl-1.9.2.jar
 jackson-jaxrs-1.9.2.jar
 jettison-1.1.jar
+jjwt-0.7.0.jar
+jackson-core-2.10.1.jar
+jackson-annotations-2.10.1.jar
+jackson-databind-2.10.1.jar
 
 This copy of Jackson JSON processor is licensed under the
 Apache (Software) License, version 2.0 ("the License").
