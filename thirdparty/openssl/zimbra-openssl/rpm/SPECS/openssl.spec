@@ -94,6 +94,7 @@ OZCS
 %defattr(-,root,root)
 OZCL/*.so
 OZCI
+OZCL/cmake
 OZCL/pkgconfig
 
 %post -p /bin/bash
