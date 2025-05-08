@@ -1,3 +1,9 @@
+zimbra-core-components (10.1.2-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-4617, Updated os-requirements(removed rsyslog dependency)
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 08 May 2025 00:00:00 +0000
+
 zimbra-core-components (10.1.1-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
   * ZBUG-3966, Updated os-requirements
