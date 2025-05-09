@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-store-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-store-base, zimbra-mariadb (>= 10.1.25-1zimbra8.7b3ZAPPEND)
+ zimbra-store-base, zimbra-mariadb (>= 10.1.25-1zimbra8.7b3ZAPPEND), acl
 Description: Zimbra components for store package
  Zimbra store components pulls in all the packages used by
  zimbra-store
