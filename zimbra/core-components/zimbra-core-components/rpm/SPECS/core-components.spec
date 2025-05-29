@@ -1,9 +1,9 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            10.1.0
+Version:            10.1.2
 Release:            1zimbra10.0b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-base, zimbra-os-requirements >= 1.0.3-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.9-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-base, zimbra-os-requirements >= 1.0.5-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.9-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-pflogsumm
 Requires:           zimbra-openssl >= 3.0.9-1zimbra8.8b1ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND
@@ -21,6 +21,10 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Thu May 08 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.2
+- ZBUG-4617, Updated os-requirements(removed rsyslog dependency)
+* Wed May 07 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.1
+- ZBUG-3966, Updated os-requirements
 * Mon Jul 22 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.0
 - Bumped-up version to differentiate from ZCS 10
 * Mon Jul 22 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.4

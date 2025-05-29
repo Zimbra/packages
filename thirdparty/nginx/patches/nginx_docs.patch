@@ -145,9 +145,9 @@ diff -urN nginx-1.24.0/docs/html/index.html nginx/docs/html/index.html
 +<p><em>Thank you for using nginx.</em></p>
 +</body>
 +</html>
-diff -urN nginx-1.24.0/docs/html/zmerror_upstream_502.html nginx/docs/html/zmerror_upstream_502.html
---- nginx-1.24.0/docs/html/zmerror_upstream_502.html	1970-01-01 05:30:00.000000000 +0530
-+++ nginx/docs/html/zmerror_upstream_502.html	2023-03-04 13:25:59.800430200 +0530
+diff -urN nginx-1.24.0/html/zmerror_upstream_502.html nginx/html/zmerror_upstream_502.html
+--- nginx-1.24.0/html/zmerror_upstream_502.html	1970-01-01 05:30:00.000000000 +0530
++++ nginx/docs/zmerror_upstream_502.html	2023-03-04 13:25:59.800430200 +0530
 @@ -0,0 +1,29 @@
 +<html>
 +<head>
@@ -178,9 +178,9 @@ diff -urN nginx-1.24.0/docs/html/zmerror_upstream_502.html nginx/docs/html/zmerr
 +
 +</body>
 +</html>
-diff -urN nginx-1.24.0/docs/html/zmerror_upstream_504.html nginx/docs/html/zmerror_upstream_504.html
---- nginx-1.24.0/docs/html/zmerror_upstream_504.html	1970-01-01 05:30:00.000000000 +0530
-+++ nginx/docs/html/zmerror_upstream_504.html	2023-03-04 13:25:59.801427300 +0530
+diff -urN nginx-1.24.0/html/zmerror_upstream_504.html nginx/html/zmerror_upstream_504.html
+--- nginx-1.24.0/html/zmerror_upstream_504.html	1970-01-01 05:30:00.000000000 +0530
++++ nginx/html/zmerror_upstream_504.html	2023-03-04 13:25:59.801427300 +0530
 @@ -0,0 +1,30 @@
 +<html>
 +<head>

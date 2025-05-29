@@ -1,3 +1,9 @@
+zimbra-store-components (1.0.4-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * ZCS-16122, added acl as dependency to store-components
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 29 Oct 2024 00:00:00 +0000
+
 zimbra-store-components (1.0.3-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
 
   * Updated zimbra-mariadb package
