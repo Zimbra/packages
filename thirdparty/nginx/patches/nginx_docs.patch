@@ -145,10 +145,10 @@ diff -urN nginx-1.24.0/docs/html/index.html nginx/docs/html/index.html
 +<p><em>Thank you for using nginx.</em></p>
 +</body>
 +</html>
-diff -urN nginx-1.24.0/html/zmerror_upstream_502.html nginx/html/zmerror_upstream_502.html
---- nginx-1.24.0/html/zmerror_upstream_502.html	1970-01-01 05:30:00.000000000 +0530
-+++ nginx/docs/zmerror_upstream_502.html	2023-03-04 13:25:59.800430200 +0530
-@@ -0,0 +1,29 @@
+diff -ruN a/html/zmerror_upstream_502.html b/html/zmerror_upstream_502.html
+--- a/html/zmerror_upstream_502.html	1970-01-01 00:00:00.000000000 +0000
++++ b/html/zmerror_upstream_502.html	2025-06-03 13:53:25.221373782 +0000
+@@ -0,0 +1,30 @@
 +<html>
 +<head>
 +<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
@@ -157,24 +157,25 @@ diff -urN nginx-1.24.0/html/zmerror_upstream_502.html nginx/html/zmerror_upstrea
 +<body>
 +<h2>HTTP ERROR 502</h2>
 +<p>Problem accessing ZCS upstream server.
-+	Cannot connect to the ZCS upstream server. Connection is refused.<br/>
++      Cannot connect to the ZCS upstream server. Connection is refused.<br/>
 +    Possible reasons:
 +    <ul>
 +        <li>upstream server is unreachable</li>
 +        <li>upstream server is currently being upgraded</li>
 +        <li>upstream server is down</li>
++        <li>license may be expired. Please verify the license status</li>
 +    </ul>
 +    Please contact your ZCS administrator to fix the problem.
 +</p><br/>
-+<i><small>Powered by Nginx-Zimbra://</small></i><br/>                                                
-+<br/>                                                
-+<br/>                                                
-+<br/>                                                
-+<br/>                                                
-+<br/>                                                
-+<br/>                                                
-+<br/>                                                
-+<br/>                                                                                             
++<i><small>Powered by Nginx-Zimbra://</small></i><br/>
++<br/>
++<br/>
++<br/>
++<br/>
++<br/>
++<br/>
++<br/>
++<br/>
 +
 +</body>
 +</html>
