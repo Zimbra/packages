@@ -1,7 +1,7 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra8.8b5ZAPPEND
+Release:            1zimbra8.8b6ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 Patch0: 			nginx_auto_cc.patch

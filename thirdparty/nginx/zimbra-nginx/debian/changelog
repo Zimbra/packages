@@ -1,3 +1,9 @@
+zimbra-nginx (VERSION-1zimbra8.8b6ZAPPEND) unstable; urgency=medium
+
+  * Fix ZBUG-17297
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 3 Jun 2025 05:12:55 +0000
+
 zimbra-nginx (VERSION-1zimbra8.8b5ZAPPEND) unstable; urgency=medium
 
   * Fix ZBUG-4637
