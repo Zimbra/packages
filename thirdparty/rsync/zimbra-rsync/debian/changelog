@@ -1,3 +1,9 @@
+zimbra-rsync (VERSION-1zimbra8.7b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-4670, Upgraded rsync to 3.4.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 05 Feb 2025 13:26:24 +0000
+
 zimbra-rsync (VERSION-ITERATIONZAPPEND) unstable; urgency=medium
 
   * Initial Release.
