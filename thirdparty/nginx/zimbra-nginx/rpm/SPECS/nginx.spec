@@ -1,7 +1,7 @@
 Summary:            Zimbra's nginx build
 Name:               zimbra-nginx
 Version:            VERSION
-Release:            1zimbra8.8b4ZAPPEND
+Release:            1zimbra8.8b6ZAPPEND
 License:            MIT
 Source:             %{name}-%{version}.tar.gz
 Patch0: 			nginx_auto_cc.patch
@@ -41,6 +41,8 @@ URL:                http://nginx.org
 The Zimbra nginx build
 
 %changelog
+* Wed Jan 29 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b5ZAPPEND
+- Fix ZBUG-4637
 * Mon Feb 05 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
 - Upgraded zimbra-nginx to 1.24.0
 * Tue Jun 13 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND

@@ -1,3 +1,21 @@
+zimbra-core-components (10.1.3-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-4670, Upgraded rsync to 3.4.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 29 May 2025 00:00:00 +0000
+
+zimbra-core-components (10.1.2-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-4617, Updated os-requirements(removed rsyslog dependency)
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 08 May 2025 00:00:00 +0000
+
+zimbra-core-components (10.1.1-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * ZBUG-3966, Updated os-requirements
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 07 May 2025 00:00:00 +0000
+
 zimbra-core-components (10.1.0-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
   * Bumped-up version to differentiate from ZCS 10
