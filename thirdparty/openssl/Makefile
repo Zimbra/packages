@@ -22,7 +22,13 @@ $(psrc_file):
 setup:
 	$(generic-setup)
 
-build: setup build_$(PKG_EXT)
+build_fips:
+	$(MKDIR) $(PLATFORM_DIR)/tmp
+	$(WGET) -O $(PLATFORM_DIR)/tmp/openssl-$(OPENSSL_FIPS_VERSION).tar.gz https://www.openssl.org/source/openssl-$(OPENSSL_FIPS_VERSION).tar.gz && \
+	$(CD) $(PLATFORM_DIR)/tmp && $(TAR) xfz openssl-$(OPENSSL_FIPS_VERSION).tar.gz && \
+	$(CD) $(PLATFORM_DIR)/tmp/openssl-$(OPENSSL_FIPS_VERSION) && ./Configure no-idea enable-fips enable-ec_nistp_64_gcc_128 no-mdc2 --with-rand-seed=devrandom,rdcpu,os,getrandom shared linux-x86_64 -g -O2 --prefix=$(PLATFORM_DIR)/tmp/openssl-fips --openssldir=$(PLATFORM_DIR)/tmp/openssl-fips/ssl && $(MAKE) install_fips
+
+build: setup build_fips build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm: 

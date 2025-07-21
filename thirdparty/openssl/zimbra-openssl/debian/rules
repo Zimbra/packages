@@ -9,7 +9,7 @@ export DEB_LDFLAGS_MAINT_APPEND="-LOZCL -ROZCL -Wl,-rpath,OZCL"
 %:
 	dh $@
 override_dh_auto_configure:
-	./Configure no-idea enable-fips enable-ec_nistp_64_gcc_128 no-mdc2 \
+	./Configure no-idea enable-ec_nistp_64_gcc_128 no-mdc2 \
   --prefix=OZC --with-rand-seed=devrandom,rdcpu,os,getrandom --libdir=lib --openssldir=OZCE/ssl \
   shared linux-x86_64 -g -O2
 
@@ -29,3 +29,5 @@ override_dh_auto_install:
 	LD_RUN_PATH=OZCL $(MAKE) DESTDIR=$$(pwd)/debian/tmp MANDIR="OZCS/man" LIBS="" install
 	cp $$(pwd)/debian/tmp/opt/zimbra/common/etc/ssl/openssl.cnf $$(pwd)/debian/tmp/opt/zimbra/common/etc/ssl/openssl-source.cnf
 	cp -af debian/openssl-fips.cnf $$(pwd)/debian/tmp/opt/zimbra/common/etc/ssl/openssl-fips.cnf
+	cp -avf $$(pwd)/../tmp/openssl-fips/lib64/ossl-modules/fips.so $$(pwd)/debian/tmp/opt/zimbra/common/lib/ossl-modules/
+	cp -avf $$(pwd)/../tmp/openssl-fips/ssl/fipsmodule.cnf $$(pwd)/debian/tmp/opt/zimbra/common/etc/ssl/fipsmodule.cnf
