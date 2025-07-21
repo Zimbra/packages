@@ -1,19 +1,19 @@
 Summary:            Zimbra's Postfix build
 Name:               zimbra-postfix
 Version:            VERSION
-Release:            1zimbra8.7b5ZAPPEND
+Release:            1zimbra8.7b6ZAPPEND
 License:            IPL-1.0
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      zimbra-openldap-devel >= 2.5.17-1zimbra10.0b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
-BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
+BuildRequires:      zimbra-openssl-devel >= 3.5.1-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-mariadb-devel
 BuildRequires:      zimbra-lmdb-devel >= 2.5.17-1zimbra10.0b1ZAPPEND
 BuildRequires:      pcre-devel
 Requires:           pcre, libicu
 Requires:           zimbra-openldap-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-mta-base
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND, zimbra-mariadb
-Requires:           zimbra-lmdb-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
+Requires:           zimbra-lmdb-libs >= 2.5.17-1zimbra10.0b1ZAPPEND, zimbra-openssl-libs >= 3.5.1-1zimbra8.8b1ZAPPEND
 Patch0:             postfix-main-cf-zimbra.patch
 Patch1:             stop-warning.patch
 Patch2:             postfix-ldap.patch
@@ -27,6 +27,8 @@ The Zimbra Postfix build
 %define debug_package %{nil}
 
 %changelog
+* Wed Jul 16 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b6ZAPPEND
+- ZCS-17413, Upgraded OpenSSL to 3.5.1
 * Sat May 11 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b5ZAPPEND
 - Updated postfix for openldap-2.5.17
 * Fri Jan 26 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
