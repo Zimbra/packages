@@ -5,7 +5,7 @@ Release:            1zimbra8.7b1ZAPPEND
 License:            GPL-3
 Source:             %{name}-%{version}.tar.gz
 BuildRequires:      popt-devel
-Requires:           popt, zimbra-base
+Requires:           popt, zimbra-base, OSDEPS
 AutoReqProv:        no
 URL:                https://rsync.samba.org
 

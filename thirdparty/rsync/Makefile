@@ -9,6 +9,7 @@ psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://download.samba.org/pub/rsync/src/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
+osdeps = $(osdeps.$(BUILD_PLATFORM))
 
 .PHONY: all getsrc setup build clean
 
@@ -29,6 +30,7 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	$(PERL) -pi -e 's/OSDEPS/$(osdeps)/' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
