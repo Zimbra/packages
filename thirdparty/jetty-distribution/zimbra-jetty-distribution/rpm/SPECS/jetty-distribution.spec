@@ -31,7 +31,6 @@ The Zimbra jetty-distribution build
 %install
 mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/common/jetty_home
 find -maxdepth 1 -mindepth 1 | grep -v -w -e debian -e rpm | xargs -r '-I{}' cp -a '{}' ${RPM_BUILD_ROOT}/opt/zimbra/common/jetty_home
-rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/common/jetty_home/demo-base
 
 %files
 %defattr(-,root,root)
