@@ -10,7 +10,7 @@ Homepage:  https://rsync.samba.org
 Package: zimbra-rsync
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base, libxxhash-dev, libzstd-dev
 Description: rsync Binaries
 
 Package: zimbra-rsync-dbg
