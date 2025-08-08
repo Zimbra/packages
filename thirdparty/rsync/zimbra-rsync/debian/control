@@ -1,5 +1,5 @@
 Source: zimbra-rsync
-Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), libpopt-dev
+Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7), libpopt-dev, libxxhash-dev, libzstd-dev
 Section: utils
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -10,7 +10,7 @@ Homepage:  https://rsync.samba.org
 Package: zimbra-rsync
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base, libxxhash-dev, libzstd-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}, zimbra-base
 Description: rsync Binaries
 
 Package: zimbra-rsync-dbg
