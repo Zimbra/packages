@@ -6,7 +6,7 @@ pvers := $(XML_VERSION)
 pname :=  libxml2
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := ftp://xmlsoft.org/libxml2//$(pfile)
+purl := http://xmlsoft.org/sources/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
