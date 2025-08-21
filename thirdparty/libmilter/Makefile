@@ -7,7 +7,7 @@ pname := libmilter
 uname := sendmail
 pfile := $(uname).$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := ftp://ftp.sendmail.org/pub/sendmail/$(pfile)
+purl := https://ftp.sendmail.org/past-releases/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
