@@ -50,6 +50,7 @@ build_deb:
 	$(replace-pathinfo) debian/rules && \
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
+	$(if $(filter $(BUILD_PLATFORM),UBUNTU24_64),$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && echo "fix-undef-assignment-perl538.patch" >> debian/patches/series &&) \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
