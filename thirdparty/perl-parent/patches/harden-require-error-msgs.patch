@@ -1,0 +1,14 @@
+diff -ruN source/t/parent.t modified/t/parent.t
+--- source/t/parent.t	2025-08-25 13:50:04.387867248 +0000
++++ modified/t/parent.t	2025-08-25 13:50:43.872797696 +0000
+@@ -56,8 +56,8 @@
+ 
+ is( $Eval2::VERSION, '1.02' );
+ 
+-my $expected= q{/^Can't locate reallyReAlLyNotexists.pm in \@INC \(\@INC contains:/};
+-$expected= q{/^Can't locate reallyReAlLyNotexists.pm in \@INC \(you may need to install the reallyReAlLyNotexists module\) \(\@INC contains:/}
++my $expected= q{/^Can't locate reallyReAlLyNotexists.pm in \@INC \(\@INC[\w ]+:/};
++$expected= q{/^Can't locate reallyReAlLyNotexists.pm in \@INC \(you may need to install the reallyReAlLyNotexists module\) \(\@INC[\w ]+:/}
+     if 5.017005 <= $];
+ 
+ eval q{use parent 'reallyReAlLyNotexists'};
