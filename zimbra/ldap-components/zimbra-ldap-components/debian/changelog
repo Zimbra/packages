@@ -2,7 +2,7 @@ zimbra-ldap-components (10.1.2-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
   * ZCS-17413, Upgraded OpenSSL to 3.5.1
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Sep, 01 Aug 2025 00:00:00 +0000
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 01 Sep 2025 00:00:00 +0000
 
 zimbra-ldap-components (10.1.1-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
