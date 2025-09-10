@@ -6,7 +6,7 @@ pvers := $(OPENSSL_VERSION)
 pname := openssl
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://www.openssl.org/source/$(pfile)
+purl := https://github.com/openssl/openssl/releases/download/openssl-$(pvers)/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
@@ -22,7 +22,13 @@ $(psrc_file):
 setup:
 	$(generic-setup)
 
-build: setup build_$(PKG_EXT)
+build_fips:
+	$(MKDIR) $(PLATFORM_DIR)/tmp
+	$(WGET) -O $(PLATFORM_DIR)/tmp/openssl-$(OPENSSL_FIPS_VERSION).tar.gz https://www.openssl.org/source/openssl-$(OPENSSL_FIPS_VERSION).tar.gz && \
+	$(CD) $(PLATFORM_DIR)/tmp && $(TAR) xfz openssl-$(OPENSSL_FIPS_VERSION).tar.gz && \
+	$(CD) $(PLATFORM_DIR)/tmp/openssl-$(OPENSSL_FIPS_VERSION) && ./Configure no-idea enable-fips enable-ec_nistp_64_gcc_128 no-mdc2 --with-rand-seed=devrandom,rdcpu,os,getrandom shared linux-x86_64 -g -O2 --prefix=$(PLATFORM_DIR)/tmp/openssl-fips --openssldir=$(PLATFORM_DIR)/tmp/openssl-fips/ssl && $(MAKE) install_fips
+
+build: setup build_fips build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm: 
@@ -31,7 +37,6 @@ build_rpm:
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
-	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(CP) $(PKG_ROOT)/openssl-fips.cnf SOURCES/ && \
 	$(PKG_BUILD) $(specfile)
 
@@ -42,7 +47,6 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
-	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(CP) $(PKG_ROOT)/openssl-fips.cnf debian/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
