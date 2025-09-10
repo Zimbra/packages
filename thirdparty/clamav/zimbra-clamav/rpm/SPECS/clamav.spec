@@ -101,6 +101,7 @@ OZCS
 %files libs
 %defattr(-,root,root)
 OZCL/*.so.*
+OZCL/libclamav_rust.a
 
 %files devel
 %defattr(-,root,root)
