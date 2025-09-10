@@ -1,14 +1,14 @@
 Summary:            ClueBringer Policy Daemon
 Name:               zimbra-cluebringer
 Version:            VERSION
-Release:            ITERATIONZAPPEND
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-2
 Source:             %{name}-%{version}.tgz
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Requires:           zimbra-mta-base, zimbra-perl-base, zimbra-perl-cache-fastmmap
-Requires:           zimbra-perl-config-inifiles, zimbra-perl-dbi, zimbra-perl-dbd-sqlite
+Requires:           zimbra-perl-config-inifiles >= 2.86-1zimbra8.7b2ZAPPEND, zimbra-perl-dbi, zimbra-perl-dbd-sqlite
 Requires:           zimbra-perl-mail-spf, zimbra-perl-net-cidr, zimbra-perl-net-dns
-Requires:           zimbra-perl-net-server, zimbra-perl-timedate
+Requires:           zimbra-perl-net-server >= 2.009-1zimbra8.7b1ZAPPEND, zimbra-perl-timedate
 AutoReqProv:        no
 URL:                http://wiki.policyd.org/
 
@@ -20,6 +20,10 @@ possible while at the same time maintaining the portability, stability and perfo
 required for mission critical email hosting of today. Most of the ideas and methods
 implemented in PolicyD v2 stem from PolicyD v1 as well as the authors' long time
 involvement in large scale mail hosting industry.
+
+%changelog
+* Tue Aug 10 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- Updated dependencies zimbra-perl-config-inifiles,zimbra-perl-net-server
 
 %define debug_package %{nil}
 
