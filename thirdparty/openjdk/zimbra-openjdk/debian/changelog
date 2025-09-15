@@ -1,5 +1,11 @@
 zimbra-openjdk (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
+  * ZCS-17668, Upgrade Openjdk to 17.0.16
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 15 Sep 2025 04:16:53 +0000
+
+zimbra-openjdk (VERSION-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
   * Upgrade Openjdk to 17.0.12
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 22 Jul 2024 00:00:00 +0000
