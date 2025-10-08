@@ -14,6 +14,8 @@ URL:                https://www.eclipse.org/jetty/
 The Zimbra jetty-distribution build
 
 %changelog
+* Fri Mar 03 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
+- Fix ZBUG-4023, Upgraded jetty to 9.4.57.v20241219
 * Mon May 09 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
 - Fix ZBUG-2633, Upgraded jetty to 9.4.46.v20220331
 * Thu Aug 31 2017 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-2.PKG_OS_TAG
@@ -29,6 +31,7 @@ The Zimbra jetty-distribution build
 %install
 mkdir -p ${RPM_BUILD_ROOT}/opt/zimbra/common/jetty_home
 find -maxdepth 1 -mindepth 1 | grep -v -w -e debian -e rpm | xargs -r '-I{}' cp -a '{}' ${RPM_BUILD_ROOT}/opt/zimbra/common/jetty_home
+rm -rf ${RPM_BUILD_ROOT}/opt/zimbra/common/jetty_home/demo-base
 
 %files
 %defattr(-,root,root)
