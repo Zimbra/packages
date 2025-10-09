@@ -22,6 +22,8 @@ The Zimbra ClamAV build
 %define debug_package %{nil}
 
 %changelog
+* Wed Sep 10 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
+- ZCS-17850, Upgraded ClamAV to 1.4.3
 * Mon Jul 29 2024  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
 - ZCS-15540, Upgraded ClamAV to 1.0.6
 * Fri Jun 23 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b4ZAPPEND
@@ -97,6 +99,7 @@ OZCS
 %files libs
 %defattr(-,root,root)
 OZCL/*.so.*
+OZCL/libclamav_rust.a
 
 %files devel
 %defattr(-,root,root)
