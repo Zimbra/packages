@@ -8,7 +8,7 @@ Standards-Version: 3.9.5
 Package: zimbra-proxy-components
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-proxy-base, zimbra-nginx (>= 1.20.0-1zimbra8.8b3ZAPPEND)
+ zimbra-proxy-base, zimbra-nginx (>= 1.20.0-1zimbra8.8b4ZAPPEND)
 Description: Zimbra components for proxy package
  Zimbra proxy components pulls in all the packages used by
  zimbra-proxy
