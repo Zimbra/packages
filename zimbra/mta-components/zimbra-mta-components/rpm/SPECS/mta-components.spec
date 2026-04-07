@@ -1,13 +1,13 @@
 Summary:            Zimbra components for MTA package
 Name:               zimbra-mta-components
-Version:            10.1.4
+Version:            10.1.5
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           sqlite, zimbra-mta-base, zimbra-altermime, zimbra-amavisd >= 2.13.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-clamav >= 1.4.3-1zimbra8.8b4ZAPPEND, zimbra-clamav-db >= 1.0.0-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-cluebringer, zimbra-mariadb >= 10.1.25-1zimbra8.7b3ZAPPEND
 Requires:           zimbra-opendkim >= 2.10.3-1zimbra8.7b7ZAPPEND, zimbra-perl-mail-spamassassin >= 4.0.1-1zimbra8.8b4ZAPPEND
-Requires:           zimbra-postfix >= 3.6.14-1zimbra8.7b6ZAPPEND
+Requires:           zimbra-postfix >= 3.6.14-1zimbra8.7b7ZAPPEND
 Requires:           zimbra-spamassassin-rules >= 1.0.0-1zimbra8.8b7ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
@@ -20,6 +20,8 @@ Zimbra mta components pulls in all the packages used by
 zimbra-mta
 
 %changelog
+* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.5
+- ZBUG-5376, updated mta-components
 * Wed Sep 10 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.4
 - ZCS-17850, Upgraded ClamAV to 1.4.3
 * Mon Jul 25 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.3

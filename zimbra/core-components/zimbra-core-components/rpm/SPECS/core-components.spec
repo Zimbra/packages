@@ -1,6 +1,6 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            10.1.6
+Version:            10.1.7
 Release:            1zimbra10.0b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-base, zimbra-os-requirements >= 1.0.5-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.9-1zimbra8.7b1ZAPPEND
@@ -8,7 +8,7 @@ Requires:           zimbra-pflogsumm
 Requires:           zimbra-openssl >= 3.5.1-1zimbra8.8b1ZAPPEND, zimbra-curl >= 7.49.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-rsync >= 3.4.1-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.5.17-1zimbra10.0b1ZAPPEND
+Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.5.17-1zimbra10.0b2ZAPPEND
 Requires:           zimbra-osl >= 3.0.0-1zimbra10.0b1ZAPPEND
 Requires:           zimbra-prepflog, zimbra-tcmalloc-libs, zimbra-perl-innotop >= 1.9.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-openjdk >= 17.0.16-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.12-1zimbra8.7b1ZAPPEND
@@ -21,6 +21,8 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.7
+- ZBUG-5376, Updated core-components
 * Mon Sep 15 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.6
 - ZCS-17668, Upgrade Openjdk to 17.0.16
 * Mon Sep 01 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.5
