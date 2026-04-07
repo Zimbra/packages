@@ -1,2 +1,3 @@
 liblmdb-soname.patch
 liblmdb-keysize.patch
+sha2-strict-aliasing-fix.patch

@@ -1,12 +1,12 @@
 Summary:            Zimbra components for ldap package
 Name:               zimbra-ldap-components
-Version:            10.1.2
+Version:            10.1.3
 Release:            1zimbra10.0b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-ldap-base, zimbra-lmdb >= 2.5.17-1zimbra10.0b1ZAPPEND
-Requires:           zimbra-openldap-server >= 2.5.17-1zimbra10.0b1ZAPPEND
+Requires:           zimbra-ldap-base, zimbra-lmdb >= 2.5.17-1zimbra10.0b2ZAPPEND
+Requires:           zimbra-openldap-server >= 2.5.17-1zimbra10.0b2ZAPPEND
 Requires:           zimbra-openssl >= 3.5.1-1zimbra8.8b1ZAPPEND, zimbra-openssl-libs >= 3.5.1-1zimbra8.8b1ZAPPEND
-Requires:           zimbra-core-components >= 10.1.5-1zimbra10.0b1ZAPPEND
+Requires:           zimbra-core-components >= 10.1.6-1zimbra10.0b1ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
 Group:              Development/Languages
 AutoReqProv:        no
@@ -18,6 +18,8 @@ Zimbra ldap components pulls in all the packages used by
 zimbra-ldap
 
 %changelog
+* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.3
+- ZBUG-5376, Updated ldap-components
 * Mon Sep 01 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.2
 - ZCS-17413, Upgraded OpenSSL to 3.5.1
 * Fri Aug 08 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.1
