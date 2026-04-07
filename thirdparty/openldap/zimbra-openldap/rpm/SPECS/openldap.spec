@@ -1,11 +1,12 @@
 Summary:            Zimbra's openldap build
 Name:               zimbra-openldap
 Version:            VERSION
-Release:            1zimbra10.0b1ZAPPEND
+Release:            1zimbra10.0b2ZAPPEND
 License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             liblmdb-soname.patch
 Patch1:             liblmdb-keysize.patch
+Patch2:             sha2-strict-aliasing-fix.patch
 BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
 BuildRequires:      zimbra-libltdl-devel, zimbra-curl-devel, zimbra-heimdal-devel, zimbra-libxml2-devel
@@ -19,6 +20,8 @@ The Zimbra openldap build
 %define debug_package %{nil}
 
 %changelog
+* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b2ZAPPEND
+- ZBUG-5376, Fix incorrect SHA256/SSHA256 hashing caused by strict aliasing optimization in GCC
 * Mon Mar 04 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b1ZAPPEND
 - Upgraded openldap to 2.5.17
 * Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b6ZAPPEND
@@ -38,6 +41,7 @@ The Zimbra openldap build
 %setup -n openldap-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"

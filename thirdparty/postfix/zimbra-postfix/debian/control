@@ -1,7 +1,7 @@
 Source: zimbra-postfix
 Build-Depends: debhelper (>= 9), m4, dpkg-dev (>= 1.15.7),
- zimbra-openldap-dev (>= 2.5.17-1zimbra10.0b1ZAPPEND), zimbra-cyrus-sasl-dev (>= 2.1.28-1zimbra8.7b4ZAPPEND), zimbra-openssl-dev (>= 3.5.1-1zimbra8.8b1ZAPPEND),
- zimbra-mariadb-dev, zimbra-lmdb-dev (>= 2.5.17-1zimbra10.0b1ZAPPEND), libpcre3-dev
+ zimbra-openldap-dev (>= 2.5.17-1zimbra10.0b2ZAPPEND), zimbra-cyrus-sasl-dev (>= 2.1.28-1zimbra8.7b4ZAPPEND), zimbra-openssl-dev (>= 3.5.1-1zimbra8.8b1ZAPPEND),
+ zimbra-mariadb-dev, zimbra-lmdb-dev (>= 2.5.17-1zimbra10.0b2ZAPPEND), libpcre3-dev
 Section: utils
 Priority: optional
 Maintainer: Zimbra Packaging Services <packaging-devel@zimbra.com>
