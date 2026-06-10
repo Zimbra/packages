@@ -1,3 +1,55 @@
+diff -ruN source/src/http/v2/ngx_http_v2.c modified/src/http/v2/ngx_http_v2.c
+--- source/src/http/v2/ngx_http_v2.c	2026-06-10 04:40:34.872555055 +0000
++++ modified/src/http/v2/ngx_http_v2.c	2026-06-10 04:41:58.626505739 +0000
+@@ -1841,6 +1841,15 @@
+         }
+ 
+     } else {
++        cscf = ngx_http_get_module_srv_conf(r, ngx_http_core_module);
++
++        if (r->headers_in.count++ >= cscf->max_headers) {
++            ngx_log_error(NGX_LOG_INFO, r->connection->log, 0,
++                          "client sent too many header lines");
++            ngx_http_finalize_request(r, NGX_HTTP_REQUEST_HEADER_TOO_LARGE);
++            goto error;
++        }
++
+         h = ngx_list_push(&r->headers_in.headers);
+         if (h == NULL) {
+             return ngx_http_v2_connection_error(h2c,
+
+diff -ruN source/src/http/ngx_http_request.c modified/src/http/ngx_http_request.c
+--- source/src/http/ngx_http_request.c	2026-06-10 06:24:33.667871626 +0000
++++ modified/src/http/ngx_http_request.c	2026-06-10 06:25:35.133314791 +0000
+@@ -1433,6 +1433,15 @@
+ 
+             /* a header line has been parsed successfully */
+ 
++            if (r->headers_in.count++ >= cscf->max_headers) {
++                r->lingering_close = 1;
++                ngx_log_error(NGX_LOG_INFO, c->log, 0,
++                              "client sent too many header lines");
++                ngx_http_finalize_request(r,
++                                          NGX_HTTP_REQUEST_HEADER_TOO_LARGE);
++                break;
++            }
++
+             h = ngx_list_push(&r->headers_in.headers);
+             if (h == NULL) {
+                 ngx_http_close_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+
+diff -ruN source/src/http/ngx_http_request.h modified/src/http/ngx_http_request.h
+--- source/src/http/ngx_http_request.h	2026-06-10 06:28:44.749685335 +0000
++++ modified/src/http/ngx_http_request.h	2026-06-10 06:29:24.350602400 +0000
+@@ -181,6 +181,7 @@
+ 
+ typedef struct {
+     ngx_list_t                        headers;
++    ngx_uint_t                        count;
+ 
+     ngx_table_elt_t                  *host;
+     ngx_table_elt_t                  *connection;
+
 diff -urN nginx/src/http/ngx_http.h nginx/src/http/ngx_http.h
 --- nginx/src/http/ngx_http.h	2023-08-18 17:02:49.306835700 +0530
 +++ nginx/src/http/ngx_http.h	2023-09-14 18:47:12.444732400 +0530
@@ -11,10 +63,24 @@ diff -urN nginx/src/http/ngx_http.h nginx/src/http/ngx_http.h
  #include <ngx_http_upstream_round_robin.h>
  #include <ngx_http_core_module.h>
  
-diff -urN nginx/src/http/ngx_http_core_module.c nginx/src/http/ngx_http_core_module.c
---- nginx/src/http/ngx_http_core_module.c	2023-08-18 17:02:49.309830000 +0530
-+++ nginx/src/http/ngx_http_core_module.c	2023-10-02 01:02:04.912075500 +0530
-@@ -777,7 +777,14 @@
+diff -ruN source/src/http/ngx_http_core_module.c modified/src/http/ngx_http_core_module.c
+--- source/src/http/ngx_http_core_module.c	2026-06-10 04:56:53.071339929 +0000
++++ modified/src/http/ngx_http_core_module.c	2026-06-10 04:58:16.441281940 +0000
+@@ -252,6 +252,13 @@
+       offsetof(ngx_http_core_srv_conf_t, large_client_header_buffers),
+       NULL },
+ 
++    { ngx_string("max_headers"),
++      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
++      ngx_conf_set_num_slot,
++      NGX_HTTP_SRV_CONF_OFFSET,
++      offsetof(ngx_http_core_srv_conf_t, max_headers),
++      NULL },
++
+     { ngx_string("ignore_invalid_headers"),
+       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_FLAG,
+       ngx_conf_set_flag_slot,
+@@ -777,7 +784,14 @@
        NULL },
  
  #endif
@@ -30,7 +96,24 @@ diff -urN nginx/src/http/ngx_http_core_module.c nginx/src/http/ngx_http_core_mod
        ngx_null_command
  };
  
-@@ -3630,7 +3637,9 @@
+@@ -3459,6 +3473,7 @@
+     cscf->request_pool_size = NGX_CONF_UNSET_SIZE;
+     cscf->client_header_timeout = NGX_CONF_UNSET_MSEC;
+     cscf->client_header_buffer_size = NGX_CONF_UNSET_SIZE;
++    cscf->max_headers = NGX_CONF_UNSET_UINT;
+     cscf->ignore_invalid_headers = NGX_CONF_UNSET;
+     cscf->merge_slashes = NGX_CONF_UNSET;
+     cscf->underscores_in_headers = NGX_CONF_UNSET;
+@@ -3500,6 +3515,8 @@
+         return NGX_CONF_ERROR;
+     }
+ 
++    ngx_conf_merge_uint_value(conf->max_headers, prev->max_headers, 1000);
++
+     ngx_conf_merge_value(conf->ignore_invalid_headers,
+                               prev->ignore_invalid_headers, 1);
+ 
+@@ -3630,7 +3647,9 @@
      clcf->open_file_cache_min_uses = NGX_CONF_UNSET_UINT;
      clcf->open_file_cache_errors = NGX_CONF_UNSET;
      clcf->open_file_cache_events = NGX_CONF_UNSET;
@@ -41,10 +124,20 @@ diff -urN nginx/src/http/ngx_http_core_module.c nginx/src/http/ngx_http_core_mod
  #if (NGX_HTTP_GZIP)
      clcf->gzip_vary = NGX_CONF_UNSET;
      clcf->gzip_http_version = NGX_CONF_UNSET_UINT;
-diff -urN nginx/src/http/ngx_http_core_module.h nginx/src/http/ngx_http_core_module.h
---- nginx/src/http/ngx_http_core_module.h	2023-08-18 17:02:49.313817300 +0530
-+++ nginx/src/http/ngx_http_core_module.h	2023-10-02 01:02:51.567052200 +0530
-@@ -404,6 +404,9 @@
+
+diff -ruN source/src/http/ngx_http_core_module.h modified/src/http/ngx_http_core_module.h
+--- source/src/http/ngx_http_core_module.h	2026-06-10 06:20:55.854704731 +0000
++++ modified/src/http/ngx_http_core_module.h	2026-06-10 06:22:33.097012205 +0000
+@@ -196,6 +196,8 @@
+ 
+     ngx_msec_t                  client_header_timeout;
+ 
++    ngx_uint_t                  max_headers;
++
+     ngx_flag_t                  ignore_invalid_headers;
+     ngx_flag_t                  merge_slashes;
+     ngx_flag_t                  underscores_in_headers;
+@@ -404,6 +406,9 @@
      ngx_flag_t    chunked_transfer_encoding; /* chunked_transfer_encoding */
      ngx_flag_t    etag;                    /* etag */
  
@@ -53,7 +146,7 @@ diff -urN nginx/src/http/ngx_http_core_module.h nginx/src/http/ngx_http_core_mod
 +// Zimbra customizations end here
  #if (NGX_HTTP_GZIP)
      ngx_flag_t    gzip_vary;               /* gzip_vary */
- 
+
 diff -urN nginx/src/http/ngx_http_upstream.c nginx/src/http/ngx_http_upstream.c
 --- nginx/src/http/ngx_http_upstream.c	2023-08-18 17:02:49.329775600 +0530
 +++ nginx/src/http/ngx_http_upstream.c	2023-10-02 01:18:32.519472600 +0530
