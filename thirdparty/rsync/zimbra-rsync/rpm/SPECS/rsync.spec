@@ -1,11 +1,11 @@
 Summary:            Zimbra's rsync build
 Name:               zimbra-rsync
-Version:            VERSION
-Release:            ITERATIONZAPPEND
+Version:            3.4.1
+Release:            1zimbra8.7b2ZAPPEND
 License:            GPL-3
 Source:             %{name}-%{version}.tar.gz
-BuildRequires:      popt-devel
-Requires:           popt, zimbra-base
+BuildRequires:      popt-devel, xxhash-devel
+Requires:           popt, zimbra-base, xxhash-libs
 AutoReqProv:        no
 URL:                https://rsync.samba.org
 
@@ -29,3 +29,9 @@ make install DESTDIR=${RPM_BUILD_ROOT}
 %defattr(-,root,root)
 OZCB
 OZCS
+
+%changelog
+* Wed Aug 06 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+- ZBUG-5062, Bumped-up rsync version due to addition of missing dependencies
+* Wed Feb 05 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- ZBUG-4670, Upgraded rsync to 3.4.1

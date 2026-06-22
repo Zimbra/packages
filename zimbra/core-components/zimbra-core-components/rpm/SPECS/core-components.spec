@@ -1,17 +1,17 @@
 Summary:            Zimbra components for core package
 Name:               zimbra-core-components
-Version:            10.1.0
+Version:            10.1.7
 Release:            1zimbra10.0b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-base, zimbra-os-requirements >= 1.0.3-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.9-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-base, zimbra-os-requirements >= 1.0.5-1zimbra8.7b1ZAPPEND, zimbra-perl >= 1.0.9-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-pflogsumm
-Requires:           zimbra-openssl >= 3.0.9-1zimbra8.8b1ZAPPEND,zimbra-curl >= 7.49.1-1zimbra8.7b4ZAPPEND
+Requires:           zimbra-openssl >= 3.5.1-1zimbra8.8b1ZAPPEND, zimbra-curl >= 7.49.1-1zimbra8.7b4ZAPPEND
 Requires:           zimbra-cyrus-sasl >= 2.1.28-1zimbra8.7b4ZAPPEND
-Requires:           zimbra-rsync
-Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.5.17-1zimbra10.0b1ZAPPEND
+Requires:           zimbra-rsync >= 3.4.1-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-mariadb-libs >= 10.1.25-1zimbra8.7b3ZAPPEND, zimbra-openldap-client >= 2.5.17-1zimbra10.0b2ZAPPEND
 Requires:           zimbra-osl >= 3.0.0-1zimbra10.0b1ZAPPEND
 Requires:           zimbra-prepflog, zimbra-tcmalloc-libs, zimbra-perl-innotop >= 1.9.1-1zimbra8.7b4ZAPPEND
-Requires:           zimbra-openjdk >= 17.0.12-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.11-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-openjdk >= 17.0.16-1zimbra8.8b1ZAPPEND, zimbra-openjdk-cacerts >= 1.0.12-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-amavis-logwatch
 Requires:           zimbra-postfix-logwatch >= 1.40.03-1zimbra8.7b1ZAPPEND, zimbra-rrdtool
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -21,6 +21,20 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
+* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.7
+- ZBUG-5376, Updated core-components
+* Mon Sep 15 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.6
+- ZCS-17668, Upgrade Openjdk to 17.0.16
+* Mon Sep 01 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.5
+- ZCS-17413, Upgraded OpenSSL to 3.5.1
+* Wed Aug 06 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.4
+- ZBUG-5062, Bumped-up rsync version
+* Thu May 29 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.3
+- ZBUG-4670, Upgraded rsync to 3.4.1
+* Thu May 08 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.2
+- ZBUG-4617, Updated os-requirements(removed rsyslog dependency)
+* Wed May 07 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.1
+- ZBUG-3966, Updated os-requirements
 * Mon Jul 22 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.0
 - Bumped-up version to differentiate from ZCS 10
 * Mon Jul 22 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 4.0.4

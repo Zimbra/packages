@@ -224,6 +224,7 @@ SECTION 1: BSD-STYLE, MIT-STYLE, OR SIMILAR STYLE LICENSES
    >>> domutils@1.7.0
    >>> entities@1.1.2
    >>> entities@^2.0.0
+   >>> zstd-jni@1.5.5-9
 
 SECTION 2: Apache License, V2.0
 
@@ -301,6 +302,7 @@ SECTION 2: Apache License, V2.0
    >>> idb-keyval@6.2.1
    >>> mixpanel-browser@2.47.0
    >>> zulip-9.2
+   >>> rocksdbjni-8.1.1
 
 
 SECTION 3: Artistic License, V2.0

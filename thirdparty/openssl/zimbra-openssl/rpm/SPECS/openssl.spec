@@ -15,6 +15,8 @@ The Zimbra OpenSSL build allows for secure communication between various process
 %define debug_package %{nil}
 
 %changelog
+* Tue Jul 15 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+- ZCS-17413, Upgraded OpenSSL to 3.5.1
 * Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Fri Feb 10 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
@@ -41,9 +43,9 @@ The Zimbra OpenSSL build allows for secure communication between various process
 %prep
 %setup -n openssl-%{version}
 %build
-./Configure enable-fips no-idea enable-ec_nistp_64_gcc_128 no-mdc2 no-rc5 \
+./Configure no-idea enable-ec_nistp_64_gcc_128 no-mdc2 \
   --prefix=OZC --with-rand-seed=devrandom,rdcpu,os,getrandom --libdir=lib --openssldir=OZCE/ssl \
-  shared linux-x86_64 -g -O2 -DOPENSSL_NO_HEARTBEATS
+  shared linux-x86_64 -g -O2
 LD_RUN_PATH=OZCL make depend
 LD_RUN_PATH=OZCL make all
 
@@ -53,6 +55,8 @@ LD_RUN_PATH=OZCL make DESTDIR=${RPM_BUILD_ROOT} MANDIR="OZCS/man" LIBS="" instal
 chmod u+w ${RPM_BUILD_ROOT}OZCL/lib* ${RPM_BUILD_ROOT}OZCL/engines-3/*.so
 cp %{buildroot}/opt/zimbra/common/etc/ssl/openssl.cnf %{buildroot}/opt/zimbra/common/etc/ssl/openssl-source.cnf
 cp -af %{SOURCE1} %{buildroot}/opt/zimbra/common/etc/ssl/openssl-fips.cnf
+cp -avf %{buildroot}/../../../../tmp/openssl-fips/lib64/ossl-modules/fips.so %{buildroot}/opt/zimbra/common/lib/ossl-modules/
+cp -avf %{buildroot}/../../../../tmp/openssl-fips/ssl/fipsmodule.cnf %{buildroot}/opt/zimbra/common/etc/ssl/fipsmodule.cnf
 
 %package libs
 Summary:	SSL Libaries
@@ -94,6 +98,7 @@ OZCS
 %defattr(-,root,root)
 OZCL/*.so
 OZCI
+OZCL/cmake
 OZCL/pkgconfig
 
 %post -p /bin/bash

@@ -1,0 +1,12 @@
+diff -ruN a/contrib/slapd-modules/passwd/sha2/Makefile b/contrib/slapd-modules/passwd/sha2/Makefile
+--- a/contrib/slapd-modules/passwd/sha2/Makefile	2026-02-11 07:02:26.788609752 +0000
++++ b/contrib/slapd-modules/passwd/sha2/Makefile	2026-04-06 07:13:06.396367937 +0000
+@@ -9,7 +9,7 @@
+ LIBTOOL = $(LDAP_BUILD)/libtool
+ INSTALL = /usr/bin/install
+ CC = gcc
+-OPT = -g -O2
++OPT = -g -O2 -fno-strict-aliasing
+ DEFS = 
+ #DEFS = -DSLAPD_SHA2_DEBUG
+ INCS = $(LDAP_INC)

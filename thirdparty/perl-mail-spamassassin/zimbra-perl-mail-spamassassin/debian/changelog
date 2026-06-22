@@ -1,5 +1,11 @@
 zimbra-perl-MODNORMNAME (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
 
+  * Upgraded spamassassin to 4.0.1
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 01 Oct 2024 05:12:55 +0000
+
+zimbra-perl-MODNORMNAME (VERSION-1zimbra8.8b4ZAPPEND) unstable; urgency=medium
+
   * Updated dependency zimbra-perl-mail-dkim
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 13 Jun 2023 05:12:55 +0000
