@@ -1,3 +1,9 @@
+zimbra-proxy-components (1.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * Fix ZBUG-3416
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 29 Jul 2026 13:35:15 +0000
+
 zimbra-proxy-components (1.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Fix ZBUG-5593
