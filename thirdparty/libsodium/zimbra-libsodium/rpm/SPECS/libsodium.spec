@@ -53,3 +53,7 @@ OZCL/pkgconfig
 OZCL/*.a
 OZCL/*.la
 OZCL/*.so
+
+%changelog
+* Tue Sep 26 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+- Upgraded libsodium to 1.0.19
