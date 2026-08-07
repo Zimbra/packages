@@ -1,3 +1,9 @@
+zimbra-os-requirements (1.0.5-1zimbra8.7b2ZAPPEND) unstable; urgency=low
+
+  * ZCS-18853, removed systemd-resolved dependency from os-requirements
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 02 Apr 2025 00:00:00 +0000
+
 zimbra-os-requirements (1.0.5-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * ZBUG-4617, removed rsyslog dependency from os-requirements

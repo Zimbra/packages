@@ -1,0 +1,12 @@
+diff -ruN source/lib/mk-ca-bundle.pl modified/lib/mk-ca-bundle.pl
+--- source/lib/mk-ca-bundle.pl	2025-09-03 04:17:10.290415438 +0000
++++ modified/lib/mk-ca-bundle.pl	2025-09-03 04:18:01.243627666 +0000
+@@ -54,7 +54,7 @@
+   'beta' =>
+     'http://hg.mozilla.org/releases/mozilla-beta/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt',
+   'release' =>
+-    'http://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt',
++    'https://raw.githubusercontent.com/mozilla-firefox/firefox/refs/heads/release/security/nss/lib/ckfw/builtins/certdata.txt',
+ );
+ 
+ $opt_d = 'release';

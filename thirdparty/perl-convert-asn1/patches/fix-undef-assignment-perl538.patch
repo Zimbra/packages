@@ -1,0 +1,20 @@
+diff -ruN source/lib/Convert/ASN1/_decode.pm modified/lib/Convert/ASN1/_decode.pm
+--- source/lib/Convert/ASN1/_decode.pm	2025-08-25 07:17:03.421325413 +0000
++++ modified/lib/Convert/ASN1/_decode.pm	2025-08-25 07:19:47.949213762 +0000
+@@ -97,8 +97,14 @@
+ 	      $buf,
+ 	    );
+ 
+-	    ($seqof ? $seqof->[$idx++] : defined($var) ? $stash->{$var} : ref($stash) eq 'SCALAR' ? $$stash : undef)
+-		= &{$ctr}(@ctrlist);
++            ($seqof
++                ? $seqof->[$idx++] # = &{$ctr}(@ctrlist);
++                    : defined($var)
++                        ? $stash->{$var} # = &{$ctr}(@ctrlist);
++                            : ref($stash) eq 'SCALAR'
++                                ? $$stash # = &{$ctr}(@ctrlist);
++                                   : my $any ) # = &{$ctr}(@ctrlist) FIX #43
++            = &{$ctr}(@ctrlist);		
+ 	    $pos = $npos+$len+$indef;
+ 
+ 	    redo TAGLOOP if $seqof && $pos < $end;

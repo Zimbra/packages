@@ -1,0 +1,12 @@
+diff -ruN source/t/policy.t modified/t/policy.t
+--- source/t/policy.t	2025-08-26 12:59:54.828675967 +0000
++++ modified/t/policy.t	2025-08-26 13:00:44.325846496 +0000
+@@ -17,7 +17,7 @@
+ 
+ $policy = Mail::DKIM::DkPolicy->fetch(
+ 		Protocol => "dns",
+-		Domain => "messiah.edu");
++		Domain => "policy.test.authmilter.org");
+ ok($policy, "fetch() works (requires DNS)");
+ ok(!$policy->is_implied_default_policy, "not the default policy");
+ 
