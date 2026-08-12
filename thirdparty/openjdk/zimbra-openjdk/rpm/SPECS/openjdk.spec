@@ -13,6 +13,8 @@ URL:                http://openjdk.java.net/
 The Zimbra OpenJDK build
 
 %changelog
+* Wed Jul 15 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+-- ZCS-19953, Upgrade Openjdk to 17.0.19
 * Mon Sep 15 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 -- ZCS-17668, Upgrade Openjdk to 17.0.16
 * Mon Jul 22 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND

@@ -8,6 +8,6 @@ Standards-Version: 3.9.5
 Package: zimbra-openjdk-cacerts
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
- zimbra-base, zimbra-openjdk (>= 17.0.16-1zimbra8.8b1ZAPPEND)
+ zimbra-base, zimbra-openjdk (>= 17.0.19-1zimbra8.8b1ZAPPEND)
 Description: CA Certs keystore for OpenJDK
  CA certs keystore for use with OpenJDK
