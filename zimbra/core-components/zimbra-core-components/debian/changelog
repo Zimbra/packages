@@ -1,3 +1,9 @@
+zimbra-core-components (10.1.8-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
+
+  * ZCS-19953, Upgrade Openjdk to 17.0.19
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 15 Jul 2026 10:13:28 +0000
+
 zimbra-core-components (10.1.7-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
   * ZBUG-5376, Updated core-components

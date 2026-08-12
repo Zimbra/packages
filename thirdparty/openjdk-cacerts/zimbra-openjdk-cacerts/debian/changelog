@@ -1,3 +1,9 @@
+zimbra-openjdk-cacerts (1.0.13-1zimbra8.7b1ZAPPEND) unstable; urgency=low
+
+  * ZCS-19953, Updated zimbra-openjdk-cacerts CA root store
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 15 Jul 2026 10:13:28 +0000
+
 zimbra-openjdk-cacerts (1.0.12-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
   * ZCS-17668, Updated zimbra-openjdk-cacerts CA root store
