@@ -1,0 +1,361 @@
+version: 2.1
+############################################################################
+
+parameters:
+  package_name:
+    type: string
+    default: "rsync"
+    description: "thirdparty/<folder> name to build (e.g. rsync). Leave as 'auto' to auto-detect the changed package(s) from the latest commit."
+
+references:
+  when_main_workflow: &when_main_workflow
+    or:
+      - equal: [ api, << pipeline.trigger_source >> ]
+      - not:
+          equal: [ << pipeline.git.branch >>, "testbranch" ]
+
+  when_develop_workflow: &when_develop_workflow
+    and:
+      - equal: [ << pipeline.git.branch >>, "testbranch" ]
+      - not:
+          equal: [ api, << pipeline.trigger_source >> ]
+
+  # ---------------------------------------------------------------------
+  # 1) Checks out the repo (full history, needed for git diff)
+  # 2) Clones the sibling tooling repos that package.def/Makefiles need
+  #    (zimbra-package-stub is REQUIRED - package.def includes
+  #     $(SRC_ROOT)/zimbra-package-stub/def/package.def, and SRC_ROOT
+  #     resolves to the parent of this checkout, i.e. ~ )
+  #    zm-pkg-tool provides bin/get_plat_tag.sh which auto-detects the
+  #    platform, so we don't need to set BUILD_PLATFORM manually.
+  # 3) Resolves WHICH thirdparty/<pkg> folder(s) to build
+  # ---------------------------------------------------------------------
+  checkout_and_resolve_steps: &checkout_and_resolve_steps
+    steps:
+      - checkout:
+          method: full
+      - run:
+          name: Checkout build-tooling dependencies (siblings of ~/packages)
+          command: |
+            git clone -b develop --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-pkg-tool.git ~/zm-pkg-tool
+            git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
+            git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-nexus.git ~/zm-nexus
+      - run:
+          name: Resolve package(s) to build
+          command: |
+            if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
+              echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
+            else
+              git diff --name-only HEAD~1 HEAD -- thirdparty/ \
+                | cut -d'/' -f2 \
+                | sort -u > packages_to_build.txt
+            fi
+
+            if [ ! -s packages_to_build.txt ]; then
+              echo "No thirdparty/ package changes found in this commit - nothing to build."
+              circleci-agent step halt
+            fi
+
+            echo "=== Package(s) resolved for this run ==="
+            cat packages_to_build.txt
+      - persist_to_workspace:
+          root: ..
+          paths:
+            - packages
+            - zm-pkg-tool
+            - zimbra-package-stub
+            - zm-nexus
+
+  # ---------------------------------------------------------------------
+  # Builds every resolved package for this platform via plain `make`.
+  # Platform is auto-detected by zm-pkg-tool/bin/get_plat_tag.sh - no
+  # manual BUILD_PLATFORM export needed.
+  # ---------------------------------------------------------------------
+  build_and_isolate_steps: &build_and_isolate_steps
+    steps:
+      - attach_workspace:
+          at: ..
+      - run:
+          name: Build resolved package(s)
+          command: |
+            echo "Using PLATFORM_TAG=${PLATFORM_TAG}"
+            mkdir -p build/dist_workspace/${PLATFORM_TAG}
+
+            while IFS= read -r PKG; do
+              echo "=== Building ${PKG} for ${PLATFORM_TAG} ==="
+
+              if [ ! -d "thirdparty/${PKG}" ]; then
+                echo "ERROR: thirdparty/${PKG} does not exist"
+                exit 1
+              fi
+
+              ( cd "thirdparty/${PKG}" && make )
+
+              find "thirdparty/${PKG}/build" -type f \
+                \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
+                -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
+            done < packages_to_build.txt
+
+            echo "=== build/dist_workspace/${PLATFORM_TAG} contents ==="
+            ls -la build/dist_workspace/${PLATFORM_TAG}/
+      - store_artifacts:
+          path: build/dist_workspace
+      - persist_to_workspace:
+          root: ..
+          paths:
+            - packages/build/dist_workspace
+
+  # ---------------------------------------------------------------------
+  # develop only: publish everything built to Nexus
+  # ---------------------------------------------------------------------
+  publish_packages_job_steps: &publish_packages_job_steps
+    steps:
+      - attach_workspace:
+          at: ..
+      - run:
+          name: Publish package artifacts to Nexus
+          command: |
+            sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
+            bash ../zm-nexus/scripts/publish-packages-to-nexus.sh "build/dist_workspace"
+
+  # ---------------------------------------------------------------------
+  # non-develop only: zip everything built and upload to OCI bucket
+  # ---------------------------------------------------------------------
+  deploy_s3_job_steps: &deploy_s3_job_steps
+    docker:
+      - image: 'cimg/python:3.10'
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: ..
+      - run:
+          name: Create a zip file for artifacts and upload them to the OCI bucket
+          command: |
+            cd build/dist_workspace
+            zip -r $CIRCLE_PROJECT_REPONAME.zip .
+            ZIP_FILE_PATH="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM/archives/$CIRCLE_PROJECT_REPONAME.zip"
+            curl -X PUT "$OCI_PAR_URL$ZIP_FILE_PATH" -T $CIRCLE_PROJECT_REPONAME.zip
+            echo "artifacts uploaded to $ZIP_FILE_PATH"
+
+###########################################################################################################################################################
+jobs:
+  checkout_and_resolve:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: small
+    <<: *checkout_and_resolve_steps
+
+  build_u24:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-24.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: u24
+    <<: *build_and_isolate_steps
+
+  build_u22:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: u22
+    <<: *build_and_isolate_steps
+
+  build_u20:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-20.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: u20
+    <<: *build_and_isolate_steps
+
+  build_u18:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-18.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: u18
+    <<: *build_and_isolate_steps
+
+  build_c9:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-9
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: c9
+    <<: *build_and_isolate_steps
+
+  build_c8:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-8
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: c8
+    <<: *build_and_isolate_steps
+
+  publish_packages:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: small
+    <<: *publish_packages_job_steps
+
+  deploy_s3:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    <<: *deploy_s3_job_steps
+
+###########################################################################################################################################################
+workflows:
+  version: 2
+
+  # -------------------------------------------------------------------------------
+  # develop branch: PR merge -> resolve -> build (all platforms) -> publish to Nexus
+  # -------------------------------------------------------------------------------
+  develop-workflow:
+    when: *when_develop_workflow
+    jobs:
+      - checkout_and_resolve:
+          context:
+            - docker-dev-registry
+      - build_u24:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u22:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u20:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u18:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c9:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c8:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - publish_packages:
+          requires:
+            - build_u24
+            - build_u22
+            - build_u20
+            - build_u18
+            - build_c9
+            - build_c8
+          context:
+            - docker-dev-registry
+            - nexus-dev-artifactory
+
+  # ----------------------------------------------------------------------------------
+  # non-develop / manual trigger: approval -> build -> validate -> approval ->
+  # upload to OCI S3 (no Nexus publish)
+  # ----------------------------------------------------------------------------------
+  main:
+    when: *when_main_workflow
+    jobs:
+      - generate:
+          type: approval
+      - checkout_and_resolve:
+          requires:
+            - generate
+          context:
+            - docker-dev-registry
+      - build_u24:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u22:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u20:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u18:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c9:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c8:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - deploy_s3_hold:
+          type: approval
+          requires:
+            - build_u24
+            - build_u22
+            - build_u20
+            - build_u18
+            - build_c9
+            - build_c8
+      - deploy_s3:
+          context:
+            - oracle
+            - docker-dev-registry
+          requires:
+            - deploy_s3_hold
