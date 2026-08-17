@@ -76,6 +76,15 @@ references:
       - attach_workspace:
           at: ..
       - run:
+          name: Install build tooling (dpkg-dev/rpm-build + dep resolvers)
+          command: |
+            if command -v apt-get >/dev/null 2>&1; then
+              sudo apt-get update
+              sudo apt-get install -y devscripts equivs dpkg-dev build-essential
+            elif command -v yum >/dev/null 2>&1; then
+              sudo yum install -y rpm-build rpmdevtools yum-utils
+            fi
+      - run:
           name: Build resolved package(s)
           command: |
             echo "Using PLATFORM_TAG=${PLATFORM_TAG}"
@@ -87,6 +96,22 @@ references:
               if [ ! -d "thirdparty/${PKG}" ]; then
                 echo "ERROR: thirdparty/${PKG} does not exist"
                 exit 1
+              fi
+
+              # Auto-install this package's own declared build-dependencies
+              # (Debian: debian/control's Build-Depends via mk-build-deps;
+              #  RPM: the .spec file's BuildRequires via yum-builddep)
+              # so we don't have to hardcode libs like libxxhash-dev per package.
+              CONTROL_FILE=$(find "thirdparty/${PKG}" -path "*/debian/control" 2>/dev/null | head -1)
+              if [ -n "$CONTROL_FILE" ] && command -v mk-build-deps >/dev/null 2>&1; then
+                echo "Installing Debian build-deps from ${CONTROL_FILE}"
+                sudo mk-build-deps -i -r -t "apt-get -y --no-install-recommends" "$CONTROL_FILE"
+              fi
+
+              SPEC_FILE=$(find "thirdparty/${PKG}" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
+              if [ -n "$SPEC_FILE" ] && command -v yum-builddep >/dev/null 2>&1; then
+                echo "Installing RPM build-deps from ${SPEC_FILE}"
+                sudo yum-builddep -y "$SPEC_FILE" || true
               fi
 
               ( cd "thirdparty/${PKG}" && make )
