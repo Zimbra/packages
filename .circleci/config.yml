@@ -76,13 +76,30 @@ references:
       - attach_workspace:
           at: ..
       - run:
-          name: Install build tooling (dpkg-dev/rpm-build)
+          name: Install build tooling + baseline dev libraries
           command: |
             if command -v apt-get >/dev/null 2>&1; then
               sudo apt-get update
-              sudo apt-get install -y dpkg-dev build-essential
+              # dpkg-dev/build-essential: needed to build any .deb package.
+              # libssl-dev/liblz4-dev/zlib1g-dev: baseline libs several
+              # packages (e.g. rsync) assume are present without declaring
+              # them in Build-Depends - see README section 3.4.2.
+              sudo apt-get install -y --no-install-recommends \
+                dpkg-dev build-essential \
+                libssl-dev liblz4-dev zlib1g-dev
             elif command -v yum >/dev/null 2>&1; then
-              sudo yum install -y rpm-build rpmdevtools
+              # CentOS 8/9 base repos don't include every -devel package
+              # (e.g. xxhash-devel) - EPEL + PowerTools/CRB carry the rest.
+              # Ignore failures here: some images may already have these
+              # enabled, or use different repo names across 8 vs 9.
+              sudo yum install -y epel-release || true
+              sudo yum config-manager --set-enabled powertools 2>/dev/null \
+                || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
+                || sudo yum config-manager --set-enabled crb 2>/dev/null \
+                || true
+              sudo yum install -y \
+                rpm-build rpmdevtools \
+                openssl-devel lz4-devel zlib-devel
             fi
       - run:
           name: Build resolved package(s)
