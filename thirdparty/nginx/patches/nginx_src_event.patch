@@ -2,7 +2,7 @@ diff -urN nginx/src/event/ngx_event_openssl.c nginx/src/event/ngx_event_openssl.
 --- nginx/src/event/ngx_event_openssl.c	2023-10-03 16:49:31.242377500 +0530
 +++ nginx/src/event/ngx_event_openssl.c	2023-10-12 01:03:16.055868100 +0530
 @@ -3203,9 +3203,6 @@
-     ngx_uint_t  tries;
+ #endif
  
      rc = NGX_OK;
 -
