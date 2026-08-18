@@ -88,20 +88,6 @@ references:
                 dpkg-dev build-essential \
                 libssl-dev liblz4-dev zlib1g-dev libzstd-dev
 
-              # Ubuntu 18.04 (bionic) ships libzstd 1.3.3, which predates
-              # the ZSTD_minCLevel symbol (added in zstd 1.4.0) that
-              # rsync's configure requires. Pull just libzstd-dev from the
-              # focal (20.04) archive on this platform only, then drop the
-              # temporary source again so nothing else gets mixed in.
-              . /etc/os-release
-              if [ "$VERSION_CODENAME" = "bionic" ]; then
-                echo "deb http://archive.ubuntu.com/ubuntu focal main" \
-                  | sudo tee /etc/apt/sources.list.d/focal-zstd.list
-                sudo apt-get update
-                sudo apt-get install -y -t focal libzstd-dev
-                sudo rm -f /etc/apt/sources.list.d/focal-zstd.list
-                sudo apt-get update
-              fi
             elif command -v yum >/dev/null 2>&1; then
               OS_VERSION=$(rpm -E %{rhel})
 
@@ -189,6 +175,16 @@ references:
               if [ ! -d "thirdparty/${PKG}" ]; then
                 echo "ERROR: thirdparty/${PKG} does not exist"
                 exit 1
+              fi
+
+              # --- optional package-owned pre-build hook -----------------
+              # Convention: thirdparty/<pkg>/ci/pre_build.sh
+              # Only runs if the package itself ships this file. Package-
+              # specific quirks live here, not in this shared config.yml.
+              PRE_HOOK="thirdparty/${PKG}/ci/pre_build.sh"
+              if [ -x "$PRE_HOOK" ]; then
+                echo "=== Running pre-build hook for ${PKG} ==="
+                "$PRE_HOOK" "${PLATFORM_TAG}"
               fi
 
               CONTROL_FILE=$(find "thirdparty/${PKG}" -path "*/debian/control" 2>/dev/null | head -1)
