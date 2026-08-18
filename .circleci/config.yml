@@ -111,10 +111,20 @@ references:
                 # silently finds nothing beyond whatever's cached. Repoint
                 # at the vault archive so normal installs keep working
                 # generically for any future package's dependencies too.
+                #
+                # Match every *.repo file here (not just CentOS-Linux-*)
+                # since the exact filenames vary by base image - and echo
+                # what we touched so a future failure is visible directly
+                # in the log instead of needing another round-trip to debug.
+                echo "=== Repo files before fix ==="
+                ls -la /etc/yum.repos.d/
                 sudo sed -i \
                   -e 's/^mirrorlist=/#mirrorlist=/' \
+                  -e 's/^metalink=/#metalink=/' \
                   -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
-                  /etc/yum.repos.d/CentOS-Linux-*.repo
+                  /etc/yum.repos.d/*.repo
+                echo "=== Resulting baseurl/mirrorlist lines ==="
+                grep -H -E '^(baseurl|mirrorlist|metalink)=' /etc/yum.repos.d/*.repo || echo "No matching lines found - repo files may use a different format"
               fi
 
               sudo yum install -y epel-release || true
