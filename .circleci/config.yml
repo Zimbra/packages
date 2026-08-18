@@ -81,17 +81,42 @@ references:
             if command -v apt-get >/dev/null 2>&1; then
               sudo apt-get update
               # dpkg-dev/build-essential: needed to build any .deb package.
-              # libssl-dev/liblz4-dev/zlib1g-dev: baseline libs several
-              # packages (e.g. rsync) assume are present without declaring
-              # them in Build-Depends - see README section 3.4.2.
+              # libssl-dev/liblz4-dev/zlib1g-dev/libzstd-dev: baseline libs
+              # several packages (e.g. rsync) assume are present without
+              # declaring them in Build-Depends - see README section 3.4.2.
               sudo apt-get install -y --no-install-recommends \
                 dpkg-dev build-essential \
-                libssl-dev liblz4-dev zlib1g-dev
+                libssl-dev liblz4-dev zlib1g-dev libzstd-dev
+
+              # Ubuntu 18.04 (bionic) ships libzstd 1.3.3, which predates
+              # the ZSTD_minCLevel symbol (added in zstd 1.4.0) that
+              # rsync's configure requires. Pull just libzstd-dev from the
+              # focal (20.04) archive on this platform only, then drop the
+              # temporary source again so nothing else gets mixed in.
+              . /etc/os-release
+              if [ "$VERSION_CODENAME" = "bionic" ]; then
+                echo "deb http://archive.ubuntu.com/ubuntu focal main" \
+                  | sudo tee /etc/apt/sources.list.d/focal-zstd.list
+                sudo apt-get update
+                sudo apt-get install -y -t focal libzstd-dev
+                sudo rm -f /etc/apt/sources.list.d/focal-zstd.list
+                sudo apt-get update
+              fi
             elif command -v yum >/dev/null 2>&1; then
-              # CentOS 8/9 base repos don't include every -devel package
-              # (e.g. xxhash-devel) - EPEL + PowerTools/CRB carry the rest.
-              # Ignore failures here: some images may already have these
-              # enabled, or use different repo names across 8 vs 9.
+              OS_VERSION=$(rpm -E %{rhel})
+
+              if [ "$OS_VERSION" = "8" ]; then
+                # CentOS 8 Linux reached EOL Dec 2021 - the default
+                # mirrorlist-based repos are dead, so plain `yum install`
+                # silently finds nothing beyond whatever's cached. Repoint
+                # at the vault archive so normal installs keep working
+                # generically for any future package's dependencies too.
+                sudo sed -i \
+                  -e 's/^mirrorlist=/#mirrorlist=/' \
+                  -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
+                  /etc/yum.repos.d/CentOS-Linux-*.repo
+              fi
+
               sudo yum install -y epel-release || true
               sudo yum config-manager --set-enabled powertools 2>/dev/null \
                 || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
@@ -99,7 +124,7 @@ references:
                 || true
               sudo yum install -y \
                 rpm-build rpmdevtools \
-                openssl-devel lz4-devel zlib-devel
+                openssl-devel lz4-devel zlib-devel libzstd-devel
             fi
       - run:
           name: Build resolved package(s)
