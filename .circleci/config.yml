@@ -135,6 +135,20 @@ references:
               sudo yum install -y \
                 rpm-build rpmdevtools \
                 openssl-devel lz4-devel zlib-devel libzstd-devel
+
+              # xxhash-devel isn't reliably resolvable via yum/EPEL on this
+              # EOL platform even with PowerTools/CRB enabled - dump repo
+              # diagnostics into the log if the plain install fails, then
+              # fall back to a direct EPEL RPM. Verify/update this URL if
+              # EPEL8's mirror layout changes.
+              if ! sudo yum install -y xxhash-devel; then
+                echo "=== xxhash-devel not found via enabled repos - repo diagnostics ==="
+                sudo yum repolist all
+                echo "=== Trying direct EPEL package fallback ==="
+                sudo yum install -y \
+                  "https://dl.fedoraproject.org/pub/epel/${OS_VERSION}/Everything/x86_64/Packages/x/xxhash-devel-0.8.1-2.el${OS_VERSION}.x86_64.rpm" \
+                  || echo "FAILED: xxhash-devel could not be installed - verify the EPEL${OS_VERSION} mirror URL/package version is still current"
+              fi
             fi
       - run:
           name: Build resolved package(s)
