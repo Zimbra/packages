@@ -11,7 +11,7 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
-* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4
+* Tue Jun 13 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - 1.0.4
 - Updated zimbra-net-snmp
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.3
 - Updated zimbra-net-snmp
