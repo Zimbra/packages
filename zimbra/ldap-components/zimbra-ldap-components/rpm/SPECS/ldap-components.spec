@@ -18,7 +18,7 @@ Zimbra ldap components pulls in all the packages used by
 zimbra-ldap
 
 %changelog
-* Wed Jul 15 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.5
+* Wed Jul 15 2026 Zimbra Packaging Services new <packaging-devel@zimbra.com> - 10.1.5
 - ZCS-19953, Upgrade Openjdk to 17.0.19
 * Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.4
 - ZBUG-5376, Updated ldap-components
