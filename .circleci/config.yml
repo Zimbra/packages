@@ -4,8 +4,8 @@ version: 2.1
 parameters:
   package_name:
     type: string
-    default: "rsync"
-    description: "thirdparty/<folder> name to build (e.g. rsync). Leave as 'auto' to auto-detect the changed package(s) from the latest commit."
+    default: "thirdparty/rsync"
+    description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
 
 references:
   when_main_workflow: &when_main_workflow
@@ -28,11 +28,13 @@ references:
   #     resolves to the parent of this checkout, i.e. ~ )
   #    zm-pkg-tool provides bin/get_plat_tag.sh which auto-detects the
   #    platform, so we don't need to set BUILD_PLATFORM manually.
-  # 3) Resolves WHICH thirdparty/<pkg> folder(s) to build, then expands
-  #    and orders that list via ci/resolve-build-order.sh (see that
-  #    script for the auto-pull-in-dependents + topological sort logic -
-  #    kept out of this file so per-package dependency changes never
-  #    require touching config.yml).
+  # 3) Resolves WHICH package(s) to build. Packages can live under any
+  #    top-level root (thirdparty/<pkg>, zimbra/<pkg>, etc.) - the
+  #    resolved list stores the FULL relative path (e.g. "zimbra/osl"),
+  #    never a bare name, so adding a package under a new root never
+  #    requires touching this file. ci/resolve-build-order.sh then
+  #    expands + orders that list (see that script for the
+  #    auto-pull-in-dependents + topological sort logic).
   # ---------------------------------------------------------------------
   checkout_and_resolve_steps: &checkout_and_resolve_steps
     steps:
@@ -50,13 +52,15 @@ references:
             if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
               echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
             else
-              git diff --name-only HEAD~1 HEAD -- thirdparty/ \
-                | cut -d'/' -f2 \
+              # Diff both known package roots - entries become full
+              # paths like "thirdparty/nginx" or "zimbra/osl".
+              git diff --name-only HEAD~1 HEAD -- thirdparty/ zimbra/ \
+                | awk -F'/' '{print $1"/"$2}' \
                 | sort -u > packages_to_build.txt
             fi
 
             if [ ! -s packages_to_build.txt ]; then
-              echo "No thirdparty/ package changes found in this commit - nothing to build."
+              echo "No package changes found in this commit - nothing to build."
               circleci-agent step halt
             fi
 
@@ -80,19 +84,20 @@ references:
   # Everything in this step is PLATFORM-level, generic setup - it applies
   # the same way no matter which package is being built. Anything that
   # is specific to one package (like rsync's bionic/zstd issue) does NOT
-  # belong here - it goes in that package's own
-  # thirdparty/<pkg>/ci/pre_build.sh instead (see the build step below).
+  # belong here - it goes in that package's own <path>/ci/pre_build.sh
+  # instead (see the build step below).
   #
-  # Internal thirdparty->thirdparty dependencies (e.g. nginx needs
-  # openssl) are handled generically here via two shared scripts:
+  # Internal package->package dependencies (e.g. nginx needs openssl,
+  # httpd needs apr/apr-util) are handled generically here via two
+  # shared scripts - both are complete no-ops for a package that
+  # declares no internal deps (e.g. zimbra/osl):
   #   - ci/verify-build-deps.sh : fails fast if a declared zimbra-*
   #     build-dep isn't resolvable yet (neither built earlier in this
-  #     same job, nor already published) - closes the cross-run race
-  #     where a dependency's own publish job hasn't finished.
+  #     same job, nor already published).
   #   - ci/register-local-repo.sh : after each package builds, publishes
   #     it into a job-local apt/yum repo pinned above other sources, so
-  #     a LATER package in the SAME job/commit (e.g. nginx right after
-  #     openssl) picks it up immediately without waiting on Nexus.
+  #     a LATER package in the SAME job/commit picks it up immediately
+  #     without waiting on Nexus.
   # ---------------------------------------------------------------------
   build_and_isolate_steps: &build_and_isolate_steps
     steps:
@@ -120,8 +125,6 @@ references:
                 # silently finds nothing beyond whatever's cached. Repoint
                 # at the vault archive so normal installs keep working
                 # generically for any future package's dependencies too.
-                # This is platform-wide, not package-specific, so it
-                # stays here rather than in a per-package pre_build.sh.
                 sudo sed -i \
                   -e 's/^mirrorlist=/#mirrorlist=/' \
                   -e 's/^metalink=/#metalink=/' \
@@ -135,8 +138,15 @@ references:
                 || sudo yum config-manager --set-enabled crb 2>/dev/null \
                 || true
               sudo yum install -y \
-                rpm-build rpmdevtools createrepo yum-plugin-priorities \
+                rpm-build rpmdevtools createrepo \
                 openssl-devel lz4-devel zlib-devel libzstd-devel
+
+              # yum-plugin-priorities only exists on yum3-based repos
+              # (EL7/EL8-style) - EL9's dnf doesn't ship it. Our local-
+              # build repo only ever contains the exact version a
+              # dependent needs, so dnf resolves it correctly even
+              # without priority-pinning - this install is best-effort.
+              sudo yum install -y yum-plugin-priorities 2>/dev/null || true
             fi
       - run:
           name: Build resolved package(s)
@@ -171,43 +181,43 @@ references:
               fi
             }
 
-            while IFS= read -r PKG; do
-              echo "=== Building ${PKG} for ${PLATFORM_TAG} ==="
+            while IFS= read -r PKGPATH; do
+              echo "=== Building ${PKGPATH} for ${PLATFORM_TAG} ==="
 
-              if [ ! -d "thirdparty/${PKG}" ]; then
-                echo "ERROR: thirdparty/${PKG} does not exist"
+              if [ ! -d "$PKGPATH" ]; then
+                echo "ERROR: $PKGPATH does not exist"
                 exit 1
               fi
 
               # --- optional package-owned pre-build hook -----------------
-              # Convention: thirdparty/<pkg>/ci/pre_build.sh
+              # Convention: <path>/ci/pre_build.sh
               # Only runs if the package itself ships this file. Package-
               # specific quirks live here, not in this shared config.yml.
-              PRE_HOOK="thirdparty/${PKG}/ci/pre_build.sh"
+              PRE_HOOK="${PKGPATH}/ci/pre_build.sh"
               if [ -x "$PRE_HOOK" ]; then
-                echo "=== Running pre-build hook for ${PKG} ==="
+                echo "=== Running pre-build hook for ${PKGPATH} ==="
                 "$PRE_HOOK" "${PLATFORM_TAG}"
               fi
 
-              CONTROL_FILE=$(find "thirdparty/${PKG}" -path "*/debian/control" 2>/dev/null | head -1)
+              CONTROL_FILE=$(find "$PKGPATH" -path "*/debian/control" 2>/dev/null | head -1)
               if [ -n "$CONTROL_FILE" ] && command -v apt-get >/dev/null 2>&1; then
                 bash ci/verify-build-deps.sh "$CONTROL_FILE" "Build-Depends"
                 install_declared_build_deps "$CONTROL_FILE" "Debian" "Build-Depends" \
                   sudo apt-get install -y --no-install-recommends
               fi
 
-              SPEC_FILE=$(find "thirdparty/${PKG}" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
+              SPEC_FILE=$(find "$PKGPATH" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
               if [ -n "$SPEC_FILE" ] && command -v yum >/dev/null 2>&1; then
                 bash ci/verify-build-deps.sh "$SPEC_FILE" "BuildRequires"
                 install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
                   sudo yum install -y
               fi
 
-              ( cd "thirdparty/${PKG}" && make )
+              ( cd "$PKGPATH" && make )
 
-              bash ci/register-local-repo.sh "thirdparty/${PKG}/build"
+              bash ci/register-local-repo.sh "${PKGPATH}/build"
 
-              find "thirdparty/${PKG}/build" -type f \
+              find "${PKGPATH}/build" -type f \
                 \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
                 -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
             done < packages_to_build.txt
