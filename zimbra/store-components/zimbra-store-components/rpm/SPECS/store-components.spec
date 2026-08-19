@@ -15,7 +15,7 @@ Zimbra store components pulls in all the packages used by
 zimbra-store
 
 %changelog
-* Tue Oct 29 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4
+* Tue Oct 29 2024 Zimbra new Packaging Services <packaging-devel@zimbra.com> - 1.0.4
 - ZCS-16122, added acl as dependency to store-components
 * Sat Dec 05 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.3
 - Updated zimbra-mariadb package
