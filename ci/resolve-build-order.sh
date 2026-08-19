@@ -3,17 +3,20 @@
 #
 # Called as: bash ci/resolve-build-order.sh packages_to_build.txt
 #
-# 1) Expands the list: if a package in the list is a declared dependency
-#    of some OTHER thirdparty package (via that package's
-#    ci/build-deps.txt), pulls that other package into the list too.
-#    -> e.g. only openssl changed => nginx gets auto-added, since
-#       thirdparty/nginx/ci/build-deps.txt says it needs openssl.
+# Entries in the input file are FULL relative paths (e.g. "thirdparty/
+# nginx" or "zimbra/osl") - not bare names. This is what lets any
+# top-level root (thirdparty/, zimbra/, or a future one) work without
+# ever touching config.yml: the path itself is the package's identity.
+#
+# 1) Expands the list: if a package is a declared dependency of some
+#    OTHER package (via that package's own ci/build-deps.txt, which
+#    also lists full paths), pulls that other package in too.
 # 2) Topologically sorts the final list so a dependency always builds
 #    before whatever depends on it.
 #
-# Convention: thirdparty/<pkg>/ci/build-deps.txt is OPTIONAL. One
-# thirdparty/<folder-name> per line. No file / empty file = no internal
-# deps for that package. This file never touches config.yml.
+# Convention: <root>/<pkg>/ci/build-deps.txt is OPTIONAL. One full
+# path (e.g. "thirdparty/openssl") per line. No file / empty file =
+# no internal deps for that package.
 set -euo pipefail
 
 INPUT="${1:-packages_to_build.txt}"
@@ -30,9 +33,10 @@ done < "$INPUT"
 i=0
 while [ "$i" -lt "${#queue[@]}" ]; do
   pkg="${queue[$i]}"; i=$((i+1))
-  for cand_deps_file in thirdparty/*/ci/build-deps.txt; do
+  for cand_deps_file in */*/ci/build-deps.txt; do
     [ -f "$cand_deps_file" ] || continue
-    cand_pkg="$(basename "$(dirname "$(dirname "$cand_deps_file")")")"
+    # strip trailing "/ci/build-deps.txt" -> gives the full path pkg id
+    cand_pkg="${cand_deps_file%/ci/build-deps.txt}"
     if grep -qxF "$pkg" "$cand_deps_file" 2>/dev/null && [ -z "${seen[$cand_pkg]:-}" ]; then
       seen["$cand_pkg"]=1
       queue+=("$cand_pkg")
@@ -45,7 +49,7 @@ done
 edges_file="$(mktemp)"
 has_edges=0
 for pkg in "${queue[@]}"; do
-  deps_file="thirdparty/${pkg}/ci/build-deps.txt"
+  deps_file="${pkg}/ci/build-deps.txt"
   [ -f "$deps_file" ] || continue
   while IFS= read -r dep; do
     dep="$(sed -e 's/#.*$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' <<<"$dep")"
@@ -57,7 +61,7 @@ done
 
 if [ "$has_edges" = "1" ]; then
   if ! tsort "$edges_file" > "$INPUT.sorted" 2>/tmp/tsort.err; then
-    echo "ERROR: circular dependency among thirdparty packages:"
+    echo "ERROR: circular dependency among packages:"
     cat /tmp/tsort.err
     exit 1
   fi
@@ -66,7 +70,6 @@ else
 fi
 rm -f "$edges_file"
 
-# tsort output first (correct order), then any isolated packages appended
 { cat "$INPUT.sorted"; printf '%s\n' "${queue[@]}"; } | awk '!seen[$0]++' > "$INPUT"
 rm -f "$INPUT.sorted"
 
