@@ -21,7 +21,7 @@ AutoReqProv:        no
 %define debug_package %{nil}
 
 %changelog
-* Wed Jul 15 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.8
+* Wed Jul 15 2026 Zimbra Packagingg Services <packaging-devel@zimbra.com> - 10.1.8
 - ZCS-19953, Upgrade Openjdk to 17.0.19
 * Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.7
 - ZBUG-5376, Updated core-components
