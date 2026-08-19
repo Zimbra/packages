@@ -4,7 +4,7 @@ version: 2.1
 parameters:
   package_name:
     type: string
-    default: "thirdparty/rsync"
+    default: "auto"
     description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
 
 references:
