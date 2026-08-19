@@ -1,0 +1,10 @@
+# Path in repo: thirdparty/nginx/ci/build-deps.txt
+#
+# Lists other thirdparty/<folder> names that MUST be built (and
+# available, either in this job's local-build repo or already
+# published) before nginx builds. One name per line.
+# This does NOT replace debian/control or rpm .spec Build-Depends -
+# those still declare the actual package name + version. This file is
+# only used by ci/resolve-build-order.sh (build ORDER + auto-pull-in)
+# and implicitly relied on by ci/verify-build-deps.sh's check.
+openssl
