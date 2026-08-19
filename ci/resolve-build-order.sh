@@ -13,12 +13,18 @@
 #    also lists full paths), pulls that other package in too.
 # 2) Topologically sorts the final list so a dependency always builds
 #    before whatever depends on it.
+# 3) Validates every entry that comes out the other end is an actual,
+#    buildable package directory - a typo'd or stale line in any
+#    ci/build-deps.txt (dependency or reverse-dependent) becomes a
+#    graph node via tsort even though it was never a real package, and
+#    would otherwise only surface as a build failure deep inside each
+#    platform's build job. Failing here instead keeps that class of
+#    error a ~seconds-long failure in checkout_and_resolve.
 #
 # Convention: <root>/<pkg>/ci/build-deps.txt is OPTIONAL. One full
 # path (e.g. "thirdparty/openssl") per line. No file / empty file =
 # no internal deps for that package.
 set -euo pipefail
-
 INPUT="${1:-packages_to_build.txt}"
 [ -s "$INPUT" ] || { echo "resolve-build-order: $INPUT is empty, nothing to do"; exit 0; }
 
@@ -63,11 +69,45 @@ if [ "$has_edges" = "1" ]; then
   if ! tsort "$edges_file" > "$INPUT.sorted" 2>/tmp/tsort.err; then
     echo "ERROR: circular dependency among packages:"
     cat /tmp/tsort.err
+    rm -f "$edges_file"
     exit 1
   fi
 else
   : > "$INPUT.sorted"
 fi
+
+# --- validate every edge participant is a real package BEFORE it gets
+#     folded into the final list. tsort only knows the strings we fed
+#     it - if a ci/build-deps.txt line is a typo'd / stale path that
+#     doesn't correspond to an actual package directory, tsort still
+#     happily emits it as a node, and it would otherwise ride straight
+#     through into packages_to_build.txt.
+bad=0
+while IFS= read -r node; do
+  [ -n "$node" ] || continue
+  if [ ! -d "$node" ] || [ ! -f "$node/Makefile" ]; then
+    # Find which build-deps.txt file(s) actually reference this bad path,
+    # so the error points straight at the file to fix.
+    offenders=$(grep -lxF "$node" */*/ci/build-deps.txt 2>/dev/null || true)
+    echo "resolve-build-order: ERROR '$node' was pulled into the build set" \
+         "but is not a valid package directory (missing dir or Makefile)."
+    if [ -n "$offenders" ]; then
+      echo "resolve-build-order:   referenced from:"
+      while IFS= read -r f; do echo "resolve-build-order:     $f"; done <<< "$offenders"
+    else
+      echo "resolve-build-order:   (could not locate which build-deps.txt referenced it - check all ci/build-deps.txt files for '$node')"
+    fi
+    bad=1
+  fi
+done < "$INPUT.sorted"
+
+if [ "$bad" -eq 1 ]; then
+  echo ""
+  echo "ERROR: resolve-build-order produced one or more invalid package paths - aborting before build."
+  rm -f "$edges_file" "$INPUT.sorted"
+  exit 1
+fi
+
 rm -f "$edges_file"
 
 { cat "$INPUT.sorted"; printf '%s\n' "${queue[@]}"; } | awk '!seen[$0]++' > "$INPUT"
