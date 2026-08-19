@@ -13,7 +13,7 @@ AutoReqProv:        no
 %changelog
 * Wed Jun 10 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.15
 - Fix ZBUG-5593
-* Tue Jun 03 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.14
+* Tue Jun 03 2025  Zimbra Packaging new Services <packaging-devel@zimbra.com> - 1.0.14
 - Fix ZBUG-17297
 * Wed Jan 29 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.13
 - Fix ZBUG-4637
