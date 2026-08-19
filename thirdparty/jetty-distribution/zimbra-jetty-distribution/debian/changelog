@@ -8,7 +8,7 @@ zimbra-jetty-distribution (VERSION-2.PKG_OS_TAG) unstable; urgency=medium
 
   * Fix ZBUG-2633, Upgraded jetty to 9.4.46.v20220331
 
- -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Mon, 09 May 2022 03:14:15 +0530
+ -- Zimbra Packaging Services added <packaging-devel@zimbra.com>  Mon, 09 May 2022 03:14:15 +0530
 
 zimbra-jetty-distribution (VERSION-2.PKG_OS_TAG) unstable; urgency=medium
 
