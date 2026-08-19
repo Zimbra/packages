@@ -1,6 +1,6 @@
 zimbra-os-requirements (1.0.5-1zimbra8.7b1ZAPPEND) unstable; urgency=low
 
-  * ZBUG-4617, removed rsyslog dependency from os-requirements
+  * ZBUG-4617, removed rsyslog dependency added from os-requirements
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 08 May 2025 00:00:00 +0000
 
