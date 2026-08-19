@@ -28,7 +28,11 @@ references:
   #     resolves to the parent of this checkout, i.e. ~ )
   #    zm-pkg-tool provides bin/get_plat_tag.sh which auto-detects the
   #    platform, so we don't need to set BUILD_PLATFORM manually.
-  # 3) Resolves WHICH thirdparty/<pkg> folder(s) to build
+  # 3) Resolves WHICH thirdparty/<pkg> folder(s) to build, then expands
+  #    and orders that list via ci/resolve-build-order.sh (see that
+  #    script for the auto-pull-in-dependents + topological sort logic -
+  #    kept out of this file so per-package dependency changes never
+  #    require touching config.yml).
   # ---------------------------------------------------------------------
   checkout_and_resolve_steps: &checkout_and_resolve_steps
     steps:
@@ -56,6 +60,8 @@ references:
               circleci-agent step halt
             fi
 
+            bash ci/resolve-build-order.sh packages_to_build.txt
+
             echo "=== Package(s) resolved for this run ==="
             cat packages_to_build.txt
       - persist_to_workspace:
@@ -76,6 +82,17 @@ references:
   # is specific to one package (like rsync's bionic/zstd issue) does NOT
   # belong here - it goes in that package's own
   # thirdparty/<pkg>/ci/pre_build.sh instead (see the build step below).
+  #
+  # Internal thirdparty->thirdparty dependencies (e.g. nginx needs
+  # openssl) are handled generically here via two shared scripts:
+  #   - ci/verify-build-deps.sh : fails fast if a declared zimbra-*
+  #     build-dep isn't resolvable yet (neither built earlier in this
+  #     same job, nor already published) - closes the cross-run race
+  #     where a dependency's own publish job hasn't finished.
+  #   - ci/register-local-repo.sh : after each package builds, publishes
+  #     it into a job-local apt/yum repo pinned above other sources, so
+  #     a LATER package in the SAME job/commit (e.g. nginx right after
+  #     openssl) picks it up immediately without waiting on Nexus.
   # ---------------------------------------------------------------------
   build_and_isolate_steps: &build_and_isolate_steps
     steps:
@@ -118,7 +135,7 @@ references:
                 || sudo yum config-manager --set-enabled crb 2>/dev/null \
                 || true
               sudo yum install -y \
-                rpm-build rpmdevtools \
+                rpm-build rpmdevtools createrepo yum-plugin-priorities \
                 openssl-devel lz4-devel zlib-devel libzstd-devel
             fi
       - run:
@@ -174,17 +191,21 @@ references:
 
               CONTROL_FILE=$(find "thirdparty/${PKG}" -path "*/debian/control" 2>/dev/null | head -1)
               if [ -n "$CONTROL_FILE" ] && command -v apt-get >/dev/null 2>&1; then
+                bash ci/verify-build-deps.sh "$CONTROL_FILE" "Build-Depends"
                 install_declared_build_deps "$CONTROL_FILE" "Debian" "Build-Depends" \
                   sudo apt-get install -y --no-install-recommends
               fi
 
               SPEC_FILE=$(find "thirdparty/${PKG}" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
               if [ -n "$SPEC_FILE" ] && command -v yum >/dev/null 2>&1; then
+                bash ci/verify-build-deps.sh "$SPEC_FILE" "BuildRequires"
                 install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
                   sudo yum install -y
               fi
 
               ( cd "thirdparty/${PKG}" && make )
+
+              bash ci/register-local-repo.sh "thirdparty/${PKG}/build"
 
               find "thirdparty/${PKG}/build" -type f \
                 \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
