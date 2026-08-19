@@ -163,6 +163,22 @@ references:
             # substituted yet (that only happens inside the Makefile's own
             # build_deb/build_rpm targets), so they fail on an "unknown"
             # version.
+            #
+            # NOTE: the pipeline below is wrapped with "|| true" because
+            # this whole script runs under `set -eo pipefail` (see the
+            # job's `shell:`). When a control/spec file declares NO
+            # Build-Depends/BuildRequires at all (e.g. zimbra/osl's
+            # .spec, which has no BuildRequires block), `awk` emits
+            # nothing and the downstream `grep -v '^$'` then has zero
+            # input lines to select - grep exits 1 in that case even
+            # though nothing is actually wrong. Under pipefail that
+            # non-zero status kills the whole build step immediately
+            # (this is exactly what was failing build_c9/build_c8: the
+            # step died silently right after "no internal zimbra- deps
+            # declared, skipping" with no further output). "|| true"
+            # lets deps legitimately come back empty without aborting -
+            # the `if [ -n "$deps" ]` guard right below already handles
+            # the empty case correctly.
             install_declared_build_deps() {
               file="$1"; label="$2"; prefix="$3"; shift 3
               deps=$(awk -v prefix="$prefix" '
@@ -173,11 +189,13 @@ references:
                 | tr ',' '\n' \
                 | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
                 | grep -v '^$' \
-                | sort -u)
+                | sort -u || true)
 
               if [ -n "$deps" ]; then
                 echo "Installing ${label} build-deps: ${deps}"
                 "$@" $deps
+              else
+                echo "No ${label} build-deps declared for ${file}, skipping install"
               fi
             }
 
