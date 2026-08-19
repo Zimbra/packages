@@ -20,7 +20,7 @@ used in the Gregorian calendar (the one currently in use) with full
 support for time changes due to daylight saving time
 
 %changelog
-* Tue Feb 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
+* Tue Feb 07 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
 - Upgraded Date-Manip to 6.90
 
 %define debug_package %{nil}
