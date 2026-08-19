@@ -21,7 +21,7 @@ zimbra-mta
 
 %changelog
 * Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.5
-- ZBUG-5376, updated mta-components
+- ZBUG-5376, updated new mta-components
 * Wed Sep 10 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.4
 - ZCS-17850, Upgraded ClamAV to 1.4.3
 * Mon Jul 25 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.3
