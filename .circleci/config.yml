@@ -70,6 +70,12 @@ references:
   # Builds every resolved package for this platform via plain `make`.
   # Platform is auto-detected by zm-pkg-tool/bin/get_plat_tag.sh - no
   # manual BUILD_PLATFORM export needed.
+  #
+  # Everything in this step is PLATFORM-level, generic setup - it applies
+  # the same way no matter which package is being built. Anything that
+  # is specific to one package (like rsync's bionic/zstd issue) does NOT
+  # belong here - it goes in that package's own
+  # thirdparty/<pkg>/ci/pre_build.sh instead (see the build step below).
   # ---------------------------------------------------------------------
   build_and_isolate_steps: &build_and_isolate_steps
     steps:
@@ -97,20 +103,13 @@ references:
                 # silently finds nothing beyond whatever's cached. Repoint
                 # at the vault archive so normal installs keep working
                 # generically for any future package's dependencies too.
-                #
-                # Match every *.repo file here (not just CentOS-Linux-*)
-                # since the exact filenames vary by base image - and echo
-                # what we touched so a future failure is visible directly
-                # in the log instead of needing another round-trip to debug.
-                echo "=== Repo files before fix ==="
-                ls -la /etc/yum.repos.d/
+                # This is platform-wide, not package-specific, so it
+                # stays here rather than in a per-package pre_build.sh.
                 sudo sed -i \
                   -e 's/^mirrorlist=/#mirrorlist=/' \
                   -e 's/^metalink=/#metalink=/' \
                   -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
                   /etc/yum.repos.d/*.repo
-                echo "=== Resulting baseurl/mirrorlist lines ==="
-                grep -H -E '^(baseurl|mirrorlist|metalink)=' /etc/yum.repos.d/*.repo || echo "No matching lines found - repo files may use a different format"
               fi
 
               sudo yum install -y epel-release || true
@@ -121,20 +120,6 @@ references:
               sudo yum install -y \
                 rpm-build rpmdevtools \
                 openssl-devel lz4-devel zlib-devel libzstd-devel
-
-              # xxhash-devel isn't reliably resolvable via yum/EPEL on this
-              # EOL platform even with PowerTools/CRB enabled - dump repo
-              # diagnostics into the log if the plain install fails, then
-              # fall back to a direct EPEL RPM. Verify/update this URL if
-              # EPEL8's mirror layout changes.
-              if ! sudo yum install -y xxhash-devel; then
-                echo "=== xxhash-devel not found via enabled repos - repo diagnostics ==="
-                sudo yum repolist all
-                echo "=== Trying direct EPEL package fallback ==="
-                sudo yum install -y \
-                  "https://dl.fedoraproject.org/pub/epel/${OS_VERSION}/Everything/x86_64/Packages/x/xxhash-devel-0.8.1-2.el${OS_VERSION}.x86_64.rpm" \
-                  || echo "FAILED: xxhash-devel could not be installed - verify the EPEL${OS_VERSION} mirror URL/package version is still current"
-              fi
             fi
       - run:
           name: Build resolved package(s)
