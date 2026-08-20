@@ -103,43 +103,6 @@ references:
     steps:
       - attach_workspace:
           at: ..
-
-      - run:
-          name: Configure Zimbra base package repo + diagnose
-          command: |
-            echo "=== Current apt/yum sources BEFORE fix ==="
-            if command -v apt-get >/dev/null 2>&1; then
-              cat /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null || true
-              echo "--- apt-cache policy zimbra-base (before) ---"
-              apt-cache policy zimbra-base 2>&1 || true
-
-              # This mirrors what the genesis dev server already has configured
-              # (repo.zimbra.com/apt/87) which is where zimbra-base actually lives -
-              # the CI base image apparently doesn't have this source baked in.
-              echo "deb https://repo.zimbra.com/apt/87 focal/zimbra" | sudo tee /etc/apt/sources.list.d/zimbra-base.list
-              sudo apt-get update -qq || true
-
-              echo "--- apt-cache policy zimbra-base (after) ---"
-              apt-cache policy zimbra-base 2>&1 || true
-
-            elif command -v yum >/dev/null 2>&1; then
-              echo "--- current yum repos ---"
-              cat /etc/yum.repos.d/*.repo 2>/dev/null || true
-              echo "--- yum list zimbra-base (before) ---"
-              yum list zimbra-base 2>&1 || true
-
-              cat \<<REPOEOF | sudo tee /etc/yum.repos.d/zimbra-base.repo >/dev/null
-              [zimbra-base]
-              name=zimbra-base
-              baseurl=https://repo.zimbra.com/yum/87/\$releasever/zimbra
-              enabled=1
-              gpgcheck=0
-              REPOEOF
-              sudo yum makecache -y || true
-
-              echo "--- yum list zimbra-base (after) ---"
-              yum list zimbra-base 2>&1 || true
-            fi
       - run:
           name: Install build tooling + baseline dev libraries
           command: |
