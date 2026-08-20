@@ -14,7 +14,7 @@ AutoReqProv:        no
 Default ruleset for SpamAssassin
 
 %changelog
-* Tue Oct 01 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b7ZAPPEND
+* Tue Oct 01 2024 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b7ZAPPEND
 - Upgraded spamassassin to 4.0.1
 * Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b6ZAPPEND
 - Updated spamassassin
