@@ -10,15 +10,15 @@ parameters:
 references:
   when_main_workflow: &when_main_workflow
     or:
-      - equal: [ api, << pipeline.trigger_source >> ]
+      - equal: [ "api", "<< pipeline.trigger_source >>" ]
       - not:
-          equal: [ << pipeline.git.branch >>, "testbranch" ]
+          equal: [ "<< pipeline.git.branch >>", "testbranch" ]
 
   when_develop_workflow: &when_develop_workflow
     and:
-      - equal: [ << pipeline.git.branch >>, "testbranch" ]
+      - equal: [ "<< pipeline.git.branch >>", "testbranch" ]
       - not:
-          equal: [ api, << pipeline.trigger_source >> ]
+          equal: [ "api", "<< pipeline.trigger_source >>" ]
 
   # ---------------------------------------------------------------------
   # 1) Checks out the repo (full history, needed for git diff)
