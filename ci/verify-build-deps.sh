@@ -44,14 +44,19 @@ while IFS= read -r line; do
   name=$(sed -E 's/[[:space:]]*\(.*//' <<<"$line" | sed -E 's/[[:space:]]*[<>=!].*//')
 
   # version + operator: handle BOTH "name (>= 1.2.3)" (deb) and bare
-  # "name >= 1.2.3" (rpm) forms.
-  if [[ "$line" =~ \([<>=!]+[[:space:]]*([^\)]+)\) ]]; then
-    ver_raw="${BASH_REMATCH[1]}"
-  elif [[ "$line" =~ [<>=!]+[[:space:]]*([^[:space:]]+)[[:space:]]*$ ]]; then
-    ver_raw="${BASH_REMATCH[1]}"
-  else
-    ver_raw=""
-  fi
+  # "name >= 1.2.3" (rpm) forms. Uses case/sed instead of bash's
+  # [[ =~ ]] extended-regex matching, which was tripping the shell's
+  # own conditional-expression parser on the "(>= ...)" pattern.
+  ver_raw=""
+  case "$line" in
+    *'('*)
+      ver_raw=$(sed -E 's/.*\(>=?[[:space:]]*([^)]+)\).*/\1/' <<<"$line")
+      ;;
+    *)
+      ver_raw=$(sed -E 's/^[^><=!]*[><=!]+[[:space:]]*//' <<<"$line")
+      [ "$ver_raw" = "$line" ] && ver_raw=""
+      ;;
+  esac
 
   if [ -z "$ver_raw" ]; then
     echo "verify-build-deps: SKIP  $name (no version constraint declared)"
@@ -66,11 +71,10 @@ while IFS= read -r line; do
     for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
       [ -e "$f" ] || continue
       base="$(basename "$f")"
-      # strip name_ / name- prefix and .deb/.rpm (+ arch) suffix to isolate the version
       ver_have="${base#${name}[-_]}"
       ver_have="${ver_have%.deb}"
-      ver_have="${ver_have%%_*.deb}"          # deb: version_arch.deb
-      ver_have="${ver_have%.*.rpm}"            # rpm: strip .<arch>.rpm
+      ver_have="${ver_have%%_*.deb}"
+      ver_have="${ver_have%.*.rpm}"
       if version_ge "$ver_have" "$ver_want"; then
         found_local=1
         echo "verify-build-deps: OK   $name >= ${ver_want} (built earlier in this job, found ${ver_have})"
