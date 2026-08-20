@@ -1,0 +1,2 @@
+# thirdparty/perl-date-manip/ci/build-deps.txt
+zimbra/perl-base
