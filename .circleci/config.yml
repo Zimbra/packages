@@ -49,8 +49,8 @@ references:
       - run:
           name: Resolve package(s) to build
           command: |
-            if [ "\<< pipeline.parameters.package_name >>" != "auto" ]; then
-              echo "\<< pipeline.parameters.package_name >>" > packages_to_build.txt
+            if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
+              echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
             else
               # Diff both known package roots - entries become full
               # paths like "thirdparty/nginx" or "zimbra/osl".
@@ -128,7 +128,7 @@ references:
               echo "--- yum list zimbra-base (before) ---"
               yum list zimbra-base 2>&1 || true
 
-              cat <<REPOEOF | sudo tee /etc/yum.repos.d/zimbra-base.repo >/dev/null
+              cat \<<REPOEOF | sudo tee /etc/yum.repos.d/zimbra-base.repo >/dev/null
               [zimbra-base]
               name=zimbra-base
               baseurl=https://repo.zimbra.com/yum/87/\$releasever/zimbra
