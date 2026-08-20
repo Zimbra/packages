@@ -129,12 +129,12 @@ references:
               yum list zimbra-base 2>&1 || true
 
               cat <<REPOEOF | sudo tee /etc/yum.repos.d/zimbra-base.repo >/dev/null
-[zimbra-base]
-name=zimbra-base
-baseurl=https://repo.zimbra.com/yum/87/\$releasever/zimbra
-enabled=1
-gpgcheck=0
-REPOEOF
+              [zimbra-base]
+              name=zimbra-base
+              baseurl=https://repo.zimbra.com/yum/87/\$releasever/zimbra
+              enabled=1
+              gpgcheck=0
+              REPOEOF
               sudo yum makecache -y || true
 
               echo "--- yum list zimbra-base (after) ---"
