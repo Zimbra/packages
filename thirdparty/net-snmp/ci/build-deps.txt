@@ -1,0 +1,2 @@
+# thirdparty/net-snmp/ci/build-deps.txt
+thirdparty/openssl
