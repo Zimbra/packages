@@ -1,0 +1,4 @@
+# thirdparty/clamav/ci/build-deps.txt
+thirdparty/openssl
+thirdparty/libxml2
+thirdparty/libmilter
