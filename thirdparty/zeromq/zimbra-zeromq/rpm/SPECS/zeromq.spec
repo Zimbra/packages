@@ -15,7 +15,7 @@ The Zimbra 0MQ build
 
 
 %changelog
-* Mon Mar 04 2024 Zimbra new modified Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+* Mon Mar 04 2024 Zimbra new updated modified Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Upgraded libsodium to 1.0.19
 
 %prep
