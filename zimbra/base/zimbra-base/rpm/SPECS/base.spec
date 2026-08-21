@@ -17,7 +17,7 @@ all the zimbra specific third party packages.
 %files
 
 %changelog
-* Tue Dec new 15 2015  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1
+* Tue Dec 15 2015  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.1
 - Create zimbra user and group
 - Add dependencies for useradd/usermod/adduser
 
