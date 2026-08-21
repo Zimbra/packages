@@ -4,29 +4,29 @@
 # Called as: bash ci/resolve-build-order.sh packages_to_build.txt
 #
 # Entries in the input file are FULL relative paths (e.g. "thirdparty/
-# nginx" or "zimbra/osl") - not bare names. This is what lets any
-# top-level root (thirdparty/, zimbra/, or a future one) work without
-# ever touching config.yml: the path itself is the package's identity.
+# nginx" or "zimbra/osl") - not bare names.
 #
 # 1) Expands the list: if a package is a declared dependency of some
 #    OTHER package (via that package's own ci/build-deps.txt, which
-#    also lists full paths), pulls that other package in too.
-# 2) Topologically sorts the final list so a dependency always builds
-#    before whatever depends on it.
-# 3) Validates every entry that comes out the other end is an actual,
-#    buildable package directory - a typo'd or stale line in any
-#    ci/build-deps.txt (dependency or reverse-dependent) becomes a
-#    graph node via tsort even though it was never a real package, and
-#    would otherwise only surface as a build failure deep inside each
-#    platform's build job. Failing here instead keeps that class of
-#    error a ~seconds-long failure in checkout_and_resolve.
+#    lists full paths), pulls that other package in too - e.g. a
+#    change to thirdparty/clamav also rebuilds zimbra/mta-components.
+# 2) Orders the final list by looking each entry up in MASTER_ORDER -
+#    an already-correct, full build sequence - instead of tsort'ing
+#    edges built from per-package build-deps.txt files. A stale/typo'd
+#    build-deps.txt line can no longer smuggle a phantom node or a
+#    fake circular dependency into the run; it just fails validation.
+# 3) Validates every entry is an actual, buildable package directory.
 #
-# Convention: <root>/<pkg>/ci/build-deps.txt is OPTIONAL. One full
-# path (e.g. "thirdparty/openssl") per line. No file / empty file =
-# no internal deps for that package.
+# Convention: <root>/<pkg>/ci/build-deps.txt is OPTIONAL and is used
+# ONLY for the expand step (finding reverse-dependents) - it has no
+# say in ordering anymore. One full path per line.
 set -euo pipefail
+
 INPUT="${1:-packages_to_build.txt}"
+MASTER_ORDER="${MASTER_ORDER:-build-order}"
+
 [ -s "$INPUT" ] || { echo "resolve-build-order: $INPUT is empty, nothing to do"; exit 0; }
+[ -f "$MASTER_ORDER" ] || { echo "resolve-build-order: ERROR master order file '$MASTER_ORDER' not found"; exit 1; }
 
 declare -A seen=()
 queue=()
@@ -41,7 +41,6 @@ while [ "$i" -lt "${#queue[@]}" ]; do
   pkg="${queue[$i]}"; i=$((i+1))
   for cand_deps_file in */*/ci/build-deps.txt; do
     [ -f "$cand_deps_file" ] || continue
-    # strip trailing "/ci/build-deps.txt" -> gives the full path pkg id
     cand_pkg="${cand_deps_file%/ci/build-deps.txt}"
     if grep -qxF "$pkg" "$cand_deps_file" 2>/dev/null && [ -z "${seen[$cand_pkg]:-}" ]; then
       seen["$cand_pkg"]=1
@@ -51,79 +50,50 @@ while [ "$i" -lt "${#queue[@]}" ]; do
   done
 done
 
-# --- build edge list "dep pkg" for tsort (dep must come before pkg) -----
-edges_file="$(mktemp)"
-has_edges=0
-for pkg in "${queue[@]}"; do
-  deps_file="${pkg}/ci/build-deps.txt"
-  [ -f "$deps_file" ] || continue
-  while IFS= read -r dep; do
-    dep="$(sed -e 's/#.*$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' <<<"$dep")"
-    [ -n "$dep" ] || continue
-    # Only order against deps that are THEMSELVES part of this run's
-    # build set. A dep that isn't queued isn't being rebuilt here - it's
-    # assumed already built/published, and ci/verify-build-deps.sh (run
-    # per-platform, at actual build time) is what validates that
-    # assumption. If we added an edge for it anyway, tsort would emit it
-    # as a graph node purely because some OTHER queued package's
-    # build-deps.txt happened to mention it - and the final sweep below
-    # folds every tsort node into packages_to_build.txt, turning it into
-    # a phantom build target even though nothing about it changed.
-    # (This is what pulled unrelated packages like thirdparty/altermime
-    # into a clamav-only run via zimbra/mta-components/ci/build-deps.txt.)
-    [ -n "${seen[$dep]:-}" ] || continue
-    echo "$dep $pkg" >> "$edges_file"
-    has_edges=1
-  done < "$deps_file"
+# --- order by position in the master build-order file -------------------
+ordered=()
+while IFS= read -r line; do
+  pkg="$(sed -e 's/#.*$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' <<<"$line")"
+  [ -n "$pkg" ] || continue
+  case "$pkg" in thirdparty/*|zimbra/*) ;; *) continue ;; esac
+  [ -n "${seen[$pkg]:-}" ] || continue
+  ordered+=("$pkg")
+  unset "seen[$pkg]"
+done < "$MASTER_ORDER"
+
+# anything still left in $seen was queued/pulled-in but never appeared
+# in the master order file - surface it instead of silently dropping it
+missing=0
+for pkg in "${!seen[@]}"; do
+  echo "resolve-build-order: ERROR '$pkg' is not listed in '$MASTER_ORDER'"
+  missing=1
 done
-
-if [ "$has_edges" = "1" ]; then
-  if ! tsort "$edges_file" > "$INPUT.sorted" 2>/tmp/tsort.err; then
-    echo "ERROR: circular dependency among packages:"
-    cat /tmp/tsort.err
-    rm -f "$edges_file"
-    exit 1
-  fi
-else
-  : > "$INPUT.sorted"
-fi
-
-# --- validate every edge participant is a real package BEFORE it gets
-#     folded into the final list. tsort only knows the strings we fed
-#     it - if a ci/build-deps.txt line is a typo'd / stale path that
-#     doesn't correspond to an actual package directory, tsort still
-#     happily emits it as a node, and it would otherwise ride straight
-#     through into packages_to_build.txt.
-bad=0
-while IFS= read -r node; do
-  [ -n "$node" ] || continue
-  if [ ! -d "$node" ] || [ ! -f "$node/Makefile" ]; then
-    # Find which build-deps.txt file(s) actually reference this bad path,
-    # so the error points straight at the file to fix.
-    offenders=$(grep -lxF "$node" */*/ci/build-deps.txt 2>/dev/null || true)
-    echo "resolve-build-order: ERROR '$node' was pulled into the build set" \
-         "but is not a valid package directory (missing dir or Makefile)."
-    if [ -n "$offenders" ]; then
-      echo "resolve-build-order:   referenced from:"
-      while IFS= read -r f; do echo "resolve-build-order:     $f"; done <<< "$offenders"
-    else
-      echo "resolve-build-order:   (could not locate which build-deps.txt referenced it - check all ci/build-deps.txt files for '$node')"
-    fi
-    bad=1
-  fi
-done < "$INPUT.sorted"
-
-if [ "$bad" -eq 1 ]; then
+if [ "$missing" -eq 1 ]; then
   echo ""
-  echo "ERROR: resolve-build-order produced one or more invalid package paths - aborting before build."
-  rm -f "$edges_file" "$INPUT.sorted"
+  echo "ERROR: package(s) missing from master order file - add them there first."
   exit 1
 fi
 
-rm -f "$edges_file"
+# --- validate every entry is a real, buildable package directory -------
+bad=0
+for pkg in "${ordered[@]}"; do
+  if [ ! -d "$pkg" ] || [ ! -f "$pkg/Makefile" ]; then
+    offenders=$(grep -lxF "$pkg" */*/ci/build-deps.txt 2>/dev/null || true)
+    echo "resolve-build-order: ERROR '$pkg' is not a valid package directory (missing dir or Makefile)."
+    if [ -n "$offenders" ]; then
+      echo "resolve-build-order:   referenced from:"
+      while IFS= read -r f; do echo "resolve-build-order:     $f"; done <<< "$offenders"
+    fi
+    bad=1
+  fi
+done
+if [ "$bad" -eq 1 ]; then
+  echo ""
+  echo "ERROR: resolve-build-order produced one or more invalid package paths - aborting before build."
+  exit 1
+fi
 
-{ cat "$INPUT.sorted"; printf '%s\n' "${queue[@]}"; } | awk '!seen[$0]++' > "$INPUT"
-rm -f "$INPUT.sorted"
+printf '%s\n' "${ordered[@]}" > "$INPUT"
 
 echo "=== Build order after dependency resolution ==="
 cat "$INPUT"
