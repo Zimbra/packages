@@ -1,0 +1,12 @@
+# zimbra/mta-components/ci/build-deps.txt
+zimbra/mta-base
+thirdparty/altermime
+thirdparty/amavisd
+thirdparty/clamav
+thirdparty/clamav-db
+thirdparty/cluebringer
+thirdparty/mariadb
+thirdparty/opendkim
+thirdparty/perl-mail-spamassassin
+thirdparty/postfix
+thirdparty/spamassassin-rules
