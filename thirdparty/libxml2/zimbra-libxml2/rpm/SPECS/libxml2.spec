@@ -39,7 +39,7 @@ Requires: zimbra-libxml2-libs = %{version}-%{release}
 AutoReqProv:        no
 
 %description devel
-The zimbra-libxml2-devel package contains the linking libraries and include files
+The zimbra-libxml2-devel package contains the linking libraries and include files...
 
 %files
 %defattr(-,root,root)
