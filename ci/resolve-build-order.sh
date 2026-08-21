@@ -60,6 +60,18 @@ for pkg in "${queue[@]}"; do
   while IFS= read -r dep; do
     dep="$(sed -e 's/#.*$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' <<<"$dep")"
     [ -n "$dep" ] || continue
+    # Only order against deps that are THEMSELVES part of this run's
+    # build set. A dep that isn't queued isn't being rebuilt here - it's
+    # assumed already built/published, and ci/verify-build-deps.sh (run
+    # per-platform, at actual build time) is what validates that
+    # assumption. If we added an edge for it anyway, tsort would emit it
+    # as a graph node purely because some OTHER queued package's
+    # build-deps.txt happened to mention it - and the final sweep below
+    # folds every tsort node into packages_to_build.txt, turning it into
+    # a phantom build target even though nothing about it changed.
+    # (This is what pulled unrelated packages like thirdparty/altermime
+    # into a clamav-only run via zimbra/mta-components/ci/build-deps.txt.)
+    [ -n "${seen[$dep]:-}" ] || continue
     echo "$dep $pkg" >> "$edges_file"
     has_edges=1
   done < "$deps_file"
