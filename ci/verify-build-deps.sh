@@ -139,7 +139,39 @@ while IFS= read -r line; do
   esac
 
   if [ -z "$ver_raw" ]; then
-    echo "verify-build-deps: SKIP  $name (no version constraint declared)"
+    # No version constraint declared - but that's not the same as "this
+    # package definitely exists somewhere". Previously this was an
+    # unconditional SKIP with no existence check at all, so a genuinely
+    # unpublished internal zimbra-* dep (e.g. one platform's repo simply
+    # doesn't have it yet) sailed through here silently, only to blow up
+    # later as an opaque raw `apt-get install`/`yum install` failure with
+    # no clear diagnostic. Do a plain existence check (no version
+    # comparison needed) so that failure surfaces HERE, clearly.
+    found_local=0
+    if [ -d "$LOCAL_REPO" ]; then
+      for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
+        [ -e "$f" ] && { found_local=1; break; }
+      done
+    fi
+    if [ "$found_local" = "1" ]; then
+      echo "verify-build-deps: OK    $name (no version constraint, built earlier in this job)"
+      continue
+    fi
+
+    found_remote=0
+    if command -v apt-cache >/dev/null 2>&1; then
+      apt-cache madison "$name" 2>/dev/null | grep -q . && found_remote=1
+    elif command -v yum >/dev/null 2>&1; then
+      yum --disablerepo=local-build list available "$name" 2>/dev/null \
+        | awk -v n="$name" '$1==n' | grep -q . && found_remote=1
+    fi
+
+    if [ "$found_remote" = "1" ]; then
+      echo "verify-build-deps: OK    $name (no version constraint, already published)"
+    else
+      echo "verify-build-deps: MISSING  $name (no version constraint declared) - package not found; neither built in this job nor published yet"
+      missing=$((missing + 1))
+    fi
     continue
   fi
   ver_want="${ver_raw%%ZAPPEND*}"
