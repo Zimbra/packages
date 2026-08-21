@@ -24,6 +24,54 @@ case "$PREFIX" in
   *) RUNTIME_PREFIX="" ;;
 esac
 
+# --- self-produced binary packages --------------------------------------
+# A single control/spec file commonly builds SEVERAL binary packages from
+# one source (e.g. thirdparty/clamav's debian/control produces both
+# zimbra-clamav and zimbra-clamav-lib). Those sibling binaries very often
+# declare a runtime Depends:/Requires: on EACH OTHER, pinned to the exact
+# same version (e.g. "zimbra-clamav-lib Depends: zimbra-clamav (=
+# ${binary:Version})") - completely normal split-package practice, and
+# both come out of the SAME `make`/dpkg-buildpackage/rpmbuild invocation
+# that is about to run.
+#
+# Those are NOT external prerequisites that need to already be built or
+# published - they're produced by this very build step. Without this
+# exclusion, verify-build-deps.sh fails a package checking for itself
+# (e.g. clamav's build failing because "zimbra-clamav" isn't built yet -
+# but it's literally what's about to be built).
+#
+# So: collect every "Package:" name in a debian/control file (each binary
+# stanza), or the base "Name:" + every "%package [-n] <name>" subpackage
+# in a .spec file, and skip any dependency that matches one of those.
+self_pkgs=""
+case "$FILE" in
+  */debian/control)
+    self_pkgs="$(grep -E '^Package:' "$FILE" | awk '{print $2}' | sort -u || true)"
+    ;;
+  *.spec)
+    base_name="$(grep -E '^Name:' "$FILE" | head -1 | awk '{print $2}')"
+    self_pkgs="$base_name"
+    while IFS= read -r line; do
+      case "$line" in
+        *'-n '*)
+          name="$(sed -E 's/.*-n[[:space:]]+([^[:space:]]+).*/\1/' <<<"$line")"
+          ;;
+        *)
+          suffix="$(awk '{print $2}' <<<"$line")"
+          name="${base_name}-${suffix}"
+          ;;
+      esac
+      [ -n "$name" ] && self_pkgs="$(printf '%s\n%s' "$self_pkgs" "$name")"
+    done < <(grep -E '^%package' "$FILE" || true)
+    ;;
+esac
+self_pkgs="$(printf '%s\n' "$self_pkgs" | sed '/^$/d' | sort -u)"
+
+is_self_produced() {
+  local name="$1"
+  [ -n "$self_pkgs" ] && grep -qxF "$name" <<<"$self_pkgs"
+}
+
 extract_deps() {
   local prefix="$1"
   awk -v prefix="$prefix" '
@@ -69,6 +117,11 @@ missing=0
 while IFS= read -r line; do
   [ -n "$line" ] || continue
   name=$(sed -E 's/[[:space:]]*\(.*//' <<<"$line" | sed -E 's/[[:space:]]*[<>=!].*//')
+
+  if is_self_produced "$name"; then
+    echo "verify-build-deps: SKIP  $name (sibling binary package produced by this same build)"
+    continue
+  fi
 
   # version + operator: handle BOTH "name (>= 1.2.3)" (deb) and bare
   # "name >= 1.2.3" (rpm) forms. Uses case/sed instead of bash's
