@@ -8,14 +8,41 @@ LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 
 [ -f "$FILE" ] || { echo "verify-build-deps: $FILE not found, skipping"; exit 0; }
 
-deps_with_versions=$(awk -v prefix="$PREFIX" '
-    $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
-    flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-    flag { print }
-  ' "$FILE" \
-  | tr ',' '\n' \
-  | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
-  | grep -E '^zimbra-' || true)
+# --- runtime companion prefix ------------------------------------------
+# Some packages (meta/component packages like mta-components,
+# core-components, ldap-components) don't compile anything themselves -
+# they just bundle other already-built packages together. Their internal
+# zimbra-* dependencies are declared under the RUNTIME dependency field
+# (Depends: for debian/control, Requires: for .spec) instead of the
+# build-time field (Build-Depends: / BuildRequires:), because nothing
+# needs to be present at BUILD time for them - only correct version pins
+# need to be verifiable. Checking both blocks means a meta-package's
+# declared deps get validated the same way a real build's do.
+case "$PREFIX" in
+  "Build-Depends") RUNTIME_PREFIX="Depends" ;;
+  "BuildRequires") RUNTIME_PREFIX="Requires" ;;
+  *) RUNTIME_PREFIX="" ;;
+esac
+
+extract_deps() {
+  local prefix="$1"
+  awk -v prefix="$prefix" '
+      $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
+      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+      flag { print }
+    ' "$FILE" \
+    | tr ',' '\n' \
+    | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+    | grep -E '^zimbra-' || true
+}
+
+deps_with_versions="$(extract_deps "$PREFIX")"
+if [ -n "$RUNTIME_PREFIX" ]; then
+  runtime_deps="$(extract_deps "$RUNTIME_PREFIX")"
+  if [ -n "$runtime_deps" ]; then
+    deps_with_versions="$(printf '%s\n%s\n' "$deps_with_versions" "$runtime_deps" | sed '/^$/d' | sort -u)"
+  fi
+fi
 
 [ -z "$deps_with_versions" ] && { echo "verify-build-deps: no internal zimbra- deps declared, skipping"; exit 0; }
 
