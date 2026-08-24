@@ -35,7 +35,7 @@
 #      always build before whatever needs them.
 set -euo pipefail
 INPUT="${1:-packages_to_build.txt}"
-BUILD_ORDER="${BUILD_ORDER_FILE:-ci/build-order.txt}"
+BUILD_ORDER="${BUILD_ORDER_FILE:-build-order}"
 
 [ -s "$INPUT" ] || { echo "resolve-build-order: $INPUT is empty, nothing to do"; exit 0; }
 [ -f "$BUILD_ORDER" ] || {
