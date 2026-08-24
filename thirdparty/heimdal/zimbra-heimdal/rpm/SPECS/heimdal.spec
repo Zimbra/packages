@@ -11,7 +11,7 @@ AutoReqProv:        no
 URL:                http://www.h5l.org/
 
 %description
-The Zimbra Heimdal Kerberos build for additional encryption services
+The Zimbra Heimdal Kerberos build for new additional encryption services
 
 %define debug_package %{nil}
 
