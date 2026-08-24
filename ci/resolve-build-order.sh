@@ -51,15 +51,23 @@ find_control_file() { find "$1" -path "*/debian/control" 2>/dev/null | head -1; 
 find_spec_file()    { find "$1" -path "*/SPECS/*.spec"    2>/dev/null | head -1; }
 
 # --- every binary package NAME this package produces --------------------
+# NOTE: every grep/awk step below is guarded with "|| true". A control
+# file legitimately having zero "Package:" matches on a weird stanza, or
+# a spec file with no "%package" subpackages, makes grep exit 1 even
+# though nothing is wrong - and under this script's `set -e`/pipefail,
+# an unguarded failure here would silently kill the ENTIRE script with
+# no error message (this is exactly the class of bug documented in
+# config.yml's own install_declared_build_deps and in
+# verify-build-deps.sh - see those for the full explanation).
 produced_names() {
   local pkgpath="$1" cf sf names=""
   cf="$(find_control_file "$pkgpath")"
   if [ -n "$cf" ]; then
-    names="$(grep -E '^Package:' "$cf" | awk '{print $2}')"
+    names="$(grep -E '^Package:' "$cf" | awk '{print $2}' || true)"
   fi
   sf="$(find_spec_file "$pkgpath")"
   if [ -n "$sf" ]; then
-    base_name="$(grep -E '^Name:' "$sf" | head -1 | awk '{print $2}')"
+    base_name="$(grep -E '^Name:' "$sf" | head -1 | awk '{print $2}' || true)"
     sub_names="$base_name"
     while IFS= read -r line; do
       case "$line" in
@@ -70,22 +78,25 @@ produced_names() {
     done < <(grep -E '^%package' "$sf" || true)
     names="$(printf '%s\n%s' "$names" "$sub_names")"
   fi
-  printf '%s\n' "$names" | sed '/^$/d' | sort -u
+  printf '%s\n' "$names" | sed '/^$/d' | sort -u || true
 }
 
 # --- every zimbra-* dependency NAME this package declares (any field,
 #     any stanza - build-time and runtime both count as a relationship) -
+# NOTE: the final "|| true" is the fix. A package like thirdparty/clamav
+# that declares NO zimbra-* dependency at all makes `grep -E '^zimbra-'`
+# match nothing -> exit 1 -> under pipefail the whole pipeline reports
+# nonzero -> under `set -e` the calling `cand_deps="$(declared_dep_names
+# ...)"` assignment aborts the ENTIRE script immediately, with zero
+# output printed (exactly the "Exited with code exit status 1, no logs"
+# failure). "No zimbra- deps declared" is a completely normal, expected
+# case (most thirdparty packages have none) - it must not be treated as
+# an error here.
 declared_dep_names() {
   local pkgpath="$1" cf sf
   cf="$(find_control_file "$pkgpath")"
   sf="$(find_spec_file "$pkgpath")"
   {
-    # NOTE: each check is "|| true" - a package legitimately missing a
-    # control or spec file makes "[ -n "$cf" ] &&/-n "$sf" ] &&" itself
-    # exit non-zero (since && short-circuits to false), and under
-    # `set -e` + pipefail that would silently kill this whole script the
-    # moment it hit a package with only ONE of the two file types (this
-    # is the exact same class of bug noted in verify-build-deps.sh).
     [ -n "$cf" ] && awk '
         /^(Build-)?Depends:/ { flag=1; sub(/^[A-Za-z-]+:/, ""); print; next }
         flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
@@ -101,7 +112,8 @@ declared_dep_names() {
     | tr ',' '\n' \
     | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
     | grep -E '^zimbra-' \
-    | sort -u
+    | sort -u \
+    || true
 }
 
 declare -A seen=()
