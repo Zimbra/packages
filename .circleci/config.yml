@@ -33,8 +33,16 @@ references:
   #    resolved list stores the FULL relative path (e.g. "zimbra/osl"),
   #    never a bare name, so adding a package under a new root never
   #    requires touching this file. ci/resolve-build-order.sh then
-  #    expands + orders that list (see that script for the
-  #    auto-pull-in-dependents + topological sort logic).
+  #    expands + orders that list, writing TWO files:
+  #      - packages_to_build.txt   : everything to build this run
+  #                                   (requested + reverse-deps +
+  #                                   forward build-time-only prereqs)
+  #      - packages_to_publish.txt : subset that actually gets copied
+  #                                   into publish artifacts (requested
+  #                                   + reverse-deps only - forward-
+  #                                   pulled prerequisites are built and
+  #                                   used locally in this job, but are
+  #                                   NEVER published to Nexus/S3)
   # ---------------------------------------------------------------------
   checkout_and_resolve_steps: &checkout_and_resolve_steps
     steps:
@@ -98,6 +106,12 @@ references:
   #     it into a job-local apt/yum repo pinned above other sources, so
   #     a LATER package in the SAME job/commit picks it up immediately
   #     without waiting on Nexus.
+  #
+  # Only packages listed in packages_to_publish.txt get their artifacts
+  # copied into build/dist_workspace - everything else in
+  # packages_to_build.txt still gets fully built and registered into the
+  # job-local repo (so later packages in this same job can use it), but
+  # is treated as a build-time-only prerequisite and never published.
   # ---------------------------------------------------------------------
   build_and_isolate_steps: &build_and_isolate_steps
     steps:
@@ -167,18 +181,14 @@ references:
             # NOTE: the pipeline below is wrapped with "|| true" because
             # this whole script runs under `set -eo pipefail` (see the
             # job's `shell:`). When a control/spec file declares NO
-            # Build-Depends/BuildRequires at all (e.g. zimbra/osl's
-            # .spec, which has no BuildRequires block), `awk` emits
-            # nothing and the downstream `grep -v '^$'` then has zero
-            # input lines to select - grep exits 1 in that case even
-            # though nothing is actually wrong. Under pipefail that
-            # non-zero status kills the whole build step immediately
-            # (this is exactly what was failing build_c9/build_c8: the
-            # step died silently right after "no internal zimbra- deps
-            # declared, skipping" with no further output). "|| true"
-            # lets deps legitimately come back empty without aborting -
-            # the `if [ -n "$deps" ]` guard right below already handles
-            # the empty case correctly.
+            # Build-Depends/BuildRequires at all, `awk` emits nothing and
+            # the downstream `grep -v '^$'` then has zero input lines to
+            # select - grep exits 1 in that case even though nothing is
+            # actually wrong. Under pipefail that non-zero status kills
+            # the whole build step immediately. "|| true" lets deps
+            # legitimately come back empty without aborting - the
+            # `if [ -n "$deps" ]` guard right below already handles the
+            # empty case correctly.
             install_declared_build_deps() {
               file="$1"; label="$2"; prefix="$3"; shift 3
               deps=$(awk -v prefix="$prefix" '
@@ -235,9 +245,20 @@ references:
 
               bash ci/register-local-repo.sh "${PKGPATH}/build"
 
-              find "${PKGPATH}/build" -type f \
-                \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
-                -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
+              # --- only publish-worthy packages get copied into the -----
+              # publish artifacts. A package that was pulled in purely as
+              # a forward build-time dependency (see ci/resolve-build-
+              # order.sh) is NOT listed in packages_to_publish.txt - it
+              # gets fully built and registered into the local repo above
+              # (so later packages in this SAME job can use it), but is
+              # never uploaded to Nexus/S3.
+              if grep -qxF "$PKGPATH" packages_to_publish.txt 2>/dev/null; then
+                find "${PKGPATH}/build" -type f \
+                  \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
+                  -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
+              else
+                echo "=== ${PKGPATH} was built as a build-time-only prerequisite for this run - not copying to publish artifacts ==="
+              fi
             done < packages_to_build.txt
 
             echo "=== build/dist_workspace/${PLATFORM_TAG} contents ==="
