@@ -7,34 +7,40 @@
 # Every internal zimbra-* dependency a package has is ALREADY declared in
 # that package's own debian/control (Depends:/Build-Depends:) or .spec
 # (Requires:/BuildRequires:) file - that's the single, authoritative
-# source of truth the package's real build already relies on. Keeping a
-# second, hand-maintained per-package text file duplicating the same
-# information is unnecessary and drifts out of sync over time. This
-# script reads directly from those real files instead.
+# source of truth the package's real build already relies on.
 #
-# This script does exactly TWO things:
+# This script does THREE things and writes TWO output files:
 #
-#   1) EXPAND: figure out which OTHER packages depend on a package that
-#      just changed (reverse-dependents), so they get rebuilt too.
-#        a. For each changed package, find every binary package NAME it
-#           actually produces (e.g. thirdparty/clamav produces
-#           zimbra-clamav, zimbra-clamav-lib, zimbra-clamav-dev, ...) -
-#           read straight from its own debian/control "Package:" lines
-#           and/or .spec "Name:"/"%package" lines.
-#        b. Scan every OTHER package's debian/control and .spec files
-#           for a Depends:/Build-Depends:/Requires:/BuildRequires: entry
-#           that exactly matches one of those produced names (e.g.
-#           zimbra/mta-components' control file lists "zimbra-clamav" in
-#           its Depends: field) - if found, that package is a reverse
-#           dependent and gets pulled into this run too.
-#        c. Repeat until no new package gets pulled in, so transitive
-#           chains work (A's rebuild pulls in B, B's rebuild pulls in C).
+#   1) EXPAND (reverse): find every OTHER package that depends on a
+#      package which just changed, so it gets rebuilt too. These are
+#      PUBLISH-worthy - their own behaviour may have changed.
 #
-#   2) ORDER: sort the expanded list to match ci/build-order.txt's
-#      sequence (the same proven order used on genesis), so dependencies
-#      always build before whatever needs them.
+#   2) EXPAND (forward): find every package that a to-be-built package
+#      itself depends on (via its own Build-Depends:/BuildRequires:),
+#      and if that dependency isn't already in the queue, pull its
+#      PRODUCER package into this same job so it gets built and can be
+#      installed locally (via ci/register-local-repo.sh) - WITHOUT
+#      requiring it to already be published on Nexus. These are
+#      BUILD-TIME-ONLY - they get compiled so clamav (etc.) can link
+#      against them in this job, but are NOT copied into the publish
+#      artifacts. Nexus only ever receives the packages that were
+#      actually requested to change (+ their reverse-dependents).
+#
+#   3) ORDER: sort the fully expanded list to match the master
+#      build-order file's sequence, so dependencies always build before
+#      whatever needs them (this also naturally puts forward-pulled
+#      prerequisites like openssl before clamav, since build-order.txt
+#      already encodes the correct topological order).
+#
+# Output files (both written into the CWD, both get persisted to the
+# workspace automatically since the whole ~/packages dir is persisted):
+#   - packages_to_build.txt   : ALL packages to build, in order
+#                                (requested + reverse-deps + forward-deps)
+#   - packages_to_publish.txt : SUBSET to actually publish to Nexus/S3
+#                                (requested + reverse-deps only)
 set -euo pipefail
 INPUT="${1:-packages_to_build.txt}"
+PUBLISH_FILE="packages_to_publish.txt"
 BUILD_ORDER="${BUILD_ORDER_FILE:-build-order}"
 
 [ -s "$INPUT" ] || { echo "resolve-build-order: $INPUT is empty, nothing to do"; exit 0; }
@@ -51,14 +57,12 @@ find_control_file() { find "$1" -path "*/debian/control" 2>/dev/null | head -1; 
 find_spec_file()    { find "$1" -path "*/SPECS/*.spec"    2>/dev/null | head -1; }
 
 # --- every binary package NAME this package produces --------------------
-# NOTE: every grep/awk step below is guarded with "|| true". A control
-# file legitimately having zero "Package:" matches on a weird stanza, or
-# a spec file with no "%package" subpackages, makes grep exit 1 even
-# though nothing is wrong - and under this script's `set -e`/pipefail,
-# an unguarded failure here would silently kill the ENTIRE script with
-# no error message (this is exactly the class of bug documented in
-# config.yml's own install_declared_build_deps and in
-# verify-build-deps.sh - see those for the full explanation).
+# NOTE: every grep/awk step below is guarded with "|| true" - a control
+# file legitimately having zero matching lines makes grep exit 1 even
+# though nothing is wrong, and under this script's set -e/pipefail that
+# would silently kill the whole script (see the same pattern already
+# fixed in config.yml's install_declared_build_deps and in
+# verify-build-deps.sh).
 produced_names() {
   local pkgpath="$1" cf sf names=""
   cf="$(find_control_file "$pkgpath")"
@@ -83,15 +87,8 @@ produced_names() {
 
 # --- every zimbra-* dependency NAME this package declares (any field,
 #     any stanza - build-time and runtime both count as a relationship) -
-# NOTE: the final "|| true" is the fix. A package like thirdparty/clamav
-# that declares NO zimbra-* dependency at all makes `grep -E '^zimbra-'`
-# match nothing -> exit 1 -> under pipefail the whole pipeline reports
-# nonzero -> under `set -e` the calling `cand_deps="$(declared_dep_names
-# ...)"` assignment aborts the ENTIRE script immediately, with zero
-# output printed (exactly the "Exited with code exit status 1, no logs"
-# failure). "No zimbra- deps declared" is a completely normal, expected
-# case (most thirdparty packages have none) - it must not be treated as
-# an error here.
+# NOTE: final "|| true" is required - a package with NO zimbra-* deps at
+# all (e.g. thirdparty/openssl itself) is the normal case, not an error.
 declared_dep_names() {
   local pkgpath="$1" cf sf
   cf="$(find_control_file "$pkgpath")"
@@ -117,40 +114,70 @@ declared_dep_names() {
 }
 
 declare -A seen=()
+declare -A publish_worthy=()
 queue=()
 while IFS= read -r p; do
   [ -n "$p" ] || continue
-  queue+=("$p"); seen["$p"]=1
+  queue+=("$p"); seen["$p"]=1; publish_worthy["$p"]=1
 done < "$INPUT"
 
-# --- expand: repeat until no new reverse-dependent gets pulled in -------
+# --- expand: repeat until no new package (either direction) gets pulled in
 i=0
 while [ "$i" -lt "${#queue[@]}" ]; do
   pkg="${queue[$i]}"; i=$((i+1))
   [ -d "$pkg" ] || continue
 
+  # ---- REVERSE: who depends on $pkg? -> pulled in AND publish-worthy ----
   this_names="$(produced_names "$pkg")"
-  [ -n "$this_names" ] || continue
+  if [ -n "$this_names" ]; then
+    while IFS= read -r cand_pkg; do
+      [ -n "$cand_pkg" ] || continue
+      [ "$cand_pkg" = "$pkg" ] && continue
+      [ -d "$cand_pkg" ] || continue
 
-  while IFS= read -r cand_pkg; do
-    [ -n "$cand_pkg" ] || continue
-    [ -n "${seen[$cand_pkg]:-}" ] && continue
-    [ "$cand_pkg" = "$pkg" ] && continue
-    [ -d "$cand_pkg" ] || continue
+      cand_deps="$(declared_dep_names "$cand_pkg")"
+      [ -n "$cand_deps" ] || continue
 
-    cand_deps="$(declared_dep_names "$cand_pkg")"
-    [ -n "$cand_deps" ] || continue
+      while IFS= read -r name; do
+        [ -n "$name" ] || continue
+        if grep -qxF "$name" <<<"$this_names"; then
+          publish_worthy["$cand_pkg"]=1
+          if [ -z "${seen[$cand_pkg]:-}" ]; then
+            seen["$cand_pkg"]=1
+            queue+=("$cand_pkg")
+            echo "resolve-build-order: auto-adding '$cand_pkg' (depends on '$name', produced by changed package '$pkg') - will be built AND published"
+          fi
+          break
+        fi
+      done <<< "$cand_deps"
+    done <<< "$master_pkgs"
+  fi
 
-    while IFS= read -r name; do
-      [ -n "$name" ] || continue
-      if grep -qxF "$name" <<<"$this_names"; then
-        seen["$cand_pkg"]=1
-        queue+=("$cand_pkg")
-        echo "resolve-build-order: auto-adding '$cand_pkg' (depends on '$name', produced by changed package '$pkg')"
-        break
-      fi
-    done <<< "$cand_deps"
-  done <<< "$master_pkgs"
+  # ---- FORWARD: what does $pkg itself depend on? -> pulled in as       --
+  # ---- build-time-ONLY prerequisite, never marked publish_worthy       --
+  these_deps="$(declared_dep_names "$pkg")"
+  if [ -n "$these_deps" ]; then
+    while IFS= read -r depname; do
+      [ -n "$depname" ] || continue
+
+      while IFS= read -r cand_pkg; do
+        [ -n "$cand_pkg" ] || continue
+        [ "$cand_pkg" = "$pkg" ] && continue
+        [ -d "$cand_pkg" ] || continue
+        [ -n "${seen[$cand_pkg]:-}" ] && continue
+
+        cand_names="$(produced_names "$cand_pkg")"
+        [ -n "$cand_names" ] || continue
+
+        if grep -qxF "$depname" <<<"$cand_names"; then
+          seen["$cand_pkg"]=1
+          queue+=("$cand_pkg")
+          echo "resolve-build-order: auto-adding '$cand_pkg' (produces '$depname', a build-time dependency of '$pkg') - build-time ONLY, will NOT be published"
+          break
+        fi
+      done <<< "$master_pkgs"
+    done <<< "$these_deps"
+  fi
 done
 
 # --- order the queue by position in the master build-order list --------
@@ -179,5 +206,13 @@ fi
 sort -n "$ordered_file" | awk '{print $2}' > "$INPUT"
 rm -f "$ordered_file"
 
-echo "=== Build order after dependency resolution ==="
+: > "$PUBLISH_FILE"
+while IFS= read -r pkg; do
+  [ -n "${publish_worthy[$pkg]:-}" ] && echo "$pkg" >> "$PUBLISH_FILE"
+done < "$INPUT"
+
+echo "=== Build order after dependency resolution (ALL - includes build-time-only prerequisites) ==="
 cat "$INPUT"
+echo ""
+echo "=== Package(s) that will be PUBLISHED to Nexus/S3 after this run ==="
+cat "$PUBLISH_FILE"
