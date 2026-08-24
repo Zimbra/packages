@@ -31,7 +31,7 @@ OZCB
 OZCS
 
 %changelog
-* Wed Aug 06 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+* Wed Aug 06 2025 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - ZBUG-5062, Bumped-up rsync version due to addition of missing dependencies
 * Wed Feb 05 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
 - ZBUG-4670, Upgraded rsync to 3.4.1
