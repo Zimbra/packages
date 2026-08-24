@@ -11,17 +11,47 @@
 #
 # This script does THREE things and writes TWO output files:
 #
-#   1) EXPAND (reverse): find every OTHER package that depends on a
-#      PUBLISH-WORTHY package (originally-requested, or itself found via
-#      an earlier reverse step), so it gets rebuilt too. Checks BOTH
-#      Depends:/Requires: AND Build-Depends:/BuildRequires: - either
-#      field mentioning a changed package's produced name is a real
-#      reason to rebuild+republish the package that mentions it. Runs
-#      ONLY for publish-worthy packages: a forward-pulled build-time-only
-#      prerequisite (e.g. openssl, pulled in because clamav needs it to
-#      compile) never triggers reverse-expansion - openssl itself didn't
-#      change, so anything that merely depends on openssl has no reason
-#      to be touched.
+#   1) EXPAND (reverse): find every OTHER package that CONSUMES a changed
+#      package, so it gets rebuilt+republished against the new artifact.
+#      Checks BOTH Depends:/Requires: AND Build-Depends:/BuildRequires: -
+#      either field mentioning a changed package's produced name is a
+#      reason to rebuild the package that mentions it.
+#
+#      *** HOW FAR THIS WALKS IS CONTROLLED BY REVERSE_DEPS_MODE. ***
+#      This is the single biggest lever on how many packages a run
+#      builds, because every package reverse-expansion adds ALSO gets
+#      its own forward build-time prerequisites pulled in by step (2)
+#      below - so reverse-expansion cost compounds at every hop.
+#
+#        off        (default) Do not reverse-expand at all. Build ONLY the
+#                   requested/changed package(s), plus whatever step (2)
+#                   says is needed to compile them. Publish only the
+#                   requested/changed package(s).
+#                   -> A one-line changelog edit to thirdparty/curl builds
+#                      openssl, heimdal, curl and publishes curl.
+#
+#        direct     Reverse-expand ONE level, from the requested/changed
+#                   packages only. Their immediate consumers are rebuilt
+#                   and republished, but those consumers are NOT
+#                   themselves reverse-expanded.
+#                   -> curl also brings cyrus-sasl, openldap,
+#                      core-components (+ their build prereqs), but NOT
+#                      postfix/nginx/opendkim/mta-components/...
+#
+#        transitive Full transitive reverse closure - every consumer, and
+#                   every consumer OF a consumer, recursively. This is
+#                   the historical behaviour of this script. It is
+#                   correct if you want the whole dependent stack
+#                   rebuilt against a genuine ABI/soname bump, but it is
+#                   very expensive: one changed leaf package can pull in
+#                   20+ packages across unrelated components.
+#                   -> curl brings 22 packages / publishes 11.
+#
+#      Reverse-expansion NEVER fires for a package that was itself only
+#      pulled in by step (2) as a forward build-time-only prerequisite
+#      (e.g. openssl, pulled in because curl needs it to compile) -
+#      openssl itself didn't change, so anything that merely consumes
+#      openssl has no reason to be touched.
 #
 #   2) EXPAND (forward): find every package a to-be-built package itself
 #      needs INSTALLED to compile, and if that dependency isn't already
@@ -44,6 +74,12 @@
 #      This step runs for EVERY package in the queue (publish-worthy or
 #      not), since every package needs its own real build deps satisfied.
 #
+#      This step is LOAD-BEARING and is not configurable: the pipeline
+#      never fetches zimbra-* build deps from Nexus mid-build (see the
+#      long comment in ci/verify-build-deps.sh), so a build-time
+#      prerequisite that isn't built earlier in the same job simply
+#      isn't available and the build fails.
+#
 #   3) ORDER: sort the fully expanded list to match the master
 #      build-order file's sequence, so dependencies always build before
 #      whatever needs them.
@@ -57,12 +93,37 @@ set -euo pipefail
 INPUT="${1:-packages_to_build.txt}"
 PUBLISH_FILE="packages_to_publish.txt"
 BUILD_ORDER="${BUILD_ORDER_FILE:-build-order}"
+REVERSE_DEPS_MODE="${REVERSE_DEPS_MODE:-off}"
+
+case "$REVERSE_DEPS_MODE" in
+  off|direct|transitive) ;;
+  *)
+    echo "resolve-build-order: ERROR - REVERSE_DEPS_MODE='$REVERSE_DEPS_MODE' is not valid."
+    echo "                     Expected one of: off | direct | transitive"
+    exit 1
+    ;;
+esac
 
 [ -s "$INPUT" ] || { echo "resolve-build-order: $INPUT is empty, nothing to do"; exit 0; }
 [ -f "$BUILD_ORDER" ] || {
   echo "resolve-build-order: ERROR - $BUILD_ORDER not found. This is the master build-order list and is required."
   exit 1
 }
+
+echo "resolve-build-order: REVERSE_DEPS_MODE=${REVERSE_DEPS_MODE}"
+case "$REVERSE_DEPS_MODE" in
+  off)
+    echo "resolve-build-order: consumers of the changed package(s) will NOT be rebuilt."
+    echo "                     Re-run with REVERSE_DEPS_MODE=direct (or transitive) if this"
+    echo "                     change bumps a version/ABI that dependents must relink against."
+    ;;
+  direct)
+    echo "resolve-build-order: immediate consumers WILL be rebuilt; consumers-of-consumers will not."
+    ;;
+  transitive)
+    echo "resolve-build-order: FULL transitive consumer closure will be rebuilt - this can be very large."
+    ;;
+esac
 
 master_pkgs="$(grep -vE '^[[:space:]]*(#|$)' "$BUILD_ORDER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
 
@@ -148,10 +209,18 @@ declared_build_dep_names() {
 
 declare -A seen=()
 declare -A publish_worthy=()
+# is_seed marks the packages that were ACTUALLY requested/changed for this
+# run, as opposed to anything the expansion below added. It is what makes
+# REVERSE_DEPS_MODE=direct one level deep instead of transitive: without
+# a separate marker, every reverse-discovered package also becomes
+# publish-worthy and therefore re-arms reverse-expansion on the next pass
+# of the queue loop, which is exactly how a single changed leaf package
+# used to fan out into its entire dependent stack.
+declare -A is_seed=()
 queue=()
 while IFS= read -r p; do
   [ -n "$p" ] || continue
-  queue+=("$p"); seen["$p"]=1; publish_worthy["$p"]=1
+  queue+=("$p"); seen["$p"]=1; publish_worthy["$p"]=1; is_seed["$p"]=1
 done < "$INPUT"
 
 i=0
@@ -159,9 +228,18 @@ while [ "$i" -lt "${#queue[@]}" ]; do
   pkg="${queue[$i]}"; i=$((i+1))
   [ -d "$pkg" ] || continue
 
-  # ---- REVERSE: who depends on $pkg? (any field) --------------------
-  # ONLY runs for publish-worthy packages - see header comment.
-  if [ -n "${publish_worthy[$pkg]:-}" ]; then
+  # ---- REVERSE: who consumes $pkg? (any field) ----------------------
+  # Gated by REVERSE_DEPS_MODE - see the header comment.
+  #   off        -> never
+  #   direct     -> only for the originally requested/changed packages
+  #   transitive -> for any publish-worthy package, i.e. recursively
+  run_reverse=0
+  case "$REVERSE_DEPS_MODE" in
+    direct)     [ -n "${is_seed[$pkg]:-}" ]        && run_reverse=1 ;;
+    transitive) [ -n "${publish_worthy[$pkg]:-}" ] && run_reverse=1 ;;
+  esac
+
+  if [ "$run_reverse" = "1" ]; then
     this_names="$(produced_names "$pkg")"
     if [ -n "$this_names" ]; then
       while IFS= read -r cand_pkg; do
@@ -179,7 +257,7 @@ while [ "$i" -lt "${#queue[@]}" ]; do
             if [ -z "${seen[$cand_pkg]:-}" ]; then
               seen["$cand_pkg"]=1
               queue+=("$cand_pkg")
-              echo "resolve-build-order: auto-adding '$cand_pkg' (depends on '$name', produced by changed package '$pkg') - will be built AND published"
+              echo "resolve-build-order: auto-adding '$cand_pkg' (consumes '$name', produced by changed package '$pkg') - will be built AND published"
             fi
             break
           fi
