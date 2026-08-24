@@ -13,28 +13,36 @@
 #
 #   1) EXPAND (reverse): find every OTHER package that depends on a
 #      PUBLISH-WORTHY package (originally-requested, or itself found via
-#      an earlier reverse step), so it gets rebuilt too. These are
-#      PUBLISH-worthy - their own behaviour may have changed.
-#      IMPORTANT: this step runs ONLY for publish-worthy packages. A
-#      package that was pulled in purely as a forward build-time
+#      an earlier reverse step), so it gets rebuilt too. Checks BOTH
+#      Depends:/Requires: AND Build-Depends:/BuildRequires: - either
+#      field mentioning a changed package's produced name is a real
+#      reason to rebuild+republish the package that mentions it. Runs
+#      ONLY for publish-worthy packages: a forward-pulled build-time-only
 #      prerequisite (e.g. openssl, pulled in because clamav needs it to
-#      compile) must NOT trigger reverse-expansion - openssl itself
-#      didn't change, so anything that merely depends on openssl has no
-#      reason to be touched. Without this guard, a single forward-pulled
-#      leaf like openssl cascades into rebuilding half the repo (every
-#      package that happens to link against openssl).
+#      compile) never triggers reverse-expansion - openssl itself didn't
+#      change, so anything that merely depends on openssl has no reason
+#      to be touched.
 #
-#   2) EXPAND (forward): find every package that a to-be-built package
-#      itself depends on (via its own Build-Depends:/BuildRequires:),
-#      and if that dependency isn't already in the queue, pull its
-#      PRODUCER package into this same job so it gets built and can be
-#      installed locally (via ci/register-local-repo.sh) - WITHOUT
-#      requiring it to already be published on Nexus. These are
-#      BUILD-TIME-ONLY - they get compiled so clamav (etc.) can link
-#      against them in this job, but are NOT copied into the publish
-#      artifacts. This step runs for EVERY package in the queue
-#      (publish-worthy or not), since every package needs its own
-#      declared deps satisfied to actually build.
+#   2) EXPAND (forward): find every package a to-be-built package itself
+#      needs INSTALLED to compile, and if that dependency isn't already
+#      in the queue, pull its PRODUCER package into this same job so it
+#      gets built and installed locally (via ci/register-local-repo.sh) -
+#      WITHOUT requiring it to already be published on Nexus.
+#      IMPORTANT: this checks ONLY Build-Depends:/BuildRequires: - NEVER
+#      runtime Depends:/Requires:. dpkg-checkbuilddeps (and rpmbuild's
+#      BuildRequires check) only ever enforces the build-time field;
+#      runtime Depends: is metadata for the package manager to check at
+#      INSTALL time on the target system, not something that needs to be
+#      present to run `make` here. A meta/component package like
+#      zimbra/mta-components declares its bundled packages (mariadb,
+#      opendkim, postfix, cluebringer, ...) under Depends: precisely
+#      because it doesn't compile anything - forward-pulling those and
+#      rebuilding them from source would be enormous unnecessary work.
+#      ci/verify-build-deps.sh already checks the runtime field too (see
+#      its own "runtime companion prefix" comment) against what's already
+#      published/built - that's the right place for that check, not here.
+#      This step runs for EVERY package in the queue (publish-worthy or
+#      not), since every package needs its own real build deps satisfied.
 #
 #   3) ORDER: sort the fully expanded list to match the master
 #      build-order file's sequence, so dependencies always build before
@@ -83,6 +91,9 @@ produced_names() {
   printf '%s\n' "$names" | sed '/^$/d' | sort -u || true
 }
 
+# ALL declared zimbra-* deps (Depends:/Requires: AND Build-Depends:/
+# BuildRequires:) - used for REVERSE matching only: does $cand_pkg
+# reference (in ANY field) a name produced by the changed package?
 declared_dep_names() {
   local pkgpath="$1" cf sf
   cf="$(find_control_file "$pkgpath")"
@@ -95,6 +106,34 @@ declared_dep_names() {
       ' "$cf"
     [ -n "$sf" ] && awk '
         /^(Build)?Requires:/ { flag=1; sub(/^[A-Za-z]+:/, ""); print; next }
+        flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+        flag { print }
+      ' "$sf"
+    true
+  } 2>/dev/null \
+    | tr ',' '\n' \
+    | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
+    | grep -E '^zimbra-' \
+    | sort -u \
+    || true
+}
+
+# ONLY the build-time field (Build-Depends:/BuildRequires:) - used for
+# FORWARD expansion only. This is deliberately narrower than
+# declared_dep_names() above: runtime Depends:/Requires: does not need
+# its producer built in this job (see the big comment block up top).
+declared_build_dep_names() {
+  local pkgpath="$1" cf sf
+  cf="$(find_control_file "$pkgpath")"
+  sf="$(find_spec_file "$pkgpath")"
+  {
+    [ -n "$cf" ] && awk '
+        /^Build-Depends:/ { flag=1; sub(/^Build-Depends:/, ""); print; next }
+        flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+        flag { print }
+      ' "$cf"
+    [ -n "$sf" ] && awk '
+        /^BuildRequires:/ { flag=1; sub(/^BuildRequires:/, ""); print; next }
         flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
         flag { print }
       ' "$sf"
@@ -120,12 +159,8 @@ while [ "$i" -lt "${#queue[@]}" ]; do
   pkg="${queue[$i]}"; i=$((i+1))
   [ -d "$pkg" ] || continue
 
-  # ---- REVERSE: who depends on $pkg? -------------------------------
-  # ONLY runs for publish-worthy packages (originally requested, or a
-  # reverse-dependent found in an earlier pass). A forward-pulled
-  # build-time-only prerequisite (e.g. openssl, pulled in solely so
-  # clamav can compile) never reaches this branch - it didn't actually
-  # change, so nothing that merely depends on it needs rebuilding.
+  # ---- REVERSE: who depends on $pkg? (any field) --------------------
+  # ONLY runs for publish-worthy packages - see header comment.
   if [ -n "${publish_worthy[$pkg]:-}" ]; then
     this_names="$(produced_names "$pkg")"
     if [ -n "$this_names" ]; then
@@ -153,10 +188,10 @@ while [ "$i" -lt "${#queue[@]}" ]; do
     fi
   fi
 
-  # ---- FORWARD: what does $pkg itself depend on? --------------------
-  # Runs for EVERY package in the queue, publish-worthy or not - every
-  # package needs its own declared build deps satisfied to compile.
-  these_deps="$(declared_dep_names "$pkg")"
+  # ---- FORWARD: what does $pkg need INSTALLED to compile? -----------
+  # Build-Depends:/BuildRequires: ONLY - runs for EVERY package in the
+  # queue (publish-worthy or not).
+  these_deps="$(declared_build_dep_names "$pkg")"
   if [ -n "$these_deps" ]; then
     while IFS= read -r depname; do
       [ -n "$depname" ] || continue
@@ -173,7 +208,7 @@ while [ "$i" -lt "${#queue[@]}" ]; do
         if grep -qxF "$depname" <<<"$cand_names"; then
           seen["$cand_pkg"]=1
           queue+=("$cand_pkg")
-          echo "resolve-build-order: auto-adding '$cand_pkg' (produces '$depname', a build-time dependency of '$pkg') - build-time ONLY, will NOT be published"
+          echo "resolve-build-order: auto-adding '$cand_pkg' (produces '$depname', a BUILD-TIME dependency of '$pkg') - build-time ONLY, will NOT be published"
           break
         fi
       done <<< "$master_pkgs"
