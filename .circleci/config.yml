@@ -7,6 +7,33 @@ parameters:
     default: "auto"
     description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
 
+  # How far ci/resolve-build-order.sh walks the CONSUMER (reverse) side of
+  # the dependency graph. This is the single biggest lever on how many
+  # packages a run builds, because every package reverse-expansion adds
+  # ALSO drags in its own forward build-time prerequisites - so the cost
+  # compounds at every hop.
+  #
+  #   off        Build only the changed package(s) + whatever is needed to
+  #              compile them. Publish only the changed package(s).
+  #              A changelog-only edit to thirdparty/curl builds
+  #              openssl + heimdal + curl and publishes curl.
+  #
+  #   direct     Also rebuild+republish the IMMEDIATE consumers of the
+  #              changed package(s), but do not recurse past them.
+  #              curl -> also cyrus-sasl, openldap, core-components.
+  #
+  #   transitive Full transitive consumer closure (the old behaviour).
+  #              curl -> 22 packages built, 11 published.
+  #
+  # Branch pushes always use the default. Pick a wider mode explicitly via
+  # an API trigger (or the "Trigger Pipeline" dialog) when a change really
+  # does bump a version/ABI that dependents must relink against.
+  rebuild_reverse_deps:
+    type: enum
+    enum: ["off", "direct", "transitive"]
+    default: "off"
+    description: "How far to walk consumers of a changed package: off (changed package only), direct (immediate consumers too), transitive (entire dependent stack)."
+
 references:
   when_main_workflow: &when_main_workflow
     or:
@@ -72,7 +99,8 @@ references:
               circleci-agent step halt
             fi
 
-            bash ci/resolve-build-order.sh packages_to_build.txt
+            REVERSE_DEPS_MODE="<< pipeline.parameters.rebuild_reverse_deps >>" \
+              bash ci/resolve-build-order.sh packages_to_build.txt
 
             echo "=== Package(s) resolved for this run ==="
             cat packages_to_build.txt
