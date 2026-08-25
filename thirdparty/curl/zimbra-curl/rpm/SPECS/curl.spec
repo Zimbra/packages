@@ -17,7 +17,7 @@ The Zimbra Curl build
 %define debug_package %{nil}
 
 %changelog
-* Mon Jun 12 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+* Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9 and updated dependency heimdal
 * Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded dependency openssl to 1.1.1h and updated dependency heimdal
