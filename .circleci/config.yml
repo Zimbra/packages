@@ -7,27 +7,6 @@ parameters:
     default: "auto"
     description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
 
-  # How far ci/resolve-build-order.sh walks the CONSUMER (reverse) side of
-  # the dependency graph. This is the single biggest lever on how many
-  # packages a run builds, because every package reverse-expansion adds
-  # ALSO drags in its own forward build-time prerequisites - so the cost
-  # compounds at every hop.
-  #
-  #   off        Build only the changed package(s) + whatever is needed to
-  #              compile them. Publish only the changed package(s).
-  #              A changelog-only edit to thirdparty/curl builds
-  #              openssl + heimdal + curl and publishes curl.
-  #
-  #   direct     Also rebuild+republish the IMMEDIATE consumers of the
-  #              changed package(s), but do not recurse past them.
-  #              curl -> also cyrus-sasl, openldap, core-components.
-  #
-  #   transitive Full transitive consumer closure (the old behaviour).
-  #              curl -> 22 packages built, 11 published.
-  #
-  # Branch pushes always use the default. Pick a wider mode explicitly via
-  # an API trigger (or the "Trigger Pipeline" dialog) when a change really
-  # does bump a version/ABI that dependents must relink against.
   rebuild_reverse_deps:
     type: enum
     enum: ["off", "direct", "transitive"]
@@ -47,30 +26,6 @@ references:
       - not:
           equal: [ "api", "<< pipeline.trigger_source >>" ]
 
-  # ---------------------------------------------------------------------
-  # 1) Checks out the repo (full history, needed for git diff)
-  # 2) Clones the sibling tooling repos that package.def/Makefiles need
-  #    (zimbra-package-stub is REQUIRED - package.def includes
-  #     $(SRC_ROOT)/zimbra-package-stub/def/package.def, and SRC_ROOT
-  #     resolves to the parent of this checkout, i.e. ~ )
-  #    zm-pkg-tool provides bin/get_plat_tag.sh which auto-detects the
-  #    platform, so we don't need to set BUILD_PLATFORM manually.
-  # 3) Resolves WHICH package(s) to build. Packages can live under any
-  #    top-level root (thirdparty/<pkg>, zimbra/<pkg>, etc.) - the
-  #    resolved list stores the FULL relative path (e.g. "zimbra/osl"),
-  #    never a bare name, so adding a package under a new root never
-  #    requires touching this file. ci/resolve-build-order.sh then
-  #    expands + orders that list, writing TWO files:
-  #      - packages_to_build.txt   : everything to build this run
-  #                                   (requested + reverse-deps +
-  #                                   forward build-time-only prereqs)
-  #      - packages_to_publish.txt : subset that actually gets copied
-  #                                   into publish artifacts (requested
-  #                                   + reverse-deps only - forward-
-  #                                   pulled prerequisites are built and
-  #                                   used locally in this job, but are
-  #                                   NEVER published to Nexus/S3)
-  # ---------------------------------------------------------------------
   checkout_and_resolve_steps: &checkout_and_resolve_steps
     steps:
       - checkout:
@@ -87,8 +42,6 @@ references:
             if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
               echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
             else
-              # Diff both known package roots - entries become full
-              # paths like "thirdparty/nginx" or "zimbra/osl".
               git diff --name-only HEAD~1 HEAD -- thirdparty/ zimbra/ \
                 | awk -F'/' '{print $1"/"$2}' \
                 | sort -u > packages_to_build.txt
@@ -112,35 +65,6 @@ references:
             - zimbra-package-stub
             - zm-nexus
 
-  # ---------------------------------------------------------------------
-  # Builds every resolved package for this platform via plain `make`.
-  # Platform is auto-detected by zm-pkg-tool/bin/get_plat_tag.sh - no
-  # manual BUILD_PLATFORM export needed.
-  #
-  # Everything in this step is PLATFORM-level, generic setup - it applies
-  # the same way no matter which package is being built. Anything that
-  # is specific to one package (like rsync's bionic/zstd issue) does NOT
-  # belong here - it goes in that package's own <path>/ci/pre_build.sh
-  # instead (see the build step below).
-  #
-  # Internal package->package dependencies (e.g. nginx needs openssl,
-  # httpd needs apr/apr-util) are handled generically here via two
-  # shared scripts - both are complete no-ops for a package that
-  # declares no internal deps (e.g. zimbra/osl):
-  #   - ci/verify-build-deps.sh : fails fast if a declared zimbra-*
-  #     build-dep isn't resolvable yet (neither built earlier in this
-  #     same job, nor already published).
-  #   - ci/register-local-repo.sh : after each package builds, publishes
-  #     it into a job-local apt/yum repo pinned above other sources, so
-  #     a LATER package in the SAME job/commit picks it up immediately
-  #     without waiting on Nexus.
-  #
-  # Only packages listed in packages_to_publish.txt get their artifacts
-  # copied into build/dist_workspace - everything else in
-  # packages_to_build.txt still gets fully built and registered into the
-  # job-local repo (so later packages in this same job can use it), but
-  # is treated as a build-time-only prerequisite and never published.
-  # ---------------------------------------------------------------------
   build_and_isolate_steps: &build_and_isolate_steps
     steps:
       - attach_workspace:
@@ -150,10 +74,6 @@ references:
           command: |
             if command -v apt-get >/dev/null 2>&1; then
               sudo apt-get update
-              # dpkg-dev/build-essential: needed to build any .deb package.
-              # libssl-dev/liblz4-dev/zlib1g-dev/libzstd-dev: baseline libs
-              # several packages (e.g. rsync) assume are present without
-              # declaring them in Build-Depends - see README section 3.4.2.
               sudo apt-get install -y --no-install-recommends \
                 dpkg-dev build-essential \
                 libssl-dev liblz4-dev zlib1g-dev libzstd-dev
@@ -162,11 +82,6 @@ references:
               OS_VERSION=$(rpm -E %{rhel})
 
               if [ "$OS_VERSION" = "8" ]; then
-                # CentOS 8 Linux reached EOL Dec 2021 - the default
-                # mirrorlist-based repos are dead, so plain `yum install`
-                # silently finds nothing beyond whatever's cached. Repoint
-                # at the vault archive so normal installs keep working
-                # generically for any future package's dependencies too.
                 sudo sed -i \
                   -e 's/^mirrorlist=/#mirrorlist=/' \
                   -e 's/^metalink=/#metalink=/' \
@@ -183,11 +98,6 @@ references:
                 rpm-build rpmdevtools createrepo \
                 openssl-devel lz4-devel zlib-devel libzstd-devel
 
-              # yum-plugin-priorities only exists on yum3-based repos
-              # (EL7/EL8-style) - EL9's dnf doesn't ship it. Our local-
-              # build repo only ever contains the exact version a
-              # dependent needs, so dnf resolves it correctly even
-              # without priority-pinning - this install is best-effort.
               sudo yum install -y yum-plugin-priorities 2>/dev/null || true
             fi
       - run:
@@ -196,27 +106,6 @@ references:
             echo "Using PLATFORM_TAG=${PLATFORM_TAG}"
             mkdir -p build/dist_workspace/${PLATFORM_TAG}
 
-            # Parses a "Build-Depends:"/"BuildRequires:" block (comma
-            # separated, may wrap to continuation lines) straight out of
-            # the raw control/spec file and installs the package names.
-            # We do NOT use mk-build-deps/yum-builddep here because those
-            # parse the changelog/spec version too - and at this point the
-            # VERSION/ZAPPEND template placeholders haven't been
-            # substituted yet (that only happens inside the Makefile's own
-            # build_deb/build_rpm targets), so they fail on an "unknown"
-            # version.
-            #
-            # NOTE: the pipeline below is wrapped with "|| true" because
-            # this whole script runs under `set -eo pipefail` (see the
-            # job's `shell:`). When a control/spec file declares NO
-            # Build-Depends/BuildRequires at all, `awk` emits nothing and
-            # the downstream `grep -v '^$'` then has zero input lines to
-            # select - grep exits 1 in that case even though nothing is
-            # actually wrong. Under pipefail that non-zero status kills
-            # the whole build step immediately. "|| true" lets deps
-            # legitimately come back empty without aborting - the
-            # `if [ -n "$deps" ]` guard right below already handles the
-            # empty case correctly.
             install_declared_build_deps() {
               file="$1"; label="$2"; prefix="$3"; shift 3
               deps=$(awk -v prefix="$prefix" '
@@ -245,10 +134,6 @@ references:
                 exit 1
               fi
 
-              # --- optional package-owned pre-build hook -----------------
-              # Convention: <path>/ci/pre_build.sh
-              # Only runs if the package itself ships this file. Package-
-              # specific quirks live here, not in this shared config.yml.
               PRE_HOOK="${PKGPATH}/ci/pre_build.sh"
               if [ -x "$PRE_HOOK" ]; then
                 echo "=== Running pre-build hook for ${PKGPATH} ==="
@@ -273,13 +158,6 @@ references:
 
               bash ci/register-local-repo.sh "${PKGPATH}/build"
 
-              # --- only publish-worthy packages get copied into the -----
-              # publish artifacts. A package that was pulled in purely as
-              # a forward build-time dependency (see ci/resolve-build-
-              # order.sh) is NOT listed in packages_to_publish.txt - it
-              # gets fully built and registered into the local repo above
-              # (so later packages in this SAME job can use it), but is
-              # never uploaded to Nexus/S3.
               if grep -qxF "$PKGPATH" packages_to_publish.txt 2>/dev/null; then
                 find "${PKGPATH}/build" -type f \
                   \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
@@ -298,9 +176,6 @@ references:
           paths:
             - packages/build/dist_workspace
 
-  # ---------------------------------------------------------------------
-  # develop only: publish everything built to Nexus
-  # ---------------------------------------------------------------------
   publish_packages_job_steps: &publish_packages_job_steps
     steps:
       - attach_workspace:
@@ -311,9 +186,6 @@ references:
             sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
             bash ../zm-nexus/scripts/publish-packages-to-nexus.sh "build/dist_workspace"
 
-  # ---------------------------------------------------------------------
-  # non-develop only: zip everything built and upload to OCI bucket
-  # ---------------------------------------------------------------------
   deploy_s3_job_steps: &deploy_s3_job_steps
     docker:
       - image: 'cimg/python:3.10'
@@ -335,6 +207,7 @@ jobs:
   checkout_and_resolve:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
         auth:
@@ -346,6 +219,7 @@ jobs:
   build_u24:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-24.04
         auth:
@@ -359,6 +233,7 @@ jobs:
   build_u22:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
         auth:
@@ -372,6 +247,7 @@ jobs:
   build_u20:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-20.04
         auth:
@@ -385,6 +261,7 @@ jobs:
   build_u18:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-18.04
         auth:
@@ -398,6 +275,7 @@ jobs:
   build_c9:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-9
         auth:
@@ -411,6 +289,7 @@ jobs:
   build_c8:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-8
         auth:
@@ -442,9 +321,6 @@ jobs:
 workflows:
   version: 2
 
-  # -------------------------------------------------------------------------------
-  # develop branch: PR merge -> resolve -> build (all platforms) -> publish to Nexus
-  # -------------------------------------------------------------------------------
   develop-workflow:
     when: *when_develop_workflow
     jobs:
@@ -493,10 +369,6 @@ workflows:
             - docker-dev-registry
             - nexus-dev-artifactory
 
-  # ----------------------------------------------------------------------------------
-  # non-develop / manual trigger: approval -> build -> validate -> approval ->
-  # upload to OCI S3 (no Nexus publish)
-  # ----------------------------------------------------------------------------------
   main:
     when: *when_main_workflow
     jobs:
