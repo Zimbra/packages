@@ -131,6 +131,23 @@ case "$REVERSE_DEPS_MODE" in
     ;;
 esac
 
+# --- diagnostic: verify this container can actually reach the internal ---
+# zimbra apt/yum repo BEFORE trusting apt-get update / apt-cache madison
+# below. A container that can't reach the repo at all will make every
+# single resolvable_via_package_manager() check fail, which looks
+# identical to "none of these are published yet" - but is a completely
+# different problem with a completely different fix (see ci notes).
+# Remove this block once the repo-reachability question is settled.
+ZIMBRA_REPO_PROBE_URL="${ZIMBRA_REPO_PROBE_URL:-}"
+if [ -n "$ZIMBRA_REPO_PROBE_URL" ]; then
+  echo "resolve-build-order: checking connectivity to zimbra apt/yum repo..."
+  curl -sS -o /dev/null -w "resolve-build-order: ${ZIMBRA_REPO_PROBE_URL} -> HTTP %{http_code} (%{time_total}s)\n" \
+    --max-time 10 "$ZIMBRA_REPO_PROBE_URL" || \
+    echo "resolve-build-order: curl to ${ZIMBRA_REPO_PROBE_URL} FAILED (timeout/unreachable) - resolvability checks below are NOT trustworthy until this is fixed"
+else
+  echo "resolve-build-order: ZIMBRA_REPO_PROBE_URL not set, skipping repo connectivity probe"
+fi
+
 # --- refresh package-manager metadata before any resolvability checks ---
 # checkout_and_resolve (where this script runs) never runs apt-get
 # update/yum makecache anywhere else - that only happens later, per
@@ -145,12 +162,29 @@ esac
 # apr, apr-util, httpd, aspell, libxml2 ALL showing "NOT found in
 # configured repos" for a single php commit that only needs httpd/aspell/
 # libxml2 directly).
+#
+# CHANGED: apt-get update's own failures used to be swallowed by
+# `|| true`, which meant a total connectivity failure looked identical
+# to "ran fine, metadata is just empty/stale" in the log. Now we
+# capture stderr and print it (still non-fatal - this script always
+# falls back to "rebuild from source" on a resolvability miss, which is
+# safe, just possibly wasteful) so a repo-reachability problem is
+# visible immediately instead of only showing up as a 100% miss rate
+# further down.
 if command -v apt-get >/dev/null 2>&1; then
   echo "resolve-build-order: refreshing apt metadata before checking build-time dep resolvability..."
-  sudo apt-get update -qq || true
+  if ! apt_update_out="$(sudo apt-get update -qq 2>&1)"; then
+    echo "resolve-build-order: WARNING - apt-get update FAILED, output was:"
+    echo "$apt_update_out" | sed 's/^/resolve-build-order:   /'
+    echo "resolve-build-order: WARNING - every zimbra-* build-time dep below will likely show as unresolvable as a result"
+  fi
 elif command -v yum >/dev/null 2>&1; then
   echo "resolve-build-order: refreshing yum metadata before checking build-time dep resolvability..."
-  sudo yum makecache -y >/dev/null 2>&1 || true
+  if ! yum_makecache_out="$(sudo yum makecache -y 2>&1)"; then
+    echo "resolve-build-order: WARNING - yum makecache FAILED, output was:"
+    echo "$yum_makecache_out" | sed 's/^/resolve-build-order:   /'
+    echo "resolve-build-order: WARNING - every zimbra-* build-time dep below will likely show as unresolvable as a result"
+  fi
 fi
 
 master_pkgs="$(grep -vE '^[[:space:]]*(#|$)' "$BUILD_ORDER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
