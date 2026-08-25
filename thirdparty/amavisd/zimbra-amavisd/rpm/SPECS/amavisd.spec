@@ -49,7 +49,7 @@ OZC/sbin
 OZCL
 
 %changelog
-* Fri Mar 10 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
+* Fri Mar 10 2023  Zimbra Packaging new Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - ZBUG-3025: Upgrade amavis to 2.13.0
 * Mon Aug 22 2022  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - Fix ZBUG-1457
