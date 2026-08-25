@@ -207,6 +207,8 @@ jobs:
   checkout_and_resolve:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
+    environment:
+       ZIMBRA_REPO_PROBE_URL: "https://repo-dev.eng.zimbra.com/apt/1010"
     circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
