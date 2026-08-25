@@ -27,58 +27,63 @@
 #                   requested/changed package(s), plus whatever step (2)
 #                   says is needed to compile them. Publish only the
 #                   requested/changed package(s).
-#                   -> A one-line changelog edit to thirdparty/curl builds
-#                      openssl, heimdal, curl and publishes curl.
 #
 #        direct     Reverse-expand ONE level, from the requested/changed
 #                   packages only. Their immediate consumers are rebuilt
 #                   and republished, but those consumers are NOT
 #                   themselves reverse-expanded.
-#                   -> curl also brings cyrus-sasl, openldap,
-#                      core-components (+ their build prereqs), but NOT
-#                      postfix/nginx/opendkim/mta-components/...
 #
 #        transitive Full transitive reverse closure - every consumer, and
-#                   every consumer OF a consumer, recursively. This is
-#                   the historical behaviour of this script. It is
-#                   correct if you want the whole dependent stack
-#                   rebuilt against a genuine ABI/soname bump, but it is
-#                   very expensive: one changed leaf package can pull in
-#                   20+ packages across unrelated components.
-#                   -> curl brings 22 packages / publishes 11.
+#                   every consumer OF a consumer, recursively. Correct if
+#                   you want the whole dependent stack rebuilt against a
+#                   genuine ABI/soname bump, but expensive.
 #
 #      Reverse-expansion NEVER fires for a package that was itself only
-#      pulled in by step (2) as a forward build-time-only prerequisite
-#      (e.g. openssl, pulled in because curl needs it to compile) -
-#      openssl itself didn't change, so anything that merely consumes
-#      openssl has no reason to be touched.
+#      pulled in by step (2) as a forward build-time-only prerequisite -
+#      see step (2) for when that even happens now.
 #
 #   2) EXPAND (forward): find every package a to-be-built package itself
-#      needs INSTALLED to compile, and if that dependency isn't already
-#      in the queue, pull its PRODUCER package into this same job so it
-#      gets built and installed locally (via ci/register-local-repo.sh) -
-#      WITHOUT requiring it to already be published on Nexus.
-#      IMPORTANT: this checks ONLY Build-Depends:/BuildRequires: - NEVER
-#      runtime Depends:/Requires:. dpkg-checkbuilddeps (and rpmbuild's
-#      BuildRequires check) only ever enforces the build-time field;
-#      runtime Depends: is metadata for the package manager to check at
-#      INSTALL time on the target system, not something that needs to be
-#      present to run `make` here. A meta/component package like
-#      zimbra/mta-components declares its bundled packages (mariadb,
-#      opendkim, postfix, cluebringer, ...) under Depends: precisely
-#      because it doesn't compile anything - forward-pulling those and
-#      rebuilding them from source would be enormous unnecessary work.
-#      ci/verify-build-deps.sh already checks the runtime field too (see
-#      its own "runtime companion prefix" comment) against what's already
-#      published/built - that's the right place for that check, not here.
-#      This step runs for EVERY package in the queue (publish-worthy or
-#      not), since every package needs its own real build deps satisfied.
+#      needs INSTALLED to compile (Build-Depends:/BuildRequires: ONLY -
+#      NEVER runtime Depends:/Requires:, which is target-install-time
+#      metadata, not something `make` needs).
 #
-#      This step is LOAD-BEARING and is not configurable: the pipeline
-#      never fetches zimbra-* build deps from Nexus mid-build (see the
-#      long comment in ci/verify-build-deps.sh), so a build-time
-#      prerequisite that isn't built earlier in the same job simply
-#      isn't available and the build fails.
+#      *** THIS STEP NO LONGER ASSUMES NEXUS IS UNAVAILABLE MID-BUILD. ***
+#      Earlier revisions of this script forward-pulled (rebuilt from
+#      source, in this same job) the PRODUCER of every declared build-time
+#      dependency unconditionally - on the assumption that Nexus is only
+#      ever a publish target, never a fetch source, mid-build. That
+#      assumption was wrong: config.yml's own "Install build tooling"
+#      step, and a plain `apt-get install zimbra-httpd-devel` run on a
+#      genesis box, both prove the base images already have Nexus wired
+#      up as a normal apt/yum source - `apt-get install`/`yum install`
+#      transparently pulls already-published zimbra-* packages from it,
+#      the same as any other package. There is no reason to rebuild
+#      openssl/apr/apr-util/httpd from source just because php declares
+#      BuildRequires: zimbra-httpd-devel, if zimbra-httpd-devel (and ITS
+#      OWN build-time deps) are already sitting in Nexus from a prior
+#      build.
+#
+#      So: before forward-pulling a build-time dependency's producer
+#      package to rebuild it from source, first check whether that
+#      dependency is already resolvable via the configured package
+#      manager (apt-cache madison / yum list available) - i.e. already
+#      published. Only forward-pull (and recursively walk ITS build-time
+#      deps) if it genuinely is NOT resolvable that way - which is
+#      exactly the case where it's part of the SAME unpublished
+#      commit/PR as the package being built.
+#
+#      CAVEAT: this check runs once, in checkout_and_resolve, on a single
+#      platform image - it does not re-check per build platform. If a
+#      dependency's availability genuinely differs across platforms
+#      (uncommon - Nexus is normally kept in sync across all of them
+#      together from prior runs), this could miss a per-platform gap.
+#
+#      A meta/component package like zimbra/mta-components declares its
+#      bundled packages (mariadb, opendkim, postfix, cluebringer, ...)
+#      under runtime Depends: precisely because it doesn't compile
+#      anything - those were never forward-pulled in the first place,
+#      resolvable-or-not, since only Build-Depends:/BuildRequires: is
+#      inspected here at all.
 #
 #   3) ORDER: sort the fully expanded list to match the master
 #      build-order file's sequence, so dependencies always build before
@@ -86,7 +91,8 @@
 #
 # Output files:
 #   - packages_to_build.txt   : ALL packages to build, in order
-#                                (requested + reverse-deps + forward-deps)
+#                                (requested + reverse-deps + forward-deps
+#                                 that genuinely aren't published yet)
 #   - packages_to_publish.txt : SUBSET to actually publish to Nexus/S3
 #                                (requested + reverse-deps only)
 set -euo pipefail
@@ -207,6 +213,26 @@ declared_build_dep_names() {
     || true
 }
 
+# Is $name already installable via the package manager configured in
+# THIS image (which includes the Nexus apt/yum repo baked into the base
+# zm-base-os images)? If yes, config.yml's normal "install declared
+# build deps" step (plain apt-get/yum install) will pick it up on its
+# own - there is no need to rebuild its producer from source in this
+# job. Version constraints are intentionally NOT checked here (that is
+# ci/verify-build-deps.sh's job, right before the actual build step) -
+# this is only a yes/no "does it exist at all in the configured repos"
+# probe to decide whether a from-source forward-pull is even needed.
+resolvable_via_package_manager() {
+  local name="$1"
+  if command -v apt-cache >/dev/null 2>&1; then
+    apt-cache madison "$name" 2>/dev/null | grep -q .
+  elif command -v yum >/dev/null 2>&1; then
+    yum list available "$name" 2>/dev/null | awk -v n="$name" '$1==n' | grep -q .
+  else
+    return 1
+  fi
+}
+
 declare -A seen=()
 declare -A publish_worthy=()
 # is_seed marks the packages that were ACTUALLY requested/changed for this
@@ -268,11 +294,19 @@ while [ "$i" -lt "${#queue[@]}" ]; do
 
   # ---- FORWARD: what does $pkg need INSTALLED to compile? -----------
   # Build-Depends:/BuildRequires: ONLY - runs for EVERY package in the
-  # queue (publish-worthy or not).
+  # queue (publish-worthy or not). For each declared build-time dep,
+  # first check if it's already resolvable via the configured package
+  # manager (already published) - only forward-pull its producer to
+  # rebuild from source if it genuinely isn't.
   these_deps="$(declared_build_dep_names "$pkg")"
   if [ -n "$these_deps" ]; then
     while IFS= read -r depname; do
       [ -n "$depname" ] || continue
+
+      if resolvable_via_package_manager "$depname"; then
+        echo "resolve-build-order: '$depname' (BUILD-TIME dep of '$pkg') already published/resolvable - will be installed directly, NOT rebuilt from source"
+        continue
+      fi
 
       while IFS= read -r cand_pkg; do
         [ -n "$cand_pkg" ] || continue
@@ -286,7 +320,7 @@ while [ "$i" -lt "${#queue[@]}" ]; do
         if grep -qxF "$depname" <<<"$cand_names"; then
           seen["$cand_pkg"]=1
           queue+=("$cand_pkg")
-          echo "resolve-build-order: auto-adding '$cand_pkg' (produces '$depname', a BUILD-TIME dependency of '$pkg') - build-time ONLY, will NOT be published"
+          echo "resolve-build-order: auto-adding '$cand_pkg' (produces '$depname', a BUILD-TIME dependency of '$pkg' NOT found in configured repos) - build-time ONLY, will NOT be published"
           break
         fi
       done <<< "$master_pkgs"
