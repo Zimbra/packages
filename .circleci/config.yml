@@ -1,35 +1,63 @@
 version: 2.1
 ############################################################################
-
 parameters:
   package_name:
     type: string
     default: "auto"
     description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
-
   rebuild_reverse_deps:
     type: enum
     enum: ["off", "direct", "transitive"]
     default: "off"
     description: "How far to walk consumers of a changed package: off (changed package only), direct (immediate consumers too), transitive (entire dependent stack)."
-
+  pkg_repo_release:
+    type: string
+    default: "1010"
+    description: "Zimbra package repo release line to enable inside build containers (e.g. 1010, 1000, 87). Published zimbra-* build deps are installed from this line instead of being rebuilt from source."
 references:
   when_main_workflow: &when_main_workflow
     or:
       - equal: [ "api", "<< pipeline.trigger_source >>" ]
       - not:
           equal: [ "<< pipeline.git.branch >>", "testbranch" ]
-
   when_develop_workflow: &when_develop_workflow
     and:
       - equal: [ "<< pipeline.git.branch >>", "testbranch" ]
       - not:
           equal: [ "api", "<< pipeline.trigger_source >>" ]
-
+  # ---------------------------------------------------------------------------
+  # Configures the Zimbra package repo inside the container, mirroring what the
+  # genesis builders have baked into their images:
+  #   Ubuntu  /etc/apt/sources.list.d/zimbra.list
+  #   RHEL    /etc/yum.repos.d/zimbra.repo
+  # Without this, apt-cache madison / yum list available return nothing for
+  # zimbra-openssl-dev & friends, resolve-build-order.sh concludes "not
+  # published", and forward expansion rebuilds OpenSSL and Heimdal from source
+  # on every platform for a curl-only change.
+  #
+  # Referenced as a plain list item ('- *setup_pkg_repo_step') because the
+  # *_steps anchors below are maps merged with '<<:', not lists.
+  # ---------------------------------------------------------------------------
+  setup_pkg_repo_step: &setup_pkg_repo_step
+    run:
+        name: Configure Zimbra package repo
+        environment:
+          PKG_REPO_RELEASE: "<< pipeline.parameters.pkg_repo_release >>"
+          # Matches genesis u2287 /etc/apt/sources.list.d/zimbra.list (the 1010 line is plain http there)
+          APT_REPO_BASE: "http://repo-dev.eng.zimbra.com/apt"
+          # Matches genesis rhel9 /etc/yum.repos.d/zimbra.repo -> baseurl=https://repo.zimbra.com/rpm/1010/rhel9
+          RPM_REPO_BASE: "https://repo.zimbra.com/rpm"
+          # Genesis uses gpgcheck=1, but the Zimbra pubkey is not imported in the
+          # devcore images. Set to 1 only after adding an 'rpm --import' step.
+          RPM_GPGCHECK: "0"
+          PROBE_PKGS: "zimbra-base zimbra-openssl-dev zimbra-heimdal-dev zimbra-openssl-devel zimbra-heimdal-devel"
+        command: bash ci/setup-pkg-repo.sh
   checkout_and_resolve_steps: &checkout_and_resolve_steps
     steps:
       - checkout:
           method: full
+      # Must run BEFORE resolve-build-order.sh, which probes dep resolvability.
+      - *setup_pkg_repo_step
       - run:
           name: Checkout build-tooling dependencies (siblings of ~/packages)
           command: |
@@ -46,15 +74,12 @@ references:
                 | awk -F'/' '{print $1"/"$2}' \
                 | sort -u > packages_to_build.txt
             fi
-
             if [ ! -s packages_to_build.txt ]; then
               echo "No package changes found in this commit - nothing to build."
               circleci-agent step halt
             fi
-
             REVERSE_DEPS_MODE="<< pipeline.parameters.rebuild_reverse_deps >>" \
               bash ci/resolve-build-order.sh packages_to_build.txt
-
             echo "=== Package(s) resolved for this run ==="
             cat packages_to_build.txt
       - persist_to_workspace:
@@ -64,7 +89,6 @@ references:
             - zm-pkg-tool
             - zimbra-package-stub
             - zm-nexus
-
   build_and_isolate_steps: &build_and_isolate_steps
     steps:
       - attach_workspace:
@@ -77,10 +101,8 @@ references:
               sudo apt-get install -y --no-install-recommends \
                 dpkg-dev build-essential \
                 libssl-dev liblz4-dev zlib1g-dev libzstd-dev
-
             elif command -v yum >/dev/null 2>&1; then
               OS_VERSION=$(rpm -E %{rhel})
-
               if [ "$OS_VERSION" = "8" ]; then
                 sudo sed -i \
                   -e 's/^mirrorlist=/#mirrorlist=/' \
@@ -88,7 +110,6 @@ references:
                   -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
                   /etc/yum.repos.d/*.repo
               fi
-
               sudo yum install -y epel-release || true
               sudo yum config-manager --set-enabled powertools 2>/dev/null \
                 || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
@@ -97,15 +118,20 @@ references:
               sudo yum install -y \
                 rpm-build rpmdevtools createrepo \
                 openssl-devel lz4-devel zlib-devel libzstd-devel
-
               sudo yum install -y yum-plugin-priorities 2>/dev/null || true
             fi
+      # Deliberately AFTER the tooling step: on c8 that step repoints the dead
+      # CentOS 8 mirrorlists at vault.centos.org and installs
+      # yum-plugin-priorities. Running the repo setup first would make its
+      # 'yum makecache' fail on c8 for unrelated reasons. Everything that needs
+      # the zimbra repo (verify-build-deps.sh, install_declared_build_deps, and
+      # the 'pkgadd' target inside make) runs in the next step.
+      - *setup_pkg_repo_step
       - run:
           name: Build resolved package(s)
           command: |
             echo "Using PLATFORM_TAG=${PLATFORM_TAG}"
             mkdir -p build/dist_workspace/${PLATFORM_TAG}
-
             install_declared_build_deps() {
               file="$1"; label="$2"; prefix="$3"; shift 3
               deps=$(awk -v prefix="$prefix" '
@@ -117,7 +143,6 @@ references:
                 | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
                 | grep -v '^$' \
                 | sort -u || true)
-
               if [ -n "$deps" ]; then
                 echo "Installing ${label} build-deps: ${deps}"
                 "$@" $deps
@@ -125,39 +150,31 @@ references:
                 echo "No ${label} build-deps declared for ${file}, skipping install"
               fi
             }
-
             while IFS= read -r PKGPATH; do
               echo "=== Building ${PKGPATH} for ${PLATFORM_TAG} ==="
-
               if [ ! -d "$PKGPATH" ]; then
                 echo "ERROR: $PKGPATH does not exist"
                 exit 1
               fi
-
               PRE_HOOK="${PKGPATH}/ci/pre_build.sh"
               if [ -x "$PRE_HOOK" ]; then
                 echo "=== Running pre-build hook for ${PKGPATH} ==="
                 "$PRE_HOOK" "${PLATFORM_TAG}"
               fi
-
               CONTROL_FILE=$(find "$PKGPATH" -path "*/debian/control" 2>/dev/null | head -1)
               if [ -n "$CONTROL_FILE" ] && command -v apt-get >/dev/null 2>&1; then
                 bash ci/verify-build-deps.sh "$CONTROL_FILE" "Build-Depends"
                 install_declared_build_deps "$CONTROL_FILE" "Debian" "Build-Depends" \
                   sudo apt-get install -y --no-install-recommends
               fi
-
               SPEC_FILE=$(find "$PKGPATH" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
               if [ -n "$SPEC_FILE" ] && command -v yum >/dev/null 2>&1; then
                 bash ci/verify-build-deps.sh "$SPEC_FILE" "BuildRequires"
                 install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
                   sudo yum install -y
               fi
-
               ( cd "$PKGPATH" && make )
-
               bash ci/register-local-repo.sh "${PKGPATH}/build"
-
               if grep -qxF "$PKGPATH" packages_to_publish.txt 2>/dev/null; then
                 find "${PKGPATH}/build" -type f \
                   \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
@@ -166,7 +183,6 @@ references:
                 echo "=== ${PKGPATH} was built as a build-time-only prerequisite for this run - not copying to publish artifacts ==="
               fi
             done < packages_to_build.txt
-
             echo "=== build/dist_workspace/${PLATFORM_TAG} contents ==="
             ls -la build/dist_workspace/${PLATFORM_TAG}/
       - store_artifacts:
@@ -175,7 +191,6 @@ references:
           root: ..
           paths:
             - packages/build/dist_workspace
-
   publish_packages_job_steps: &publish_packages_job_steps
     steps:
       - attach_workspace:
@@ -185,7 +200,6 @@ references:
           command: |
             sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
             bash ../zm-nexus/scripts/publish-packages-to-nexus.sh "build/dist_workspace"
-
   deploy_s3_job_steps: &deploy_s3_job_steps
     docker:
       - image: 'cimg/python:3.10'
@@ -201,14 +215,13 @@ references:
             ZIP_FILE_PATH="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM/archives/$CIRCLE_PROJECT_REPONAME.zip"
             curl -X PUT "$OCI_PAR_URL$ZIP_FILE_PATH" -T $CIRCLE_PROJECT_REPONAME.zip
             echo "artifacts uploaded to $ZIP_FILE_PATH"
-
 ###########################################################################################################################################################
 jobs:
   checkout_and_resolve:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
     environment:
-       ZIMBRA_REPO_PROBE_URL: "https://repo-dev.eng.zimbra.com/apt/1010"
+       ZIMBRA_REPO_PROBE_URL: "http://repo-dev.eng.zimbra.com/apt/1010"
     circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
@@ -217,7 +230,6 @@ jobs:
           password: $DOCKER_PASS
     resource_class: small
     <<: *checkout_and_resolve_steps
-
   build_u24:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -231,7 +243,6 @@ jobs:
     environment:
       PLATFORM_TAG: u24
     <<: *build_and_isolate_steps
-
   build_u22:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -245,7 +256,6 @@ jobs:
     environment:
       PLATFORM_TAG: u22
     <<: *build_and_isolate_steps
-
   build_u20:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -259,7 +269,6 @@ jobs:
     environment:
       PLATFORM_TAG: u20
     <<: *build_and_isolate_steps
-
   build_u18:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -273,7 +282,6 @@ jobs:
     environment:
       PLATFORM_TAG: u18
     <<: *build_and_isolate_steps
-
   build_c9:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -287,7 +295,6 @@ jobs:
     environment:
       PLATFORM_TAG: c9
     <<: *build_and_isolate_steps
-
   build_c8:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -301,7 +308,6 @@ jobs:
     environment:
       PLATFORM_TAG: c8
     <<: *build_and_isolate_steps
-
   publish_packages:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -313,16 +319,13 @@ jobs:
           password: $DOCKER_PASS
     resource_class: small
     <<: *publish_packages_job_steps
-
   deploy_s3:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
     <<: *deploy_s3_job_steps
-
 ###########################################################################################################################################################
 workflows:
   version: 2
-
   develop-workflow:
     when: *when_develop_workflow
     jobs:
@@ -370,7 +373,6 @@ workflows:
           context:
             - docker-dev-registry
             - nexus-dev-artifactory
-
   main:
     when: *when_main_workflow
     jobs:
