@@ -35,6 +35,14 @@ references:
   # published", and forward expansion rebuilds OpenSSL and Heimdal from source
   # on every platform for a curl-only change.
   #
+  # PUBLIC HOST FIRST. repo-dev.eng.zimbra.com is internal-only: pipeline #236
+  # showed 'curl: (6) Could not resolve host' and 'Could not resolve
+  # repo-dev.eng.zimbra.com' from every container. circleci_ip_ranges only pins
+  # egress IPs for firewall allowlisting - it does not give the container Zimbra
+  # DNS. repo-dev is kept as a second candidate so the same script does the right
+  # thing on a self-hosted runner inside the network; the script probes in order
+  # and uses the first base URL that actually serves this platform's tree.
+  #
   # Referenced as a plain list item ('- *setup_pkg_repo_step') because the
   # *_steps anchors below are maps merged with '<<:', not lists.
   # ---------------------------------------------------------------------------
@@ -43,10 +51,9 @@ references:
         name: Configure Zimbra package repo
         environment:
           PKG_REPO_RELEASE: "<< pipeline.parameters.pkg_repo_release >>"
-          # Matches genesis u2287 /etc/apt/sources.list.d/zimbra.list (the 1010 line is plain http there)
-          APT_REPO_BASE: "http://repo-dev.eng.zimbra.com/apt"
-          # Matches genesis rhel9 /etc/yum.repos.d/zimbra.repo -> baseurl=https://repo.zimbra.com/rpm/1010/rhel9
-          RPM_REPO_BASE: "https://repo.zimbra.com/rpm"
+          # Space-separated, highest priority first.
+          APT_REPO_CANDIDATES: "https://repo.zimbra.com/apt http://repo-dev.eng.zimbra.com/apt"
+          RPM_REPO_CANDIDATES: "https://repo.zimbra.com/rpm http://repo-dev.eng.zimbra.com/rpm"
           # Genesis uses gpgcheck=1, but the Zimbra pubkey is not imported in the
           # devcore images. Set to 1 only after adding an 'rpm --import' step.
           RPM_GPGCHECK: "0"
@@ -221,7 +228,9 @@ jobs:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
     environment:
-       ZIMBRA_REPO_PROBE_URL: "http://repo-dev.eng.zimbra.com/apt/1010"
+       # Public host - repo-dev is unreachable from CircleCI cloud (DNS), so probing
+       # it here only produced 'curl: (6) Could not resolve host'.
+       ZIMBRA_REPO_PROBE_URL: "https://repo.zimbra.com/apt/1010"
     circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
