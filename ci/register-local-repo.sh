@@ -30,6 +30,10 @@ if [ -n "$DEB_FILES" ] && command -v dpkg-scanpackages >/dev/null 2>&1; then
     echo "deb [trusted=yes] file:$LOCAL_REPO ./" | sudo tee /etc/apt/sources.list.d/local-build.list >/dev/null
     printf 'Package: *\nPin: origin ""\nPin-Priority: 1001\n' | sudo tee /etc/apt/preferences.d/local-build >/dev/null
   fi
+  echo "resolve-build-order: checking connectivity to zimbra apt repo..."
+  curl -sS -o /dev/null -w "resolve-build-order: repo-dev.eng.zimbra.com -> HTTP %{http_code} (%{time_total}s)\n" \
+    --max-time 10 "https://repo-dev.eng.zimbra.com/apt/1010" || \
+    echo "resolve-build-order: curl to repo-dev.eng.zimbra.com FAILED (timeout/unreachable)"
   sudo apt-get update -qq
   echo "register-local-repo: added $(wc -w <<<"$DEB_FILES") deb(s) to $LOCAL_REPO"
 fi
