@@ -131,6 +131,28 @@ case "$REVERSE_DEPS_MODE" in
     ;;
 esac
 
+# --- refresh package-manager metadata before any resolvability checks ---
+# checkout_and_resolve (where this script runs) never runs apt-get
+# update/yum makecache anywhere else - that only happens later, per
+# platform, inside build_and_isolate_steps, in a DIFFERENT job/container.
+# The zimbra apt/yum repo IS already configured in this image (same
+# zm-base-os:devcore-ubuntu-22.04 tag used by build_u22, same baked-in
+# /etc/apt/sources.list.d/zimbra.list a genesis build box has) - but a
+# fresh container's apt-cache/yum metadata is empty until something
+# populates it. Without this, resolvable_via_package_manager() below
+# reports EVERY zimbra-* package as unresolvable regardless of whether
+# it's actually published, which is exactly what was observed (openssl,
+# apr, apr-util, httpd, aspell, libxml2 ALL showing "NOT found in
+# configured repos" for a single php commit that only needs httpd/aspell/
+# libxml2 directly).
+if command -v apt-get >/dev/null 2>&1; then
+  echo "resolve-build-order: refreshing apt metadata before checking build-time dep resolvability..."
+  sudo apt-get update -qq || true
+elif command -v yum >/dev/null 2>&1; then
+  echo "resolve-build-order: refreshing yum metadata before checking build-time dep resolvability..."
+  sudo yum makecache -y >/dev/null 2>&1 || true
+fi
+
 master_pkgs="$(grep -vE '^[[:space:]]*(#|$)' "$BUILD_ORDER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
 
 find_control_file() { find "$1" -path "*/debian/control" 2>/dev/null | head -1; }
