@@ -54,6 +54,14 @@ references:
           # Space-separated, highest priority first.
           APT_REPO_CANDIDATES: "https://repo.zimbra.com/apt http://repo-dev.eng.zimbra.com/apt"
           RPM_REPO_CANDIDATES: "https://repo.zimbra.com/rpm http://repo-dev.eng.zimbra.com/rpm"
+          # Release lines tried in order. 1010 serves a 'focal' dist but does not
+          # publish zimbra-base for it (pipeline #239, build_u20 -> exit 100), so
+          # older platforms need to fall through to a line that does.
+          PKG_REPO_RELEASE_CANDIDATES: "<< pipeline.parameters.pkg_repo_release >> 1000 87"
+          # A release line is only accepted if these are actually present in it.
+          # zimbra-base is never built by this pipeline - only fetched - so a line
+          # missing it cannot produce a working build.
+          REQUIRE_PKGS: "zimbra-base"
           # Genesis uses gpgcheck=1, but the Zimbra pubkey is not imported in the
           # devcore images. Set to 1 only after adding an 'rpm --import' step.
           RPM_GPGCHECK: "0"
@@ -228,9 +236,10 @@ jobs:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
     environment:
-       # Public host - repo-dev is unreachable from CircleCI cloud (DNS), so probing
-       # it here only produced 'curl: (6) Could not resolve host'.
-       ZIMBRA_REPO_PROBE_URL: "https://repo.zimbra.com/apt/1010"
+       # Point at a real file, not a directory. The bare base URL returns 404
+       # (pipeline #239: 'https://repo.zimbra.com/apt/1010 -> HTTP 404'), which
+       # looks like a failure but only means the dir has no index.
+       ZIMBRA_REPO_PROBE_URL: "https://repo.zimbra.com/apt/1010/dists/jammy/Release"
     circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
