@@ -16,6 +16,7 @@
 # cross-job/cross-pipeline races - that's what ci/verify-build-deps.sh
 # is for.
 set -euo pipefail
+
 PKG_BUILD_DIR="$1"
 LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 mkdir -p "$LOCAL_REPO"
@@ -30,11 +31,26 @@ if [ -n "$DEB_FILES" ] && command -v dpkg-scanpackages >/dev/null 2>&1; then
     echo "deb [trusted=yes] file:$LOCAL_REPO ./" | sudo tee /etc/apt/sources.list.d/local-build.list >/dev/null
     printf 'Package: *\nPin: origin ""\nPin-Priority: 1001\n' | sudo tee /etc/apt/preferences.d/local-build >/dev/null
   fi
-  echo "resolve-build-order: checking connectivity to zimbra apt repo..."
-  curl -sS -o /dev/null -w "resolve-build-order: repo-dev.eng.zimbra.com -> HTTP %{http_code} (%{time_total}s)\n" \
-    --max-time 10 "https://repo-dev.eng.zimbra.com/apt/1010" || \
-    echo "resolve-build-order: curl to repo-dev.eng.zimbra.com FAILED (timeout/unreachable)"
-  sudo apt-get update -qq
+  # Refresh ONLY the local-build file: repo so the just-added .deb becomes
+  # visible to later apt-get install calls in this same job.
+  #
+  # This is deliberately SCOPED (Dir::Etc::sourcelist + List-Cleanup=0),
+  # exactly like ci/setup-pkg-repo.sh's apt_update_zimbra_only:
+  #   - it never touches the network (the repo is file://), so it's instant;
+  #   - it cannot disturb the zimbra.list index that setup-pkg-repo.sh already
+  #     built, which a bare unscoped 'apt-get update' refetches from scratch
+  #     and can leave stale (that exact pattern produced a false
+  #     'zimbra-openssl-dev not published' verdict in resolve-build-order.sh,
+  #     CI #242 - see the comment block in ci/resolve-build-order.sh).
+  # NOTE: the previous version also fired a curl probe at
+  # https://repo-dev.eng.zimbra.com here (mislabelled with a
+  # 'resolve-build-order:' prefix). That host is INTERNAL and never resolves
+  # from CircleCI cloud, so the probe added ~10s and a scary failure line to
+  # every deb package registered while proving nothing - removed.
+  sudo apt-get update -qq \
+    -o Dir::Etc::sourcelist="sources.list.d/local-build.list" \
+    -o Dir::Etc::sourceparts="-" \
+    -o APT::Get::List-Cleanup="0"
   echo "register-local-repo: added $(wc -w <<<"$DEB_FILES") deb(s) to $LOCAL_REPO"
 fi
 
@@ -45,7 +61,6 @@ if [ -n "$RPM_FILES" ]; then
   elif command -v createrepo >/dev/null 2>&1; then
     CREATEREPO_BIN="createrepo"
   fi
-
   if [ -n "$CREATEREPO_BIN" ]; then
     cp $RPM_FILES "$LOCAL_REPO/"
     "$CREATEREPO_BIN" --update "$LOCAL_REPO" >/dev/null
