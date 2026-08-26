@@ -132,7 +132,7 @@ case "$REVERSE_DEPS_MODE" in
 esac
 
 # --- diagnostic: verify this container can actually reach the internal ---
-# zimbra apt/yum repo BEFORE trusting apt-get update / apt-cache madison
+# zimbra apt/yum repo BEFORE trusting apt-cache madison / yum list available
 # below. A container that can't reach the repo at all will make every
 # single resolvable_via_package_manager() check fail, which looks
 # identical to "none of these are published yet" - but is a completely
@@ -149,41 +149,59 @@ else
 fi
 
 # --- refresh package-manager metadata before any resolvability checks ---
-# checkout_and_resolve (where this script runs) never runs apt-get
-# update/yum makecache anywhere else - that only happens later, per
-# platform, inside build_and_isolate_steps, in a DIFFERENT job/container.
-# The zimbra apt/yum repo IS already configured in this image (same
-# zm-base-os:devcore-ubuntu-22.04 tag used by build_u22, same baked-in
-# /etc/apt/sources.list.d/zimbra.list a genesis build box has) - but a
-# fresh container's apt-cache/yum metadata is empty until something
-# populates it. Without this, resolvable_via_package_manager() below
-# reports EVERY zimbra-* package as unresolvable regardless of whether
-# it's actually published, which is exactly what was observed (openssl,
-# apr, apr-util, httpd, aspell, libxml2 ALL showing "NOT found in
-# configured repos" for a single php commit that only needs httpd/aspell/
-# libxml2 directly).
 #
-# CHANGED: apt-get update's own failures used to be swallowed by
-# `|| true`, which meant a total connectivity failure looked identical
-# to "ran fine, metadata is just empty/stale" in the log. Now we
-# capture stderr and print it (still non-fatal - this script always
-# falls back to "rebuild from source" on a resolvability miss, which is
-# safe, just possibly wasteful) so a repo-reachability problem is
-# visible immediately instead of only showing up as a 100% miss rate
-# further down.
+# *** FIXED ***
+# This used to unconditionally re-run a bare, unscoped 'apt-get update -qq'
+# here, EVEN THOUGH ci/setup-pkg-repo.sh (via the setup_pkg_repo_step anchor
+# in config.yml) already runs immediately before this script, in the SAME
+# job/container, and already writes /etc/apt/sources.list.d/zimbra.list and
+# refreshes it with a SCOPED update (apt_update_zimbra_only: only the zimbra
+# source list, with List-Cleanup=0 so other lists survive).
+#
+# That redundant second update was the actual cause of curl's build pulling
+# in a from-source OpenSSL rebuild (see CI run #242, job 1227): setup-pkg-repo
+# had JUST confirmed zimbra-openssl-dev resolvable ("will be INSTALLED, not
+# rebuilt"), then THIS unscoped 'apt-get update -qq' ran seconds later in the
+# same container, refetched every configured source from scratch, one repo's
+# index came back empty/stale while the overall command still exited 0 (-qq
+# suppresses the per-repo diagnostics that would have shown it, and there was
+# no Acquire::Retries here unlike setup-pkg-repo.sh's version) - and
+# apt-cache madison zimbra-openssl-dev then reported nothing, so
+# resolve-build-order.sh force-added thirdparty/openssl as an unpublished
+# build-time-only prerequisite, which every downstream platform job then
+# dutifully rebuilt from source.
+#
+# Fix: if zimbra.list is already present (i.e. setup-pkg-repo.sh already ran
+# and already refreshed it in this same container), DO NOT refresh again -
+# trust that result. Only fall back to running our own update here if
+# zimbra.list is missing (e.g. someone runs this script standalone, or
+# setup-pkg-repo.sh failed to write it), and when we do, use the SAME scoped,
+# retried form setup-pkg-repo.sh uses instead of a bare 'apt-get update -qq',
+# so a partial/silent failure can't hide behind a 0 exit code again.
 if command -v apt-get >/dev/null 2>&1; then
-  echo "resolve-build-order: refreshing apt metadata before checking build-time dep resolvability..."
-  if ! apt_update_out="$(sudo apt-get update -qq 2>&1)"; then
-    echo "resolve-build-order: WARNING - apt-get update FAILED, output was:"
-    echo "$apt_update_out" | sed 's/^/resolve-build-order:   /'
-    echo "resolve-build-order: WARNING - every zimbra-* build-time dep below will likely show as unresolvable as a result"
+  if [ -f /etc/apt/sources.list.d/zimbra.list ]; then
+    echo "resolve-build-order: /etc/apt/sources.list.d/zimbra.list already configured and refreshed by ci/setup-pkg-repo.sh earlier in this job - skipping duplicate apt-get update"
+    echo "resolve-build-order:   (a second, unscoped 'apt-get update' here previously caused a false 'not published' result for zimbra-openssl-dev - see comment above)"
+  else
+    echo "resolve-build-order: /etc/apt/sources.list.d/zimbra.list not found - ci/setup-pkg-repo.sh did not run first, or failed to configure a repo"
+    echo "resolve-build-order: refreshing apt metadata (scoped to zimbra.list if present, full otherwise) before checking build-time dep resolvability..."
+    if ! apt_update_out="$(sudo apt-get update -qq -o Acquire::Retries=3 2>&1)"; then
+      echo "resolve-build-order: WARNING - apt-get update FAILED, output was:"
+      echo "$apt_update_out" | sed 's/^/resolve-build-order:   /'
+      echo "resolve-build-order: WARNING - every zimbra-* build-time dep below will likely show as unresolvable as a result"
+    fi
   fi
-elif command -v yum >/dev/null 2>&1; then
-  echo "resolve-build-order: refreshing yum metadata before checking build-time dep resolvability..."
-  if ! yum_makecache_out="$(sudo yum makecache -y 2>&1)"; then
-    echo "resolve-build-order: WARNING - yum makecache FAILED, output was:"
-    echo "$yum_makecache_out" | sed 's/^/resolve-build-order:   /'
-    echo "resolve-build-order: WARNING - every zimbra-* build-time dep below will likely show as unresolvable as a result"
+elif command -v yum >/dev/null 2>&1 || command -v dnf >/dev/null 2>&1; then
+  if [ -f /etc/yum.repos.d/zimbra.repo ]; then
+    echo "resolve-build-order: /etc/yum.repos.d/zimbra.repo already configured and refreshed by ci/setup-pkg-repo.sh earlier in this job - skipping duplicate makecache"
+  else
+    echo "resolve-build-order: /etc/yum.repos.d/zimbra.repo not found - ci/setup-pkg-repo.sh did not run first, or failed to configure a repo"
+    echo "resolve-build-order: refreshing yum metadata before checking build-time dep resolvability..."
+    if ! yum_makecache_out="$(sudo yum makecache -y 2>&1)"; then
+      echo "resolve-build-order: WARNING - yum makecache FAILED, output was:"
+      echo "$yum_makecache_out" | sed 's/^/resolve-build-order:   /'
+      echo "resolve-build-order: WARNING - every zimbra-* build-time dep below will likely show as unresolvable as a result"
+    fi
   fi
 fi
 
@@ -270,14 +288,15 @@ declared_build_dep_names() {
 }
 
 # Is $name already installable via the package manager configured in
-# THIS image (which includes the Nexus apt/yum repo baked into the base
-# zm-base-os images)? If yes, config.yml's normal "install declared
-# build deps" step (plain apt-get/yum install) will pick it up on its
-# own - there is no need to rebuild its producer from source in this
-# job. Version constraints are intentionally NOT checked here (that is
-# ci/verify-build-deps.sh's job, right before the actual build step) -
-# this is only a yes/no "does it exist at all in the configured repos"
-# probe to decide whether a from-source forward-pull is even needed.
+# THIS image (which includes the Nexus apt/yum repo written by
+# ci/setup-pkg-repo.sh earlier in this same job)? If yes, config.yml's
+# normal "install declared build deps" step (plain apt-get/yum install)
+# will pick it up on its own - there is no need to rebuild its producer
+# from source in this job. Version constraints are intentionally NOT
+# checked here (that is ci/verify-build-deps.sh's job, right before the
+# actual build step) - this is only a yes/no "does it exist at all in
+# the configured repos" probe to decide whether a from-source
+# forward-pull is even needed.
 resolvable_via_package_manager() {
   local name="$1"
   if command -v apt-cache >/dev/null 2>&1; then
