@@ -71,21 +71,31 @@ extract_deps() {
 # --- ONLY the build-time field is checked here ---------------------------
 # Build-Depends:/BuildRequires: is the sole field dpkg-buildpackage /
 # rpmbuild actually enforce to run `make` - that's what needs to be
-# resolvable (built earlier in THIS job, via LOCAL_REPO) before this
-# package's build step runs.
+# resolvable before this package's build step runs. It can be satisfied
+# three ways, in order of preference:
+#
+#   1. built EARLIER IN THIS JOB and registered into LOCAL_REPO by
+#      ci/register-local-repo.sh (the case where the dep is part of the
+#      SAME unpublished commit/PR - resolve-build-order.sh's forward
+#      expansion put it in the build list ahead of this package); OR
+#   2. already INSTALLED in the base image; OR
+#   3. PUBLISHED in the configured repos (the zimbra repo written by
+#      ci/setup-pkg-repo.sh), from which config.yml's build-dep install
+#      step pulls it directly.
+#
+# (2) and (3) are now the COMMON case, not an error: resolve-build-order.sh
+# only force-builds a dep's producer from source when the dep is NOT already
+# published/installed. Before, this script only checked (1), so as soon as
+# the resolver correctly stopped rebuilding e.g. zimbra-openssl-dev, this
+# step would fail it as MISSING even though it was installed straight from
+# the repo. It now falls through 1 -> 2 -> 3 and only fails if ALL miss.
 #
 # Runtime Depends:/Requires: (e.g. zimbra-base) is metadata consumed by
 # the package manager when the FINAL .deb/.rpm is installed on a target
-# system - it plays no part in producing that artifact. This pipeline
-# never pulls/fetches from Nexus mid-build; Nexus is only ever a
-# publish target, at the very end (publish_packages/deploy_s3), after
-# every platform has already built successfully. So there is nothing to
-# verify against Nexus here, and a runtime dep that isn't built in this
-# job is not an error - see thirdparty/rsync's local `make` run, which
-# built and packaged successfully with zimbra-base neither installed
-# nor referenced at build time.
+# system - it plays no part in producing that artifact, and is not checked
+# here (see thirdparty/rsync, which builds fine with zimbra-base neither
+# installed nor referenced at build time).
 deps_with_versions="$(extract_deps "$PREFIX")"
-
 [ -z "$deps_with_versions" ] && { echo "verify-build-deps: no internal zimbra- build-time deps declared, skipping"; exit 0; }
 
 # Compare $1 >= $2 for either deb or rpm style versions. Prefers the
@@ -104,6 +114,38 @@ version_ge() {
     [ "$rc" = "0" ] || [ "$rc" = "11" ]
   else
     [ "$(printf '%s\n%s\n' "$want" "$have" | sort -V | tail -1)" = "$have" ]
+  fi
+}
+
+# What version of $1 is already INSTALLED in this image (empty if none)?
+# dpkg-query prints a Version even for removed-but-config-files packages,
+# so gate on the Status actually being "ok installed". rpm -q is only
+# queried after confirming the package is installed, otherwise it prints
+# "package X is not installed" to stdout, which must not be read as a version.
+installed_version() {
+  local name="$1" s
+  if command -v dpkg-query >/dev/null 2>&1; then
+    s="$(dpkg-query -W -f='${Status} ${Version}' "$name" 2>/dev/null || true)"
+    case "$s" in
+      *"ok installed"*) echo "${s##* }" ;;
+    esac
+  elif command -v rpm >/dev/null 2>&1; then
+    if rpm -q "$name" >/dev/null 2>&1; then
+      rpm -q --qf '%{VERSION}-%{RELEASE}' "$name" 2>/dev/null
+    fi
+  fi
+}
+
+# What version of $1 is PUBLISHED (available to install) in the configured
+# repos - the zimbra repo from ci/setup-pkg-repo.sh, plus the job-local repo?
+# 'yum list available' prints name.arch, so match both "name" and "name.".
+published_version() {
+  local name="$1"
+  if command -v apt-cache >/dev/null 2>&1; then
+    apt-cache madison "$name" 2>/dev/null | awk -F'|' 'NR==1{gsub(/ /,"",$2); print $2}'
+  elif command -v yum >/dev/null 2>&1; then
+    { yum --showduplicates list available "$name" 2>/dev/null || true; } \
+      | awk -v n="$name" '$1==n || index($1, n".")==1 {v=$2} END{print v}'
   fi
 }
 
@@ -133,12 +175,8 @@ while IFS= read -r line; do
   esac
 
   if [ -z "$ver_raw" ]; then
-    # No version constraint declared. Since this is a build-time
-    # (Build-Depends:/BuildRequires:) dep, it must have been built
-    # earlier in THIS job and registered into LOCAL_REPO by
-    # ci/register-local-repo.sh - resolve-build-order.sh's forward
-    # expansion is what's responsible for putting it there before this
-    # package builds.
+    # No version constraint declared. Satisfy it from any of the three
+    # sources (built-in-job -> installed -> published), in that order.
     found_local=0
     if [ -d "$LOCAL_REPO" ]; then
       for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
@@ -147,15 +185,20 @@ while IFS= read -r line; do
     fi
     if [ "$found_local" = "1" ]; then
       echo "verify-build-deps: OK    $name (no version constraint, built earlier in this job)"
+    elif [ -n "$(installed_version "$name")" ]; then
+      echo "verify-build-deps: OK    $name (no version constraint, already installed in image)"
+    elif [ -n "$(published_version "$name")" ]; then
+      echo "verify-build-deps: OK    $name (no version constraint, published in configured repos)"
     else
-      echo "verify-build-deps: MISSING  $name (no version constraint declared) - not built earlier in this job"
+      echo "verify-build-deps: MISSING  $name (no version constraint declared) - not built in this job, not installed, not published"
       missing=$((missing + 1))
     fi
     continue
   fi
+
   ver_want="${ver_raw%%ZAPPEND*}"
 
-  # same-job local-build repo only: find ANY built version of $name from
+  # (1) same-job local-build repo: find ANY built version of $name from
   # earlier in this job, then compare it properly instead of exact-prefix
   # matching.
   found_local=0
@@ -163,10 +206,21 @@ while IFS= read -r line; do
     for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
       [ -e "$f" ] || continue
       base="$(basename "$f")"
-      ver_have="${base#${name}[-_]}"
-      ver_have="${ver_have%.deb}"
-      ver_have="${ver_have%%_*.deb}"
-      ver_have="${ver_have%.*.rpm}"
+      ver_have="${base#${name}[-_]}"          # drop "name-" / "name_" prefix
+      case "$base" in
+        *.deb)
+          ver_have="${ver_have%.deb}"         # -> VERSION_arch
+          ver_have="${ver_have%_*}"           # drop _<arch>  -> VERSION
+          ;;                                   #   (deb versions never contain '_',
+          #                                        so the last '_' is the arch sep -
+          #                                        this is the fix for the #239
+          #                                        "invalid character in revision
+          #                                        number: ..._amd64" warning)
+        *.rpm)
+          ver_have="${ver_have%.rpm}"         # -> version-release.arch
+          ver_have="${ver_have%.*}"           # drop .<arch>  -> version-release
+          ;;
+      esac
       if version_ge "$ver_have" "$ver_want"; then
         found_local=1
         echo "verify-build-deps: OK   $name >= ${ver_want} (built earlier in this job, found ${ver_have})"
@@ -176,15 +230,30 @@ while IFS= read -r line; do
   fi
   [ "$found_local" = "1" ] && continue
 
-  echo "verify-build-deps: MISSING  $name >= ${ver_want} - not built earlier in this job"
+  # (2) installed in the base image?
+  ver_have="$(installed_version "$name")"
+  if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
+    echo "verify-build-deps: OK   $name >= ${ver_want} (already installed in image, found ${ver_have})"
+    continue
+  fi
+
+  # (3) published in the configured repos?
+  ver_have="$(published_version "$name")"
+  if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
+    echo "verify-build-deps: OK   $name >= ${ver_want} (published in configured repos, found ${ver_have})"
+    continue
+  fi
+
+  echo "verify-build-deps: MISSING  $name >= ${ver_want} - not built in this job, not installed, not published"
   missing=$((missing + 1))
 done <<< "$deps_with_versions"
 
 if [ "$missing" -gt 0 ]; then
   echo ""
   echo "ERROR: $missing internal build-time dependency(ies) not resolvable."
-  echo "These must be built EARLIER IN THIS SAME JOB before this package can build."
-  echo "Check that ci/resolve-build-order.sh's forward expansion is pulling in the"
-  echo "producer package, and that the master build-order file lists it before this one."
+  echo "A build-time dep must be satisfiable one of three ways before this package"
+  echo "can build: built earlier in THIS job (via ci/resolve-build-order.sh forward"
+  echo "expansion + ci/register-local-repo.sh), already installed in the image, or"
+  echo "published in the configured repos (ci/setup-pkg-repo.sh). None applied above."
   exit 1
 fi
