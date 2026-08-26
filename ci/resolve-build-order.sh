@@ -72,11 +72,29 @@
 #      exactly the case where it's part of the SAME unpublished
 #      commit/PR as the package being built.
 #
+#      *** BUILD-TIME DEP NAMES ARE READ FROM THE FLAVOUR-MATCHING FILE ONLY. ***
+#      A package usually ships BOTH a debian/control (deb names, e.g.
+#      zimbra-openssl-dev) AND a .spec (rpm names, e.g. zimbra-openssl-devel).
+#      This step must consult ONLY the file that matches the CURRENT
+#      container: debian/control on an apt host, the .spec on a yum host.
+#      Reading both and unioning them (as an earlier revision did) meant a
+#      deb container probed the RPM names with apt-cache - which can NEVER
+#      resolve - and then force-added their producers (thirdparty/openssl,
+#      thirdparty/heimdal) to rebuild from source on EVERY platform, even
+#      though the correct deb-named packages were published and installable.
+#      That single union was the actual cause of openssl+heimdal being
+#      recompiled across all six platforms (CI #239/#242). See
+#      declared_build_dep_names() below - it is now gated on PKG_FLAVOR.
+#
 #      CAVEAT: this check runs once, in checkout_and_resolve, on a single
-#      platform image - it does not re-check per build platform. If a
-#      dependency's availability genuinely differs across platforms
-#      (uncommon - Nexus is normally kept in sync across all of them
-#      together from prior runs), this could miss a per-platform gap.
+#      platform image - it does not re-check per build platform, and the
+#      platforms DO genuinely differ (CI #239: release 1010 publishes
+#      zimbra-base for jammy but not for focal). A packages_to_build.txt
+#      computed on jammy can therefore be wrong for focal. The proper fix
+#      is to move this resolve step into build_and_isolate_steps so each
+#      platform decides its own resolvability right after its own repo
+#      setup; until then, keep the resolve platform and the build matrix
+#      on release lines that are known to be published in lockstep.
 #
 #      A meta/component package like zimbra/mta-components declares its
 #      bundled packages (mariadb, opendkim, postfix, cluebringer, ...)
@@ -95,7 +113,9 @@
 #                                 that genuinely aren't published yet)
 #   - packages_to_publish.txt : SUBSET to actually publish to Nexus/S3
 #                                (requested + reverse-deps only)
+
 set -euo pipefail
+
 INPUT="${1:-packages_to_build.txt}"
 PUBLISH_FILE="packages_to_publish.txt"
 BUILD_ORDER="${BUILD_ORDER_FILE:-build-order}"
@@ -129,6 +149,27 @@ case "$REVERSE_DEPS_MODE" in
   transitive)
     echo "resolve-build-order: FULL transitive consumer closure will be rebuilt - this can be very large."
     ;;
+esac
+
+# --- which packaging flavour is THIS container? -------------------------
+# Only the metadata file that MATCHES this container may be consulted for
+# build-time dep names (see declared_build_dep_names). Probing rpm names
+# with apt (or deb names with yum) always concludes "not published" and
+# force-rebuilds the producer from source - that is what made every deb
+# platform recompile openssl+heimdal in CI #239/#242.
+if command -v apt-get >/dev/null 2>&1; then
+  PKG_FLAVOR=deb
+elif command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then
+  PKG_FLAVOR=rpm
+else
+  PKG_FLAVOR=unknown
+fi
+echo "resolve-build-order: PKG_FLAVOR=$PKG_FLAVOR"
+case "$PKG_FLAVOR" in
+  deb) grep -rqs zimbra /etc/apt/sources.list /etc/apt/sources.list.d/ \
+         || echo "resolve-build-order: WARNING - no zimbra apt source configured; every zimbra-* build dep will look unpublished and its producer will be rebuilt from source" ;;
+  rpm) grep -rqs zimbra /etc/yum.repos.d/ \
+         || echo "resolve-build-order: WARNING - no zimbra yum repo configured; every zimbra-* build dep will look unpublished and its producer will be rebuilt from source" ;;
 esac
 
 # --- diagnostic: verify this container can actually reach the internal ---
@@ -235,6 +276,12 @@ produced_names() {
 # ALL declared zimbra-* deps (Depends:/Requires: AND Build-Depends:/
 # BuildRequires:) - used for REVERSE matching only: does $cand_pkg
 # reference (in ANY field) a name produced by the changed package?
+#
+# NOTE: this one DELIBERATELY reads both debian/control AND the .spec and
+# unions them. Reverse matching must catch a consumer no matter which
+# naming scheme it declared the dependency under, and produced_names()
+# emits both schemes for the changed package, so the union is correct here.
+# (Contrast declared_build_dep_names() below, which must NOT union.)
 declared_dep_names() {
   local pkgpath="$1" cf sf
   cf="$(find_control_file "$pkgpath")"
@@ -261,27 +308,33 @@ declared_dep_names() {
 
 # ONLY the build-time field (Build-Depends:/BuildRequires:) - used for
 # FORWARD expansion only. This is deliberately narrower than
-# declared_dep_names() above: runtime Depends:/Requires: does not need
-# its producer built in this job (see the big comment block up top).
+# declared_dep_names() above in TWO ways:
+#   1. runtime Depends:/Requires: does not need its producer built in this
+#      job (see the big comment block up top); and
+#   2. it reads ONLY the metadata file matching THIS container's flavour -
+#      debian/control on a deb host, the .spec on an rpm host - NEVER both.
+#      Unioning them made a deb container probe the rpm '-devel' names with
+#      apt (never resolvable) and force-rebuild openssl+heimdal on every
+#      platform. produced_names() stays a superset because it only maps a
+#      dep name back to its producing directory, where extra names are
+#      harmless; here they are not.
 declared_build_dep_names() {
-  local pkgpath="$1" cf sf
-  cf="$(find_control_file "$pkgpath")"
-  sf="$(find_spec_file "$pkgpath")"
-  {
-    [ -n "$cf" ] && awk '
-        /^Build-Depends:/ { flag=1; sub(/^Build-Depends:/, ""); print; next }
-        flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-        flag { print }
-      ' "$cf"
-    [ -n "$sf" ] && awk '
-        /^BuildRequires:/ { flag=1; sub(/^BuildRequires:/, ""); print; next }
-        flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-        flag { print }
-      ' "$sf"
-    true
-  } 2>/dev/null \
+  local pkgpath="$1" file="" field=""
+  case "$PKG_FLAVOR" in
+    deb) file="$(find_control_file "$pkgpath")"; field="Build-Depends" ;;
+    rpm) file="$(find_spec_file "$pkgpath")";    field="BuildRequires" ;;
+    *)   return 0 ;;
+  esac
+  [ -n "$file" ] || return 0
+
+  awk -v f="$field" '
+      $0 ~ "^"f":" { flag=1; sub("^"f":", ""); print; next }
+      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+      flag && /^[[:space:]]/ { print }
+    ' "$file" \
     | tr ',' '\n' \
-    | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
+    | sed -E 's/\(.*\)//; s/\[.*\]//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
+    | awk 'NF' \
     | grep -E '^zimbra-' \
     | sort -u \
     || true
@@ -297,15 +350,51 @@ declared_build_dep_names() {
 # actual build step) - this is only a yes/no "does it exist at all in
 # the configured repos" probe to decide whether a from-source
 # forward-pull is even needed.
+#
+# Three things this does that the old one-liner did not:
+#   1. honours PKG_FLAVOR (deb -> apt-cache, rpm -> yum) instead of
+#      probing whatever binary happens to exist;
+#   2. counts an ALREADY-INSTALLED package as resolvable (a dep baked into
+#      the base image needs no build either); and
+#   3. fixes the yum matcher - 'yum list available' prints name.arch
+#      (e.g. zimbra-openssl-devel.x86_64) so a bare $1==name never matched.
+# It also prints, to stderr, the version it found OR the exact command
+# that came back empty, so the next run's log explains its own verdict
+# instead of leaving us to guess (as CI #242 did for zimbra-openssl-dev).
 resolvable_via_package_manager() {
-  local name="$1"
-  if command -v apt-cache >/dev/null 2>&1; then
-    apt-cache madison "$name" 2>/dev/null | grep -q .
-  elif command -v yum >/dev/null 2>&1; then
-    yum list available "$name" 2>/dev/null | awk -v n="$name" '$1==n' | grep -q .
-  else
-    return 1
+  local name="$1" v=""
+
+  # already installed in this image -> nothing to build
+  if command -v dpkg-query >/dev/null 2>&1 \
+     && dpkg-query -W -f='${Status}' "$name" 2>/dev/null | grep -q "ok installed"; then
+    echo "resolve-build-order:   '$name' already installed in this image" >&2
+    return 0
   fi
+  if command -v rpm >/dev/null 2>&1 && rpm -q "$name" >/dev/null 2>&1; then
+    echo "resolve-build-order:   '$name' already installed in this image" >&2
+    return 0
+  fi
+
+  case "$PKG_FLAVOR" in
+    deb)
+      v="$(apt-cache madison "$name" 2>/dev/null | awk -F'|' 'NR==1{gsub(/ /,"",$2); print $2}')"
+      [ -n "$v" ] || echo "resolve-build-order:   'apt-cache madison $name' returned nothing" >&2
+      ;;
+    rpm)
+      v="$( { yum --showduplicates list available "$name" 2>/dev/null || true; } \
+            | awk -v n="$name" '$1==n || index($1, n".")==1 {v=$2} END{print v}')"
+      [ -n "$v" ] || echo "resolve-build-order:   'yum list available $name' returned nothing" >&2
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+
+  if [ -n "$v" ]; then
+    echo "resolve-build-order:   '$name' -> $v in configured repos" >&2
+    return 0
+  fi
+  return 1
 }
 
 declare -A seen=()
@@ -319,6 +408,7 @@ declare -A publish_worthy=()
 # used to fan out into its entire dependent stack.
 declare -A is_seed=()
 queue=()
+
 while IFS= read -r p; do
   [ -n "$p" ] || continue
   queue+=("$p"); seen["$p"]=1; publish_worthy["$p"]=1; is_seed["$p"]=1
@@ -347,10 +437,8 @@ while [ "$i" -lt "${#queue[@]}" ]; do
         [ -n "$cand_pkg" ] || continue
         [ "$cand_pkg" = "$pkg" ] && continue
         [ -d "$cand_pkg" ] || continue
-
         cand_deps="$(declared_dep_names "$cand_pkg")"
         [ -n "$cand_deps" ] || continue
-
         while IFS= read -r name; do
           [ -n "$name" ] || continue
           if grep -qxF "$name" <<<"$this_names"; then
@@ -377,21 +465,17 @@ while [ "$i" -lt "${#queue[@]}" ]; do
   if [ -n "$these_deps" ]; then
     while IFS= read -r depname; do
       [ -n "$depname" ] || continue
-
       if resolvable_via_package_manager "$depname"; then
         echo "resolve-build-order: '$depname' (BUILD-TIME dep of '$pkg') already published/resolvable - will be installed directly, NOT rebuilt from source"
         continue
       fi
-
       while IFS= read -r cand_pkg; do
         [ -n "$cand_pkg" ] || continue
         [ "$cand_pkg" = "$pkg" ] && continue
         [ -d "$cand_pkg" ] || continue
         [ -n "${seen[$cand_pkg]:-}" ] && continue
-
         cand_names="$(produced_names "$cand_pkg")"
         [ -n "$cand_names" ] || continue
-
         if grep -qxF "$depname" <<<"$cand_names"; then
           seen["$cand_pkg"]=1
           queue+=("$cand_pkg")
