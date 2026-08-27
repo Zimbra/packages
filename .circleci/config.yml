@@ -129,8 +129,16 @@ references:
           command: |
             if command -v apt-get >/dev/null 2>&1; then
               sudo apt-get update
+              # cmake: ClamAV (and other thirdparty pkgs) configure/build with CMake -
+              # debian/rules override_dh_auto_configure runs 'cd cmake && cmake ..'. The
+              # genesis builder image (u2287) has cmake baked into its baseline toolchain;
+              # the devcore CI containers do not, so build_u20/u22/u24 died with
+              #   /bin/sh: 1: cmake: not found
+              #   make[2]: *** [debian/rules:12: override_dh_auto_configure] Error 127
+              # cmake is a build TOOL (like build-essential), not a zimbra-* package, so it
+              # is never installed by the per-package Build-Depends step - it must be baseline.
               sudo apt-get install -y --no-install-recommends \
-                dpkg-dev build-essential \
+                dpkg-dev build-essential cmake \
                 libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev
             elif command -v yum >/dev/null 2>&1; then
               OS_VERSION=$(rpm -E %{rhel})
@@ -160,8 +168,13 @@ references:
               # on build_c8 and build_c9 (Ubuntu images link fine because
               # libexpat1-dev is already pulled in transitively there - it is
               # now installed explicitly below too, so that isn't relied on).
+              # cmake: same baseline build tool as on the apt side above. clamav's
+              # %build runs 'cd cmake && cmake ..'; without it build_c8/build_c9 died with
+              #   cmake: command not found
+              #   error: Bad exit status from /var/tmp/rpm-tmp.XXXX (%build)
+              #   make: *** [Makefile:39: build_rpm] Error 1
               sudo yum install -y \
-                rpm-build rpmdevtools createrepo \
+                rpm-build rpmdevtools createrepo cmake \
                 openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel \
                 perl-libwww-perl perl-LWP-Protocol-https
               sudo yum install -y yum-plugin-priorities 2>/dev/null || true
