@@ -149,8 +149,14 @@ references:
               # -DCURL* override, so it relies on a SYSTEM libcurl-dev. Genesis (u2287) bakes that
               # in; the devcore CI images do not. Same baseline-gap as cmake/expat - not a zimbra-*
               # dep, so install_declared_build_deps never pulls it and it must live here.
+              # python3: clamav's CMake also runs find_package(Python3 ... Interpreter) at
+              # CMakeLists.txt:230. The Ubuntu images already ship /usr/bin/python3, so the deb
+              # builds never tripped on it (only CentOS 8 did - see the yum branch below); it is
+              # listed here purely to keep the apt and yum baselines in lockstep so a future base-
+              # image change cannot silently reintroduce the gap on the deb side. It is a no-op on
+              # today's Ubuntu images.
               sudo apt-get install -y --no-install-recommends \
-                dpkg-dev build-essential cmake \
+                dpkg-dev build-essential cmake python3 \
                 libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev \
                 libcurl4-openssl-dev
             elif command -v yum >/dev/null 2>&1; then
@@ -191,8 +197,23 @@ references:
               # same way on c8/c9 (Could NOT find CURL -> Bad exit status from %build ->
               # make: *** [Makefile:39: build_rpm] Error 1). clamav needs system libcurl headers
               # that genesis bakes in but devcore lacks, and does not declare them - so baseline.
+              # python3: clamav's CMake configure calls find_package(Python3 COMPONENTS Interpreter)
+              # at CMakeLists.txt:230 - EARLIER in the file than the CURL check at :546. This gap is
+              # PLATFORM-SPECIFIC to c8. RHEL/Rocky 9 (c9) and every Ubuntu image ship /usr/bin/python3
+              # in their base, so c9 + u20/u22/u24 sailed past this line and built to completion; only
+              # CentOS 8 lacks a cmake-discoverable interpreter (it carries /usr/libexec/platform-python,
+              # which is not on PATH and not a name FindPython3 probes for), so build_c8 alone died with:
+              #   Could NOT find Python3 (missing: Python3_EXECUTABLE Interpreter)
+              #   CMakeLists.txt:230 (find_package) -> Configuring incomplete, errors occurred!
+              #   error: Bad exit status from %build -> make: *** [Makefile:39: build_rpm] Error 1
+              # It only became visible now because c8 has been stuck at this exact line since the cmake
+              # fix let configure start - the CURL failures seen earlier were on the python3-having
+              # platforms (they reach :546); with those four now green, c8's pre-existing python3 gap is
+              # the last one still red. Installing the 'python3' rpm creates /usr/bin/python3, which
+              # FindPython3 then locates. Like cmake/curl it is a genesis-baked build tool clamav does
+              # not declare in BuildRequires, so it belongs in the baseline, not the per-package step.
               sudo yum install -y \
-                rpm-build rpmdevtools createrepo cmake \
+                rpm-build rpmdevtools createrepo cmake python3 \
                 openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel \
                 libcurl-devel \
                 perl-libwww-perl perl-LWP-Protocol-https
