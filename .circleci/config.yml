@@ -8,8 +8,24 @@ parameters:
   rebuild_reverse_deps:
     type: enum
     enum: ["off", "direct", "transitive"]
-    default: "off"
-    description: "How far to walk consumers of a changed package: off (changed package only), direct (immediate consumers too), transitive (entire dependent stack)."
+    # DEFAULT CHANGED "off" -> "direct".
+    # A push that changes a package must also rebuild (and republish) that
+    # package's IMMEDIATE consumers in the SAME run, so bumping thirdparty/clamav
+    # automatically pulls zimbra/mta-components - which declares zimbra-clamav in
+    # its runtime Depends:/Requires: - into the build order right after clamav and
+    # rebuilds it against the freshly-built clamav.
+    # With the previous "off" default resolve-build-order.sh never reverse-expanded,
+    # so a clamav-only commit (pipeline #257) resolved to just thirdparty/clamav and
+    # zimbra/mta-components was never triggered. Reverse-matching keys on the binary
+    # names a package PRODUCES (produced_names) against what candidates DECLARE
+    # (declared_dep_names, which reads runtime Depends:/Requires: as well as the
+    # build-time fields), which is exactly how the runtime-only clamav->mta-components
+    # edge is discovered - forward expansion alone can never find it.
+    # "direct" walks one level (immediate consumers of the changed package only, from
+    # the seeds); pass "off" per-run to build strictly the changed package, or
+    # "transitive" to rebuild the entire dependent stack (expensive).
+    default: "direct"
+    description: "How far to walk consumers of a changed package: off (changed package only), direct (immediate consumers too - DEFAULT, e.g. clamav change also rebuilds mta-components), transitive (entire dependent stack)."
   pkg_repo_release:
     type: string
     default: "1010"
