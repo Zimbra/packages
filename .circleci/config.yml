@@ -115,7 +115,7 @@ references:
               sudo apt-get update
               sudo apt-get install -y --no-install-recommends \
                 dpkg-dev build-essential \
-                libssl-dev liblz4-dev zlib1g-dev libzstd-dev
+                libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev
             elif command -v yum >/dev/null 2>&1; then
               OS_VERSION=$(rpm -E %{rhel})
               if [ "$OS_VERSION" = "8" ]; then
@@ -134,9 +134,19 @@ references:
               # needs perl(LWP::UserAgent) (+ https transport). RHEL images do not
               # ship it; the Ubuntu images do, which is why only c8/c9 failed at
               # 'generating a fresh ca-bundle.crt'. Install it for all rpm builds.
+              # expat-devel: provides -lexpat, needed by apr-util (and hence
+              # httpd's support/htpasswd.c). Not a zimbra-* package, so it is
+              # never picked up by verify-build-deps.sh / the per-package
+              # BuildRequires install step - it must be a baseline lib here,
+              # same as openssl-devel. Missing this on RHEL8/9 caused:
+              #   /usr/bin/ld: cannot find -lexpat
+              #   make[3]: *** [Makefile:48: htpasswd] Error 1
+              # on build_c8 and build_c9 (Ubuntu images link fine because
+              # libexpat1-dev is already pulled in transitively there - it is
+              # now installed explicitly below too, so that isn't relied on).
               sudo yum install -y \
                 rpm-build rpmdevtools createrepo \
-                openssl-devel lz4-devel zlib-devel libzstd-devel \
+                openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel \
                 perl-libwww-perl perl-LWP-Protocol-https
               sudo yum install -y yum-plugin-priorities 2>/dev/null || true
             fi
