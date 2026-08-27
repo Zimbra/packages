@@ -130,9 +130,14 @@ references:
                 || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
                 || sudo yum config-manager --set-enabled crb 2>/dev/null \
                 || true
+              # curl's %install runs 'make ca-bundle' -> lib/mk-ca-bundle.pl, which
+              # needs perl(LWP::UserAgent) (+ https transport). RHEL images do not
+              # ship it; the Ubuntu images do, which is why only c8/c9 failed at
+              # 'generating a fresh ca-bundle.crt'. Install it for all rpm builds.
               sudo yum install -y \
                 rpm-build rpmdevtools createrepo \
-                openssl-devel lz4-devel zlib-devel libzstd-devel
+                openssl-devel lz4-devel zlib-devel libzstd-devel \
+                perl-libwww-perl perl-LWP-Protocol-https
               sudo yum install -y yum-plugin-priorities 2>/dev/null || true
             fi
       # Deliberately AFTER the tooling step: on c8 that step repoints the dead
@@ -187,6 +192,14 @@ references:
                 bash ci/verify-build-deps.sh "$SPEC_FILE" "BuildRequires"
                 install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
                   sudo yum install -y
+                # The spec's %changelog is the source of truth and is deliberately NOT
+                # modified here. rpmbuild prints 'bogus date in %changelog' when a
+                # weekday token does not match its date, but on the el8/el9 devcore
+                # images that is a NON-FATAL warning: build #250 parsed the whole spec
+                # and executed %install (make ca-bundle) despite that line, which proves
+                # the parse did not abort. The real c8/c9 blocker was the missing
+                # perl(LWP::UserAgent) for 'make ca-bundle', installed in the tooling
+                # step above. Whatever weekday the spec author wrote is accepted as-is.
               fi
               ( cd "$PKGPATH" && make )
               bash ci/register-local-repo.sh "${PKGPATH}/build"
@@ -287,19 +300,6 @@ jobs:
     environment:
       PLATFORM_TAG: u20
     <<: *build_and_isolate_steps
-  build_u18:
-    working_directory: ~/packages
-    shell: /bin/bash -eo pipefail
-    circleci_ip_ranges: true
-    docker:
-      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-18.04
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    resource_class: medium
-    environment:
-      PLATFORM_TAG: u18
-    <<: *build_and_isolate_steps
   build_c9:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
@@ -365,11 +365,6 @@ workflows:
             - checkout_and_resolve
           context:
             - docker-dev-registry
-      - build_u18:
-          requires:
-            - checkout_and_resolve
-          context:
-            - docker-dev-registry
       - build_c9:
           requires:
             - checkout_and_resolve
@@ -385,7 +380,6 @@ workflows:
             - build_u24
             - build_u22
             - build_u20
-            - build_u18
             - build_c9
             - build_c8
           context:
@@ -416,11 +410,6 @@ workflows:
             - checkout_and_resolve
           context:
             - docker-dev-registry
-      - build_u18:
-          requires:
-            - checkout_and_resolve
-          context:
-            - docker-dev-registry
       - build_c9:
           requires:
             - checkout_and_resolve
@@ -437,7 +426,6 @@ workflows:
             - build_u24
             - build_u22
             - build_u20
-            - build_u18
             - build_c9
             - build_c8
       - deploy_s3:
