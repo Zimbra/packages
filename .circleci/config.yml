@@ -137,9 +137,22 @@ references:
               #   make[2]: *** [debian/rules:12: override_dh_auto_configure] Error 127
               # cmake is a build TOOL (like build-essential), not a zimbra-* package, so it
               # is never installed by the per-package Build-Depends step - it must be baseline.
+              # libcurl4-openssl-dev: now that cmake is present, clamav's CMake configure actually
+              # runs and advances THROUGH every lib it finds (OpenSSL 3.5.1, ZLIB, BZip2, LibXml2,
+              # PCRE2, Iconv, JSONC, Rust 1.98.0) to the next gate, CMakeLists.txt:546
+              # find_package(CURL), which then failed:
+              #   Could NOT find CURL (missing: CURL_LIBRARY CURL_INCLUDE_DIR)
+              #   make[2]: *** [debian/rules:12: override_dh_auto_configure] Error 1
+              # This is not a regression - it was simply never reached before, because the build
+              # used to die earlier at 'cmake: not found'. clamav links libcurl (freshclam /
+              # clamsubmit) but does NOT declare it in debian/control, and its cmake line passes no
+              # -DCURL* override, so it relies on a SYSTEM libcurl-dev. Genesis (u2287) bakes that
+              # in; the devcore CI images do not. Same baseline-gap as cmake/expat - not a zimbra-*
+              # dep, so install_declared_build_deps never pulls it and it must live here.
               sudo apt-get install -y --no-install-recommends \
                 dpkg-dev build-essential cmake \
-                libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev
+                libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev \
+                libcurl4-openssl-dev
             elif command -v yum >/dev/null 2>&1; then
               OS_VERSION=$(rpm -E %{rhel})
               if [ "$OS_VERSION" = "8" ]; then
@@ -173,9 +186,15 @@ references:
               #   cmake: command not found
               #   error: Bad exit status from /var/tmp/rpm-tmp.XXXX (%build)
               #   make: *** [Makefile:39: build_rpm] Error 1
+              # libcurl-devel: the rpm analog of libcurl4-openssl-dev above. With cmake present the
+              # %build cmake configure reaches CMakeLists.txt:546 find_package(CURL) and fails the
+              # same way on c8/c9 (Could NOT find CURL -> Bad exit status from %build ->
+              # make: *** [Makefile:39: build_rpm] Error 1). clamav needs system libcurl headers
+              # that genesis bakes in but devcore lacks, and does not declare them - so baseline.
               sudo yum install -y \
                 rpm-build rpmdevtools createrepo cmake \
                 openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel \
+                libcurl-devel \
                 perl-libwww-perl perl-LWP-Protocol-https
               sudo yum install -y yum-plugin-priorities 2>/dev/null || true
             fi
