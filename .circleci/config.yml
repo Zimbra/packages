@@ -375,13 +375,17 @@ workflows:
             - checkout_and_resolve
           context:
             - docker-dev-registry
-      - publish_packages:
+      - publish_packages_hold:
+          type: approval
           requires:
             - build_u24
             - build_u22
             - build_u20
             - build_c9
             - build_c8
+      - publish_packages:
+          requires:
+            - publish_packages_hold
           context:
             - docker-dev-registry
             - nexus-dev-artifactory
