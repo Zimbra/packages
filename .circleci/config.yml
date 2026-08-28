@@ -87,6 +87,11 @@ references:
     steps:
       - checkout:
           method: full
+      - run:
+          name: Generate dependency graph
+          command: bash ci/generate-dependency-graph.sh dependency-graph.json
+      - store_artifacts:
+          path: dependency-graph.json
       # Must run BEFORE resolve-build-order.sh, which probes dep resolvability.
       - *setup_pkg_repo_step
       - run:
