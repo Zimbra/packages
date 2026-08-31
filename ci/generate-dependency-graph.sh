@@ -2,9 +2,10 @@
 # Path in repo: ci/generate-dependency-graph.sh
 #
 # One-time-per-run scan: walks every package in build-order, extracts
-# produced names, build-time deps, and all declared deps (reusing the
-# exact same parsing rules as resolve-build-order.sh), and writes it
-# all out as a single dependency-graph.json.
+# produced names, build-time deps (WITH version constraints), and
+# reverse-index consumers - reusing the same parsing rules as
+# resolve-build-order.sh, but keeping the version string alongside
+# each name instead of stripping it.
 #
 # This does NOT change what gets built - it only pre-computes what
 # resolve-build-order.sh currently re-discovers by scanning files live
@@ -18,7 +19,7 @@ OUT="${1:-dependency-graph.json}"
 find_control_file() { find "$1" -path "*/debian/control" 2>/dev/null | head -1; }
 find_spec_file()    { find "$1" -path "*/SPECS/*.spec"    2>/dev/null | head -1; }
 
-# --- identical logic to resolve-build-order.sh's produced_names() -------
+# --- identical to resolve-build-order.sh's produced_names() -------------
 produced_names() {
   local pkgpath="$1" cf sf names=""
   cf="$(find_control_file "$pkgpath")"
@@ -39,55 +40,96 @@ produced_names() {
   printf '%s\n' "$names" | sed '/^$/d' | sort -u || true
 }
 
-# --- identical logic to declared_dep_names() (unioned, reverse-match use) -
-declared_dep_names() {
+# --- raw (un-stripped) comma-split tokens from a field block ------------
+# Emits one dependency TOKEN per line, still carrying its version
+# constraint if it has one, e.g.:
+#   "zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND"   (rpm form)
+#   "zimbra-openssl-dev (>= 3.0.9-1zimbra8.8b1ZAPPEND)"   (deb form)
+#   "zimbra-libxml2-dev"                                   (no constraint)
+raw_field_tokens() {
+  local file="$1" field="$2"
+  [ -n "$file" ] || return 0
+  awk -v f="$field" '
+      $0 ~ "^"f":" { flag=1; sub("^"f":", ""); print; next }
+      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+      flag { print }
+    ' "$file" \
+    | tr ',' '\n' \
+    | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+    | awk 'NF' \
+    || true
+}
+
+# --- split a raw token into "name<TAB>version" (version may be empty) ---
+split_name_version() {
+  while IFS= read -r tok; do
+    [ -n "$tok" ] || continue
+    local name="" ver=""
+    case "$tok" in
+      *'('*)
+        name="$(sed -E 's/^([^[:space:](]+).*/\1/' <<<"$tok")"
+        ver="$(sed -E 's/.*\(([^)]*)\).*/\1/' <<<"$tok")"
+        ;;
+      *[\<\>=]*)
+        name="$(sed -E 's/^([^[:space:]<>=!]+).*/\1/' <<<"$tok")"
+        ver="$(sed -E 's/^[^<>=!]*([<>=!].*)$/\1/' <<<"$tok")"
+        ;;
+      *)
+        name="$tok"
+        ;;
+    esac
+    ver="${ver%%ZAPPEND*}"
+    ver="$(sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' <<<"$ver")"
+    case "$name" in
+      zimbra-*) printf '%s\t%s\n' "$name" "$ver" ;;
+    esac
+  done
+}
+
+# Build-time deps (Build-Depends / BuildRequires), name+version, for
+# BOTH flavours - each package's spec/control declares its own naming,
+# so we capture both and let the consumer pick the flavour that matches
+# the container it's building in (same reasoning as resolve-build-order.sh).
+build_deps_versioned() {
+  local pkgpath="$1" flavor="$2" file="" field=""
+  case "$flavor" in
+    deb) file="$(find_control_file "$pkgpath")"; field="Build-Depends" ;;
+    rpm) file="$(find_spec_file "$pkgpath")";    field="BuildRequires" ;;
+  esac
+  raw_field_tokens "$file" "$field" | split_name_version
+}
+
+# ALL declared deps (Depends/Requires + Build-Depends/BuildRequires),
+# name+version, unioned across deb+rpm - used ONLY to build the
+# reverse_index (same reasoning as declared_dep_names() in
+# resolve-build-order.sh: reverse matching must catch a consumer no
+# matter which naming scheme it used).
+all_declared_versioned() {
   local pkgpath="$1" cf sf
   cf="$(find_control_file "$pkgpath")"
   sf="$(find_spec_file "$pkgpath")"
   {
-    [ -n "$cf" ] && awk '
-        /^(Build-)?Depends:/ { flag=1; sub(/^[A-Za-z-]+:/, ""); print; next }
-        flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-        flag { print }
-      ' "$cf"
-    [ -n "$sf" ] && awk '
-        /^(Build)?Requires:/ { flag=1; sub(/^[A-Za-z]+:/, ""); print; next }
-        flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-        flag { print }
-      ' "$sf"
-    true
-  } 2>/dev/null \
-    | tr ',' '\n' \
-    | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
-    | grep -E '^zimbra-' | sort -u || true
+    raw_field_tokens "$cf" "Depends"
+    raw_field_tokens "$cf" "Build-Depends"
+    raw_field_tokens "$sf" "Requires"
+    raw_field_tokens "$sf" "BuildRequires"
+  } | split_name_version | sort -u
 }
 
-# --- deb build-time deps only (Build-Depends) ---------------------------
-deb_build_deps() {
-  local cf; cf="$(find_control_file "$1")"; [ -n "$cf" ] || return 0
-  awk '
-      /^Build-Depends:/ { flag=1; sub(/^Build-Depends:/, ""); print; next }
-      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-      flag && /^[[:space:]]/ { print }
-    ' "$cf" | tr ',' '\n' \
-    | sed -E 's/\(.*\)//; s/\[.*\]//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
-    | awk 'NF' | grep -E '^zimbra-' | sort -u || true
-}
-
-# --- rpm build-time deps only (BuildRequires) ----------------------------
-rpm_build_deps() {
-  local sf; sf="$(find_spec_file "$1")"; [ -n "$sf" ] || return 0
-  awk '
-      /^BuildRequires:/ { flag=1; sub(/^BuildRequires:/, ""); print; next }
-      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-      flag && /^[[:space:]]/ { print }
-    ' "$sf" | tr ',' '\n' \
-    | sed -E 's/\(.*\)//; s/\[.*\]//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
-    | awk 'NF' | grep -E '^zimbra-' | sort -u || true
+json_dep_map() {
+  # stdin: "name<TAB>version" lines -> JSON object { "name": "version", ... }
+  local first=1
+  printf '{'
+  while IFS=$'\t' read -r name ver; do
+    [ -n "$name" ] || continue
+    [ "$first" = 1 ] || printf ','
+    printf '"%s":"%s"' "$name" "$ver"
+    first=0
+  done
+  printf '}'
 }
 
 json_array() {
-  # turn newline-separated input into a JSON string array
   local first=1
   printf '['
   while IFS= read -r item; do
@@ -101,7 +143,6 @@ json_array() {
 
 master_pkgs="$(grep -vE '^[[:space:]]*(#|$)' "$BUILD_ORDER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
 
-# Build reverse_index[name] = [package1, package2, ...] as we go
 declare -A reverse_map=()
 
 {
@@ -117,22 +158,21 @@ declare -A reverse_map=()
     idx=$((idx+1))
 
     produces="$(produced_names "$pkg")"
-    deb_deps="$(deb_build_deps "$pkg")"
-    rpm_deps="$(rpm_build_deps "$pkg")"
-    all_deps="$(declared_dep_names "$pkg")"
+    deb_deps_vt="$(build_deps_versioned "$pkg" deb)"
+    rpm_deps_vt="$(build_deps_versioned "$pkg" rpm)"
+    all_vt="$(all_declared_versioned "$pkg")"
 
-    # feed the reverse index: for every name this package declares
-    # (deb+rpm, runtime+build), record "consumers of that name include $pkg"
-    while IFS= read -r dep; do
-      [ -n "$dep" ] || continue
-      reverse_map["$dep"]="${reverse_map[$dep]:-}"$'\n'"$pkg"
-    done <<< "$all_deps"
+    # feed the reverse index using names only (version not needed for
+    # "who consumes me" lookup)
+    while IFS=$'\t' read -r name _ver; do
+      [ -n "$name" ] || continue
+      reverse_map["$name"]="${reverse_map[$name]:-}"$'\n'"$pkg"
+    done <<< "$all_vt"
 
     printf '    "%s": {\n' "$pkg"
     printf '      "produces": %s,\n' "$(json_array <<< "$produces")"
-    printf '      "build_time_deps_deb": %s,\n' "$(json_array <<< "$deb_deps")"
-    printf '      "build_time_deps_rpm": %s,\n' "$(json_array <<< "$rpm_deps")"
-    printf '      "declared_deps_all": %s,\n' "$(json_array <<< "$all_deps")"
+    printf '      "build_requires_deb": %s,\n' "$(json_dep_map <<< "$deb_deps_vt")"
+    printf '      "build_requires_rpm": %s,\n' "$(json_dep_map <<< "$rpm_deps_vt")"
     printf '      "build_order_index": %s\n' "$idx"
     if [ "$idx" -lt "$count" ]; then
       printf '    },\n'
