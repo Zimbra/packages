@@ -8,22 +8,6 @@ parameters:
   rebuild_reverse_deps:
     type: enum
     enum: ["off", "direct", "transitive"]
-    # DEFAULT CHANGED "off" -> "direct".
-    # A push that changes a package must also rebuild (and republish) that
-    # package's IMMEDIATE consumers in the SAME run, so bumping thirdparty/clamav
-    # automatically pulls zimbra/mta-components - which declares zimbra-clamav in
-    # its runtime Depends:/Requires: - into the build order right after clamav and
-    # rebuilds it against the freshly-built clamav.
-    # With the previous "off" default resolve-build-order.sh never reverse-expanded,
-    # so a clamav-only commit (pipeline #257) resolved to just thirdparty/clamav and
-    # zimbra/mta-components was never triggered. Reverse-matching keys on the binary
-    # names a package PRODUCES (produced_names) against what candidates DECLARE
-    # (declared_dep_names, which reads runtime Depends:/Requires: as well as the
-    # build-time fields), which is exactly how the runtime-only clamav->mta-components
-    # edge is discovered - forward expansion alone can never find it.
-    # "direct" walks one level (immediate consumers of the changed package only, from
-    # the seeds); pass "off" per-run to build strictly the changed package, or
-    # "transitive" to rebuild the entire dependent stack (expensive).
     default: "direct"
     description: "How far to walk consumers of a changed package: off (changed package only), direct (immediate consumers too - DEFAULT, e.g. clamav change also rebuilds mta-components), transitive (entire dependent stack)."
   pkg_repo_release:
@@ -41,45 +25,15 @@ references:
       - equal: [ "<< pipeline.git.branch >>", "testbranch" ]
       - not:
           equal: [ "api", "<< pipeline.trigger_source >>" ]
-  # ---------------------------------------------------------------------------
-  # Configures the Zimbra package repo inside the container, mirroring what the
-  # genesis builders have baked into their images:
-  #   Ubuntu  /etc/apt/sources.list.d/zimbra.list
-  #   RHEL    /etc/yum.repos.d/zimbra.repo
-  # Without this, apt-cache madison / yum list available return nothing for
-  # zimbra-openssl-dev & friends, resolve-build-order.sh concludes "not
-  # published", and forward expansion rebuilds OpenSSL and Heimdal from source
-  # on every platform for a curl-only change.
-  #
-  # PUBLIC HOST FIRST. repo-dev.eng.zimbra.com is internal-only: pipeline #236
-  # showed 'curl: (6) Could not resolve host' and 'Could not resolve
-  # repo-dev.eng.zimbra.com' from every container. circleci_ip_ranges only pins
-  # egress IPs for firewall allowlisting - it does not give the container Zimbra
-  # DNS. repo-dev is kept as a second candidate so the same script does the right
-  # thing on a self-hosted runner inside the network; the script probes in order
-  # and uses the first base URL that actually serves this platform's tree.
-  #
-  # Referenced as a plain list item ('- *setup_pkg_repo_step') because the
-  # *_steps anchors below are maps merged with '<<:', not lists.
-  # ---------------------------------------------------------------------------
   setup_pkg_repo_step: &setup_pkg_repo_step
     run:
         name: Configure Zimbra package repo
         environment:
           PKG_REPO_RELEASE: "<< pipeline.parameters.pkg_repo_release >>"
-          # Space-separated, highest priority first.
           APT_REPO_CANDIDATES: "https://repo.zimbra.com/apt http://repo-dev.eng.zimbra.com/apt"
           RPM_REPO_CANDIDATES: "https://repo.zimbra.com/rpm http://repo-dev.eng.zimbra.com/rpm"
-          # Release lines tried in order. 1010 serves a 'focal' dist but does not
-          # publish zimbra-base for it (pipeline #239, build_u20 -> exit 100), so
-          # older platforms need to fall through to a line that does.
           PKG_REPO_RELEASE_CANDIDATES: "<< pipeline.parameters.pkg_repo_release >> 1000 87"
-          # A release line is only accepted if these are actually present in it.
-          # zimbra-base is never built by this pipeline - only fetched - so a line
-          # missing it cannot produce a working build.
           REQUIRE_PKGS: "zimbra-base"
-          # Genesis uses gpgcheck=1, but the Zimbra pubkey is not imported in the
-          # devcore images. Set to 1 only after adding an 'rpm --import' step.
           RPM_GPGCHECK: "0"
           PROBE_PKGS: "zimbra-base zimbra-openssl-dev zimbra-heimdal-dev zimbra-openssl-devel zimbra-heimdal-devel"
         command: bash ci/setup-pkg-repo.sh
@@ -92,7 +46,6 @@ references:
           command: bash ci/generate-dependency-graph.sh dependency-graph.json
       - store_artifacts:
           path: dependency-graph.json
-      # Must run BEFORE resolve-build-order.sh, which probes dep resolvability.
       - *setup_pkg_repo_step
       - run:
           name: Checkout build-tooling dependencies (siblings of ~/packages)
@@ -134,35 +87,23 @@ references:
           command: |
             if command -v apt-get >/dev/null 2>&1; then
               sudo apt-get update
-              # cmake: ClamAV (and other thirdparty pkgs) configure/build with CMake -
-              # debian/rules override_dh_auto_configure runs 'cd cmake && cmake ..'. The
-              # genesis builder image (u2287) has cmake baked into its baseline toolchain;
-              # the devcore CI containers do not, so build_u20/u22/u24 died with
-              #   /bin/sh: 1: cmake: not found
-              #   make[2]: *** [debian/rules:12: override_dh_auto_configure] Error 127
-              # cmake is a build TOOL (like build-essential), not a zimbra-* package, so it
-              # is never installed by the per-package Build-Depends step - it must be baseline.
-              # libcurl4-openssl-dev: now that cmake is present, clamav's CMake configure actually
-              # runs and advances THROUGH every lib it finds (OpenSSL 3.5.1, ZLIB, BZip2, LibXml2,
-              # PCRE2, Iconv, JSONC, Rust 1.98.0) to the next gate, CMakeLists.txt:546
-              # find_package(CURL), which then failed:
-              #   Could NOT find CURL (missing: CURL_LIBRARY CURL_INCLUDE_DIR)
-              #   make[2]: *** [debian/rules:12: override_dh_auto_configure] Error 1
-              # This is not a regression - it was simply never reached before, because the build
-              # used to die earlier at 'cmake: not found'. clamav links libcurl (freshclam /
-              # clamsubmit) but does NOT declare it in debian/control, and its cmake line passes no
-              # -DCURL* override, so it relies on a SYSTEM libcurl-dev. Genesis (u2287) bakes that
-              # in; the devcore CI images do not. Same baseline-gap as cmake/expat - not a zimbra-*
-              # dep, so install_declared_build_deps never pulls it and it must live here.
-              # python3: clamav's CMake also runs find_package(Python3 ... Interpreter) at
-              # CMakeLists.txt:230. The Ubuntu images already ship /usr/bin/python3, so the deb
-              # builds never tripped on it (only CentOS 8 did - see the yum branch below); it is
-              # listed here purely to keep the apt and yum baselines in lockstep so a future base-
-              # image change cannot silently reintroduce the gap on the deb side. It is a no-op on
-              # today's Ubuntu images.
+              # libxml2-dev: ADDED. PHP's ./configure runs 'pkg-config libxml-2.0 >= 2.9.0'
+              # (configure.ac --with-libxml-dir), which needs a system libxml-2.0.pc on
+              # PKG_CONFIG_PATH. zimbra-libxml2-devel IS extracted by php's Makefile pkgadd
+              # target, but into the zimbra custom prefix (OZC placeholders), not a path
+              # pkg-config searches by default - see the PKG_CONFIG_PATH export added below
+              # in the "Build resolved package(s)" step. Genesis builder images (u2287) bake
+              # a system libxml2-dev in; devcore CI containers do not - same baseline-gap
+              # pattern as cmake/libcurl-dev documented below for clamav. Missing this (and
+              # the PKG_CONFIG_PATH export) caused build_u22/u24/c8/c9 to fail php with:
+              #   checking for libxml-2.0 >= 2.9.0... no
+              #   configure: error: Package requirements (libxml-2.0 >= 2.9.0) were not met
+              #   Package 'libxml-2.0', required by 'virtual:world', not found
+              # on pipeline #283 (commit 26e598e, httpd.spec change reverse-pulled php via
+              # rebuild_reverse_deps=direct).
               sudo apt-get install -y --no-install-recommends \
                 dpkg-dev build-essential cmake python3 \
-                libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev \
+                libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev libxml2-dev \
                 libcurl4-openssl-dev
             elif command -v yum >/dev/null 2>&1; then
               OS_VERSION=$(rpm -E %{rhel})
@@ -178,64 +119,32 @@ references:
                 || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
                 || sudo yum config-manager --set-enabled crb 2>/dev/null \
                 || true
-              # curl's %install runs 'make ca-bundle' -> lib/mk-ca-bundle.pl, which
-              # needs perl(LWP::UserAgent) (+ https transport). RHEL images do not
-              # ship it; the Ubuntu images do, which is why only c8/c9 failed at
-              # 'generating a fresh ca-bundle.crt'. Install it for all rpm builds.
-              # expat-devel: provides -lexpat, needed by apr-util (and hence
-              # httpd's support/htpasswd.c). Not a zimbra-* package, so it is
-              # never picked up by verify-build-deps.sh / the per-package
-              # BuildRequires install step - it must be a baseline lib here,
-              # same as openssl-devel. Missing this on RHEL8/9 caused:
-              #   /usr/bin/ld: cannot find -lexpat
-              #   make[3]: *** [Makefile:48: htpasswd] Error 1
-              # on build_c8 and build_c9 (Ubuntu images link fine because
-              # libexpat1-dev is already pulled in transitively there - it is
-              # now installed explicitly below too, so that isn't relied on).
-              # cmake: same baseline build tool as on the apt side above. clamav's
-              # %build runs 'cd cmake && cmake ..'; without it build_c8/build_c9 died with
-              #   cmake: command not found
-              #   error: Bad exit status from /var/tmp/rpm-tmp.XXXX (%build)
-              #   make: *** [Makefile:39: build_rpm] Error 1
-              # libcurl-devel: the rpm analog of libcurl4-openssl-dev above. With cmake present the
-              # %build cmake configure reaches CMakeLists.txt:546 find_package(CURL) and fails the
-              # same way on c8/c9 (Could NOT find CURL -> Bad exit status from %build ->
-              # make: *** [Makefile:39: build_rpm] Error 1). clamav needs system libcurl headers
-              # that genesis bakes in but devcore lacks, and does not declare them - so baseline.
-              # python3: clamav's CMake configure calls find_package(Python3 COMPONENTS Interpreter)
-              # at CMakeLists.txt:230 - EARLIER in the file than the CURL check at :546. This gap is
-              # PLATFORM-SPECIFIC to c8. RHEL/Rocky 9 (c9) and every Ubuntu image ship /usr/bin/python3
-              # in their base, so c9 + u20/u22/u24 sailed past this line and built to completion; only
-              # CentOS 8 lacks a cmake-discoverable interpreter (it carries /usr/libexec/platform-python,
-              # which is not on PATH and not a name FindPython3 probes for), so build_c8 alone died with:
-              #   Could NOT find Python3 (missing: Python3_EXECUTABLE Interpreter)
-              #   CMakeLists.txt:230 (find_package) -> Configuring incomplete, errors occurred!
-              #   error: Bad exit status from %build -> make: *** [Makefile:39: build_rpm] Error 1
-              # It only became visible now because c8 has been stuck at this exact line since the cmake
-              # fix let configure start - the CURL failures seen earlier were on the python3-having
-              # platforms (they reach :546); with those four now green, c8's pre-existing python3 gap is
-              # the last one still red. Installing the 'python3' rpm creates /usr/bin/python3, which
-              # FindPython3 then locates. Like cmake/curl it is a genesis-baked build tool clamav does
-              # not declare in BuildRequires, so it belongs in the baseline, not the per-package step.
+              # libxml2-devel: ADDED, rpm analog of libxml2-dev above - same
+              # 'Package libxml-2.0 not found' failure hit build_c8/build_c9 on
+              # pipeline #283 for the same reason (php's configure pkg-config check).
               sudo yum install -y \
                 rpm-build rpmdevtools createrepo cmake python3 \
-                openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel \
+                openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel libxml2-devel \
                 libcurl-devel \
                 perl-libwww-perl perl-LWP-Protocol-https
               sudo yum install -y yum-plugin-priorities 2>/dev/null || true
             fi
-      # Deliberately AFTER the tooling step: on c8 that step repoints the dead
-      # CentOS 8 mirrorlists at vault.centos.org and installs
-      # yum-plugin-priorities. Running the repo setup first would make its
-      # 'yum makecache' fail on c8 for unrelated reasons. Everything that needs
-      # the zimbra repo (verify-build-deps.sh, install_declared_build_deps, and
-      # the 'pkgadd' target inside make) runs in the next step.
       - *setup_pkg_repo_step
       - run:
           name: Build resolved package(s)
           command: |
             echo "Using PLATFORM_TAG=${PLATFORM_TAG}"
             mkdir -p build/dist_workspace/${PLATFORM_TAG}
+            # PKG_CONFIG_PATH: ADDED. pkgadd extracts zimbra-libxml2-devel (and any other
+            # zimbra-*-devel package a Makefile's pkgadd target pulls) into the zimbra
+            # custom install prefix, NOT /usr - so a plain 'pkg-config libxml-2.0' never
+            # finds it even though the package IS extracted (see php's build_u22/c9
+            # failures on pipeline #283: 'Package libxml-2.0 not found' even after
+            # zimbra-libxml2-devel is present under the extracted tree).
+            # TODO: confirm the exact pkgconfig directory zm-pkg-tool's PKG_EXTRACT writes
+            # to (commonly .../opt/zimbra/common/lib/pkgconfig going by the OZCL placeholder
+            # convention used in clamav.spec/php.spec) and adjust the path below if different.
+            export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
             install_declared_build_deps() {
               file="$1"; label="$2"; prefix="$3"; shift 3
               deps=$(awk -v prefix="$prefix" '
@@ -276,14 +185,6 @@ references:
                 bash ci/verify-build-deps.sh "$SPEC_FILE" "BuildRequires"
                 install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
                   sudo yum install -y
-                # The spec's %changelog is the source of truth and is deliberately NOT
-                # modified here. rpmbuild prints 'bogus date in %changelog' when a
-                # weekday token does not match its date, but on the el8/el9 devcore
-                # images that is a NON-FATAL warning: build #250 parsed the whole spec
-                # and executed %install (make ca-bundle) despite that line, which proves
-                # the parse did not abort. The real c8/c9 blocker was the missing
-                # perl(LWP::UserAgent) for 'make ca-bundle', installed in the tooling
-                # step above. Whatever weekday the spec author wrote is accepted as-is.
               fi
               ( cd "$PKGPATH" && make )
               bash ci/register-local-repo.sh "${PKGPATH}/build"
@@ -333,9 +234,6 @@ jobs:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
     environment:
-       # Point at a real file, not a directory. The bare base URL returns 404
-       # (pipeline #239: 'https://repo.zimbra.com/apt/1010 -> HTTP 404'), which
-       # looks like a failure but only means the dir has no index.
        ZIMBRA_REPO_PROBE_URL: "https://repo.zimbra.com/apt/1010/dists/jammy/Release"
     circleci_ip_ranges: true
     docker:
