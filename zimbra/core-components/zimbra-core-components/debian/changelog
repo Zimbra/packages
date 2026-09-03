@@ -30,7 +30,7 @@ zimbra-core-components (10.1.4-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
 zimbra-core-components (10.1.3-1zimbra10.0b1ZAPPEND) unstable; urgency=medium
 
-  * ZBUG-4670, Upgraded rsync to 3.4.1
+  * ZBUG-4670, Upgraded rsync to 3.4.2
 
  -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 29 May 2025 00:00:00 +0000
 
