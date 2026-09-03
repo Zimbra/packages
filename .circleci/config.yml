@@ -5,11 +5,6 @@ parameters:
     type: string
     default: "auto"
     description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
-  rebuild_reverse_deps:
-    type: enum
-    enum: ["off", "direct", "transitive"]
-    default: "direct"
-    description: "How far to walk consumers of a changed package: off (changed package only), direct (immediate consumers too - DEFAULT, e.g. clamav change also rebuilds mta-components), transitive (entire dependent stack)."
   pkg_repo_release:
     type: string
     default: "1010"
@@ -41,11 +36,6 @@ references:
     steps:
       - checkout:
           method: full
-      - run:
-          name: Generate dependency graph
-          command: bash ci/generate-dependency-graph.sh dependency-graph.json
-      - store_artifacts:
-          path: dependency-graph.json
       - *setup_pkg_repo_step
       - run:
           name: Checkout build-tooling dependencies (siblings of ~/packages)
@@ -54,7 +44,7 @@ references:
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-nexus.git ~/zm-nexus
       - run:
-          name: Resolve package(s) to build
+          name: Find changed package(s) (PR is source of truth)
           command: |
             if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
               echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
@@ -67,9 +57,13 @@ references:
               echo "No package changes found in this commit - nothing to build."
               circleci-agent step halt
             fi
-            REVERSE_DEPS_MODE="<< pipeline.parameters.rebuild_reverse_deps >>" \
-              bash ci/resolve-build-order.sh packages_to_build.txt
-            echo "=== Package(s) resolved for this run ==="
+            echo "=== Changed package(s) found in this commit ==="
+            cat packages_to_build.txt
+      - run:
+          name: Sort changed package(s) using build-order file
+          command: |
+            bash ci/resolve-build-order.sh packages_to_build.txt
+            echo "=== Package(s) resolved for this run (build order) ==="
             cat packages_to_build.txt
       - persist_to_workspace:
           root: ..
@@ -87,20 +81,6 @@ references:
           command: |
             if command -v apt-get >/dev/null 2>&1; then
               sudo apt-get update
-              # libxml2-dev: ADDED. PHP's ./configure runs 'pkg-config libxml-2.0 >= 2.9.0'
-              # (configure.ac --with-libxml-dir), which needs a system libxml-2.0.pc on
-              # PKG_CONFIG_PATH. zimbra-libxml2-devel IS extracted by php's Makefile pkgadd
-              # target, but into the zimbra custom prefix (OZC placeholders), not a path
-              # pkg-config searches by default - see the PKG_CONFIG_PATH export added below
-              # in the "Build resolved package(s)" step. Genesis builder images (u2287) bake
-              # a system libxml2-dev in; devcore CI containers do not - same baseline-gap
-              # pattern as cmake/libcurl-dev documented below for clamav. Missing this (and
-              # the PKG_CONFIG_PATH export) caused build_u22/u24/c8/c9 to fail php with:
-              #   checking for libxml-2.0 >= 2.9.0... no
-              #   configure: error: Package requirements (libxml-2.0 >= 2.9.0) were not met
-              #   Package 'libxml-2.0', required by 'virtual:world', not found
-              # on pipeline #283 (commit 26e598e, httpd.spec change reverse-pulled php via
-              # rebuild_reverse_deps=direct).
               sudo apt-get install -y --no-install-recommends \
                 dpkg-dev build-essential cmake python3 \
                 libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev libxml2-dev \
@@ -119,9 +99,6 @@ references:
                 || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
                 || sudo yum config-manager --set-enabled crb 2>/dev/null \
                 || true
-              # libxml2-devel: ADDED, rpm analog of libxml2-dev above - same
-              # 'Package libxml-2.0 not found' failure hit build_c8/build_c9 on
-              # pipeline #283 for the same reason (php's configure pkg-config check).
               sudo yum install -y \
                 rpm-build rpmdevtools createrepo cmake python3 \
                 openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel libxml2-devel \
@@ -135,15 +112,6 @@ references:
           command: |
             echo "Using PLATFORM_TAG=${PLATFORM_TAG}"
             mkdir -p build/dist_workspace/${PLATFORM_TAG}
-            # PKG_CONFIG_PATH: ADDED. pkgadd extracts zimbra-libxml2-devel (and any other
-            # zimbra-*-devel package a Makefile's pkgadd target pulls) into the zimbra
-            # custom install prefix, NOT /usr - so a plain 'pkg-config libxml-2.0' never
-            # finds it even though the package IS extracted (see php's build_u22/c9
-            # failures on pipeline #283: 'Package libxml-2.0 not found' even after
-            # zimbra-libxml2-devel is present under the extracted tree).
-            # TODO: confirm the exact pkgconfig directory zm-pkg-tool's PKG_EXTRACT writes
-            # to (commonly .../opt/zimbra/common/lib/pkgconfig going by the OZCL placeholder
-            # convention used in clamav.spec/php.spec) and adjust the path below if different.
             export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
             install_declared_build_deps() {
               file="$1"; label="$2"; prefix="$3"; shift 3
@@ -188,13 +156,9 @@ references:
               fi
               ( cd "$PKGPATH" && make )
               bash ci/register-local-repo.sh "${PKGPATH}/build"
-              if grep -qxF "$PKGPATH" packages_to_publish.txt 2>/dev/null; then
-                find "${PKGPATH}/build" -type f \
-                  \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
-                  -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
-              else
-                echo "=== ${PKGPATH} was built as a build-time-only prerequisite for this run - not copying to publish artifacts ==="
-              fi
+              find "${PKGPATH}/build" -type f \
+                \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
+                -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
             done < packages_to_build.txt
             echo "=== build/dist_workspace/${PLATFORM_TAG} contents ==="
             ls -la build/dist_workspace/${PLATFORM_TAG}/
