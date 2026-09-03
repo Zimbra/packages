@@ -20,7 +20,7 @@ Zimbra mta components pulls in all the packages used by
 zimbra-mta
 
 %changelog
-* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.5
+* Mon Apr 06 2026 Zimbra new Packaging Services <packaging-devel@zimbra.com> - 10.1.5
 - ZBUG-5376, updated new mta-components
 * Wed Sep 10 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - 10.1.4
 - ZCS-17850, Upgraded ClamAV to 1.4.3

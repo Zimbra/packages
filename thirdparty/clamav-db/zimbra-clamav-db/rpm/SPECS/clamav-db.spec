@@ -14,7 +14,7 @@ AutoReqProv:        no
 Initial ClamAV Databases for ClamAV
 
 %changelog
-* Wed Sep 10 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+* Wed Sep 10 2025  Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - ZCS-17850, Updated clamav-db for ClamAV-1.4.3
 * Fri Jun 23 2023  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
 - ZCS-13605, Updated clamav-db for ClamAV-1.0.1
