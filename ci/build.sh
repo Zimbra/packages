@@ -41,6 +41,11 @@ LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 ########################################################################
 install_build_tooling() {
   if command -v apt-get >/dev/null 2>&1; then
+    # This is the job's ONE full apt-get update. ci/setup-pkg-repo.sh (which
+    # runs immediately before this step) only does a SCOPED update against
+    # zimbra.list, on purpose - do not add another full update anywhere
+    # else in this job, it just re-downloads archive/security/zimbra
+    # index data for no new information.
     sudo apt-get update
     sudo apt-get install -y --no-install-recommends \
       dpkg-dev build-essential cmake python3 \
