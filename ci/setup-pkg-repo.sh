@@ -41,6 +41,19 @@
 # 'yum makecache' or 'yum list available' - i.e. before ci/resolve-build-order.sh,
 # and before the build step that runs verify-build-deps.sh / installs build-deps.
 #
+# ONE FULL UPDATE PER JOB
+# ------------------------
+# This script only ever runs a SCOPED apt-get update (against zimbra.list
+# alone, via apt_update_zimbra_only()) - once per candidate probed, and that
+# scoped refresh is what's still current when a candidate is accepted. It
+# deliberately does NOT run a second, unscoped, full 'apt-get update' after
+# choosing a candidate - that would just re-fetch archive/security/zimbra a
+# second time for no new information. ci/build.sh's install_build_tooling()
+# runs immediately after this step and is the job's one and only full
+# 'apt-get update' (it needs one anyway, to install non-zimbra baseline
+# libs from archive/security). Do not add another full update anywhere
+# else in the job.
+#
 # Environment:
 #   PKG_REPO_RELEASE             preferred release line (default 1010); tried first
 #   PKG_REPO_RELEASE_CANDIDATES  full ordered list (default "$PKG_REPO_RELEASE 1000 87")
@@ -231,9 +244,12 @@ setup_apt() {
   log "USING       ${chosen_base}/${chosen_rel} (${codename})"
   log "wrote $APT_LIST:"
   sed 's/^/setup-pkg-repo:   /' "$APT_LIST"
-  if ! $SUDO apt-get update -qq -o Acquire::Retries=3; then
-    log "WARNING - apt-get update reported errors after adding the zimbra source"
-  fi
+  # NOTE: no full 'apt-get update' here. apt_update_zimbra_only() already
+  # refreshed this exact list right before this candidate was accepted
+  # (last loop iteration before 'break 2'). A full, unscoped update here
+  # re-fetches archive/security/zimbra again for no new information -
+  # build.sh's install_build_tooling() does the job's one full update,
+  # and it runs immediately after this step.
 }
 
 # --------------------------------------------------------------------------- rpm
