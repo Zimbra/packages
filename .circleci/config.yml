@@ -20,6 +20,10 @@ references:
       - equal: [ "<< pipeline.git.branch >>", "testbranch" ]
       - not:
           equal: [ "api", "<< pipeline.trigger_source >>" ]
+  # Configures the zimbra apt/yum source. Only needed where a package is
+  # actually being compiled (build jobs) - checkout_and_resolve no longer
+  # calls this, since resolve-build-order.sh only sorts, it never queries
+  # the package manager.
   setup_pkg_repo_step: &setup_pkg_repo_step
     run:
         name: Configure Zimbra package repo
@@ -32,11 +36,13 @@ references:
           RPM_GPGCHECK: "0"
           PROBE_PKGS: "zimbra-base zimbra-openssl-dev zimbra-heimdal-dev zimbra-openssl-devel zimbra-heimdal-devel"
         command: bash ci/setup-pkg-repo.sh
+  # checkout -> find what the PR changed -> sort against build-order +
+  # print dry-run summary (ci/resolve-build-order.sh does both) -> hand
+  # the resolved list + sibling repos to every platform job via workspace.
   checkout_and_resolve_steps: &checkout_and_resolve_steps
     steps:
       - checkout:
           method: full
-      - *setup_pkg_repo_step
       - run:
           name: Checkout build-tooling dependencies (siblings of ~/packages)
           command: |
@@ -60,11 +66,8 @@ references:
             echo "=== Changed package(s) found in this commit ==="
             cat packages_to_build.txt
       - run:
-          name: Sort changed package(s) using build-order file
-          command: |
-            bash ci/resolve-build-order.sh packages_to_build.txt
-            echo "=== Package(s) resolved for this run (build order) ==="
-            cat packages_to_build.txt
+          name: Sort changed package(s) + show dry-run build plan
+          command: bash ci/resolve-build-order.sh packages_to_build.txt
       - persist_to_workspace:
           root: ..
           paths:
@@ -72,96 +75,17 @@ references:
             - zm-pkg-tool
             - zimbra-package-stub
             - zm-nexus
+  # Per-platform build. The only thing that changes per platform is
+  # PLATFORM_TAG (set in each job below) - everything else, including all
+  # build behavior, lives in ci/build.sh.
   build_and_isolate_steps: &build_and_isolate_steps
     steps:
       - attach_workspace:
           at: ..
-      - run:
-          name: Install build tooling + baseline dev libraries
-          command: |
-            if command -v apt-get >/dev/null 2>&1; then
-              sudo apt-get update
-              sudo apt-get install -y --no-install-recommends \
-                dpkg-dev build-essential cmake python3 \
-                libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev libxml2-dev \
-                libcurl4-openssl-dev
-            elif command -v yum >/dev/null 2>&1; then
-              OS_VERSION=$(rpm -E %{rhel})
-              if [ "$OS_VERSION" = "8" ]; then
-                sudo sed -i \
-                  -e 's/^mirrorlist=/#mirrorlist=/' \
-                  -e 's/^metalink=/#metalink=/' \
-                  -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
-                  /etc/yum.repos.d/*.repo
-              fi
-              sudo yum install -y epel-release || true
-              sudo yum config-manager --set-enabled powertools 2>/dev/null \
-                || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
-                || sudo yum config-manager --set-enabled crb 2>/dev/null \
-                || true
-              sudo yum install -y \
-                rpm-build rpmdevtools createrepo cmake python3 \
-                openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel libxml2-devel \
-                libcurl-devel \
-                perl-libwww-perl perl-LWP-Protocol-https
-              sudo yum install -y yum-plugin-priorities 2>/dev/null || true
-            fi
       - *setup_pkg_repo_step
       - run:
           name: Build resolved package(s)
-          command: |
-            echo "Using PLATFORM_TAG=${PLATFORM_TAG}"
-            mkdir -p build/dist_workspace/${PLATFORM_TAG}
-            export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
-            install_declared_build_deps() {
-              file="$1"; label="$2"; prefix="$3"; shift 3
-              deps=$(awk -v prefix="$prefix" '
-                  $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
-                  flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-                  flag { print }
-                ' "$file" \
-                | tr ',' '\n' \
-                | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
-                | grep -v '^$' \
-                | sort -u || true)
-              if [ -n "$deps" ]; then
-                echo "Installing ${label} build-deps: ${deps}"
-                "$@" $deps
-              else
-                echo "No ${label} build-deps declared for ${file}, skipping install"
-              fi
-            }
-            while IFS= read -r PKGPATH; do
-              echo "=== Building ${PKGPATH} for ${PLATFORM_TAG} ==="
-              if [ ! -d "$PKGPATH" ]; then
-                echo "ERROR: $PKGPATH does not exist"
-                exit 1
-              fi
-              PRE_HOOK="${PKGPATH}/ci/pre_build.sh"
-              if [ -x "$PRE_HOOK" ]; then
-                echo "=== Running pre-build hook for ${PKGPATH} ==="
-                "$PRE_HOOK" "${PLATFORM_TAG}"
-              fi
-              CONTROL_FILE=$(find "$PKGPATH" -path "*/debian/control" 2>/dev/null | head -1)
-              if [ -n "$CONTROL_FILE" ] && command -v apt-get >/dev/null 2>&1; then
-                bash ci/verify-build-deps.sh "$CONTROL_FILE" "Build-Depends"
-                install_declared_build_deps "$CONTROL_FILE" "Debian" "Build-Depends" \
-                  sudo apt-get install -y --no-install-recommends
-              fi
-              SPEC_FILE=$(find "$PKGPATH" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
-              if [ -n "$SPEC_FILE" ] && command -v yum >/dev/null 2>&1; then
-                bash ci/verify-build-deps.sh "$SPEC_FILE" "BuildRequires"
-                install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
-                  sudo yum install -y
-              fi
-              ( cd "$PKGPATH" && make )
-              bash ci/register-local-repo.sh "${PKGPATH}/build"
-              find "${PKGPATH}/build" -type f \
-                \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
-                -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
-            done < packages_to_build.txt
-            echo "=== build/dist_workspace/${PLATFORM_TAG} contents ==="
-            ls -la build/dist_workspace/${PLATFORM_TAG}/
+          command: bash ci/build.sh packages_to_build.txt
       - store_artifacts:
           path: build/dist_workspace
       - persist_to_workspace:
@@ -197,8 +121,6 @@ jobs:
   checkout_and_resolve:
     working_directory: ~/packages
     shell: /bin/bash -eo pipefail
-    environment:
-       ZIMBRA_REPO_PROBE_URL: "https://repo.zimbra.com/apt/1010/dists/jammy/Release"
     circleci_ip_ranges: true
     docker:
       - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
