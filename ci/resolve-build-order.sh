@@ -8,18 +8,21 @@
 # be built - whatever "auto" detected via git diff, or whatever the
 # package_name pipeline parameter said explicitly.
 #
-# This script does ONE thing: sort that list into the sequence given by
-# the master build-order file, so a package that depends on another
-# changed package (e.g. zimbra/apache-components depends on
-# thirdparty/httpd) always builds after it.
+# This script does TWO things:
+#   1. Sort that list into the sequence given by the master build-order
+#      file, so a package that depends on another changed package (e.g.
+#      zimbra/apache-components depends on thirdparty/httpd) always
+#      builds after it.
+#   2. Print a dry-run summary of the final, sorted build plan - so
+#      anyone reading this job's log sees exactly what is about to be
+#      built, in what order, BEFORE any compiling starts.
 #
-# It does NOT discover any extra packages. No reverse-dependency walk
-# (consumers of a changed package), no forward-dependency walk (producers
-# of a declared Build-Depends/BuildRequires). Any package that is a
-# build-time prerequisite but was NOT itself changed in the PR is assumed
-# to already be published in the Zimbra package repo (configured by
-# ci/setup-pkg-repo.sh) - ci/verify-build-deps.sh checks that assumption
-# right before each package builds and fails clearly if it's wrong.
+# It does NOT discover any extra packages, and does NOT need the zimbra
+# package repo configured (no apt-cache/yum lookups here at all) - any
+# build-time prerequisite that was NOT itself changed in the PR is
+# assumed to already be published; ci/build.sh's verify_build_deps checks
+# that assumption right before each package builds and fails clearly if
+# it's wrong.
 #
 # Since every package that gets built here was explicitly part of the PR,
 # every package that gets built also gets published - there is no
@@ -65,5 +68,17 @@ fi
 sort -n "$ordered_file" | awk '{print $2}' > "$INPUT"
 rm -f "$ordered_file"
 
-echo "=== Build order after sorting against $BUILD_ORDER ==="
-cat "$INPUT"
+# --- dry-run summary --------------------------------------------------
+total="$(grep -c . "$INPUT" || true)"
+echo ""
+echo "================================================================"
+echo " DRY RUN - build plan for this pipeline run"
+echo " (${total} package(s), in build order, will be built on EVERY platform)"
+echo "================================================================"
+n=0
+while IFS= read -r pkg; do
+  [ -n "$pkg" ] || continue
+  n=$((n+1))
+  printf "  [%d/%d] %s\n" "$n" "$total" "$pkg"
+done < "$INPUT"
+echo "================================================================"
