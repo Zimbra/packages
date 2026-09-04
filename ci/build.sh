@@ -208,14 +208,25 @@ verify_build_deps() {
     fi
     [ "$found_local" = "1" ] && continue
 
+    # NOTE: '|| true' on both lines below is required, not decorative.
+    # installed_version()/published_version() intentionally return
+    # non-zero when the package isn't found (empty stdout = "not found").
+    # Without '|| true', a standalone `var="$(cmd)"` assignment that
+    # fails aborts the WHOLE script under 'set -e' - silently, with no
+    # error message - the moment the first genuinely-missing dependency
+    # is checked. This is exactly what happened on c8/c9: those platforms
+    # don't have zimbra-apr-devel pre-installed, so installed_version
+    # failed and killed the job right after printing the previous OK line.
+    # Ubuntu never hit this because its base image happened to already
+    # have the package installed, so the command substitution succeeded.
     local ver_have
-    ver_have="$(installed_version "$name")"
+    ver_have="$(installed_version "$name")" || true
     if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
       echo "verify-build-deps: OK   $name >= ${ver_want} (already installed in image, found ${ver_have})"
       continue
     fi
 
-    ver_have="$(published_version "$name")"
+    ver_have="$(published_version "$name")" || true
     if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
       echo "verify-build-deps: OK   $name >= ${ver_want} (published in configured repos, found ${ver_have})"
       continue
