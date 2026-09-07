@@ -86,6 +86,9 @@ references:
       - run:
           name: Build resolved package(s)
           command: bash ci/build.sh packages_to_build.txt
+      - run:
+          name: Build summary
+          command: bash ci/build-summary.sh packages_to_build.txt
       - store_artifacts:
           path: build/dist_workspace
       - persist_to_workspace:
