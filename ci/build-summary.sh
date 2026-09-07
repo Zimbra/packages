@@ -19,7 +19,7 @@ total="$(grep -c . "$INPUT" || true)"
 echo "================================================================"
 echo " BUILD SUMMARY - platform: ${PLATFORM_TAG}"
 echo "================================================================"
-echo " ${total} package(s) built successfully, from this PR/commit:"
+echo " ${total} package(s) built successfully....."
 echo ""
 n=0
 while IFS= read -r pkg; do
@@ -27,10 +27,4 @@ while IFS= read -r pkg; do
   n=$((n+1))
   printf "   [%d/%d] %s\n" "$n" "$total" "$pkg"
 done < "$INPUT"
-echo ""
-echo " Artifacts are in build/dist_workspace/${PLATFORM_TAG}/ and have been"
-echo " uploaded to this job's Artifacts tab."
-echo " Once every platform (u24/u22/u20/c9/c8) succeeds, these package(s)"
-echo " will be published to Nexus (develop branch) after manual approval"
-echo " at the 'publish_packages_hold' step."
 echo "================================================================"
