@@ -91,15 +91,20 @@ log() { echo "setup-pkg-repo: $*"; }
 # Invoked as 'bash ci/setup-pkg-repo.sh', so this file needs no +x itself. It is
 # the earliest step in the job though, which makes it a convenient place to
 # restore +x on the rest of ci/*.sh - that bit is easily lost when a file is
-# added through the GitHub web UI. Harmless when already set.
+# added through the GitHub web UI. Harmless when already set - and once the
+# scripts are committed with the executable bit set (e.g. via
+# `git update-index --chmod=+x ci/*.sh`), this loop never has anything to do
+# and prints nothing at all.
 CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_fixed=""
 for _s in "$CI_DIR"/*.sh; do
   [ -f "$_s" ] || continue
   if [ ! -x "$_s" ]; then
-    chmod +x "$_s" 2>/dev/null && log "restored +x on $_s" || true
+    chmod +x "$_s" 2>/dev/null && _fixed="${_fixed} $(basename "$_s")"
   fi
 done
-unset _s
+[ -n "$_fixed" ] && log "restored +x on:${_fixed}"
+unset _s _fixed
 
 SUDO=""
 if [ "$(id -u)" -ne 0 ]; then
@@ -143,12 +148,19 @@ describe_probe() {
 
 # Refresh ONLY the zimbra source. A full 'apt-get update' per candidate would be
 # needlessly slow, and List-Cleanup=0 stops apt discarding the other lists.
+#
+# NOTE: output is captured into a variable FIRST, then printed once with the
+# prefix applied - deliberately NOT streamed live through '| sed'. Piping
+# apt's live output through sed while it's still running could render as a
+# garbled/duplicated line in CircleCI's log viewer (buffered chunks arriving
+# out of order) - capturing first and printing once avoids that entirely.
 apt_update_zimbra_only() {
-  $SUDO apt-get update -qq \
+  local out
+  out="$($SUDO apt-get update -qq \
     -o Dir::Etc::sourcelist="sources.list.d/zimbra.list" \
     -o Dir::Etc::sourceparts="-" \
-    -o APT::Get::List-Cleanup="0" 2>&1 \
-    | sed 's/^/setup-pkg-repo:   apt: /' || true
+    -o APT::Get::List-Cleanup="0" 2>&1)" || true
+  [ -n "$out" ] && echo "$out" | sed 's/^/setup-pkg-repo:   apt: /'
 }
 
 available_version() {
