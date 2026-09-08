@@ -20,8 +20,9 @@
 #                                     - already installed in the image
 #                                     - published in the zimbra repo
 #                                   fails clearly here, before `make`, if none apply
-#        c. install those build-time deps (deb only - see NOTE at the RPM
-#           call site below for why RPM packages do NOT get this step)
+#        c. (install step removed for BOTH deb and RPM - see NOTEs at the
+#           two call sites below: every package's own build already
+#           installs/reinstalls its own zimbra-* build-time deps)
 #        d. make
 #        e. register_local_repo  - drop the freshly-built .deb/.rpm into a
 #                                   job-local repo pinned ABOVE the published
@@ -362,9 +363,17 @@ while IFS= read -r PKGPATH; do
 
   CONTROL_FILE=$(find "$PKGPATH" -path "*/debian/control" 2>/dev/null | head -1)
   if [ -n "$CONTROL_FILE" ] && command -v apt-get >/dev/null 2>&1; then
+    # NOTE: verify ONLY here - do NOT call install_declared_build_deps for
+    # deb packages either. Same reasoning as the RPM branch below: Zimbra's
+    # debian/rules-driven package builds (e.g. thirdparty/net-snmp) already
+    # run their own
+    #   sudo apt-get --purge purge zimbra-base
+    #   sudo apt-get install zimbra-base zimbra-<...>-dev
+    # cycle as part of `make`. Pre-installing the same packages here just
+    # gets purged and reinstalled a second time by make - the exact
+    # "Install 3 Packages" -> "Remove 3 Packages" -> "Install 3 Packages"
+    # churn seen in CircleCI's u22/u24/u20 logs, mirroring the c9/rhel9 case.
     verify_build_deps "$CONTROL_FILE" "Build-Depends"
-    install_declared_build_deps "$CONTROL_FILE" "Debian" "Build-Depends" \
-      sudo apt-get install -y --no-install-recommends
   fi
 
   SPEC_FILE=$(find "$PKGPATH" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
