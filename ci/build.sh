@@ -20,9 +20,9 @@
 #                                     - already installed in the image
 #                                     - published in the zimbra repo
 #                                   fails clearly here, before `make`, if none apply
-#        c. (install step removed for BOTH deb and RPM - see NOTEs at the
-#           two call sites below: every package's own build already
-#           installs/reinstalls its own zimbra-* build-time deps)
+#        c. install its declared build-time deps EXCLUDING zimbra-* ones
+#           (those are installed by the package's own build - see the
+#           NOTE on install_declared_build_deps() below for why)
 #        d. make
 #        e. register_local_repo  - drop the freshly-built .deb/.rpm into a
 #                                   job-local repo pinned ABOVE the published
@@ -306,8 +306,19 @@ REPOEOF
 }
 
 ########################################################################
-# 2c) install a package's declared build-time deps (name only, no version -
-#     verify_build_deps above already confirmed the version is satisfied)
+# 2c) install a package's declared build-time deps EXCLUDING zimbra-*
+#     ones. zimbra-* deps are handled separately: verify_build_deps()
+#     above only checks they're resolvable (never installs them), and
+#     the package's own build (its pkgadd/pkgrm-style targets) installs
+#     zimbra-base + friends itself as part of `make` - installing them
+#     here too would just get purged and reinstalled a second time by
+#     that same `make` step (that was the c9/u22 double-install bug).
+#     Everything else declared here (e.g. libpcre2-dev/pcre2-devel,
+#     debhelper, cmake, m4) is a normal OS package the package's own
+#     build does NOT install for itself, so it must still be installed
+#     here - skipping ALL of install_declared_build_deps (not just the
+#     zimbra-* part) is what broke the httpd build with "Unmet build
+#     dependencies: libpcre2-dev" / "pcre2-devel is needed by...".
 ########################################################################
 install_declared_build_deps() {
   local file="$1" label="$2" prefix="$3"; shift 3
@@ -320,12 +331,13 @@ install_declared_build_deps() {
     | tr ',' '\n' \
     | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
     | grep -v '^$' \
+    | grep -v '^zimbra-' \
     | sort -u || true)
   if [ -n "$deps" ]; then
-    echo "Installing ${label} build-deps: ${deps}"
+    echo "Installing ${label} build-deps (non-zimbra): ${deps}"
     "$@" $deps
   else
-    echo "No ${label} build-deps declared for ${file}, skipping install"
+    echo "No non-zimbra ${label} build-deps declared for ${file}, skipping install"
   fi
 }
 
@@ -363,46 +375,26 @@ while IFS= read -r PKGPATH; do
 
   CONTROL_FILE=$(find "$PKGPATH" -path "*/debian/control" 2>/dev/null | head -1)
   if [ -n "$CONTROL_FILE" ] && command -v apt-get >/dev/null 2>&1; then
-    # NOTE: verify ONLY here - do NOT call install_declared_build_deps for
-    # deb packages either. Same reasoning as the RPM branch below: Zimbra's
-    # debian/rules-driven package builds (e.g. thirdparty/net-snmp) already
-    # run their own
-    #   sudo apt-get --purge purge zimbra-base
-    #   sudo apt-get install zimbra-base zimbra-<...>-dev
-    # cycle as part of `make`. Pre-installing the same packages here just
-    # gets purged and reinstalled a second time by make - the exact
-    # "Install 3 Packages" -> "Remove 3 Packages" -> "Install 3 Packages"
-    # churn seen in CircleCI's u22/u24/u20 logs, mirroring the c9/rhel9 case.
+    # verify_build_deps: checks zimbra-* deps resolvable, never installs.
+    # install_declared_build_deps: installs everything else declared
+    # (libpcre2-dev, debhelper, cmake, m4, ...) - it now excludes
+    # zimbra-* packages internally, since those are installed by the
+    # package's own build (see NOTE on install_declared_build_deps above).
     verify_build_deps "$CONTROL_FILE" "Build-Depends"
+    install_declared_build_deps "$CONTROL_FILE" "Debian" "Build-Depends" \
+      sudo apt-get install -y --no-install-recommends
   fi
 
   SPEC_FILE=$(find "$PKGPATH" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
   if [ -n "$SPEC_FILE" ] && command -v yum >/dev/null 2>&1; then
-    # NOTE: verify ONLY here - do NOT call install_declared_build_deps for
-    # RPM packages. Zimbra's RPM package Makefiles (e.g.
-    # thirdparty/net-snmp/Makefile) already run their own
-    #   sudo yum erase -y zimbra-base
-    #   sudo yum -y install zimbra-base zimbra-<...>-devel
-    # cycle as part of `make`, to guarantee a clean dependency state right
-    # before rpmbuild runs. If we ALSO pre-install those same packages
-    # here (as this used to do), make's own `erase` step tears down what
-    # we just installed, and make's own `install` step immediately
-    # reinstalls it - i.e. every RPM package's zimbra-* build deps get
-    # downloaded/installed TWICE with an erase in between, for free. That
-    # extra "Install 3 Packages" -> "Erase 3 Packages" -> "Install 3
-    # Packages" churn is exactly the noise showing up in CircleCI's c9/rhel9
-    # logs that never appears when running `make` by hand on genesis:
-    # genesis never pre-installs anything, so make's own `yum erase`
-    # finds nothing ("No match for argument: zimbra-base") and only ONE
-    # install happens.
-    #
-    # verify_build_deps() only CHECKS resolvability (against local-repo/
-    # installed/published state) - it never installs anything - so it's
-    # still correct and useful to keep here: it fails the job fast, with
-    # a clear message, if a declared zimbra-* dep can't be resolved
-    # anywhere, well before the (slower) `make` step would hit the same
-    # problem less clearly.
+    # Same split as the deb branch above: verify_build_deps only checks
+    # zimbra-* resolvability (never installs); install_declared_build_deps
+    # installs everything else declared (e.g. pcre2-devel) - it excludes
+    # zimbra-* packages internally since the package's own build (its
+    # pkgadd/pkgrm-style targets, run inside `make`) installs those itself.
     verify_build_deps "$SPEC_FILE" "BuildRequires"
+    install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
+      sudo yum install -y
   fi
 
   echo "--- [${n}/${total}] ${PKGPATH}: make ---"
