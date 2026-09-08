@@ -15,7 +15,7 @@ This file contains the licenses for the open source 3rd party
 software used by Zimbra
 
 %changelog
-* Fri Jul 07 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 3.0.0-1zimbra10.0b1ZAPPEND
+* Fri Jul 07 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - 3.0.0-1zimbra10.0b1ZAPPEND
 - ZBUG-3355, Updated OpenSSL License and other 3rd party open source licenses
 * Tue Mar 31 2020  Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.0-1zimbra9.0b1ZAPPEND
 - Update modern UI
