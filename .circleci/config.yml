@@ -24,6 +24,11 @@ references:
   # actually being compiled (build jobs) - checkout_and_resolve no longer
   # calls this, since resolve-build-order.sh only sorts, it never queries
   # the package manager.
+  #
+  # PROBE_PKGS is no longer passed here: ci/setup-pkg-repo.sh now defaults
+  # PROBE_PKGS_DEB/PROBE_PKGS_RPM itself and picks the one matching THIS
+  # container's flavour automatically, so a deb job never wastes a log
+  # line probing an rpm-only '-devel' name (and vice versa).
   setup_pkg_repo_step: &setup_pkg_repo_step
     run:
         name: Configure Zimbra package repo
@@ -34,7 +39,6 @@ references:
           PKG_REPO_RELEASE_CANDIDATES: "<< pipeline.parameters.pkg_repo_release >> 1000 87"
           REQUIRE_PKGS: "zimbra-base"
           RPM_GPGCHECK: "0"
-          PROBE_PKGS: "zimbra-base zimbra-openssl-dev zimbra-heimdal-dev zimbra-openssl-devel zimbra-heimdal-devel"
         command: bash ci/setup-pkg-repo.sh
   # checkout -> find what the PR changed -> sort against build-order +
   # print dry-run summary (ci/resolve-build-order.sh does both) -> hand
