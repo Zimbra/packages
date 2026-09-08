@@ -63,7 +63,10 @@
 #                                to be accepted (default "zimbra-base")
 #   APT_TRUSTED                  'yes' -> [trusted=yes], skip sig check (default yes)
 #   RPM_GPGCHECK                 0|1 (default 0)
-#   PROBE_PKGS                   extra names to probe and log (does not gate anything)
+#   PROBE_PKGS_DEB                deb-flavour names to probe and log (default:
+#                                 "zimbra-base zimbra-openssl-dev zimbra-heimdal-dev")
+#   PROBE_PKGS_RPM                rpm-flavour names to probe and log (default:
+#                                 "zimbra-base zimbra-openssl-devel zimbra-heimdal-devel")
 #   APT_REPO_BASE / RPM_REPO_BASE   legacy single-URL forms, still honoured
 #
 # Always exits 0. A repo problem is reported as a WARNING naming the specific
@@ -80,7 +83,11 @@ RPM_REPO_CANDIDATES="${RPM_REPO_CANDIDATES:-${RPM_REPO_BASE:-https://repo.zimbra
 REQUIRE_PKGS="${REQUIRE_PKGS:-zimbra-base}"
 APT_TRUSTED="${APT_TRUSTED:-yes}"
 RPM_GPGCHECK="${RPM_GPGCHECK:-0}"
-PROBE_PKGS="${PROBE_PKGS:-}"
+# Split by naming flavour so a deb job never wastes a probe line (always
+# "NOT AVAILABLE") on an rpm-only name like zimbra-openssl-devel, and vice
+# versa - see the dispatch/probing section at the bottom of this file.
+PROBE_PKGS_DEB="${PROBE_PKGS_DEB:-zimbra-base zimbra-openssl-dev zimbra-heimdal-dev}"
+PROBE_PKGS_RPM="${PROBE_PKGS_RPM:-zimbra-base zimbra-openssl-devel zimbra-heimdal-devel}"
 
 APT_LIST=/etc/apt/sources.list.d/zimbra.list
 YUM_REPO=/etc/yum.repos.d/zimbra.repo
@@ -149,17 +156,24 @@ describe_probe() {
 # Refresh ONLY the zimbra source. A full 'apt-get update' per candidate would be
 # needlessly slow, and List-Cleanup=0 stops apt discarding the other lists.
 #
-# NOTE: output is captured into a variable FIRST, then printed once with the
-# prefix applied - deliberately NOT streamed live through '| sed'. Piping
-# apt's live output through sed while it's still running could render as a
-# garbled/duplicated line in CircleCI's log viewer (buffered chunks arriving
-# out of order) - capturing first and printing once avoids that entirely.
+# Output is captured into a variable first, then printed once with the
+# prefix applied (not streamed live through '| sed') so buffered chunks
+# can't render as a garbled/duplicated line in CircleCI's log viewer.
+#
+# The NO_PUBKEY GPG warning is filtered out here: it is EXPECTED and
+# harmless (trusted=yes is set deliberately in setup_apt() because the
+# Zimbra keyring isn't installed on these images - see the comment there),
+# and this function runs once per candidate release line probed, so
+# without filtering it the same harmless line repeats once per candidate
+# for no informational gain. setup_apt() prints one explanatory note
+# before probing starts instead.
 apt_update_zimbra_only() {
   local out
   out="$($SUDO apt-get update -qq \
     -o Dir::Etc::sourcelist="sources.list.d/zimbra.list" \
     -o Dir::Etc::sourceparts="-" \
     -o APT::Get::List-Cleanup="0" 2>&1)" || true
+  out="$(grep -v 'NO_PUBKEY 5234D2B73B6996C7' <<<"$out" || true)"
   [ -n "$out" ] && echo "$out" | sed 's/^/setup-pkg-repo:   apt: /'
 }
 
@@ -223,6 +237,11 @@ setup_apt() {
   fi
 
   log "flavour=deb codename=$codename"
+  if [ "$APT_TRUSTED" = "yes" ]; then
+    log "NOTE: zimbra repo has no keyring installed on this image - signature"
+    log "      verification is deliberately skipped (APT_TRUSTED=yes). Any"
+    log "      'NO_PUBKEY' warning below is expected and not an error."
+  fi
   log "looking for a '$codename' dist that contains: $REQUIRE_PKGS"
   for base in $APT_REPO_CANDIDATES; do
     for rel in $PKG_REPO_RELEASE_CANDIDATES; do
@@ -341,10 +360,18 @@ fi
 
 # ----------------------------------------------------------------------- probing
 # Log exactly what resolve-build-order.sh and the build-dep install step will
-# see. Note the deb/rpm naming split: on a deb container the '-devel' names are
-# EXPECTED to be missing and vice versa - that is not a repo fault, and
-# resolve-build-order.sh must not treat it as one.
-for p in $PROBE_PKGS; do
+# see - using ONLY the naming scheme that matches THIS container's flavour.
+# Probing the other flavour's names (e.g. '-devel' on a deb box) always
+# reports "NOT AVAILABLE" - not a repo fault, just the wrong dictionary -
+# so it's skipped entirely rather than printed as noise.
+if command -v apt-cache >/dev/null 2>&1; then
+  PROBE_LIST="$PROBE_PKGS_DEB"
+elif command -v yum >/dev/null 2>&1; then
+  PROBE_LIST="$PROBE_PKGS_RPM"
+else
+  PROBE_LIST=""
+fi
+for p in $PROBE_LIST; do
   v="$(available_version "$p")"
   if [ -n "${v:-}" ]; then
     log "probe pkg '$p' -> $v (will be INSTALLED, not rebuilt)"
