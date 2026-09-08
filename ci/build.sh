@@ -20,7 +20,8 @@
 #                                     - already installed in the image
 #                                     - published in the zimbra repo
 #                                   fails clearly here, before `make`, if none apply
-#        c. install those build-time deps
+#        c. install those build-time deps (deb only - see NOTE at the RPM
+#           call site below for why RPM packages do NOT get this step)
 #        d. make
 #        e. register_local_repo  - drop the freshly-built .deb/.rpm into a
 #                                   job-local repo pinned ABOVE the published
@@ -368,9 +369,31 @@ while IFS= read -r PKGPATH; do
 
   SPEC_FILE=$(find "$PKGPATH" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
   if [ -n "$SPEC_FILE" ] && command -v yum >/dev/null 2>&1; then
+    # NOTE: verify ONLY here - do NOT call install_declared_build_deps for
+    # RPM packages. Zimbra's RPM package Makefiles (e.g.
+    # thirdparty/net-snmp/Makefile) already run their own
+    #   sudo yum erase -y zimbra-base
+    #   sudo yum -y install zimbra-base zimbra-<...>-devel
+    # cycle as part of `make`, to guarantee a clean dependency state right
+    # before rpmbuild runs. If we ALSO pre-install those same packages
+    # here (as this used to do), make's own `erase` step tears down what
+    # we just installed, and make's own `install` step immediately
+    # reinstalls it - i.e. every RPM package's zimbra-* build deps get
+    # downloaded/installed TWICE with an erase in between, for free. That
+    # extra "Install 3 Packages" -> "Erase 3 Packages" -> "Install 3
+    # Packages" churn is exactly the noise showing up in CircleCI's c9/rhel9
+    # logs that never appears when running `make` by hand on genesis:
+    # genesis never pre-installs anything, so make's own `yum erase`
+    # finds nothing ("No match for argument: zimbra-base") and only ONE
+    # install happens.
+    #
+    # verify_build_deps() only CHECKS resolvability (against local-repo/
+    # installed/published state) - it never installs anything - so it's
+    # still correct and useful to keep here: it fails the job fast, with
+    # a clear message, if a declared zimbra-* dep can't be resolved
+    # anywhere, well before the (slower) `make` step would hit the same
+    # problem less clearly.
     verify_build_deps "$SPEC_FILE" "BuildRequires"
-    install_declared_build_deps "$SPEC_FILE" "RPM" "BuildRequires" \
-      sudo yum install -y
   fi
 
   echo "--- [${n}/${total}] ${PKGPATH}: make ---"
