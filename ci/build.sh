@@ -40,6 +40,14 @@ LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 
 ########################################################################
 # 1) baseline OS packaging tools + dev libraries (once per job)
+#
+# libsqlite3-dev/sqlite-devel is here (not left for a package's own
+# BuildRequires/Build-Depends) because we can't edit package spec/control
+# files - PHP's ./configure auto-probes for sqlite3 and fails the whole
+# build if it's missing, even though zimbra-php's php.spec/debian/control
+# never declared it as a build dep. Genesis never hit this because it's a
+# long-lived box where sqlite-devel happened to already be installed;
+# CircleCI's containers are fresh every run, so it must be baked in here.
 ########################################################################
 install_build_tooling() {
   if command -v apt-get >/dev/null 2>&1; then
@@ -52,7 +60,7 @@ install_build_tooling() {
     sudo apt-get install -y --no-install-recommends \
       dpkg-dev build-essential cmake python3 \
       libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev libxml2-dev \
-      libcurl4-openssl-dev
+      libcurl4-openssl-dev libsqlite3-dev
   elif command -v yum >/dev/null 2>&1; then
     OS_VERSION=$(rpm -E %{rhel})
     if [ "$OS_VERSION" = "8" ]; then
@@ -70,7 +78,7 @@ install_build_tooling() {
     sudo yum install -y \
       rpm-build rpmdevtools createrepo cmake python3 \
       openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel libxml2-devel \
-      libcurl-devel \
+      libcurl-devel sqlite-devel \
       perl-libwww-perl perl-LWP-Protocol-https
     sudo yum install -y yum-plugin-priorities 2>/dev/null || true
   fi
