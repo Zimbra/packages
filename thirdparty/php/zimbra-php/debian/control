@@ -22,4 +22,4 @@ Priority: extra
 Architecture: any
 Multi-Arch: same
 Depends: zimbra-php (= ${binary:Version}), ${misc:Depends}
-Description: PHP Apache Module new debug information
+Description: PHP Apache Module debug information
