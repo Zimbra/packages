@@ -27,7 +27,7 @@ The Zimbra Postfix build
 %define debug_package %{nil}
 
 %changelog
-* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
+* Mon Apr 06 2026 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b7ZAPPEND
 - Updated openldap for ZBUG-5376
 * Wed Jul 16 2025 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b6ZAPPEND
 - ZCS-17413, Upgraded OpenSSL to 3.5.1
