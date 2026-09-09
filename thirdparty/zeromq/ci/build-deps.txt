@@ -1,2 +1,0 @@
-# thirdparty/zeromq/ci/build-deps.txt
-thirdparty/libsodium
