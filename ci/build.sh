@@ -356,6 +356,24 @@ echo "=== Installing build tooling + baseline dev libraries ==="
 install_build_tooling
 
 export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# Disable LTO for deb builds (dpkg-buildpackage reads DEB_BUILD_OPTIONS via
+# dpkg-buildflags and, on newer Ubuntu, injects -flto by default even when
+# debian/rules never asks for it). Newer GCC (u22's gcc-11, u24's gcc-13)
+# rejects PHP's Zend engine global-register-variable pattern under LTO:
+#   ./Zend/zend_execute.c:75:40: error: global register variable follows
+#   a function definition
+#   lto-wrapper: fatal error: cc returned 1 exit status
+# u20 (older gcc-9) and the RPM platforms (c8/c9, which don't go through
+# dpkg-buildflags at all) never hit this, which is why only u22/u24 failed.
+# 'nolto' is a standard Debian build-option flag - no debian/rules or
+# control file changes needed, and it's safe to set unconditionally on
+# every deb job since it only turns an optimization off.
+if command -v apt-get >/dev/null 2>&1; then
+  export DEB_BUILD_OPTIONS="${DEB_BUILD_OPTIONS:+$DEB_BUILD_OPTIONS }nolto"
+  echo "DEB_BUILD_OPTIONS=${DEB_BUILD_OPTIONS} (LTO disabled - see ci/build.sh comment for why)"
+fi
+
 mkdir -p "build/dist_workspace/${PLATFORM_TAG}"
 
 total="$(grep -c . "$INPUT" || true)"
