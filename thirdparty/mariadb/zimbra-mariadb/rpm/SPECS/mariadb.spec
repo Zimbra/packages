@@ -116,7 +116,7 @@ OZCI
 OZCS/man/man1/mysql_config.1
 
 %changelog
-* Fri Dec 02 2020 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
+* Fri Dec 02 2020 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded dependency openssl to 1.1.1h
 * Thu Sep 17 2020 Zimbra Packaging Services <packaging-devel@zimbra.com>
 - Upgraded dependency openssl to 1.1.1g
