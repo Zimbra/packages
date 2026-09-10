@@ -29,6 +29,7 @@ thirdparty/postfix-logwatch
 thirdparty/amavisd
 thirdparty/openjdk
 thirdparty/openjdk-cacerts
+thirdparty/jetty-distribution
 thirdparty/pflogsumm
 thirdparty/prepflog
 thirdparty/apr
