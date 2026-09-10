@@ -85,6 +85,96 @@ install_build_tooling() {
 }
 
 ########################################################################
+# shared version-resolution helpers - hoisted to top level (were
+# previously re-declared inside verify_build_deps() on EVERY package,
+# which is wasteful since none of them close over per-call state).
+########################################################################
+
+# deb/rpm version compare, preferring the platform-native comparator for
+# correct epoch/tilde semantics.
+version_ge() {
+  local have="$1" want="$2"
+  if command -v dpkg >/dev/null 2>&1; then
+    dpkg --compare-versions "$have" ge "$want"
+  elif command -v rpmdev-vercmp >/dev/null 2>&1; then
+    rpmdev-vercmp "$have" "$want" >/dev/null 2>&1
+    local rc=$?
+    [ "$rc" = "0" ] || [ "$rc" = "11" ]
+  else
+    [ "$(printf '%s\n%s\n' "$want" "$have" | sort -V | tail -1)" = "$have" ]
+  fi
+}
+
+installed_version() {
+  local name="$1" s
+  if command -v dpkg-query >/dev/null 2>&1; then
+    s="$(dpkg-query -W -f='${Status} ${Version}' "$name" 2>/dev/null || true)"
+    case "$s" in *"ok installed"*) echo "${s##* }" ;; esac
+  elif command -v rpm >/dev/null 2>&1; then
+    rpm -q "$name" >/dev/null 2>&1 && rpm -q --qf '%{VERSION}-%{RELEASE}' "$name" 2>/dev/null
+  fi
+}
+
+published_version() {
+  local name="$1"
+  if command -v apt-cache >/dev/null 2>&1; then
+    apt-cache madison "$name" 2>/dev/null | awk -F'|' 'NR==1{gsub(/ /,"",$2); print $2}'
+  elif command -v yum >/dev/null 2>&1; then
+    { yum --showduplicates list available "$name" 2>/dev/null || true; } \
+      | awk -v n="$name" '$1==n || index($1, n".")==1 {v=$2} END{print v}'
+  fi
+}
+
+# Is $name resolvable, optionally at >= $ver_want (pass "" for no version
+# constraint)? Tries, in order: built earlier in THIS job (LOCAL_REPO),
+# already installed in the image, published in the configured repos.
+# Prints an OK/MISSING line in the same format either way and returns
+# 0/1 accordingly. This single function replaces what used to be two
+# near-identical copies of the same 3-tier check inside
+# verify_build_deps() - one for "no version constraint", one for
+# "version constraint declared".
+resolve_dep() {
+  local name="$1" ver_want="$2" ver_have base f
+  local suffix=""
+  [ -n "$ver_want" ] && suffix=" >= ${ver_want}"
+
+  if [ -d "$LOCAL_REPO" ]; then
+    for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
+      [ -e "$f" ] || continue
+      base="$(basename "$f")"
+      ver_have="${base#${name}[-_]}"
+      case "$base" in
+        *.deb) ver_have="${ver_have%.deb}"; ver_have="${ver_have%_*}" ;;
+        *.rpm) ver_have="${ver_have%.rpm}"; ver_have="${ver_have%.*}" ;;
+      esac
+      if [ -z "$ver_want" ] || version_ge "$ver_have" "$ver_want"; then
+        echo "verify-build-deps: OK   ${name}${suffix} (built earlier in this job, found ${ver_have})"
+        return 0
+      fi
+    done
+  fi
+
+  # '|| true' required: installed_version()/published_version() return
+  # non-zero when the package isn't found. Without it, this standalone
+  # `var="$(cmd)"` assignment would abort the WHOLE script under 'set -e'
+  # the moment the first genuinely-missing dependency is checked.
+  ver_have="$(installed_version "$name")" || true
+  if [ -n "$ver_have" ] && { [ -z "$ver_want" ] || version_ge "$ver_have" "$ver_want"; }; then
+    echo "verify-build-deps: OK   ${name}${suffix} (already installed in image, found ${ver_have})"
+    return 0
+  fi
+
+  ver_have="$(published_version "$name")" || true
+  if [ -n "$ver_have" ] && { [ -z "$ver_want" ] || version_ge "$ver_have" "$ver_want"; }; then
+    echo "verify-build-deps: OK   ${name}${suffix} (published in configured repos, found ${ver_have})"
+    return 0
+  fi
+
+  echo "verify-build-deps: MISSING  ${name}${suffix} - not built in this job, not installed, not published"
+  return 1
+}
+
+########################################################################
 # 2b) verify a package's declared zimbra-* build-time deps are resolvable
 #     (was ci/verify-build-deps.sh) - args: <control/spec file> <field prefix>
 ########################################################################
@@ -115,7 +205,6 @@ verify_build_deps() {
       ;;
   esac
   self_pkgs="$(printf '%s\n' "$self_pkgs" | sed '/^$/d' | sort -u)"
-  local is_self_produced_name
   is_self_produced() { [ -n "$self_pkgs" ] && grep -qxF "$1" <<<"$self_pkgs"; }
 
   local deps_with_versions
@@ -128,39 +217,6 @@ verify_build_deps() {
     | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
     | grep -E '^zimbra-' || true)"
   [ -z "$deps_with_versions" ] && { echo "verify-build-deps: no internal zimbra- build-time deps declared, skipping"; return 0; }
-
-  # deb/rpm version compare, preferring the platform-native comparator for
-  # correct epoch/tilde semantics.
-  version_ge() {
-    local have="$1" want="$2"
-    if command -v dpkg >/dev/null 2>&1; then
-      dpkg --compare-versions "$have" ge "$want"
-    elif command -v rpmdev-vercmp >/dev/null 2>&1; then
-      rpmdev-vercmp "$have" "$want" >/dev/null 2>&1
-      local rc=$?
-      [ "$rc" = "0" ] || [ "$rc" = "11" ]
-    else
-      [ "$(printf '%s\n%s\n' "$want" "$have" | sort -V | tail -1)" = "$have" ]
-    fi
-  }
-  installed_version() {
-    local name="$1" s
-    if command -v dpkg-query >/dev/null 2>&1; then
-      s="$(dpkg-query -W -f='${Status} ${Version}' "$name" 2>/dev/null || true)"
-      case "$s" in *"ok installed"*) echo "${s##* }" ;; esac
-    elif command -v rpm >/dev/null 2>&1; then
-      rpm -q "$name" >/dev/null 2>&1 && rpm -q --qf '%{VERSION}-%{RELEASE}' "$name" 2>/dev/null
-    fi
-  }
-  published_version() {
-    local name="$1"
-    if command -v apt-cache >/dev/null 2>&1; then
-      apt-cache madison "$name" 2>/dev/null | awk -F'|' 'NR==1{gsub(/ /,"",$2); print $2}'
-    elif command -v yum >/dev/null 2>&1; then
-      { yum --showduplicates list available "$name" 2>/dev/null || true; } \
-        | awk -v n="$name" '$1==n || index($1, n".")==1 {v=$2} END{print v}'
-    fi
-  }
 
   local missing=0
   while IFS= read -r line; do
@@ -181,74 +237,9 @@ verify_build_deps() {
         [ "$ver_raw" = "$line" ] && ver_raw=""
         ;;
     esac
-
-    if [ -z "$ver_raw" ]; then
-      local found_local=0
-      if [ -d "$LOCAL_REPO" ]; then
-        for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
-          [ -e "$f" ] && { found_local=1; break; }
-        done
-      fi
-      if [ "$found_local" = "1" ]; then
-        echo "verify-build-deps: OK    $name (no version constraint, built earlier in this job)"
-      elif [ -n "$(installed_version "$name")" ]; then
-        echo "verify-build-deps: OK    $name (no version constraint, already installed in image)"
-      elif [ -n "$(published_version "$name")" ]; then
-        echo "verify-build-deps: OK    $name (no version constraint, published in configured repos)"
-      else
-        echo "verify-build-deps: MISSING  $name (no version constraint declared) - not built in this job, not installed, not published"
-        missing=$((missing + 1))
-      fi
-      continue
-    fi
-
     local ver_want="${ver_raw%%ZAPPEND*}"
-    local found_local=0
-    if [ -d "$LOCAL_REPO" ]; then
-      for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
-        [ -e "$f" ] || continue
-        local base ver_have
-        base="$(basename "$f")"
-        ver_have="${base#${name}[-_]}"
-        case "$base" in
-          *.deb) ver_have="${ver_have%.deb}"; ver_have="${ver_have%_*}" ;;
-          *.rpm) ver_have="${ver_have%.rpm}"; ver_have="${ver_have%.*}" ;;
-        esac
-        if version_ge "$ver_have" "$ver_want"; then
-          found_local=1
-          echo "verify-build-deps: OK   $name >= ${ver_want} (built earlier in this job, found ${ver_have})"
-          break
-        fi
-      done
-    fi
-    [ "$found_local" = "1" ] && continue
 
-    # NOTE: '|| true' on both lines below is required, not decorative.
-    # installed_version()/published_version() intentionally return
-    # non-zero when the package isn't found (empty stdout = "not found").
-    # Without '|| true', a standalone `var="$(cmd)"` assignment that
-    # fails aborts the WHOLE script under 'set -e' - silently, with no
-    # error message - the moment the first genuinely-missing dependency
-    # is checked. This is exactly what happened on c8/c9: those platforms
-    # don't have zimbra-apr-devel pre-installed, so installed_version
-    # failed and killed the job right after printing the previous OK line.
-    # Ubuntu never hit this because its base image happened to already
-    # have the package installed, so the command substitution succeeded.
-    local ver_have
-    ver_have="$(installed_version "$name")" || true
-    if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
-      echo "verify-build-deps: OK   $name >= ${ver_want} (already installed in image, found ${ver_have})"
-      continue
-    fi
-
-    ver_have="$(published_version "$name")" || true
-    if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
-      echo "verify-build-deps: OK   $name >= ${ver_want} (published in configured repos, found ${ver_have})"
-      continue
-    fi
-
-    echo "verify-build-deps: MISSING  $name >= ${ver_want} - not built in this job, not installed, not published"
-    missing=$((missing + 1))
+    resolve_dep "$name" "$ver_want" || missing=$((missing + 1))
   done <<< "$deps_with_versions"
 
   if [ "$missing" -gt 0 ]; then
