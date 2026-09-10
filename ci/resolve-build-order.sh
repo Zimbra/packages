@@ -27,26 +27,33 @@
 # Since every package that gets built here was explicitly part of the PR,
 # every package that gets built also gets published - there is no
 # build-time-only/unpublished-prerequisite split to track anymore.
-
 set -euo pipefail
-
 INPUT="${1:?path to packages_to_build.txt required}"
 BUILD_ORDER="${BUILD_ORDER_FILE:-build-order}"
-
 [ -s "$INPUT" ] || { echo "resolve-build-order: $INPUT is empty, nothing to do"; exit 0; }
 [ -f "$BUILD_ORDER" ] || {
   echo "resolve-build-order: ERROR - $BUILD_ORDER not found. This is the master build-order list and is required."
   exit 1
 }
-
 master_pkgs="$(grep -vE '^[[:space:]]*(#|$)' "$BUILD_ORDER" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-
 bad=0
 ordered_file="$(mktemp)"
 while IFS= read -r pkg; do
   [ -n "$pkg" ] || continue
-
-  idx="$(grep -nxF "$pkg" <<<"$master_pkgs" | head -1 | cut -d: -f1)"
+  # '|| true' is required, not decorative. Under 'set -euo pipefail', a
+  # standalone `idx="$(cmd1 | cmd2 | cmd3)"` assignment aborts the WHOLE
+  # script the instant grep finds no match (exit 1), because pipefail
+  # propagates that failure through the pipeline and set -e then kills
+  # the script immediately - silently, before the 'if [ -z "$idx" ]'
+  # error-reporting line below ever runs. This is the exact same class
+  # of bug ci/build.sh's installed_version()/published_version() calls
+  # already guard against (see the comment on resolve_dep() there) - it
+  # was just missed here. Without '|| true', a package that is simply
+  # not (yet) listed in build-order kills this job with a bare "Exited
+  # with code exit status 1" and zero explanation, instead of the clear
+  # "ERROR '<pkg>' is not listed in $BUILD_ORDER" message this script is
+  # supposed to print.
+  idx="$(grep -nxF "$pkg" <<<"$master_pkgs" | head -1 | cut -d: -f1)" || true
   if [ -z "$idx" ]; then
     echo "resolve-build-order: ERROR '$pkg' is not listed in $BUILD_ORDER - add it there before it can be built."
     bad=1; continue
@@ -57,17 +64,14 @@ while IFS= read -r pkg; do
   fi
   echo "$idx $pkg" >> "$ordered_file"
 done < "$INPUT"
-
 if [ "$bad" -eq 1 ]; then
   echo ""
   echo "ERROR: resolve-build-order found one or more unresolvable packages - aborting before build."
   rm -f "$ordered_file"
   exit 1
 fi
-
 sort -n "$ordered_file" | awk '{print $2}' > "$INPUT"
 rm -f "$ordered_file"
-
 # --- dry-run summary --------------------------------------------------
 total="$(grep -c . "$INPUT" || true)"
 echo ""
