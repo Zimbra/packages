@@ -5,10 +5,6 @@ parameters:
     type: string
     default: "auto"
     description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
-  pkg_repo_release:
-    type: string
-    default: "1010"
-    description: "Zimbra package repo release line to enable inside build containers (e.g. 1010, 1000, 87). Published zimbra-* build deps are installed from this line instead of being rebuilt from source."
 references:
   when_main_workflow: &when_main_workflow
     or:
@@ -25,7 +21,16 @@ references:
   # calls this, since resolve-build-order.sh only sorts, it never queries
   # the package manager.
   #
-  # PROBE_PKGS is no longer passed here: ci/setup-pkg-repo.sh now defaults
+  # There is deliberately NO manually-triggerable "which release line"
+  # parameter here. ci/setup-pkg-repo.sh already probes 1010 -> 1000 -> 87
+  # and picks whichever one actually publishes zimbra-base for THIS
+  # platform - and different platforms genuinely need different lines
+  # (e.g. focal/rhel8 need 1000, jammy/noble/rhel9 are fine on 1010). A
+  # single manual override value could never be correct for all 5
+  # platforms at once, so exposing one as a pipeline parameter was
+  # actively misleading - removed.
+  #
+  # PROBE_PKGS is also not passed here: ci/setup-pkg-repo.sh defaults
   # PROBE_PKGS_DEB/PROBE_PKGS_RPM itself and picks the one matching THIS
   # container's flavour automatically, so a deb job never wastes a log
   # line probing an rpm-only '-devel' name (and vice versa).
@@ -33,10 +38,9 @@ references:
     run:
         name: Configure Zimbra package repo
         environment:
-          PKG_REPO_RELEASE: "<< pipeline.parameters.pkg_repo_release >>"
           APT_REPO_CANDIDATES: "https://repo.zimbra.com/apt http://repo-dev.eng.zimbra.com/apt"
           RPM_REPO_CANDIDATES: "https://repo.zimbra.com/rpm http://repo-dev.eng.zimbra.com/rpm"
-          PKG_REPO_RELEASE_CANDIDATES: "<< pipeline.parameters.pkg_repo_release >> 1000 87"
+          PKG_REPO_RELEASE_CANDIDATES: "1010 1000 87"
           REQUIRE_PKGS: "zimbra-base"
           RPM_GPGCHECK: "0"
         command: bash ci/setup-pkg-repo.sh
