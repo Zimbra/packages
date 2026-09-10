@@ -15,26 +15,25 @@
 #    'curl: (6) Could not resolve host'). circleci_ip_ranges only pins EGRESS
 #    IPs for firewall allowlisting; it does not give the container Zimbra DNS.
 #
-# 2. THE RELEASE LINE. Pipeline #239 showed that a dist existing is NOT the same
-#    as a dist being usable. Under release 1010 the public repo serves
-#    .../dists/focal/Release (HTTP 200) but does NOT publish zimbra-base or
-#    zimbra-heimdal-dev for focal - and pipeline #319 showed a THIRD failure
-#    mode on top of that: on 'noble' (u24/u22/u20 - see below), the Release
-#    file returns 200 but the per-component Packages index underneath it can
-#    be missing/malformed, so 'apt-cache madison' (used by missing_required())
-#    returns nonzero. Under 'set -euo pipefail', that nonzero inside a pipeline
-#    killed the WHOLE script immediately - before the 'REJECTED' log line, and
-#    before the next candidate was even tried. c8/c9 (rpm, yum/dnf path) never
-#    hit this because setup_yum()'s candidate body was never restructured this
-#    way in the first place; only setup_apt() had the bug, which is exactly why
-#    u24/u22/u20 crashed and c8/c9 sailed through to 'done' in pipeline #319.
+# 2. THE RELEASE LINE. This is not a hypothetical - pipeline #348 showed all
+#    5 platforms probed in the SAME run, and the correct release line
+#    genuinely differs per platform:
+#      u22 (jammy)  -> 1010 publishes zimbra-base directly, used as-is
+#      u24 (noble)  -> 1010 publishes zimbra-base directly, used as-is
+#      c9  (rhel9)  -> 1010 publishes zimbra-base directly, used as-is
+#      u20 (focal)  -> 1010 REJECTED (missing zimbra-base), falls back to 1000
+#      c8  (rhel8)  -> 1010 REJECTED (missing zimbra-base), falls back to 1000
+#    A single fixed value could never be correct for all 5 platforms in the
+#    same run - this is exactly why there is no manually-settable "which
+#    release line" pipeline parameter in config.yml: any single override
+#    would be wrong for at least some of the 5 platforms, every run.
 #
 #    zimbra-base is only ever fetched from a repo, never built by this pipeline,
 #    so a release line that lacks it cannot work no matter what gets rebuilt.
 #
 # Hence: probe every (base URL x release line) combination and accept the first
 # one that both serves this platform's dist AND actually contains REQUIRE_PKGS.
-# Reorder the candidate lists to change precedence.
+# Reorder PKG_REPO_RELEASE_CANDIDATES to change precedence.
 #
 # CRITICAL: each candidate's try-it body runs inside a FUNCTION, called as the
 # condition of an 'if'. Bash suspends 'set -e' for the duration of any command
@@ -43,8 +42,8 @@
 # try_apt_candidate() (a failed pipeline under pipefail, a failed apt-get, etc.)
 # no longer kills the whole script - it just makes that candidate fail, log
 # REJECTED, and let the loop move on to the next one, exactly as intended.
-# Do NOT flatten this back into a bare for-loop body - that reintroduces the
-# u24/u22/u20 crash-on-first-bad-candidate bug from pipeline #319.
+# Do NOT flatten this back into a bare for-loop body - that reintroduces a
+# crash-on-first-bad-candidate bug seen in an earlier pipeline (#319).
 #
 # Must run BEFORE anything that calls 'apt-get update', 'apt-cache madison',
 # 'yum makecache' or 'yum list available' - i.e. before ci/build.sh's
@@ -66,8 +65,7 @@
 # else in the job.
 #
 # Environment:
-#   PKG_REPO_RELEASE             preferred release line (default 1010); tried first
-#   PKG_REPO_RELEASE_CANDIDATES  full ordered list (default "$PKG_REPO_RELEASE 1000 87")
+#   PKG_REPO_RELEASE_CANDIDATES  ordered release lines to try (default "1010 1000 87")
 #   APT_REPO_CANDIDATES          ordered .deb base URLs
 #   RPM_REPO_CANDIDATES          ordered .rpm base URLs
 #   REQUIRE_PKGS                 packages that MUST be present for a release line
@@ -87,8 +85,7 @@
 
 set -euo pipefail
 
-PKG_REPO_RELEASE="${PKG_REPO_RELEASE:-1010}"
-PKG_REPO_RELEASE_CANDIDATES="${PKG_REPO_RELEASE_CANDIDATES:-${PKG_REPO_RELEASE} 1000 87}"
+PKG_REPO_RELEASE_CANDIDATES="${PKG_REPO_RELEASE_CANDIDATES:-1010 1000 87}"
 APT_REPO_CANDIDATES="${APT_REPO_CANDIDATES:-${APT_REPO_BASE:-https://repo.zimbra.com/apt http://repo-dev.eng.zimbra.com/apt}}"
 RPM_REPO_CANDIDATES="${RPM_REPO_CANDIDATES:-${RPM_REPO_BASE:-https://repo.zimbra.com/rpm http://repo-dev.eng.zimbra.com/rpm}}"
 REQUIRE_PKGS="${REQUIRE_PKGS:-zimbra-base}"
