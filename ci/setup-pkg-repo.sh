@@ -47,8 +47,10 @@
 # u24/u22/u20 crash-on-first-bad-candidate bug from pipeline #319.
 #
 # Must run BEFORE anything that calls 'apt-get update', 'apt-cache madison',
-# 'yum makecache' or 'yum list available' - i.e. before ci/resolve-build-order.sh,
-# and before the build step that runs verify-build-deps.sh / installs build-deps.
+# 'yum makecache' or 'yum list available' - i.e. before ci/build.sh's
+# verify_build_deps()/install_declared_build_deps() steps, which are the
+# only things in this pipeline that actually query or install from the
+# repo this script configures (ci/resolve-build-order.sh never does).
 #
 # ONE FULL UPDATE PER JOB
 # ------------------------
@@ -72,7 +74,10 @@
 #                                to be accepted (default "zimbra-base")
 #   APT_TRUSTED                  'yes' -> [trusted=yes], skip sig check (default yes)
 #   RPM_GPGCHECK                 0|1 (default 0)
-#   PROBE_PKGS                   extra names to probe and log (does not gate anything)
+#   PROBE_PKGS_DEB                deb-flavour names to probe and log (default:
+#                                 "zimbra-base zimbra-openssl-dev zimbra-heimdal-dev")
+#   PROBE_PKGS_RPM                rpm-flavour names to probe and log (default:
+#                                 "zimbra-base zimbra-openssl-devel zimbra-heimdal-devel")
 #   APT_REPO_BASE / RPM_REPO_BASE   legacy single-URL forms, still honoured
 #
 # Always exits 0. A repo problem is reported as a WARNING naming the specific
@@ -89,7 +94,8 @@ RPM_REPO_CANDIDATES="${RPM_REPO_CANDIDATES:-${RPM_REPO_BASE:-https://repo.zimbra
 REQUIRE_PKGS="${REQUIRE_PKGS:-zimbra-base}"
 APT_TRUSTED="${APT_TRUSTED:-yes}"
 RPM_GPGCHECK="${RPM_GPGCHECK:-0}"
-PROBE_PKGS="${PROBE_PKGS:-}"
+PROBE_PKGS_DEB="${PROBE_PKGS_DEB:-zimbra-base zimbra-openssl-dev zimbra-heimdal-dev}"
+PROBE_PKGS_RPM="${PROBE_PKGS_RPM:-zimbra-base zimbra-openssl-devel zimbra-heimdal-devel}"
 
 APT_LIST=/etc/apt/sources.list.d/zimbra.list
 YUM_REPO=/etc/yum.repos.d/zimbra.repo
@@ -100,14 +106,15 @@ log() { echo "setup-pkg-repo: $*"; }
 # Invoked as 'bash ci/setup-pkg-repo.sh', so this file needs no +x itself. It is
 # the earliest step in the job though, which makes it a convenient place to
 # restore +x on the rest of ci/*.sh - that bit is easily lost when a file is
-# added through the GitHub web UI. Harmless when already set.
+# added through the GitHub web UI.
 #
-# SILENT on purpose: config.yml's checkout_and_resolve job already does an
-# explicit 'chmod +x ci/*.sh' before persist_to_workspace, so every build_*
-# job (u24/u22/u20/c9/c8) that attaches that workspace should find nothing
-# to fix here - this loop is cheap insurance, not the primary fix, and does
-# not log per-file so it stays a true no-op instead of printing the same
-# lines in every platform job's log.
+# This IS the only place in the pipeline that fixes this - config.yml does
+# NOT chmod anything itself. Silent by design (no per-file log line) so a
+# repo where the bit is already correct produces zero extra output; if you
+# ever see nothing printed here across all 5 platform jobs, that's the
+# steady state to aim for (fix once with
+# `git update-index --chmod=+x ci/*.sh` and commit, and this loop becomes
+# a permanent no-op).
 CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for _s in "$CI_DIR"/*.sh; do
   [ -f "$_s" ] && [ ! -x "$_s" ] && chmod +x "$_s" 2>/dev/null
@@ -156,14 +163,26 @@ describe_probe() {
 
 # Refresh ONLY the zimbra source. A full 'apt-get update' per candidate would be
 # needlessly slow, and List-Cleanup=0 stops apt discarding the other lists.
+#
+# Output is captured into a variable first, then printed once with the
+# prefix applied - never streamed live through '| sed' (that can render as
+# garbled/duplicated lines in CircleCI's log viewer).
+#
+# The repo's NO_PUBKEY/GPG warning is expected and harmless (APT_TRUSTED=yes
+# deliberately skips signature verification - see the NOTE printed in
+# setup_apt()) and is NOT actionable, so it's filtered out of the
+# per-candidate noise here.
+#
 # '|| true' is required: under pipefail, a nonzero from apt-get here must not
 # propagate out and kill the calling function's exit status early.
 apt_update_zimbra_only() {
-  $SUDO apt-get update -qq \
+  local out filtered
+  out="$($SUDO apt-get update -qq \
     -o Dir::Etc::sourcelist="sources.list.d/zimbra.list" \
     -o Dir::Etc::sourceparts="-" \
-    -o APT::Get::List-Cleanup="0" 2>&1 \
-    | sed 's/^/setup-pkg-repo:   apt: /' || true
+    -o APT::Get::List-Cleanup="0" 2>&1)" || true
+  filtered="$(grep -v -E 'GPG error|NO_PUBKEY' <<<"$out" || true)"
+  [ -n "$filtered" ] && echo "$filtered" | sed 's/^/setup-pkg-repo:   apt: /'
 }
 
 # NOTE: 'apt-cache madison'/'yum list' can return nonzero for reasons that are
@@ -201,11 +220,11 @@ no_repo_warning() {
   log "WARNING  Tried release lines: $PKG_REPO_RELEASE_CANDIDATES"
   log "WARNING  Required packages:   $REQUIRE_PKGS"
   log "WARNING  Consequences, in order of appearance:"
-  log "WARNING   1. resolve-build-order.sh reports every zimbra-* build dep as"
-  log "WARNING      unpublished and rebuilds its producer from source (slow)."
-  log "WARNING   2. The first package whose deps reach zimbra-base then fails at"
-  log "WARNING      'apt-get install' / 'yum install' with unmet dependencies,"
-  log "WARNING      because zimbra-base is only ever fetched from a repo."
+  log "WARNING   1. ci/build.sh's verify_build_deps() reports every zimbra-*"
+  log "WARNING      build-time dep as unresolvable and fails before 'make'."
+  log "WARNING   2. Even a package with NO zimbra-* build deps still fails,"
+  log "WARNING      since zimbra-base itself is only ever fetched from a repo -"
+  log "WARNING      never built by this pipeline."
   log "WARNING  Fix repo reachability or pick a release line that publishes this"
   log "WARNING  platform fully - do not just wait out the slow build."
   log "WARNING ============================================================"
@@ -262,7 +281,8 @@ setup_apt() {
     opts="$opts trusted=yes"
     log "NOTE: zimbra repo has no keyring installed on this image - signature"
     log "      verification is deliberately skipped (APT_TRUSTED=yes). Any"
-    log "      'NO_PUBKEY' warning below is expected and not an error."
+    log "      'NO_PUBKEY' warning is expected and not an error (already"
+    log "      filtered out of apt_update_zimbra_only()'s output below)."
   fi
 
   log "flavour=deb codename=$codename"
@@ -310,8 +330,8 @@ try_yum_candidate() {
   describe_probe "$rc" "$code" "$url" || return 1
 
   # priority=5 keeps this BELOW the job-local repo written by
-  # ci/register-local-repo.sh (priority=1), so a package built earlier in
-  # this same job always wins over a published one.
+  # register_local_repo() in ci/build.sh (priority=1), so a package built
+  # earlier in this same job always wins over a published one.
   $SUDO tee "$YUM_REPO" >/dev/null <<EOF
 [zimbra-${rel}]
 name=Zimbra RPM ${rel} Repository (rhel${el})
@@ -389,11 +409,19 @@ else
 fi
 
 # ----------------------------------------------------------------------- probing
-# Log exactly what resolve-build-order.sh and the build-dep install step will
-# see. Note the deb/rpm naming split: on a deb container the '-devel' names are
-# EXPECTED to be missing and vice versa - that is not a repo fault, and
-# resolve-build-order.sh must not treat it as one.
-for p in $PROBE_PKGS; do
+# Log exactly what ci/build.sh will see - using ONLY the naming scheme that
+# matches THIS container's flavour. Probing the other flavour's names (e.g.
+# '-devel' on a deb box) always reports "NOT AVAILABLE" - not a repo fault,
+# just the wrong dictionary - so it's skipped entirely rather than printed
+# as noise.
+if command -v apt-cache >/dev/null 2>&1; then
+  PROBE_LIST="$PROBE_PKGS_DEB"
+elif command -v yum >/dev/null 2>&1; then
+  PROBE_LIST="$PROBE_PKGS_RPM"
+else
+  PROBE_LIST=""
+fi
+for p in $PROBE_LIST; do
   v="$(available_version "$p")"
   if [ -n "${v:-}" ]; then
     log "probe pkg '$p' -> $v (will be INSTALLED, not rebuilt)"
