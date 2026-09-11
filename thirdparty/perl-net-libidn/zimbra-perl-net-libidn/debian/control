@@ -9,7 +9,7 @@ Homepage: https://metacpan.org/release/MODNAME
 Package: zimbra-perl-MODNORMNAME
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}, zimbra-perl-base,
- libidn11
+ OSDEPS
 Description:  Net::LibIDN - Perl bindings for GNU Libidn
  Provides bindings for GNU Libidn, a C library for handling
  Internationalized Domain Names according to IDNA (RFC 3490),

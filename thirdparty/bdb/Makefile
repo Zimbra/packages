@@ -7,7 +7,7 @@ pname := bdb
 uname := db
 pfile := $(uname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://ftp.tw.freebsd.org/distfiles/bdb/$(pfile)
+purl := http://download.oracle.com/berkeley-db/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

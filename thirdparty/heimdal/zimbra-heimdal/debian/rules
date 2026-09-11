@@ -8,7 +8,7 @@ export DEB_CXXFLAGS_MAINT_APPEND=-D_REENTRANT
 export DEB_CPPFLAGS_MAINT_APPEND=-IOZCI
 
 %:
-	dh $@
+	dh $@ --without autoreconf
 override_dh_auto_configure:
 	./configure --prefix=OZC \
 	--sysconfdir=/etc \

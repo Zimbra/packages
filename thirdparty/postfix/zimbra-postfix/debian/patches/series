@@ -2,3 +2,4 @@ postfix-main-cf-zimbra.patch
 stop-warning.patch
 postfix-ldap.patch
 lmdb-default.patch
+glibc-2.34.patch

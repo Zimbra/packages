@@ -49,6 +49,7 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
+	$(if $(filter $(BUILD_PLATFORM),UBUNTU24_64),$(MKDIR) -p debian/patches && $(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && echo "harden-require-error-msgs.patch" >> debian/patches/series &&) \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 

@@ -11,6 +11,8 @@ zimbra/store-base
 zimbra/osl
 zimbra/os-requirements
 thirdparty/openssl
+thirdparty/erlang
+thirdparty/rabbitmq-server
 thirdparty/libxml2
 thirdparty/libltdl
 thirdparty/libbsd
