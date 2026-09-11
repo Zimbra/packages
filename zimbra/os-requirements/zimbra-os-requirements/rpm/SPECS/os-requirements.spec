@@ -18,7 +18,7 @@ Zimbra OS requirements is used as a simple method to pull in all
 OS required core packages
 
 %changelog
-* Thu May 08 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.5-1zimbra8.7b1ZAPPEND
+* Thu May 08 2025  Zimbra new Packaging Services <packaging-devel@zimbra.com> - 1.0.5-1zimbra8.7b1ZAPPEND
 - ZBUG-4617, removed rsyslog dependency from os-requirements
 * Thu Apr 25 2025  Zimbra Packaging Services <packaging-devel@zimbra.com> - 1.0.4-1zimbra8.7b1ZAPPEND
 - ZBUG-3966, added gdb, lsof, bzip2 in os-requirements
