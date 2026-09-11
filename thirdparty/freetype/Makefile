@@ -6,7 +6,7 @@ pvers := $(FREETYPE_VERSION)
 pname := freetype
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := http://download.savannah.gnu.org/releases/freetype/$(pfile)
+purl := http://download.savannah.gnu.org/releases/freetype/freetype-old/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 

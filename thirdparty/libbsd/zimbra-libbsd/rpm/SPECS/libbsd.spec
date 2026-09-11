@@ -9,6 +9,8 @@ URL:                http://libbsd.freedesktop.org/
 %description
 The Zimbra libbsd build
 
+%define debug_package %{nil}
+
 %prep
 %setup -n libbsd-%{version}
 

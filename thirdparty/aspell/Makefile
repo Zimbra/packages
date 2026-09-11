@@ -6,7 +6,7 @@ pvers := $(ASPELL_VERSION)
 pname := aspell
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := ftp://alpha.gnu.org/gnu/aspell/$(pfile)
+purl := ftp://ftp.gnu.org/gnu/aspell/$(pname)-$(pvers).tar.gz
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
