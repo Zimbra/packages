@@ -4,7 +4,7 @@ parameters:
   package_name:
     type: string
     default: "auto"
-    description: "Full path of the package to build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
+    description: "Full path of the package to new build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
 references:
   when_main_workflow: &when_main_workflow
     or:
