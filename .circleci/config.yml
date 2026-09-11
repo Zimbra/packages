@@ -52,13 +52,13 @@ references:
       - checkout:
           method: full
       - run:
-          name: Checkout build-tooling dependencies (siblings of ~/packages)
+          name: Checkout build-tool dependencies
           command: |
             git clone -b develop --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-pkg-tool.git ~/zm-pkg-tool
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-nexus.git ~/zm-nexus
       - run:
-          name: Find changed package(s) (PR is source of truth)
+          name: Identify Packages Changed in PR/Commit
           command: |
             if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
               echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
@@ -74,7 +74,7 @@ references:
             echo "=== Changed package(s) found in this commit ==="
             cat packages_to_build.txt
       - run:
-          name: Sort changed package(s) + show dry-run build plan
+          name: Sort changes Packages according to build-order
           command: bash ci/resolve-build-order.sh packages_to_build.txt
       - persist_to_workspace:
           root: ..
@@ -92,7 +92,7 @@ references:
           at: ..
       - *setup_pkg_repo_step
       - run:
-          name: Build resolved package(s)
+          name: Build Packages
           command: bash ci/build.sh packages_to_build.txt
       - run:
           name: Build summary
