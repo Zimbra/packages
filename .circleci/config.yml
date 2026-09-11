@@ -74,7 +74,7 @@ references:
             echo "=== Changed package(s) found in this commit ==="
             cat packages_to_build.txt
       - run:
-          name: Sort changes Packages according to build-order
+          name: Sort changed Packages according to build-order
           command: bash ci/resolve-build-order.sh packages_to_build.txt
       - persist_to_workspace:
           root: ..
