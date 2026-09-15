@@ -13,7 +13,7 @@ URL:                https://metacpan.org/release/MODNAME
 
 %description
 Date::Manip is a series of modules designed to make any common date/time
-operation easy to do. Operations such as comparing two times,
+operation easy to do. Operations such as comparing to times,
 determining a date a given amount of time from another, or parsing
 international times are all easily done. It deals with time as it is
 used in the Gregorian calendar (the one currently in use) with full
