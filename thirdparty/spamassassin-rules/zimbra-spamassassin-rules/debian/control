@@ -10,4 +10,4 @@ Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends},
  zimbra-mta-base, zimbra-perl-mail-spamassassin (>= 4.0.1-1zimbra8.8b5ZAPPEND)
 Description: Default ruleset for SpamAssassin
- Default ruleset for SpamAssassin
+ Default ruleset forr SpamAssassin
