@@ -22,9 +22,9 @@ $(psrc_file):
 pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
-	$(PKG_EXTRACT) zimbra-base zimbra-apr-$(PKG_DEV) zimbra-apr-util-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) pcre2-devel zlib-devel expat-devel
+	$(PKG_EXTRACT) zimbra-base zimbra-apr-$(PKG_DEV) zimbra-apr-util-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) pcre2-devel expat-devel
 pkgadd_deb:
-	$(PKG_EXTRACT) zimbra-base zimbra-apr-$(PKG_DEV) zimbra-apr-util-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) libpcre2-dev libz-dev libexpat1-dev
+	$(PKG_EXTRACT) zimbra-base zimbra-apr-$(PKG_DEV) zimbra-apr-util-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) libpcre2-dev
 
 pkgrm: pkgrm%
 pkgrm%:
