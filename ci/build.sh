@@ -47,38 +47,13 @@ LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 ########################################################################
 # 1) baseline OS packaging tools + dev libraries (once per job)
 #
-# ONLY truly universal stuff goes here unconditionally: the packaging
-# toolchain (dpkg-dev/build-essential, or rpm-build/rpmdevtools/createrepo)
-# and the handful of -dev/-devel libs that multiple different packages in
-# this repo (openssl, curl, httpd, ...) actually link against. Genesis's
-# own manual `make` runs never install any of this themselves - they rely
-# on it already being present on that long-lived box - so this list is
-# deliberately kept to the same footprint a persistent build box already
-# carries, not padded out "just in case".
-#
-# PACKAGE-SPECIFIC extras (below, in the conditional block) are for cases
-# like PHP, where ./configure auto-probes for a lib (sqlite3, in PHP's
-# case) and fails the whole build if it's missing, even though
-# zimbra-php's php.spec/debian/control never declared it as a build dep.
-# Genesis never hit this because it's a long-lived box where sqlite-devel
-# happened to already be installed; CircleCI's containers are fresh every
-# run, so it must be installed explicitly - but ONLY when the package that
-# actually needs it is part of THIS run, not for every platform/package
-# unconditionally.
-#
-# CHANGED 2026-09-15: this used to install cmake/python3/libcurl-dev/
-# libxml2-dev/libsqlite3-dev (and RPM equivalents, plus perl-libwww-perl)
-# unconditionally for every single job, regardless of which package was
-# actually being built. cmake alone drags in a ~15-20 package dependency
-# chain (icu-devtools, libjsoncpp25, librhash0, libarchive13, libuv1,
-# dh-elpa-helper, emacsen-common on deb; the whole perl-HTTP-* stack,
-# python3 upgrade, attr, mailcap, etc. on rpm) - tens of MB per job, on
-# EVERY platform, even a plain httpd-only or openssl-only run that never
-# touches PHP. Confirmed unnecessary by diffing against genesis's manual
-# `make` runs for the same packages, which install none of it. Only PHP's
-# actual undeclared-probe need is real; everything else here was scope
-# creep. Moved to the conditional block below, gated on thirdparty/php
-# actually being in this run's package list.
+# libsqlite3-dev/sqlite-devel is here (not left for a package's own
+# BuildRequires/Build-Depends) because we can't edit package spec/control
+# files - PHP's ./configure auto-probes for sqlite3 and fails the whole
+# build if it's missing, even though zimbra-php's php.spec/debian/control
+# never declared it as a build dep. Genesis never hit this because it's a
+# long-lived box where sqlite-devel happened to already be installed;
+# CircleCI's containers are fresh every run, so it must be baked in here.
 ########################################################################
 install_build_tooling() {
   if command -v apt-get >/dev/null 2>&1; then
@@ -89,15 +64,9 @@ install_build_tooling() {
     # index data for no new information.
     sudo apt-get update
     sudo apt-get install -y --no-install-recommends \
-      dpkg-dev build-essential \
-      libssl-dev liblz4-dev zlib1g-dev libzstd-dev
-
-    if grep -qxF "thirdparty/php" "$INPUT" 2>/dev/null; then
-      echo "install-build-tooling: thirdparty/php is in this run - installing its configure-probed (undeclared) baseline libs"
-      sudo apt-get install -y --no-install-recommends \
-        libsqlite3-dev libcurl4-openssl-dev libxml2-dev libexpat1-dev
-    fi
-
+      dpkg-dev build-essential cmake python3 \
+      libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev libxml2-dev \
+      libcurl4-openssl-dev libsqlite3-dev
   elif command -v yum >/dev/null 2>&1; then
     OS_VERSION=$(rpm -E %{rhel})
     if [ "$OS_VERSION" = "8" ]; then
@@ -113,15 +82,10 @@ install_build_tooling() {
       || sudo yum config-manager --set-enabled crb 2>/dev/null \
       || true
     sudo yum install -y \
-      rpm-build rpmdevtools createrepo \
-      openssl-devel lz4-devel zlib-devel libzstd-devel
-
-    if grep -qxF "thirdparty/php" "$INPUT" 2>/dev/null; then
-      echo "install-build-tooling: thirdparty/php is in this run - installing its configure-probed (undeclared) baseline libs"
-      sudo yum install -y \
-        sqlite-devel libcurl-devel libxml2-devel expat-devel \
-        perl-libwww-perl perl-LWP-Protocol-https
-    fi
+      rpm-build rpmdevtools createrepo cmake python3 \
+      openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel libxml2-devel \
+      libcurl-devel sqlite-devel \
+      perl-libwww-perl perl-LWP-Protocol-https
   fi
 }
 
