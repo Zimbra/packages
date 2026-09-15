@@ -1,0 +1,525 @@
+#!/usr/bin/env bash
+# Path in repo: ci/build.sh
+#
+# Called as: bash ci/build.sh packages_to_build.txt
+#
+# Everything needed to build every resolved package on THIS platform
+# (PLATFORM_TAG env var). This is the ONE script config.yml's build jobs
+# call - every build-behavior change (baseline tools, per-package steps,
+# how a fresh build is shared with a later package in the same run)
+# happens here, never in .circleci/config.yml.
+#
+# Flow:
+#   1. install_build_tooling   - the minimal OS packaging tools the CI
+#                                 mechanics themselves need (once per
+#                                 job). NO generic -dev/-devel library
+#                                 pile: every package installs its own
+#                                 build deps via its own Makefile
+#                                 pkgadd_rpm/pkgadd_deb target.
+#   2. for each package, in build order:
+#        a. run its ci/pre_build.sh hook if present
+#        b/c. handle_build_deps  - finds the package's manifest for THIS
+#                                   platform (debian/control or *.spec),
+#                                   then verify_build_deps() checks its
+#                                   declared zimbra-* deps are resolvable
+#                                   one of 3 ways (built earlier in THIS
+#                                   job / already installed / published in
+#                                   the zimbra repo - fails clearly here,
+#                                   before `make`, if none apply), and
+#                                   install_declared_build_deps() installs
+#                                   everything else declared (non-zimbra) -
+#                                   UNLESS the package's own Makefile has
+#                                   been migrated to a pkgadd_deb:/pkgadd_rpm:
+#                                   target that already self-installs those
+#                                   (detected automatically, see the NOTE on
+#                                   handle_build_deps() below)
+#        d. make
+#        e. register_local_repo  - drop the freshly-built .deb/.rpm into a
+#                                   job-local repo pinned ABOVE the published
+#                                   zimbra repo, so a LATER package in this
+#                                   same run picks up this fresh build
+#        f. copy artifacts into build/dist_workspace/${PLATFORM_TAG}/
+
+set -euo pipefail
+
+: "${PLATFORM_TAG:?PLATFORM_TAG must be set}"
+INPUT="${1:-packages_to_build.txt}"
+LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
+
+[ -s "$INPUT" ] || { echo "build: $INPUT is empty, nothing to build"; exit 0; }
+
+########################################################################
+# 1) minimal baseline (once per job): ONLY the tools the CI mechanics
+#    themselves execute. Genesis-parity by design.
+#
+# The old baseline installed a generic pile of dev libraries on every
+# job (deb: cmake libxml2-dev libcurl4-openssl-dev libsqlite3-dev
+# libssl-dev ...; rpm: cmake openssl-devel libxml2-devel libcurl-devel
+# sqlite-devel perl-libwww-perl ...) - 40+ packages and ~39 MB on the
+# rpm side alone - none of which httpd (or most packages) use. That was
+# the "unwanted package installation" noise genesis never shows:
+# genesis' long-lived boxes already have whatever a package needs, so
+# nothing extra is ever installed there. Fresh CircleCI containers do
+# need real build deps - and they already get them from the RIGHT place:
+# each package's own Makefile pkgadd_rpm/pkgadd_deb target (httpd:
+# pcre2-devel zlib-devel on rpm; debhelper m4 libpcre2-dev libz-dev on
+# deb), and for not-yet-migrated packages their declared non-zimbra
+# BuildRequires/Build-Depends via install_declared_build_deps() below.
+# Hence the generic list is simply deleted, not trimmed.
+#
+# What remains is only what the PIPELINE itself runs:
+#   deb: dpkg-dev        - dpkg-scanpackages (register_local_repo) and
+#                          dpkg-buildpackage (`make`)
+#        build-essential - compiler toolchain for `make`
+#   rpm: rpm-build       - rpmbuild (`make`)
+#        createrepo_c    - register_local_repo's job-local yum repo
+# Both lists are already satisfied on the current devcore images, so
+# this step is a no-op there - insurance against a leaner image, not a
+# source of extra packages.
+#
+# IF A SPECIFIC PACKAGE NEEDS MORE, THE FIX LIVES IN THAT PACKAGE:
+#   - a compile dep    -> add it to that package's pkgadd_rpm /
+#                         pkgadd_deb list (e.g. PHP will need
+#                         sqlite3-devel / libsqlite3-dev there: its
+#                         ./configure auto-probes sqlite and fails
+#                         without it, but its spec/control never
+#                         declared it - that is why sqlite used to sit
+#                         in the old baseline)
+#   - an extra OS repo -> enable it in that package's ci/pre_build.sh:
+#                         sudo yum install -y epel-release
+#                         sudo yum config-manager --set-enabled crb
+########################################################################
+install_build_tooling() {
+  if command -v apt-get >/dev/null 2>&1; then
+    # Disable Recommends for the WHOLE job, not just our own apt-get
+    # calls: zm-pkg-tool's PKG_EXTRACT (run inside `make` by a
+    # package's pkgadd_deb) calls plain `apt-get install` with no
+    # --no-install-recommends of its own, so on jammy debhelper's
+    # Recommends dragged in dh-elpa-helper + emacsen-common (and
+    # friends) on every deb build. This apt.conf.d file is the one
+    # place we can fix that without patching zm-pkg-tool.
+    printf 'APT::Install-Recommends "false";\n' \
+      | sudo tee /etc/apt/apt.conf.d/99-no-install-recommends >/dev/null
+
+    # This is the job's ONE full apt-get update. ci/setup-pkg-repo.sh
+    # (which runs immediately before this step) only does a SCOPED
+    # update against zimbra.list, on purpose - do not add another full
+    # update anywhere else in this job, it just re-downloads
+    # archive/security/zimbra index data for no new information. The
+    # full update is still needed HERE: pkgadd_deb's PKG_EXTRACT
+    # installs OS packages (libpcre2-dev, debhelper, ...) inside
+    # `make`, and that needs usable indexes.
+    sudo apt-get update
+
+    sudo apt-get install -y --no-install-recommends \
+      dpkg-dev build-essential
+  elif command -v yum >/dev/null 2>&1; then
+    # CentOS 8 is EOL: its mirrorlist is dead. Repoint the image's
+    # repos at vault so ANY yum on c8 works at all. Pure platform-image
+    # fixup - stays.
+    OS_VERSION=$(rpm -E %{rhel})
+    if [ "$OS_VERSION" = "8" ]; then
+      sudo sed -i \
+        -e 's/^mirrorlist=/#mirrorlist=/' \
+        -e 's/^metalink=/#metalink=/' \
+        -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
+        /etc/yum.repos.d/*.repo
+    fi
+    # NOTE: epel-release and the powertools/PowerTools/crb enables are
+    # deliberately gone from this baseline. Nothing currently built
+    # needs them (httpd's pcre2-devel / zlib-devel come from
+    # BaseOS/AppStream), and merely having EPEL enabled costs a ~20 MB
+    # metadata fetch on every c9 job. A package that genuinely needs
+    # EPEL/CRB enables it itself - see the comment block above.
+    sudo yum install -y rpm-build createrepo_c \
+      || sudo yum install -y rpm-build createrepo
+  fi
+}
+
+########################################################################
+# 2b) verify a package's declared zimbra-* build-time deps are resolvable
+#     (was ci/verify-build-deps.sh) - args: <control/spec file> <field prefix>
+########################################################################
+verify_build_deps() {
+  local file="$1" prefix="$2"
+  [ -f "$file" ] || { echo "verify-build-deps: $file not found, skipping"; return 0; }
+
+  # Sibling binaries from the SAME control/spec (e.g. clamav produces both
+  # zimbra-clamav and zimbra-clamav-lib) often depend on each other - those
+  # are produced by this very build, not external prerequisites.
+  local self_pkgs=""
+  case "$file" in
+    */debian/control)
+      self_pkgs="$(grep -E '^Package:' "$file" | awk '{print $2}' | sort -u || true)"
+      ;;
+    *.spec)
+      local base_name
+      base_name="$(grep -E '^Name:' "$file" | head -1 | awk '{print $2}')"
+      self_pkgs="$base_name"
+      while IFS= read -r line; do
+        local n
+        case "$line" in
+          *'-n '*) n="$(sed -E 's/.*-n[[:space:]]+([^[:space:]]+).*/\1/' <<<"$line")" ;;
+          *)       n="${base_name}-$(awk '{print $2}' <<<"$line")" ;;
+        esac
+        [ -n "$n" ] && self_pkgs="$(printf '%s\n%s' "$self_pkgs" "$n")"
+      done < <(grep -E '^%package' "$file" || true)
+      ;;
+  esac
+  self_pkgs="$(printf '%s\n' "$self_pkgs" | sed '/^$/d' | sort -u)"
+  local is_self_produced_name
+  is_self_produced() { [ -n "$self_pkgs" ] && grep -qxF "$1" <<<"$self_pkgs"; }
+
+  local deps_with_versions
+  deps_with_versions="$(awk -v prefix="$prefix" '
+      $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
+      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+      flag { print }
+    ' "$file" \
+    | tr ',' '\n' \
+    | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+    | grep -E '^zimbra-' || true)"
+  [ -z "$deps_with_versions" ] && { echo "verify-build-deps: no internal zimbra- build-time deps declared, skipping"; return 0; }
+
+  # deb/rpm version compare, preferring the platform-native comparator for
+  # correct epoch/tilde semantics.
+  version_ge() {
+    local have="$1" want="$2"
+    if command -v dpkg >/dev/null 2>&1; then
+      dpkg --compare-versions "$have" ge "$want"
+    elif command -v rpmdev-vercmp >/dev/null 2>&1; then
+      rpmdev-vercmp "$have" "$want" >/dev/null 2>&1
+      local rc=$?
+      [ "$rc" = "0" ] || [ "$rc" = "11" ]
+    else
+      [ "$(printf '%s\n%s\n' "$want" "$have" | sort -V | tail -1)" = "$have" ]
+    fi
+  }
+  installed_version() {
+    local name="$1" s
+    if command -v dpkg-query >/dev/null 2>&1; then
+      s="$(dpkg-query -W -f='${Status} ${Version}' "$name" 2>/dev/null || true)"
+      case "$s" in *"ok installed"*) echo "${s##* }" ;; esac
+    elif command -v rpm >/dev/null 2>&1; then
+      rpm -q "$name" >/dev/null 2>&1 && rpm -q --qf '%{VERSION}-%{RELEASE}' "$name" 2>/dev/null
+    fi
+  }
+  published_version() {
+    local name="$1"
+    if command -v apt-cache >/dev/null 2>&1; then
+      apt-cache madison "$name" 2>/dev/null | awk -F'|' 'NR==1{gsub(/ /,"",$2); print $2}'
+    elif command -v yum >/dev/null 2>&1; then
+      { yum --showduplicates list available "$name" 2>/dev/null || true; } \
+        | awk -v n="$name" '$1==n || index($1, n".")==1 {v=$2} END{print v}'
+    fi
+  }
+
+  local missing=0
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    local name
+    name=$(sed -E 's/[[:space:]]*\(.*//' <<<"$line" | sed -E 's/[[:space:]]*[<>=!].*//')
+
+    if is_self_produced "$name"; then
+      echo "verify-build-deps: SKIP  $name (sibling binary package produced by this same build)"
+      continue
+    fi
+
+    local ver_raw=""
+    case "$line" in
+      *'('*) ver_raw=$(sed -E 's/.*\(>=?[[:space:]]*([^)]+)\).*/\1/' <<<"$line") ;;
+      *)
+        ver_raw=$(sed -E 's/^[^><=!]*[><=!]+[[:space:]]*//' <<<"$line")
+        [ "$ver_raw" = "$line" ] && ver_raw=""
+        ;;
+    esac
+
+    if [ -z "$ver_raw" ]; then
+      local found_local=0
+      if [ -d "$LOCAL_REPO" ]; then
+        for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
+          [ -e "$f" ] && { found_local=1; break; }
+        done
+      fi
+      if [ "$found_local" = "1" ]; then
+        echo "verify-build-deps: OK    $name (no version constraint, built earlier in this job)"
+      elif [ -n "$(installed_version "$name")" ]; then
+        echo "verify-build-deps: OK    $name (no version constraint, already installed in image)"
+      elif [ -n "$(published_version "$name")" ]; then
+        echo "verify-build-deps: OK    $name (no version constraint, published in configured repos)"
+      else
+        echo "verify-build-deps: MISSING  $name (no version constraint declared) - not built in this job, not installed, not published"
+        missing=$((missing + 1))
+      fi
+      continue
+    fi
+
+    local ver_want="${ver_raw%%ZAPPEND*}"
+    local found_local=0
+    if [ -d "$LOCAL_REPO" ]; then
+      for f in "$LOCAL_REPO/${name}_"*.deb "$LOCAL_REPO/${name}-"*.rpm; do
+        [ -e "$f" ] || continue
+        local base ver_have
+        base="$(basename "$f")"
+        ver_have="${base#${name}[-_]}"
+        case "$base" in
+          *.deb) ver_have="${ver_have%.deb}"; ver_have="${ver_have%_*}" ;;
+          *.rpm) ver_have="${ver_have%.rpm}"; ver_have="${ver_have%.*}" ;;
+        esac
+        if version_ge "$ver_have" "$ver_want"; then
+          found_local=1
+          echo "verify-build-deps: OK   $name >= ${ver_want} (built earlier in this job, found ${ver_have})"
+          break
+        fi
+      done
+    fi
+    [ "$found_local" = "1" ] && continue
+
+    # NOTE: '|| true' on both lines below is required, not decorative.
+    # installed_version()/published_version() intentionally return
+    # non-zero when the package isn't found (empty stdout = "not found").
+    # Without '|| true', a standalone `var="$(cmd)"` assignment that
+    # fails aborts the WHOLE script under 'set -e' - silently, with no
+    # error message - the moment the first genuinely-missing dependency
+    # is checked. This is exactly what happened on c8/c9: those platforms
+    # don't have zimbra-apr-devel pre-installed, so installed_version
+    # failed and killed the job right after printing the previous OK line.
+    # Ubuntu never hit this because its base image happened to already
+    # have the package installed, so the command substitution succeeded.
+    local ver_have
+    ver_have="$(installed_version "$name")" || true
+    if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
+      echo "verify-build-deps: OK   $name >= ${ver_want} (already installed in image, found ${ver_have})"
+      continue
+    fi
+
+    ver_have="$(published_version "$name")" || true
+    if [ -n "$ver_have" ] && version_ge "$ver_have" "$ver_want"; then
+      echo "verify-build-deps: OK   $name >= ${ver_want} (published in configured repos, found ${ver_have})"
+      continue
+    fi
+
+    echo "verify-build-deps: MISSING  $name >= ${ver_want} - not built in this job, not installed, not published"
+    missing=$((missing + 1))
+  done <<< "$deps_with_versions"
+
+  if [ "$missing" -gt 0 ]; then
+    echo ""
+    echo "ERROR: $missing internal build-time dependency(ies) not resolvable."
+    echo "Must be satisfiable one of 3 ways: built earlier in THIS job, already"
+    echo "installed in the image, or published in the zimbra repo. None applied."
+    exit 1
+  fi
+}
+
+########################################################################
+# 2e) register a package's just-built .deb/.rpm into the job-local repo,
+#     pinned ABOVE the published zimbra repo (was ci/register-local-repo.sh)
+#     - arg: <package build dir, e.g. thirdparty/foo/build>
+########################################################################
+register_local_repo() {
+  local pkg_build_dir="$1"
+  mkdir -p "$LOCAL_REPO"
+
+  local deb_files rpm_files
+  deb_files=$(find "$pkg_build_dir" -name '*.deb' 2>/dev/null || true)
+  rpm_files=$(find "$pkg_build_dir" -name '*.rpm' ! -name '*.src.rpm' 2>/dev/null || true)
+
+  if [ -n "$deb_files" ] && command -v dpkg-scanpackages >/dev/null 2>&1; then
+    cp $deb_files "$LOCAL_REPO/"
+    ( cd "$LOCAL_REPO" && dpkg-scanpackages . /dev/null 2>/dev/null | gzip -9c > Packages.gz )
+    if [ ! -f /etc/apt/sources.list.d/local-build.list ]; then
+      echo "deb [trusted=yes] file:$LOCAL_REPO ./" | sudo tee /etc/apt/sources.list.d/local-build.list >/dev/null
+      printf 'Package: *\nPin: origin ""\nPin-Priority: 1001\n' | sudo tee /etc/apt/preferences.d/local-build >/dev/null
+    fi
+    # Scoped refresh only (file://, instant) - never touch zimbra.list's index.
+    sudo apt-get update -qq \
+      -o Dir::Etc::sourcelist="sources.list.d/local-build.list" \
+      -o Dir::Etc::sourceparts="-" \
+      -o APT::Get::List-Cleanup="0"
+    echo "register-local-repo: added $(wc -w <<<"$deb_files") deb(s) to $LOCAL_REPO"
+  fi
+
+  if [ -n "$rpm_files" ]; then
+    local createrepo_bin=""
+    if command -v createrepo_c >/dev/null 2>&1; then createrepo_bin="createrepo_c"
+    elif command -v createrepo >/dev/null 2>&1; then createrepo_bin="createrepo"; fi
+    if [ -n "$createrepo_bin" ]; then
+      cp $rpm_files "$LOCAL_REPO/"
+      "$createrepo_bin" --update "$LOCAL_REPO" >/dev/null
+      if [ ! -f /etc/yum.repos.d/local-build.repo ]; then
+        cat <<REPOEOF | sudo tee /etc/yum.repos.d/local-build.repo >/dev/null
+[local-build]
+name=local-build
+baseurl=file://$LOCAL_REPO
+enabled=1
+gpgcheck=0
+priority=1
+REPOEOF
+      fi
+      sudo yum makecache -y --disablerepo="*" --enablerepo="local-build" >/dev/null 2>&1 || true
+      echo "register-local-repo: added $(wc -w <<<"$rpm_files") rpm(s) to $LOCAL_REPO"
+    else
+      echo "register-local-repo: WARNING - neither createrepo_c nor createrepo found, skipping RPM registration" >&2
+    fi
+  fi
+}
+
+########################################################################
+# 2c) install a package's declared build-time deps EXCLUDING zimbra-*
+#     ones. zimbra-* deps are handled separately: verify_build_deps()
+#     above only checks they're resolvable (never installs them), and
+#     the package's own build (its pkgadd/pkgrm-style targets) installs
+#     zimbra-base + friends itself as part of `make` - installing them
+#     here too would just get purged and reinstalled a second time by
+#     that same `make` step (that was the c9/u22 double-install bug).
+#     Everything else declared here (e.g. libpcre2-dev/pcre2-devel,
+#     debhelper, cmake, m4) is a normal OS package the package's own
+#     build does NOT install for itself, so it must still be installed
+#     here - skipping ALL of install_declared_build_deps (not just the
+#     zimbra-* part) is what broke the httpd build with "Unmet build
+#     dependencies: libpcre2-dev" / "pcre2-devel is needed by...".
+########################################################################
+install_declared_build_deps() {
+  local file="$1" label="$2" prefix="$3"; shift 3
+  local deps
+  deps=$(awk -v prefix="$prefix" '
+      $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
+      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+      flag { print }
+    ' "$file" \
+    | tr ',' '\n' \
+    | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
+    | grep -v '^$' \
+    | grep -v '^zimbra-' \
+    | sort -u || true)
+  if [ -n "$deps" ]; then
+    echo "Installing ${label} build-deps (non-zimbra): ${deps}"
+    "$@" $deps
+  else
+    echo "No non-zimbra ${label} build-deps declared for ${file}, skipping install"
+  fi
+}
+
+########################################################################
+# 2b+2c combined) find this package's manifest for THIS platform's
+# package family and run verify + install against it.
+#
+# MIGRATION AWARENESS: some packages (e.g. thirdparty/httpd, after its
+# Makefile was updated to split pkgadd into pkgadd_rpm/pkgadd_deb
+# targets) now extract ALL of their build-time deps themselves via
+# PKG_EXTRACT inside `make` - zimbra-* ones AND plain OS ones like
+# pcre2-devel/debhelper. If we ALSO run install_declared_build_deps()
+# for such a package, its non-zimbra deps get installed TWICE: once
+# here, once again by its own pkgadd a few seconds later in `make` -
+# the exact same class of duplicate-install waste we already fixed for
+# zimbra-base. is_migrated_pkgadd() detects this generically (by
+# checking whether the package's own Makefile defines a platform-
+# specific pkgadd_deb:/pkgadd_rpm: target) so nothing here needs to
+# hardcode package names: as each package's Makefile is migrated to
+# self-install its own build deps, this starts skipping the redundant
+# generic install for THAT package automatically, no further ci/build.sh
+# changes needed. verify_build_deps() is still run either way - it only
+# checks resolvability, never installs, so there's nothing to duplicate
+# there and it stays useful as an early, clear failure if something is
+# genuinely unresolvable.
+########################################################################
+is_migrated_pkgadd() {
+  local pkgpath="$1" target="$2" makefile="${pkgpath}/Makefile"
+  [ -f "$makefile" ] && grep -qE "^${target}:" "$makefile"
+}
+
+handle_build_deps() {
+  local pkgpath="$1" file field label
+  if command -v apt-get >/dev/null 2>&1; then
+    file=$(find "$pkgpath" -path "*/debian/control" 2>/dev/null | head -1)
+    field="Build-Depends"; label="Debian"
+    [ -n "$file" ] || return 0
+    verify_build_deps "$file" "$field"
+    if is_migrated_pkgadd "$pkgpath" "pkgadd_deb"; then
+      echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_deb - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
+      return 0
+    fi
+    install_declared_build_deps "$file" "$label" "$field" \
+      sudo apt-get install -y --no-install-recommends
+  elif command -v yum >/dev/null 2>&1; then
+    file=$(find "$pkgpath" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
+    field="BuildRequires"; label="RPM"
+    [ -n "$file" ] || return 0
+    verify_build_deps "$file" "$field"
+    if is_migrated_pkgadd "$pkgpath" "pkgadd_rpm"; then
+      echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_rpm - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
+      return 0
+    fi
+    install_declared_build_deps "$file" "$label" "$field" \
+      sudo yum install -y
+  fi
+}
+
+########################################################################
+# main
+########################################################################
+echo "=== Installing build tooling (minimal) ==="
+install_build_tooling
+
+export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# Disable LTO for deb builds (dpkg-buildpackage reads DEB_BUILD_OPTIONS via
+# dpkg-buildflags and, on newer Ubuntu, injects -flto by default even when
+# debian/rules never asks for it). Newer GCC (u22's gcc-11, u24's gcc-13)
+# rejects PHP's Zend engine global-register-variable pattern under LTO:
+#   ./Zend/zend_execute.c:75:40: error: global register variable follows
+#   a function definition
+#   lto-wrapper: fatal error: cc returned 1 exit status
+# u20 (older gcc-9) and the RPM platforms (c8/c9, which don't go through
+# dpkg-buildflags at all) never hit this, which is why only u22/u24 failed.
+# 'nolto' is a standard Debian build-option flag - no debian/rules or
+# control file changes needed, and it's safe to set unconditionally on
+# every deb job since it only turns an optimization off.
+if command -v apt-get >/dev/null 2>&1; then
+  export DEB_BUILD_OPTIONS="${DEB_BUILD_OPTIONS:+$DEB_BUILD_OPTIONS }nolto"
+  echo "DEB_BUILD_OPTIONS=${DEB_BUILD_OPTIONS} (LTO disabled - see ci/build.sh comment for why)"
+fi
+
+mkdir -p "build/dist_workspace/${PLATFORM_TAG}"
+
+total="$(grep -c . "$INPUT" || true)"
+n=0
+
+while IFS= read -r PKGPATH; do
+  [ -n "$PKGPATH" ] || continue
+  n=$((n + 1))
+
+  echo ""
+  echo "############################################################"
+  echo "###  [${n}/${total}] Building ${PKGPATH}   (platform: ${PLATFORM_TAG})"
+  echo "############################################################"
+
+  if [ ! -d "$PKGPATH" ]; then
+    echo "ERROR: $PKGPATH does not exist"
+    exit 1
+  fi
+
+  PRE_HOOK="${PKGPATH}/ci/pre_build.sh"
+  if [ -x "$PRE_HOOK" ]; then
+    echo "--- [${n}/${total}] ${PKGPATH}: running pre-build hook ---"
+    "$PRE_HOOK" "${PLATFORM_TAG}"
+  fi
+
+  handle_build_deps "$PKGPATH"
+
+  echo "--- [${n}/${total}] ${PKGPATH}: make ---"
+  ( cd "$PKGPATH" && make )
+
+  register_local_repo "${PKGPATH}/build"
+
+  find "${PKGPATH}/build" -type f \
+    \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
+    -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
+
+  echo "--- [${n}/${total}] ${PKGPATH}: done ---"
+done < "$INPUT"
+
+echo ""
+echo "=== build/dist_workspace/${PLATFORM_TAG} contents ==="
+ls -la "build/dist_workspace/${PLATFORM_TAG}/"
