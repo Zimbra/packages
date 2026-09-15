@@ -13,7 +13,7 @@ URL:                https://metacpan.org/release/HTML-Parser
 
 %description
 The HTML-Parser distribution is is a collection
-of modules that parse and extract information
+of modules that parse and now extract information
 from HTML documents.
 
 %define debug_package %{nil}
