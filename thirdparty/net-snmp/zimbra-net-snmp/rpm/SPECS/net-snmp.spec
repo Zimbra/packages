@@ -17,7 +17,7 @@ The Zimbra NetSNMP build
 %define debug_package %{nil}
 
 %changelog
-* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+* Tue Jun 13 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Tue Aug 10 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded dependency openssl to 1.1.1k
