@@ -5,13 +5,17 @@
 #
 # Everything needed to build every resolved package on THIS platform
 # (PLATFORM_TAG env var). This is the ONE script config.yml's build jobs
-# call - every build-behavior change (baseline libs, per-package steps,
+# call - every build-behavior change (baseline tools, per-package steps,
 # how a fresh build is shared with a later package in the same run)
 # happens here, never in .circleci/config.yml.
 #
 # Flow:
-#   1. install_build_tooling   - OS packaging tools + baseline -dev/-devel
-#                                 libs every package needs (once per job)
+#   1. install_build_tooling   - the minimal OS packaging tools the CI
+#                                 mechanics themselves need (once per
+#                                 job). NO generic -dev/-devel library
+#                                 pile: every package installs its own
+#                                 build deps via its own Makefile
+#                                 pkgadd_rpm/pkgadd_deb target.
 #   2. for each package, in build order:
 #        a. run its ci/pre_build.sh hook if present
 #        b/c. handle_build_deps  - finds the package's manifest for THIS
@@ -45,29 +49,74 @@ LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 [ -s "$INPUT" ] || { echo "build: $INPUT is empty, nothing to build"; exit 0; }
 
 ########################################################################
-# 1) baseline OS packaging tools + dev libraries (once per job)
+# 1) minimal baseline (once per job): ONLY the tools the CI mechanics
+#    themselves execute. Genesis-parity by design.
 #
-# libsqlite3-dev/sqlite-devel is here (not left for a package's own
-# BuildRequires/Build-Depends) because we can't edit package spec/control
-# files - PHP's ./configure auto-probes for sqlite3 and fails the whole
-# build if it's missing, even though zimbra-php's php.spec/debian/control
-# never declared it as a build dep. Genesis never hit this because it's a
-# long-lived box where sqlite-devel happened to already be installed;
-# CircleCI's containers are fresh every run, so it must be baked in here.
+# The old baseline installed a generic pile of dev libraries on every
+# job (deb: cmake libxml2-dev libcurl4-openssl-dev libsqlite3-dev
+# libssl-dev ...; rpm: cmake openssl-devel libxml2-devel libcurl-devel
+# sqlite-devel perl-libwww-perl ...) - 40+ packages and ~39 MB on the
+# rpm side alone - none of which httpd (or most packages) use. That was
+# the "unwanted package installation" noise genesis never shows:
+# genesis' long-lived boxes already have whatever a package needs, so
+# nothing extra is ever installed there. Fresh CircleCI containers do
+# need real build deps - and they already get them from the RIGHT place:
+# each package's own Makefile pkgadd_rpm/pkgadd_deb target (httpd:
+# pcre2-devel zlib-devel on rpm; debhelper m4 libpcre2-dev libz-dev on
+# deb), and for not-yet-migrated packages their declared non-zimbra
+# BuildRequires/Build-Depends via install_declared_build_deps() below.
+# Hence the generic list is simply deleted, not trimmed.
+#
+# What remains is only what the PIPELINE itself runs:
+#   deb: dpkg-dev        - dpkg-scanpackages (register_local_repo) and
+#                          dpkg-buildpackage (`make`)
+#        build-essential - compiler toolchain for `make`
+#   rpm: rpm-build       - rpmbuild (`make`)
+#        createrepo_c    - register_local_repo's job-local yum repo
+# Both lists are already satisfied on the current devcore images, so
+# this step is a no-op there - insurance against a leaner image, not a
+# source of extra packages.
+#
+# IF A SPECIFIC PACKAGE NEEDS MORE, THE FIX LIVES IN THAT PACKAGE:
+#   - a compile dep    -> add it to that package's pkgadd_rpm /
+#                         pkgadd_deb list (e.g. PHP will need
+#                         sqlite3-devel / libsqlite3-dev there: its
+#                         ./configure auto-probes sqlite and fails
+#                         without it, but its spec/control never
+#                         declared it - that is why sqlite used to sit
+#                         in the old baseline)
+#   - an extra OS repo -> enable it in that package's ci/pre_build.sh:
+#                         sudo yum install -y epel-release
+#                         sudo yum config-manager --set-enabled crb
 ########################################################################
 install_build_tooling() {
   if command -v apt-get >/dev/null 2>&1; then
-    # This is the job's ONE full apt-get update. ci/setup-pkg-repo.sh (which
-    # runs immediately before this step) only does a SCOPED update against
-    # zimbra.list, on purpose - do not add another full update anywhere
-    # else in this job, it just re-downloads archive/security/zimbra
-    # index data for no new information.
+    # Disable Recommends for the WHOLE job, not just our own apt-get
+    # calls: zm-pkg-tool's PKG_EXTRACT (run inside `make` by a
+    # package's pkgadd_deb) calls plain `apt-get install` with no
+    # --no-install-recommends of its own, so on jammy debhelper's
+    # Recommends dragged in dh-elpa-helper + emacsen-common (and
+    # friends) on every deb build. This apt.conf.d file is the one
+    # place we can fix that without patching zm-pkg-tool.
+    printf 'APT::Install-Recommends "false";\n' \
+      | sudo tee /etc/apt/apt.conf.d/99-no-install-recommends >/dev/null
+
+    # This is the job's ONE full apt-get update. ci/setup-pkg-repo.sh
+    # (which runs immediately before this step) only does a SCOPED
+    # update against zimbra.list, on purpose - do not add another full
+    # update anywhere else in this job, it just re-downloads
+    # archive/security/zimbra index data for no new information. The
+    # full update is still needed HERE: pkgadd_deb's PKG_EXTRACT
+    # installs OS packages (libpcre2-dev, debhelper, ...) inside
+    # `make`, and that needs usable indexes.
     sudo apt-get update
+
     sudo apt-get install -y --no-install-recommends \
-      dpkg-dev build-essential cmake python3 \
-      libssl-dev liblz4-dev zlib1g-dev libzstd-dev libexpat1-dev libxml2-dev \
-      libcurl4-openssl-dev libsqlite3-dev
+      dpkg-dev build-essential
   elif command -v yum >/dev/null 2>&1; then
+    # CentOS 8 is EOL: its mirrorlist is dead. Repoint the image's
+    # repos at vault so ANY yum on c8 works at all. Pure platform-image
+    # fixup - stays.
     OS_VERSION=$(rpm -E %{rhel})
     if [ "$OS_VERSION" = "8" ]; then
       sudo sed -i \
@@ -76,16 +125,14 @@ install_build_tooling() {
         -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
         /etc/yum.repos.d/*.repo
     fi
-    sudo yum install -y epel-release || true
-    sudo yum config-manager --set-enabled powertools 2>/dev/null \
-      || sudo yum config-manager --set-enabled PowerTools 2>/dev/null \
-      || sudo yum config-manager --set-enabled crb 2>/dev/null \
-      || true
-    sudo yum install -y \
-      rpm-build rpmdevtools createrepo cmake python3 \
-      openssl-devel lz4-devel zlib-devel libzstd-devel expat-devel libxml2-devel \
-      libcurl-devel sqlite-devel \
-      perl-libwww-perl perl-LWP-Protocol-https
+    # NOTE: epel-release and the powertools/PowerTools/crb enables are
+    # deliberately gone from this baseline. Nothing currently built
+    # needs them (httpd's pcre2-devel / zlib-devel come from
+    # BaseOS/AppStream), and merely having EPEL enabled costs a ~20 MB
+    # metadata fetch on every c9 job. A package that genuinely needs
+    # EPEL/CRB enables it itself - see the comment block above.
+    sudo yum install -y rpm-build createrepo_c \
+      || sudo yum install -y rpm-build createrepo
   fi
 }
 
@@ -356,15 +403,7 @@ install_declared_build_deps() {
 
 ########################################################################
 # 2b+2c combined) find this package's manifest for THIS platform's
-# package family and run verify + install against it. Was two separate
-# ~15-line if-blocks in main (one for debian/control, one for *.spec)
-# that differed only in the file glob, the field name, and the installer
-# command - everything else (the verify/install call shape) was
-# identical. A package only ever has one manifest relevant to the
-# platform actually running (a deb job has no yum, an rpm job has no
-# apt-get), so this collapses cleanly to one function with no behavior
-# change - it always uses the deb path on deb platforms, and the rpm
-# path on rpm platforms, same as before.
+# package family and run verify + install against it.
 #
 # MIGRATION AWARENESS: some packages (e.g. thirdparty/httpd, after its
 # Makefile was updated to split pkgadd into pkgadd_rpm/pkgadd_deb
@@ -420,7 +459,7 @@ handle_build_deps() {
 ########################################################################
 # main
 ########################################################################
-echo "=== Installing build tooling + baseline dev libraries ==="
+echo "=== Installing build tooling (minimal) ==="
 install_build_tooling
 
 export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
