@@ -10,7 +10,7 @@ URL:                https://download.libsodium.org/doc/
 The Zimbra libsodium build
 
 %changelog
-* Mon Mar 04 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b1ZAPPEND
+* Mon Mar 04 2024 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b1ZAPPEND
 - Upgraded libsodium to 1.0.19
 
 %prep
