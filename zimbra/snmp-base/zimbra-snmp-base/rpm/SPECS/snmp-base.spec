@@ -12,6 +12,6 @@ AutoReqProv:        no
 
 %description
 Zimbra snmp Base is used as a simple method to allow removing
-all the zimbra-snmp specific packages
+all the zimbra-snmp specific packages..
 
 %files
