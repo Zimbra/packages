@@ -12,6 +12,6 @@ AutoReqProv:        no
 
 %description
 Zimbra proxy Base is used as a simple method to allow removing
-all the zimbra-proxy specific packages
+all the zimbra-proxy specific packages..
 
 %files
