@@ -12,7 +12,7 @@ AutoReqProv:        no
 
 %description
 Zimbra MTA Base is used as a simple method to allow removing
-all the zimbra-mta specific packages
+all the zimbra-mta specific packages..
 
 %files
 
