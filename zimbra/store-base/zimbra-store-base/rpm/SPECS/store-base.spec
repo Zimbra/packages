@@ -12,6 +12,6 @@ AutoReqProv:        no
 
 %description
 Zimbra store Base is used as a simple method to allow removing
-all the zimbra-store specific packages
+all the zimbra-store specific packages..
 
 %files
