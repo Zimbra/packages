@@ -12,6 +12,6 @@ AutoReqProv:        no
 
 %description
 Zimbra memcached Base is used as a simple method to allow removing
-all the zimbra-memcached specific packages
+all the zimbra-memcached specific packages..
 
 %files
