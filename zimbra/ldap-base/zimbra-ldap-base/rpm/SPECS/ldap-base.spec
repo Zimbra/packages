@@ -12,6 +12,6 @@ AutoReqProv:        no
 
 %description
 Zimbra LDAP Base is used as a simple method to allow removing
-all the zimbra-ldap specific packages
+all the zimbra-ldap specific packages..
 
 %files
