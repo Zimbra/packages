@@ -12,6 +12,6 @@ AutoReqProv:        no
 
 %description
 Zimbra Spell Base is used as a simple method to allow removing
-all the zimbra-spell specific packages
+all the zimbra-spell specific packages..
 
 %files
