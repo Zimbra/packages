@@ -10,7 +10,7 @@ AutoReqProv:        no
 URL:                http://www.xmlsoft.org
 
 %description
-The Zimbra LibXML2 build
+The Zimbra LibXML2 build..
 
 %prep
 %setup -n libxml2-%{version}
