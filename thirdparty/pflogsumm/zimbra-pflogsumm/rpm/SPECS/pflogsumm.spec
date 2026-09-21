@@ -12,7 +12,7 @@ URL:                http://jimsun.linxnet.com/postfix_contrib.html
 %description
 pflogsumm.pl is designed to provide an over-view of postfix
 activity, with just enough detail to give the administrator
-a "heads up" for potential trouble spots.
+a "heads up" for potential trouble spots..
 
 %changelog
 * Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
