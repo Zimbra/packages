@@ -9,7 +9,7 @@ AutoReqProv:        no
 URL:                http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/downloads/index.html
 
 %description
-The Zimbra Berkeley DB build
+The Zimbra Berkeley DB build..
 
 %prep
 %setup -n db-%{version}
