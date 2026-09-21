@@ -9,7 +9,7 @@ AutoReqProv:        no
 URL:                https://apr.apache.org/
 
 %description
-The Zimbra Apache Portable Runtime build
+The Zimbra Apache Portable Runtime build..
 
 %prep
 %setup -n apr-%{version}
