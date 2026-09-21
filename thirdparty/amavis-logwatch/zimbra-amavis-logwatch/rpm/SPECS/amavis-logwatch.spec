@@ -9,7 +9,7 @@ AutoReqProv:        no
 URL:                http://www.logwatch.org/
 
 %description
-The Zimbra amavis-logwatch build
+The Zimbra amavis-logwatch build..
 
 %define debug_package %{nil}
 
