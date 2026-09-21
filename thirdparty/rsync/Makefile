@@ -11,10 +11,15 @@ zname := zimbra-$(pname)
 zspec := $(pname).spec
 
 rsync_rpm_configure_options :=
+rsync_rpm_spec_edits := -e 's|data/tmp|data/tmp $(rsync_rpm_configure_options)|'
 ifeq ($(BUILD_PLATFORM),RHEL8_64)
 rsync_rpm_configure_options := --disable-xxhash --disable-zstd
+rsync_rpm_spec_edits := -e 's|data/tmp|data/tmp $(rsync_rpm_configure_options)|;' \
+	-e 's{, xxhash-devel}{};' \
+	-e 's{, xxhash-libs}{};'
 else ifeq ($(BUILD_PLATFORM),RHEL9_64)
 rsync_rpm_configure_options := --disable-zstd
+rsync_rpm_spec_edits := -e 's|data/tmp|data/tmp $(rsync_rpm_configure_options)|'
 endif
 
 .PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb
@@ -50,7 +55,7 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
-	perl -pi -e 's|--localstatedir=\$\(ZIMBRA_HOME\)/data/tmp|--localstatedir=\$\(ZIMBRA_HOME\)/data/tmp $(rsync_rpm_configure_options)|' $(specfile) && \
+	perl -pi $(rsync_rpm_spec_edits) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
