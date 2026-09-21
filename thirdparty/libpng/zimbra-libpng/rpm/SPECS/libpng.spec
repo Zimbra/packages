@@ -8,7 +8,7 @@ Source:             %{name}-%{version}.tar.gz
 URL:                http://www.libpng.org/pub/png/libpng.html
 
 %description
-The Zimbra libpng build
+The Zimbra libpng build..
 
 %prep
 %setup -n libpng-%{version}
