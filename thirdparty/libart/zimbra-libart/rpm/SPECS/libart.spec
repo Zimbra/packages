@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.bz2
 URL:                http://ftp.gnome.org/pub/gnome/sources/libart_lgpl/2.3/
 
 %description
-The Zimbra libart build
+The Zimbra libart build..
 
 %prep
 %setup -n libart_lgpl-%{version}
