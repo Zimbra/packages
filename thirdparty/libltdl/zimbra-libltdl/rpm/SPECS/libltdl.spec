@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 URL:                https://www.gnu.org/software/libtool
 
 %description
-The Zimbra libltdl build
+The Zimbra libltdl build..
 
 %prep
 %setup -n libtool-%{version}
