@@ -10,6 +10,13 @@ purl := https://download.samba.org/pub/rsync/src/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
+rsync_rpm_configure_options :=
+ifeq ($(BUILD_PLATFORM),RHEL8_64)
+rsync_rpm_configure_options := --disable-xxhash --disable-zstd
+else ifeq ($(BUILD_PLATFORM),RHEL9_64)
+rsync_rpm_configure_options := --disable-zstd
+endif
+
 .PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb
 
 all: clean getsrc build
@@ -23,9 +30,12 @@ pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
 ifeq ($(BUILD_PLATFORM),RHEL8_64)
-	$(PKG_EXTRACT) epel-release
-endif
+	$(PKG_EXTRACT) popt-devel openssl-devel lz4-devel
+else ifeq ($(BUILD_PLATFORM),RHEL9_64)
+	$(PKG_EXTRACT) popt-devel xxhash-devel openssl-devel lz4-devel
+else
 	$(PKG_EXTRACT) popt-devel xxhash-devel openssl-devel zstd-devel lz4-devel
+endif
 
 pkgadd_deb:
 	$(PKG_EXTRACT) debhelper m4 libpopt-dev libxxhash-dev libssl-dev libzstd-dev liblz4-dev
@@ -40,6 +50,7 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	perl -pi -e 's|--localstatedir=\$\(ZIMBRA_HOME\)/data/tmp|--localstatedir=\$\(ZIMBRA_HOME\)/data/tmp $(rsync_rpm_configure_options)|' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
