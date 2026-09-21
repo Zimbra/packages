@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.gz
 URL:                https://github.com/gperftools/gperftools
 
 %description
-The Zimbra tcmalloc build
+The Zimbra tcmalloc build..
 
 %prep
 %setup -n gperftools-%{version}
