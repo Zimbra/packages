@@ -8,7 +8,7 @@ Source:             %{name}-%{version}.tar.gz
 URL:                http://www.freetype.org
 
 %description
-The Zimbra freetype build
+The Zimbra freetype build..
 
 %prep
 %setup -n freetype-%{version}
