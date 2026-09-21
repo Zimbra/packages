@@ -10,7 +10,7 @@ purl := http://us2.php.net/distributions/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean pkgadd pkgrm
+.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
 
 all: clean getsrc build pkgrm1
 
@@ -19,9 +19,15 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-pkgadd:
+pkgadd: pkgadd_$(PKG_EXT)
+
+pkgadd_rpm:
 	$(PKG_EXTRACT) zimbra-base zimbra-httpd-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
-	zimbra-aspell zimbra-aspell-$(PKG_DEV)
+	zimbra-aspell zimbra-aspell-$(PKG_DEV) zlib-devel sqlite-devel
+
+pkgadd_deb:
+	$(PKG_EXTRACT) zimbra-base zimbra-httpd-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
+	zimbra-aspell zimbra-aspell-$(PKG_DEV) debhelper m4 dpkg-dev libz-dev libsqlite3-dev
 
 pkgrm: pkgrm%
 pkgrm%:
