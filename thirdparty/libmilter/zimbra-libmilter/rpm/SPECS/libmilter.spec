@@ -9,7 +9,7 @@ Source:             %{name}-%{version}.tar.gz
 URL:                https://www.sendmail.com/
 
 %description
-The Zimbra libmilter build..
+The Zimbra libmilter build
 
 %define debug_package %{nil}
 
