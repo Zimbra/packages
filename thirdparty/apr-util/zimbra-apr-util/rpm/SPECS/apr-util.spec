@@ -11,7 +11,7 @@ AutoReqProv:        no
 URL:                https://apr.apache.org/
 
 %description
-The Zimbra Apache Portable Runtime Utilities build
+The Zimbra Apache Portable Runtime Utilities build..
 
 %define debug_package %{nil}
 
