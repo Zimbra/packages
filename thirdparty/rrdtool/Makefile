@@ -10,7 +10,11 @@ purl := https://oss.oetiker.ch/rrdtool/pub/archive/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
+ifeq ($(PKG_EXT),rpm)
+pkgadd_extra := bzip2-devel
+endif
+
+.PHONY: all getsrc setup build clean pkgadd pkgrm
 
 all: clean getsrc build pkgrm1
 
@@ -19,15 +23,9 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-pkgadd: pkgadd_$(PKG_EXT)
-
-pkgadd_rpm:
+pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-libart-$(PKG_DEV) zimbra-libpng-$(PKG_DEV) \
-	zimbra-freetype-$(PKG_DEV) zlib-devel pkgconfig perl-devel bzip2-devel
-
-pkgadd_deb:
-	$(PKG_EXTRACT) zimbra-base zimbra-libart-$(PKG_DEV) zimbra-libpng-$(PKG_DEV) \
-	zimbra-freetype-$(PKG_DEV) debhelper m4 dpkg-dev libz-dev libbz2-dev pkg-config
+	zimbra-freetype-$(PKG_DEV) $(pkgadd_extra)
 
 pkgrm: pkgrm%
 pkgrm%:
