@@ -23,7 +23,7 @@ pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
-	perl-libwww-perl
+	perl-libwww-perl zlib-devel
 
 pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV)
