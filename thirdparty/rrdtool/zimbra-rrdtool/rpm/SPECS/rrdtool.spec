@@ -15,7 +15,7 @@ AutoReqProv:        no
 URL:                http://oss.oetiker.ch/rrdtool/
 
 %description
-The Zimbra RRDTool build..
+The Zimbra RRDTool build
 
 %prep
 %setup -n rrdtool-%{version}
