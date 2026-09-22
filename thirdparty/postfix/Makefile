@@ -14,7 +14,7 @@ postfix_disable_nis = $(PERL) -pi -e 's|-DHAS_LMDB -DNO_DB|-DHAS_LMDB -DNO_DB -D
 postfix_mysqlclient_lib = $(PERL) -pi -e 's|libmariadb\.so\.3|libmysqlclient.so*|' $(1)
 postfix_resolv_lib = $(PERL) -pi -e 's|-L/usr/lib -lz -lm -lpthread|-L/usr/lib -lz -lm -lresolv -lpthread|' $(1)
 
-.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
+.PHONY: all getsrc setup build clean pkgadd pkgrm
 
 all: clean getsrc build pkgrm1
 
@@ -23,17 +23,14 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-pkgadd: pkgadd_$(PKG_EXT)
+ifeq ($(PKG_EXT),rpm)
+pkgadd_extra := pcre-devel m4 zlib-devel
+endif
 
-pkgadd_rpm:
+pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-mariadb-$(PKG_DEV) \
 	zimbra-cyrus-sasl-$(PKG_DEV) zimbra-openldap-$(PKG_DEV) zimbra-lmdb-$(PKG_DEV) \
-	pcre-devel m4 zlib-devel
-
-pkgadd_deb:
-	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-mariadb-$(PKG_DEV) \
-	zimbra-cyrus-sasl-$(PKG_DEV) zimbra-openldap-$(PKG_DEV) zimbra-lmdb-$(PKG_DEV) \
-	debhelper m4 dpkg-dev libpcre3-dev
+	$(pkgadd_extra)
 
 pkgrm: pkgrm%
 pkgrm%:

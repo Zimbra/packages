@@ -10,7 +10,7 @@ purl := http://curl.haxx.se/download/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
+.PHONY: all getsrc setup build clean pkgadd pkgrm
 
 all: clean getsrc build pkgrm1
 
@@ -19,14 +19,12 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-pkgadd: pkgadd_$(PKG_EXT)
+ifeq ($(PKG_EXT),rpm)
+pkgadd_extra := perl-libwww-perl zlib-devel
+endif
 
-pkgadd_rpm:
-	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
-	perl-libwww-perl zlib-devel
-
-pkgadd_deb:
-	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV)
+pkgadd:
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) $(pkgadd_extra)
 
 pkgrm: pkgrm%
 

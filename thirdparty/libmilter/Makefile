@@ -11,7 +11,7 @@ purl := https://ftp.sendmail.org/past-releases/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb
+.PHONY: all getsrc setup build clean pkgadd
 
 all: clean getsrc build
 
@@ -20,13 +20,12 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-pkgadd: pkgadd_$(PKG_EXT)
-
-pkgadd_rpm:
+ifeq ($(PKG_EXT),rpm)
+pkgadd:
 	$(PKG_EXTRACT) m4
-
-pkgadd_deb:
-	$(PKG_EXTRACT) m4
+else
+pkgadd:
+endif
 
 setup:
 	$(generic-setup)
