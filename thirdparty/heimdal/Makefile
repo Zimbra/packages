@@ -37,6 +37,7 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	perl -pi -e 's|-D_REENTRANT"|-D_REENTRANT -pthread"|' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
@@ -47,6 +48,7 @@ build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
+	perl -pi -e 's|=-D_REENTRANT|=-D_REENTRANT -pthread|' debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
