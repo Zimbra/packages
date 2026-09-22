@@ -10,7 +10,7 @@ purl := https://github.com/libevent/libevent/releases/download/release-$(pvers)-
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean
+.PHONY: all getsrc setup build clean pkgadd
 
 all: clean getsrc build
 
@@ -19,10 +19,13 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+pkgadd:
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV)
+
 setup:
 	$(generic-setup)
 
-build: setup build_$(PKG_EXT)
+build: pkgadd setup build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
