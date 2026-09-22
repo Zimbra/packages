@@ -43,7 +43,7 @@ build_rpm:
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	perl -pi -e 's|zimbra-openssl-devel = ([^[:space:]]+)|zimbra-openssl-devel >= $$1|' $(specfile) && \
-	perl -pi -e 's|-DCMAKE_CXX_STANDARD=11|-DCMAKE_CXX_STANDARD=11 -DCMAKE_C_FLAGS=-fcommon|' $(specfile) && \
+	perl -pi -e 's|-DCMAKE_CXX_STANDARD=11|-DCMAKE_CXX_STANDARD=11 -DCMAKE_C_FLAGS=-fcommon -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE|' $(specfile) && \
 	perl -pi -e 's|libssl\.so\.1\.0\.0 /opt/zimbra/common/lib/libcrypto\.so\.1\.0\.0|libssl.so.* /opt/zimbra/common/lib/libcrypto.so.*|' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
