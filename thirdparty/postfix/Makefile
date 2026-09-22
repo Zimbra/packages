@@ -9,6 +9,7 @@ psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://postfix.cs.utah.edu/source/official/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
+postfix_linux7_compat := $(PERL) -pi -e "s|Linux\.\[3456\]\.\*|Linux.[34567].*|" makedefs
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
@@ -37,6 +38,7 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	$(PERL) -0pi -e 's{(%patch4 -p1)}{$$1 . "\n" . q{$(postfix_linux7_compat)}}e' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
@@ -51,6 +53,7 @@ build_deb:
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(postfix_linux7_compat) && \
 	$(PKG_BUILD)
 
 clean: pkgrm
