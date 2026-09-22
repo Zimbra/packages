@@ -20,7 +20,7 @@ The Zimbra openldap build
 %define debug_package %{nil}
 
 %changelog
-* Mon Apr 06 2026 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b2ZAPPEND
+* Mon Apr 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b2ZAPPEND
 - ZBUG-5376, Fix incorrect SHA256/SSHA256 hashing caused by strict aliasing optimization in GCC
 * Mon Mar 04 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra10.0b1ZAPPEND
 - Upgraded openldap to 2.5.17
