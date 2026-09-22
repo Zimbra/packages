@@ -10,6 +10,7 @@ purl := https://postfix.cs.utah.edu/source/official/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 postfix_linux7_compat := sed -i "/^Linux[.][[]3456[]][.][*]/i Linux.7.*) SYSTYPE=LINUX6 ;;" makedefs
+postfix_disable_nis = $(PERL) -pi -e 's|-DHAS_LMDB -DNO_DB|-DHAS_LMDB -DNO_DB -DNO_NIS|' $(1)
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
@@ -38,6 +39,7 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	$(call postfix_disable_nis,$(specfile)) && \
 	$(PERL) -0pi -e 's{(%build)}{$$1 . "\n" . q{$(postfix_linux7_compat)}}e' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
@@ -50,6 +52,7 @@ build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
+	$(call postfix_disable_nis,debian/rules) && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
