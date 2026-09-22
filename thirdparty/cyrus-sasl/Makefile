@@ -19,9 +19,13 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+ifeq ($(PKG_EXT),rpm)
+pkgadd_extra := libtool
+endif
+
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
-	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV)
+	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) $(pkgadd_extra)
 
 pkgrm: pkgrm%
 
