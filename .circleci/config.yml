@@ -10,10 +10,10 @@ references:
     or:
       - equal: [ "api", "<< pipeline.trigger_source >>" ]
       - not:
-          equal: [ "<< pipeline.git.branch >>", "feature/third-party-pkg-integration" ]
+          equal: [ "<< pipeline.git.branch >>", "ZCICD-103" ]
   when_develop_workflow: &when_develop_workflow
     and:
-      - equal: [ "<< pipeline.git.branch >>", "feature/third-party-pkg-integration" ]
+      - equal: [ "<< pipeline.git.branch >>", "ZCICD-103" ]
       - not:
           equal: [ "api", "<< pipeline.trigger_source >>" ]
   # Build jobs use the same repo order as genesis: 87, then 1000, then 1010.
