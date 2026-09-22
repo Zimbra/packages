@@ -24,7 +24,7 @@ The Zimbra Cyrus-SASL build
 %define debug_package %{nil}
 
 %changelog
-* Mon Jun 12 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
+* Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Tue Jun 21 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b3ZAPPEND
 - Upgraded cyrus-sasl to 2.1.28
