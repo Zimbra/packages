@@ -20,10 +20,18 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+ifeq ($(PKG_EXT),rpm)
+ifeq ($(BUILD_PLATFORM),RHEL8_64)
+pkgadd_extra := zlib-devel
+else ifeq ($(BUILD_PLATFORM),RHEL9_64)
+pkgadd_extra := xz-devel
+endif
+endif
+
 pkgadd:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV) \
 	zimbra-libltdl-$(PKG_DEV) zimbra-curl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
-	zimbra-libsodium-$(PKG_DEV)
+	zimbra-libsodium-$(PKG_DEV) $(pkgadd_extra)
 
 pkgrm: pkgrm%
 pkgrm%:
