@@ -22,7 +22,7 @@ $(psrc_file):
 pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
-	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) libaio-devel ncurses-devel
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) cmake libaio-devel ncurses-devel
 
 pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) debhelper m4 dpkg-dev \
@@ -43,6 +43,8 @@ build_rpm:
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	perl -pi -e 's|zimbra-openssl-devel = ([^[:space:]]+)|zimbra-openssl-devel >= $$1|' $(specfile) && \
+	perl -pi -e 's|-DCMAKE_CXX_STANDARD=11|-DCMAKE_CXX_STANDARD=11 -DCMAKE_C_FLAGS=-fcommon|' $(specfile) && \
+	perl -pi -e 's|libssl\.so\.1\.0\.0 /opt/zimbra/common/lib/libcrypto\.so\.1\.0\.0|libssl.so.* /opt/zimbra/common/lib/libcrypto.so.*|' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
@@ -54,6 +56,8 @@ build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
+	perl -pi -e 's|-DCMAKE_CXX_STANDARD=11|-DCMAKE_CXX_STANDARD=11 -DCMAKE_C_FLAGS=-fcommon -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE|' debian/rules && \
+	perl -pi -e 's|libssl\.so\.1\.0\.0 /opt/zimbra/common/lib/libcrypto\.so\.1\.0\.0|libssl.so.* /opt/zimbra/common/lib/libcrypto.so.*|' debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 --exclude=debian && \
