@@ -21,6 +21,9 @@ $(psrc_file):
 
 ifeq ($(PKG_EXT),rpm)
 pkgadd_extra := libtool
+ifeq ($(BUILD_PLATFORM),RHEL9_64)
+pkgadd_extra += xz-devel
+endif
 endif
 
 pkgadd:
