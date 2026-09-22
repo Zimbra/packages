@@ -14,7 +14,7 @@ AutoReqProv:        no
 URL:                https://www.mariadb.org/
 
 %description
-The Zimbra MariaDB build for SQL database storage..
+The Zimbra MariaDB build for SQL database storage
 
 %prep
 %setup -n mariadb-%{version}
