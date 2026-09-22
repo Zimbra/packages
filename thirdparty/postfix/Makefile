@@ -9,7 +9,7 @@ psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://postfix.cs.utah.edu/source/official/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
-postfix_linux7_compat := sed -i "/^Linux[.][[]3456[]][.][*]/i Linux.7.*) SYSTYPE=LINUX6" makedefs
+postfix_linux7_compat := sed -i "/^Linux[.][[]3456[]][.][*]/i Linux.7.*) SYSTYPE=LINUX6 ;;" makedefs
 
 .PHONY: all getsrc setup build clean pkgadd pkgrm
 
