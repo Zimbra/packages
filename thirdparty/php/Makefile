@@ -23,11 +23,11 @@ pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
 	$(PKG_EXTRACT) zimbra-base zimbra-httpd-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
-	zimbra-aspell zimbra-aspell-$(PKG_DEV) zlib-devel sqlite-devel
+	zimbra-aspell zimbra-aspell-$(PKG_DEV) zlib-devel sqlite-devel xz-devel
 
 pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-base zimbra-httpd-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
-	zimbra-aspell zimbra-aspell-$(PKG_DEV) debhelper m4 dpkg-dev libz-dev libsqlite3-dev
+	zimbra-aspell zimbra-aspell-$(PKG_DEV) debhelper m4 dpkg-dev libz-dev libsqlite3-dev liblzma-dev
 
 pkgrm: pkgrm%
 pkgrm%:
