@@ -22,10 +22,10 @@ $(psrc_file):
 pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
-	$(PKG_EXTRACT) zimbra-base
+	$(PKG_EXTRACT) zimbra-base libmd-devel
 
 pkgadd_deb:
-	$(PKG_EXTRACT)
+	$(PKG_EXTRACT) libmd-dev
 
 setup:
 	$(generic-setup)
