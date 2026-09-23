@@ -16,7 +16,7 @@ use it with amavisd-new configured as a postfix after queue content filter which
 does anti spam checks through spamassassin and antivirus checks through a third
 party virus checker. If your postfix setup requires additional content filters
 resulting in 3 or more passages of the same message through postfix, this script
-will not work for you.
+will not work for you..
 
 %changelog
 * Tue Aug 10 2021  Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
