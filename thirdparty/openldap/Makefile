@@ -11,7 +11,7 @@ zname := zimbra-$(pname)
 zspec := $(pname).spec
 DEB_TEST ?= nocheck
 
-.PHONY: all getsrc setup build clean pkgadd pkgrm
+.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
 
 all: clean getsrc build pkgrm1
 
@@ -20,18 +20,23 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-ifeq ($(PKG_EXT),rpm)
-ifeq ($(BUILD_PLATFORM),RHEL8_64)
-pkgadd_extra := zlib-devel
-else ifeq ($(BUILD_PLATFORM),RHEL9_64)
-pkgadd_extra := xz-devel
-endif
-endif
+pkgadd: pkgadd_$(PKG_EXT)
 
-pkgadd:
+pkgadd_rpm:
+ifeq ($(BUILD_PLATFORM),RHEL8_64)
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV) \
 	zimbra-libltdl-$(PKG_DEV) zimbra-curl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
-	zimbra-libsodium-$(PKG_DEV) $(pkgadd_extra)
+	zimbra-libsodium-$(PKG_DEV) zlib-devel
+else ifeq ($(BUILD_PLATFORM),RHEL9_64)
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV) \
+	zimbra-libltdl-$(PKG_DEV) zimbra-curl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
+	zimbra-libsodium-$(PKG_DEV) xz-devel
+endif
+
+pkgadd_deb:
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-cyrus-sasl-$(PKG_DEV) \
+	zimbra-libltdl-$(PKG_DEV) zimbra-curl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
+	zimbra-libsodium-$(PKG_DEV)
 
 pkgrm: pkgrm%
 pkgrm%:
