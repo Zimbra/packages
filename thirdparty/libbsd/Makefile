@@ -10,7 +10,9 @@ purl := http://libbsd.freedesktop.org/releases/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-libbsd = $(libbsd.$(BUILD_PLATFORM))
+ifeq ($(PKG_EXT),rpm)
+pkgadd_extra := zimbra-base
+endif
 
 .PHONY: all getsrc setup build clean pkgadd
 
@@ -22,7 +24,7 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
-	$(PKG_EXTRACT) $(libbsd)
+	$(PKG_EXTRACT) $(pkgadd_extra)
 
 setup:
 	$(generic-setup)
