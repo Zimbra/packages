@@ -7,7 +7,7 @@ Source:             %{name}-%{version}.tar.xz
 URL:                http://libbsd.freedesktop.org/
 
 %description
-The Zimbra libbsd build..
+The Zimbra libbsd build
 
 %define debug_package %{nil}
 
