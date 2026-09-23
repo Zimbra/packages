@@ -24,7 +24,7 @@ pkgadd: pkgadd_$(PKG_EXT)
 pkgadd_rpm:
 ifeq ($(BUILD_PLATFORM),RHEL9_64)
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
-	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) libtool xz-devel zlib-devel
+	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) libtool zlib-devel
 else
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
 	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) libtool zlib-devel
