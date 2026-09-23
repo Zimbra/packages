@@ -23,7 +23,7 @@ pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
 	$(PKG_EXTRACT) zimbra-base zimbra-libart-$(PKG_DEV) zimbra-libpng-$(PKG_DEV) \
-	zimbra-freetype-$(PKG_DEV) bzip2-devel
+	zimbra-freetype-$(PKG_DEV) bzip2-devel zlib-devel pkgconfig perl-devel
 
 pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-base zimbra-libart-$(PKG_DEV) zimbra-libpng-$(PKG_DEV) \
