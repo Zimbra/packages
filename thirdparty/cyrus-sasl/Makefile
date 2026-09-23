@@ -10,7 +10,7 @@ purl := https://ftp.osuosl.org/pub/blfs/conglomeration/cyrus-sasl/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean pkgadd pkgrm
+.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
 
 all: clean getsrc build pkgrm1
 
@@ -19,16 +19,20 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-ifeq ($(PKG_EXT),rpm)
-pkgadd_extra := libtool
+pkgadd: pkgadd_$(PKG_EXT)
+
+pkgadd_rpm:
 ifeq ($(BUILD_PLATFORM),RHEL9_64)
-pkgadd_extra += xz-devel
-endif
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
+	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) libtool xz-devel
+else
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
+	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) libtool
 endif
 
-pkgadd:
+pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-heimdal-$(PKG_DEV) \
-	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) $(pkgadd_extra)
+	zimbra-curl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV)
 
 pkgrm: pkgrm%
 
