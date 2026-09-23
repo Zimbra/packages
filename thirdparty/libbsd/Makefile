@@ -22,7 +22,8 @@ $(psrc_file):
 pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
-	$(PKG_EXTRACT) zimbra-base libmd-devel
+	$(PKG_EXTRACT) zimbra-base epel-release
+	$(PKG_EXTRACT) libmd-devel
 
 pkgadd_deb:
 	$(PKG_EXTRACT) libmd-dev
