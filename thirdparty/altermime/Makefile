@@ -9,6 +9,11 @@ psrc_file := $(SRC_DIR)/$(pfile)
 purl := http://www.pldaniels.com/altermime/altermime-0.3-dev.tar.gz
 zname := zimbra-altermime
 zspec := $(pname).spec
+# Upstream Makefile hardcodes CFLAGS with -Werror, which newer gcc turns into a
+# hard FTBFS via -Werror=format-truncation. Override CFLAGS on the make command
+# line (which always wins over the Makefile's own assignment) to drop -Werror.
+altermime_cflags := -Wall -g -I. -O2 -DALTERMIME_PRETEXT
+altermime_fix_werror = $(PERL) -pi -e 's|^make$$|make CFLAGS="$(altermime_cflags)"|' $(1)
 
 .PHONY: all getsrc setup build clean
 
@@ -29,6 +34,7 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	$(call altermime_fix_werror,$(specfile)) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
@@ -43,6 +49,7 @@ build_deb:
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
+	printf '\noverride_dh_auto_build:\n\tdh_auto_build -- CFLAGS="$(altermime_cflags)"\n' >> debian/rules && \
 	$(PKG_BUILD)
 
 clean:
