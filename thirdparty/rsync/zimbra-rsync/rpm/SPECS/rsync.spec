@@ -10,7 +10,7 @@ AutoReqProv:        no
 URL:                https://rsync.samba.org
 
 %description
-The Zimbra rsync build
+The Zimbra rsync build..
 
 %prep
 %setup -n rsync-%{version}
