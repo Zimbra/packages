@@ -9,7 +9,7 @@ AutoReqProv:        no
 URL:                http://libevent.org/
 
 %description
-The Zimbra libevent build..
+The Zimbra libevent build
 
 %prep
 %setup -n libevent-%{version}-stable
