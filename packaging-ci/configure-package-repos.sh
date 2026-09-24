@@ -25,6 +25,7 @@ log() { echo "configure-package-repo: $*"; }
 
 filter_apt_output() {
   tr -d '\000' \
+    | sed 's/\^@//g' \
     | grep -Ev "NO_PUBKEY 5234D2B73B6996C7|^$" \
     || true
 }

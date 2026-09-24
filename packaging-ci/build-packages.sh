@@ -61,6 +61,7 @@ manifest_field() {
 
 filter_apt_output() {
   tr -d '\000' \
+    | sed 's/\^@//g' \
     | grep -Ev "NO_PUBKEY 5234D2B73B6996C7|^$" \
     || true
 }
@@ -96,7 +97,7 @@ install_build_tooling() {
     apt_update
 
     if have_deb_build_tools; then
-      echo "Build environment ready: Debian tools already installed"
+      echo "Build tools ready: dpkg-buildpackage, dpkg-scanpackages, gcc, g++, make"
       return 0
     fi
 
@@ -119,7 +120,11 @@ install_build_tooling() {
     fi
 
     if have_rpm_build_tools; then
-      echo "Build environment ready: RPM tools already installed"
+      if command -v createrepo_c >/dev/null 2>&1; then
+        echo "Build tools ready: rpmbuild, createrepo_c"
+      else
+        echo "Build tools ready: rpmbuild, createrepo"
+      fi
       return 0
     fi
 
@@ -340,7 +345,7 @@ REPOEOF
 
 # Install only non-zimbra build deps from the manifest.
 install_declared_build_deps() {
-  local file="$1" label="$2" prefix="$3"
+  local file="$1" prefix="$2"
   local deps
   deps=$(manifest_field "$file" "$prefix" \
     | tr ',' '\n' \
@@ -349,7 +354,7 @@ install_declared_build_deps() {
     | grep -v '^zimbra-' \
     | sort -u || true)
   if [ -n "$deps" ]; then
-    DEP_CONTEXT="${label} build dependencies" install_package_deps $deps
+    DEP_CONTEXT="Build dependencies" install_package_deps $deps
   fi
 }
 
@@ -360,27 +365,27 @@ is_migrated_pkgadd() {
 }
 
 handle_build_deps() {
-  local pkgpath="$1" file field label
+  local pkgpath="$1" file field
   if command -v apt-get >/dev/null 2>&1; then
     file=$(find "$pkgpath" -path "*/debian/control" 2>/dev/null | head -1)
-    field="Build-Depends"; label="Debian"
+    field="Build-Depends"
     [ -n "$file" ] || return 0
     verify_build_deps "$file" "$field"
     if is_migrated_pkgadd "$pkgpath" "pkgadd_deb"; then
       echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_deb - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
       return 0
     fi
-    install_declared_build_deps "$file" "$label" "$field"
+    install_declared_build_deps "$file" "$field"
   elif command -v yum >/dev/null 2>&1; then
     file=$(find "$pkgpath" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
-    field="BuildRequires"; label="RPM"
+    field="BuildRequires"
     [ -n "$file" ] || return 0
     verify_build_deps "$file" "$field"
     if is_migrated_pkgadd "$pkgpath" "pkgadd_rpm"; then
       echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_rpm - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
       return 0
     fi
-    install_declared_build_deps "$file" "$label" "$field"
+    install_declared_build_deps "$file" "$field"
   fi
 }
 
@@ -394,7 +399,7 @@ export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
 # Some packages do not build reliably with link-time optimization on newer Ubuntu.
 if command -v apt-get >/dev/null 2>&1; then
   export DEB_BUILD_OPTIONS="${DEB_BUILD_OPTIONS:+$DEB_BUILD_OPTIONS }nolto"
-  echo "Debian compatibility: link-time optimization disabled"
+  echo "Build setting: LTO disabled for Debian compatibility"
 fi
 
 mkdir -p "build/dist_workspace/${PLATFORM_TAG}"
@@ -413,9 +418,7 @@ while IFS= read -r PKGPATH; do
   n=$((n + 1))
 
   echo ""
-  echo "############################################################"
-  echo "###  [${n}/${total}] Building ${PKGPATH}   (platform: ${PLATFORM_TAG})"
-  echo "############################################################"
+  echo "=== Package ${n}/${total}: ${PKGPATH} (${PLATFORM_TAG}) ==="
 
   if [ ! -d "$PKGPATH" ]; then
     echo "ERROR: $PKGPATH does not exist"
@@ -430,8 +433,7 @@ while IFS= read -r PKGPATH; do
 
   handle_build_deps "$PKGPATH"
 
-  echo "--- [${n}/${total}] ${PKGPATH}: make ---"
-  ( cd "$PKGPATH" && make "${make_args[@]}" )
+  ( cd "$PKGPATH" && make --silent "${make_args[@]}" )
 
   register_local_repo "${PKGPATH}/build"
 
@@ -439,7 +441,7 @@ while IFS= read -r PKGPATH; do
     \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
     -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
 
-  echo "--- [${n}/${total}] ${PKGPATH}: done ---"
+  echo "=== Completed: ${PKGPATH} (${PLATFORM_TAG}) ==="
 done < "$INPUT"
 
 echo ""
