@@ -1,0 +1,5 @@
+Test cycle: 1
+
+The commit that last changes this file is the exclusive baseline for automatic
+package selection on testbranch. Commit a baseline update separately before
+starting a new multi-commit package test.

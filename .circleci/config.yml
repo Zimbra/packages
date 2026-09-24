@@ -4,7 +4,11 @@ parameters:
   package_name:
     type: string
     default: "auto"
-    description: "Full path of the package to new build, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to auto-detect changed package(s) from the latest commit."
+    description: "Full package path, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to build every package changed on the branch."
+  change_base_branch:
+    type: string
+    default: "develop"
+    description: "Base branch used for cumulative automatic builds outside testbranch."
 references:
   when_main_workflow: &when_main_workflow
     or:
@@ -38,20 +42,54 @@ references:
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-nexus.git ~/zm-nexus
       - run:
-          name: Identify Packages Changed in PR/Commit
+          name: Identify cumulative package change set
           command: |
             if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
               echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
+              echo "Package selection: manual override"
             else
-              git diff --name-only HEAD~1 HEAD -- thirdparty/ zimbra/ \
-                | awk -F'/' '{print $1"/"$2}' \
+              BASE_BRANCH="<< pipeline.parameters.change_base_branch >>"
+              if [ "$CIRCLE_BRANCH" = "testbranch" ]; then
+                BASE_MARKER=".circleci/testbranch-build-baseline"
+                BASE_COMMIT="$(git log -1 --format=%H -- "$BASE_MARKER")"
+                if [ -z "$BASE_COMMIT" ]; then
+                  echo "ERROR: $BASE_MARKER has no committed baseline."
+                  exit 1
+                fi
+                SELECTION_MODE="test cycle baseline"
+              elif [ "$CIRCLE_BRANCH" = "$BASE_BRANCH" ]; then
+                BASE_COMMIT="HEAD~1"
+                SELECTION_MODE="latest ${BASE_BRANCH} commit"
+              else
+                git fetch --no-tags origin "$BASE_BRANCH"
+                BASE_COMMIT="$(git merge-base "origin/${BASE_BRANCH}" HEAD)"
+                SELECTION_MODE="changes since ${BASE_BRANCH}"
+              fi
+              if ! git merge-base --is-ancestor "$BASE_COMMIT" HEAD; then
+                echo "ERROR: package selection baseline $BASE_COMMIT is not an ancestor of HEAD."
+                exit 1
+              fi
+
+              echo "============================================================"
+              echo " CUMULATIVE PACKAGE CHANGE SET"
+              echo "============================================================"
+              echo "Mode:     $SELECTION_MODE"
+              echo "Branch:   $CIRCLE_BRANCH"
+              echo "Baseline: $(git show -s --format='%h %s' "$BASE_COMMIT")"
+              echo "Current:  $(git show -s --format='%h %s' HEAD)"
+              echo "Commits included after baseline:"
+              git log --reverse --format='  %h %s' "$BASE_COMMIT"..HEAD
+              echo "============================================================"
+
+              git diff --name-only "$BASE_COMMIT" HEAD -- thirdparty/ zimbra/ \
+                | awk -F'/' 'NF >= 2 {print $1"/"$2}' \
                 | sort -u > packages_to_build.txt
             fi
             if [ ! -s packages_to_build.txt ]; then
-              echo "No package changes found in this commit - nothing to build."
+              echo "No package changes found after the baseline - nothing to build."
               circleci-agent step halt
             fi
-            echo "=== Changed package(s) found in this commit ==="
+            echo "Package(s) selected before build-order sorting:"
             cat packages_to_build.txt
       - run:
           name: Sort changed Packages according to build-order
