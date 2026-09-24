@@ -12,6 +12,29 @@ LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 
 [ -s "$INPUT" ] || { echo "build: $INPUT is empty, nothing to build"; exit 0; }
 
+manifest_field() {
+  local file="$1" prefix="$2"
+  awk -v prefix="$prefix" '
+      $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
+      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
+      flag { print }
+    ' "$file"
+}
+
+filter_apt_output() {
+  tr -d '\000' \
+    | grep -Ev "NO_PUBKEY 5234D2B73B6996C7|^$" \
+    || true
+}
+
+apt_update() {
+  local output rc=0
+  output="$(sudo env DEBIAN_FRONTEND=noninteractive apt-get update -qq "$@" 2>&1)" || rc=$?
+  output="$(printf '%s\n' "$output" | filter_apt_output)"
+  [ -z "$output" ] || printf '%s\n' "$output"
+  return "$rc"
+}
+
 have_deb_build_tools() {
   command -v dpkg-buildpackage >/dev/null 2>&1 \
     && command -v dpkg-scanpackages >/dev/null 2>&1 \
@@ -30,7 +53,7 @@ install_build_tooling() {
     export DEBIAN_FRONTEND=noninteractive
     printf 'APT::Install-Recommends "false";\n' \
       | sudo tee /etc/apt/apt.conf.d/99-no-install-recommends >/dev/null
-    sudo env DEBIAN_FRONTEND=noninteractive apt-get update -qq
+    apt_update
 
     if have_deb_build_tools; then
       echo "Debian build tools already present, skipping install"
@@ -45,7 +68,7 @@ install_build_tooling() {
       missing+=("build-essential")
     fi
     [ "${#missing[@]}" -eq 0 ] || sudo env DEBIAN_FRONTEND=noninteractive \
-      apt-get install -y --no-install-recommends "${missing[@]}"
+      apt-get install -qq -y --no-install-recommends -o Dpkg::Use-Pty=0 "${missing[@]}"
   elif command -v yum >/dev/null 2>&1; then
     OS_VERSION=$(rpm -E %{rhel})
     if [ "$OS_VERSION" = "8" ]; then
@@ -73,10 +96,7 @@ install_build_tooling() {
   fi
 }
 
-########################################################################
-# 2b) verify a package's declared zimbra-* build-time deps are resolvable
-#     (was ci/verify-build-deps.sh) - args: <control/spec file> <field prefix>
-########################################################################
+# Verify that declared zimbra-* build dependencies can be resolved.
 verify_build_deps() {
   local file="$1" prefix="$2"
   [ -f "$file" ] || { echo "verify-build-deps: $file not found, skipping"; return 0; }
@@ -102,15 +122,10 @@ verify_build_deps() {
       ;;
   esac
   self_pkgs="$(printf '%s\n' "$self_pkgs" | sed '/^$/d' | sort -u)"
-  local is_self_produced_name
   is_self_produced() { [ -n "$self_pkgs" ] && grep -qxF "$1" <<<"$self_pkgs"; }
 
   local deps_with_versions
-  deps_with_versions="$(awk -v prefix="$prefix" '
-      $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
-      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-      flag { print }
-    ' "$file" \
+  deps_with_versions="$(manifest_field "$file" "$prefix" \
     | tr ',' '\n' \
     | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
     | grep -E '^zimbra-' || true)"
@@ -252,7 +267,7 @@ register_local_repo() {
       echo "deb [trusted=yes] file:$LOCAL_REPO ./" | sudo tee /etc/apt/sources.list.d/local-build.list >/dev/null
       printf 'Package: *\nPin: origin ""\nPin-Priority: 1001\n' | sudo tee /etc/apt/preferences.d/local-build >/dev/null
     fi
-    sudo apt-get update -qq \
+    apt_update \
       -o Dir::Etc::sourcelist="sources.list.d/local-build.list" \
       -o Dir::Etc::sourceparts="-" \
       -o APT::Get::List-Cleanup="0"
@@ -288,18 +303,14 @@ REPOEOF
 install_declared_build_deps() {
   local file="$1" label="$2" prefix="$3"; shift 3
   local deps
-  deps=$(awk -v prefix="$prefix" '
-      $0 ~ "^"prefix":" { flag=1; sub("^"prefix":", ""); print; next }
-      flag && /^[A-Za-z][A-Za-z0-9-]*:/ { flag=0 }
-      flag { print }
-    ' "$file" \
+  deps=$(manifest_field "$file" "$prefix" \
     | tr ',' '\n' \
     | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
     | grep -v '^$' \
     | grep -v '^zimbra-' \
     | sort -u || true)
   if [ -n "$deps" ]; then
-    echo "Installing ${label} build-deps (non-zimbra): ${deps}"
+    echo "Installing ${label} build-deps (non-zimbra): $(tr '\n' ' ' <<<"$deps")"
     "$@" $deps
   else
     echo "No non-zimbra ${label} build-deps declared for ${file}, skipping install"
@@ -324,7 +335,8 @@ handle_build_deps() {
       return 0
     fi
     install_declared_build_deps "$file" "$label" "$field" \
-      sudo apt-get install -y --no-install-recommends
+      sudo env DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
+        --no-install-recommends -o Dpkg::Use-Pty=0
   elif command -v yum >/dev/null 2>&1; then
     file=$(find "$pkgpath" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
     field="BuildRequires"; label="RPM"
@@ -335,7 +347,7 @@ handle_build_deps() {
       return 0
     fi
     install_declared_build_deps "$file" "$label" "$field" \
-      sudo yum install -y
+      sudo yum install -q -y
   fi
 }
 

@@ -23,6 +23,12 @@ PROBE_FAILURES=()
 
 log() { echo "configure-package-repo: $*"; }
 
+filter_apt_output() {
+  tr -d '\000' \
+    | grep -Ev "NO_PUBKEY 5234D2B73B6996C7|^$" \
+    || true
+}
+
 CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for _s in "$CI_DIR"/*.sh; do
   [ -f "$_s" ] && [ ! -x "$_s" ] && chmod +x "$_s" 2>/dev/null
@@ -77,7 +83,7 @@ apt_update_zimbra_only() {
     -o Dir::Etc::sourceparts="-" \
     -o APT::Get::List-Cleanup="0" 2>&1 || true
   )"
-  output="$(printf '%s\n' "$output" | grep -Ev "NO_PUBKEY 5234D2B73B6996C7|^$" || true)"
+  output="$(printf '%s\n' "$output" | filter_apt_output)"
   if [ -n "$output" ]; then
     printf '%s\n' "$output" | sed 's/^/configure-package-repo: apt: /'
   fi

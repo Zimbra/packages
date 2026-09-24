@@ -25,8 +25,6 @@ references:
           RPM_REPO_CANDIDATES: "https://repo.zimbra.com/rpm"
           PKG_REPO_RELEASE_CANDIDATES: "87 1000 1010"
           REQUIRE_PKGS: "zimbra-base"
-          RPM_GPGCHECK: "0"
-          REPO_LOG_VERBOSE: "0"
         command: bash packaging-ci/configure-package-repos.sh
   # Resolve the changed package list once and share it with every build job.
   checkout_and_resolve_steps: &checkout_and_resolve_steps
