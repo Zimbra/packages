@@ -76,17 +76,13 @@ print_probe_failures() {
 }
 
 apt_update_zimbra_only() {
-  local output
-  output="$(
-    $SUDO env DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+  $SUDO env DEBIAN_FRONTEND=noninteractive apt-get update -qq \
     -o Dir::Etc::sourcelist="sources.list.d/zimbra.list" \
     -o Dir::Etc::sourceparts="-" \
-    -o APT::Get::List-Cleanup="0" 2>&1 || true
-  )"
-  output="$(printf '%s\n' "$output" | filter_apt_output)"
-  if [ -n "$output" ]; then
-    printf '%s\n' "$output" | sed 's/^/configure-package-repo: apt: /'
-  fi
+    -o APT::Get::List-Cleanup="0" 2>&1 \
+    | filter_apt_output \
+    | sed 's/^/configure-package-repo: apt: /' \
+    || true
 }
 
 available_version() {
@@ -131,7 +127,7 @@ still_missing_warning() {
 }
 
 setup_apt() {
-  local codename opts base rel url rc code added=0
+  local codename opts base rel url rc code added=0 enabled_repos="" enabled_releases=""
   # shellcheck disable=SC1091
   . /etc/os-release
   codename="${UBUNTU_CODENAME:-${VERSION_CODENAME:-}}"
@@ -145,9 +141,6 @@ setup_apt() {
    opts="$opts trusted=yes"
   fi
 
-  log "flavour=deb codename=$codename"
-  log "adding reachable release lines for '$codename'"
-
   $SUDO rm -f "$APT_LIST"
   $SUDO touch "$APT_LIST"
 
@@ -159,6 +152,8 @@ setup_apt() {
       if describe_probe "$rc" "$code" "$url"; then
         echo "deb [$opts] ${base}/${rel} ${codename} zimbra" | $SUDO tee -a "$APT_LIST" >/dev/null
         added=$((added + 1))
+        enabled_repos="${enabled_repos}${enabled_repos:+, }${base}/${rel}"
+        enabled_releases="${enabled_releases}${enabled_releases:+,}${rel}"
       fi
     done
   done
@@ -171,8 +166,9 @@ setup_apt() {
     return 0
   fi
 
-  log "enabled apt repo lines:"
-  awk '{print "configure-package-repo:   " $3 " " $4}' "$APT_LIST"
+  if [ "$REPO_LOG_VERBOSE" = "1" ]; then
+    log "enabled apt repositories for $codename: $enabled_repos"
+  fi
 
   apt_update_zimbra_only
 
@@ -181,7 +177,7 @@ setup_apt() {
   if [ -n "$miss" ]; then
     still_missing_warning "$miss"
   else
-    log "confirmed available across added lines: $REQUIRE_PKGS"
+    log "ready: deb/$codename releases=$enabled_releases; verified=$REQUIRE_PKGS"
   fi
   if [ "$REPO_LOG_VERBOSE" = "1" ]; then
     print_probe_failures
@@ -189,7 +185,7 @@ setup_apt() {
 }
 
 setup_yum() {
-  local el base rel url rc code added=0
+  local el base rel url rc code added=0 enabled_repos="" enabled_releases=""
   el="$(rpm -E '%{rhel}' 2>/dev/null || true)"
   if [ -z "$el" ] || [ "$el" = "%{rhel}" ]; then
     # shellcheck disable=SC1091
@@ -200,9 +196,6 @@ setup_yum() {
     log "ERROR - cannot determine EL major version"
     return 0
   fi
-
-  log "flavour=rpm el=$el"
-  log "adding reachable release lines for rhel${el}"
 
   $SUDO rm -f "$YUM_REPO"
   $SUDO touch "$YUM_REPO"
@@ -224,6 +217,8 @@ module_hotfixes=1
 
 EOF
         added=$((added + 1))
+        enabled_repos="${enabled_repos}${enabled_repos:+, }${base}/${rel}/rhel${el}"
+        enabled_releases="${enabled_releases}${enabled_releases:+,}${rel}"
       fi
     done
   done
@@ -236,11 +231,9 @@ EOF
     return 0
   fi
 
-  log "enabled rpm repo lines:"
-  awk -F'[][]|=' '
-    /^\[/ { repo=$2 }
-    /^baseurl=/ { print "configure-package-repo:   " repo " " $2 }
-  ' "$YUM_REPO"
+  if [ "$REPO_LOG_VERBOSE" = "1" ]; then
+    log "enabled rpm repositories for rhel${el}: $enabled_repos"
+  fi
 
   if command -v dnf >/dev/null 2>&1; then
     $SUDO dnf -q makecache -y >/dev/null 2>&1 || true
@@ -253,7 +246,7 @@ EOF
   if [ -n "$miss" ]; then
     still_missing_warning "$miss"
   else
-    log "confirmed available across added lines: $REQUIRE_PKGS"
+    log "ready: rpm/rhel${el} releases=$enabled_releases; verified=$REQUIRE_PKGS"
   fi
   if [ "$REPO_LOG_VERBOSE" = "1" ]; then
     print_probe_failures
@@ -277,5 +270,3 @@ for p in $PROBE_PKGS; do
     log "probe pkg '$p' -> NOT AVAILABLE"
   fi
 done
-
-log "done"

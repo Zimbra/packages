@@ -6,6 +6,44 @@
 
 set -euo pipefail
 
+SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+
+install_package_deps() {
+  [ "$#" -gt 0 ] || return 0
+
+  local output rc
+  local -a install_cmd
+  if command -v apt-get >/dev/null 2>&1; then
+    install_cmd=(
+      sudo env DEBIAN_FRONTEND=noninteractive
+      apt-get -qq --assume-yes --no-install-recommends
+      -o Dpkg::Use-Pty=0 install
+    )
+  elif command -v yum >/dev/null 2>&1; then
+    install_cmd=(sudo yum -q -y install)
+  else
+    echo "ERROR: neither apt-get nor yum is available to install dependencies" >&2
+    return 1
+  fi
+
+  if output="$("${install_cmd[@]}" "$@" 2>&1)"; then
+    echo "${DEP_CONTEXT:-Dependencies} ready: $*"
+    return 0
+  else
+    rc=$?
+  fi
+
+  echo "ERROR: failed to install dependencies: $*" >&2
+  printf '%s\n' "$output" >&2
+  return "$rc"
+}
+
+if [ "${1:-}" = "--install-deps" ]; then
+  shift
+  install_package_deps "$@"
+  exit
+fi
+
 : "${PLATFORM_TAG:?PLATFORM_TAG must be set}"
 INPUT="${1:-packages_to_build.txt}"
 LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
@@ -28,10 +66,12 @@ filter_apt_output() {
 }
 
 apt_update() {
-  local output rc=0
-  output="$(sudo env DEBIAN_FRONTEND=noninteractive apt-get update -qq "$@" 2>&1)" || rc=$?
-  output="$(printf '%s\n' "$output" | filter_apt_output)"
-  [ -z "$output" ] || printf '%s\n' "$output"
+  local rc
+  set +e
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get update -qq "$@" 2>&1 \
+    | filter_apt_output
+  rc="${PIPESTATUS[0]}"
+  set -e
   return "$rc"
 }
 
@@ -56,7 +96,7 @@ install_build_tooling() {
     apt_update
 
     if have_deb_build_tools; then
-      echo "Debian build tools already present, skipping install"
+      echo "Build environment ready: Debian tools already installed"
       return 0
     fi
 
@@ -67,8 +107,7 @@ install_build_tooling() {
     if ! command -v gcc >/dev/null 2>&1 || ! command -v g++ >/dev/null 2>&1 || ! command -v make >/dev/null 2>&1; then
       missing+=("build-essential")
     fi
-    [ "${#missing[@]}" -eq 0 ] || sudo env DEBIAN_FRONTEND=noninteractive \
-      apt-get install -qq -y --no-install-recommends -o Dpkg::Use-Pty=0 "${missing[@]}"
+    [ "${#missing[@]}" -eq 0 ] || install_package_deps "${missing[@]}"
   elif command -v yum >/dev/null 2>&1; then
     OS_VERSION=$(rpm -E %{rhel})
     if [ "$OS_VERSION" = "8" ]; then
@@ -80,7 +119,7 @@ install_build_tooling() {
     fi
 
     if have_rpm_build_tools; then
-      echo "RPM build tools already present, skipping install"
+      echo "Build environment ready: RPM tools already installed"
       return 0
     fi
 
@@ -129,7 +168,7 @@ verify_build_deps() {
     | tr ',' '\n' \
     | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
     | grep -E '^zimbra-' || true)"
-  [ -z "$deps_with_versions" ] && { echo "verify-build-deps: no internal zimbra- build-time deps declared, skipping"; return 0; }
+  [ -z "$deps_with_versions" ] && return 0
 
   # deb/rpm version compare, preferring the platform-native comparator for
   # correct epoch/tilde semantics.
@@ -301,7 +340,7 @@ REPOEOF
 
 # Install only non-zimbra build deps from the manifest.
 install_declared_build_deps() {
-  local file="$1" label="$2" prefix="$3"; shift 3
+  local file="$1" label="$2" prefix="$3"
   local deps
   deps=$(manifest_field "$file" "$prefix" \
     | tr ',' '\n' \
@@ -310,10 +349,7 @@ install_declared_build_deps() {
     | grep -v '^zimbra-' \
     | sort -u || true)
   if [ -n "$deps" ]; then
-    echo "Installing ${label} build-deps (non-zimbra): $(tr '\n' ' ' <<<"$deps")"
-    "$@" $deps
-  else
-    echo "No non-zimbra ${label} build-deps declared for ${file}, skipping install"
+    DEP_CONTEXT="${label} build dependencies" install_package_deps $deps
   fi
 }
 
@@ -334,9 +370,7 @@ handle_build_deps() {
       echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_deb - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
       return 0
     fi
-    install_declared_build_deps "$file" "$label" "$field" \
-      sudo env DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
-        --no-install-recommends -o Dpkg::Use-Pty=0
+    install_declared_build_deps "$file" "$label" "$field"
   elif command -v yum >/dev/null 2>&1; then
     file=$(find "$pkgpath" -path "*/SPECS/*.spec" 2>/dev/null | head -1)
     field="BuildRequires"; label="RPM"
@@ -346,26 +380,30 @@ handle_build_deps() {
       echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_rpm - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
       return 0
     fi
-    install_declared_build_deps "$file" "$label" "$field" \
-      sudo yum install -q -y
+    install_declared_build_deps "$file" "$label" "$field"
   fi
 }
 
 ########################################################################
 # main
 ########################################################################
-echo "=== Installing build tooling (minimal) ==="
 install_build_tooling
 
 export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
 
-# Newer Ubuntu builds need nolto for some packages, so keep it enabled on deb jobs.
+# Some packages do not build reliably with link-time optimization on newer Ubuntu.
 if command -v apt-get >/dev/null 2>&1; then
   export DEB_BUILD_OPTIONS="${DEB_BUILD_OPTIONS:+$DEB_BUILD_OPTIONS }nolto"
-  echo "DEB_BUILD_OPTIONS=${DEB_BUILD_OPTIONS}"
+  echo "Debian compatibility: link-time optimization disabled"
 fi
 
 mkdir -p "build/dist_workspace/${PLATFORM_TAG}"
+
+make_args=()
+make_args+=("PKG_EXTRACT=@bash ${SCRIPT_PATH} --install-deps")
+if command -v yum >/dev/null 2>&1; then
+  make_args+=('PKG_BUILD=rpmbuild --define "_topdir $$PWD" -ba')
+fi
 
 total="$(grep -c . "$INPUT" || true)"
 n=0
@@ -393,7 +431,7 @@ while IFS= read -r PKGPATH; do
   handle_build_deps "$PKGPATH"
 
   echo "--- [${n}/${total}] ${PKGPATH}: make ---"
-  ( cd "$PKGPATH" && make )
+  ( cd "$PKGPATH" && make "${make_args[@]}" )
 
   register_local_repo "${PKGPATH}/build"
 
