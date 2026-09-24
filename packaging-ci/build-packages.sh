@@ -6,8 +6,6 @@
 
 set -euo pipefail
 
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
-
 install_package_deps() {
   [ "$#" -gt 0 ] || return 0
 
@@ -37,12 +35,6 @@ install_package_deps() {
   printf '%s\n' "$output" >&2
   return "$rc"
 }
-
-if [ "${1:-}" = "--install-deps" ]; then
-  shift
-  install_package_deps "$@"
-  exit
-fi
 
 : "${PLATFORM_TAG:?PLATFORM_TAG must be set}"
 INPUT="${1:-packages_to_build.txt}"
@@ -404,12 +396,6 @@ fi
 
 mkdir -p "build/dist_workspace/${PLATFORM_TAG}"
 
-make_args=()
-make_args+=("PKG_EXTRACT=@bash ${SCRIPT_PATH} --install-deps")
-if command -v yum >/dev/null 2>&1; then
-  make_args+=('PKG_BUILD=rpmbuild --define "_topdir $$PWD" -ba')
-fi
-
 total="$(grep -c . "$INPUT" || true)"
 n=0
 
@@ -418,7 +404,9 @@ while IFS= read -r PKGPATH; do
   n=$((n + 1))
 
   echo ""
-  echo "=== Package ${n}/${total}: ${PKGPATH} (${PLATFORM_TAG}) ==="
+  echo "############################################################"
+  echo "###  [${n}/${total}] Building ${PKGPATH}   (platform: ${PLATFORM_TAG})"
+  echo "############################################################"
 
   if [ ! -d "$PKGPATH" ]; then
     echo "ERROR: $PKGPATH does not exist"
@@ -433,7 +421,8 @@ while IFS= read -r PKGPATH; do
 
   handle_build_deps "$PKGPATH"
 
-  ( cd "$PKGPATH" && make --silent "${make_args[@]}" )
+  echo "--- [${n}/${total}] ${PKGPATH}: make ---"
+  ( cd "$PKGPATH" && make )
 
   register_local_repo "${PKGPATH}/build"
 
@@ -441,7 +430,7 @@ while IFS= read -r PKGPATH; do
     \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
     -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
 
-  echo "=== Completed: ${PKGPATH} (${PLATFORM_TAG}) ==="
+  echo "--- [${n}/${total}] ${PKGPATH}: done ---"
 done < "$INPUT"
 
 echo ""

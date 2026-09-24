@@ -5,6 +5,15 @@
 
 set -euo pipefail
 
+if [ "${CONFIGURE_REPO_OUTPUT_FILTERED:-0}" != "1" ]; then
+  set +e
+  CONFIGURE_REPO_OUTPUT_FILTERED=1 bash "${BASH_SOURCE[0]}" "$@" 2>&1 \
+    | tr -d '\000' \
+    | sed 's/\^@//g'
+  rc="${PIPESTATUS[0]}"
+  exit "$rc"
+fi
+
 PKG_REPO_RELEASE="${PKG_REPO_RELEASE:-87}"
 if [ -z "${PKG_REPO_RELEASE_CANDIDATES:-}" ]; then
   PKG_REPO_RELEASE_CANDIDATES="${PKG_REPO_RELEASE} 1000 1010"
