@@ -1,0 +1,320 @@
+version: 2.1
+############################################################################
+parameters:
+  package_name:
+    type: string
+    default: "auto"
+    description: "Full package path, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to build every package changed on the branch."
+  change_base_branch:
+    type: string
+    default: "develop"
+    description: "Base branch used to find cumulative package changes on feature branches."
+references:
+  when_main_workflow: &when_main_workflow
+    or:
+      - equal: [ "api", "<< pipeline.trigger_source >>" ]
+      - not:
+          equal: [ "<< pipeline.git.branch >>", "develop" ]
+  when_develop_workflow: &when_develop_workflow
+    and:
+      - equal: [ "<< pipeline.git.branch >>", "develop" ]
+      - not:
+          equal: [ "api", "<< pipeline.trigger_source >>" ]
+  # Build jobs use the same repo order as genesis: 87, then 1000, then 1010.
+  setup_pkg_repo_step: &setup_pkg_repo_step
+    run:
+        name: Configure Zimbra package repo
+        environment:
+          APT_REPO_CANDIDATES: "https://repo.zimbra.com/apt"
+          RPM_REPO_CANDIDATES: "https://repo.zimbra.com/rpm"
+          PKG_REPO_RELEASE_CANDIDATES: "87 1000 1010"
+          REQUIRE_PKGS: "zimbra-base"
+        command: bash packaging-ci/configure-package-repos.sh
+  # Resolve the changed package list once and share it with every build job.
+  checkout_and_resolve_steps: &checkout_and_resolve_steps
+    steps:
+      - checkout:
+          method: full
+      - run:
+          name: Checkout build-tool dependencies
+          command: |
+            git clone -b develop --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-pkg-tool.git ~/zm-pkg-tool
+            git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
+            git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-nexus.git ~/zm-nexus
+      - run:
+          name: Identify cumulative package change set
+          command: |
+            if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
+              echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
+              echo "Package selection: manual override"
+            else
+              BASE_BRANCH="<< pipeline.parameters.change_base_branch >>"
+              if [ "$CIRCLE_BRANCH" = "$BASE_BRANCH" ]; then
+                BASE_COMMIT="HEAD~1"
+                SELECTION_MODE="latest ${BASE_BRANCH} commit"
+              else
+                git fetch --no-tags origin "$BASE_BRANCH"
+                BASE_COMMIT="$(git merge-base "origin/${BASE_BRANCH}" HEAD)"
+                SELECTION_MODE="changes since ${BASE_BRANCH}"
+              fi
+              if ! git merge-base --is-ancestor "$BASE_COMMIT" HEAD; then
+                echo "ERROR: package selection baseline $BASE_COMMIT is not an ancestor of HEAD."
+                exit 1
+              fi
+
+              echo "============================================================"
+              echo " CUMULATIVE PACKAGE CHANGE SET"
+              echo "============================================================"
+              echo "Mode:     $SELECTION_MODE"
+              echo "Branch:   $CIRCLE_BRANCH"
+              echo "Baseline: $(git show -s --format='%h %s' "$BASE_COMMIT")"
+              echo "Current:  $(git show -s --format='%h %s' HEAD)"
+              echo "Commits included after baseline:"
+              git log --reverse --format='  %h %s' "$BASE_COMMIT"..HEAD
+              echo "============================================================"
+
+              git diff --name-only "$BASE_COMMIT" HEAD -- thirdparty/ zimbra/ \
+                | awk -F'/' 'NF >= 2 {print $1"/"$2}' \
+                | sort -u > packages_to_build.txt
+            fi
+            if [ ! -s packages_to_build.txt ]; then
+              echo "No package changes found after the baseline - nothing to build."
+              circleci-agent step halt
+            fi
+            echo "Package(s) selected before build-order sorting:"
+            cat packages_to_build.txt
+      - run:
+          name: Sort changed Packages according to build-order
+          command: bash packaging-ci/resolve-package-build-order.sh packages_to_build.txt
+      - persist_to_workspace:
+          root: ..
+          paths:
+            - packages
+            - zm-pkg-tool
+            - zimbra-package-stub
+            - zm-nexus
+  build_and_isolate_steps: &build_and_isolate_steps
+    steps:
+      - attach_workspace:
+          at: ..
+      - *setup_pkg_repo_step
+      - run:
+          name: Build Packages
+          command: bash packaging-ci/build-packages.sh packages_to_build.txt
+      - run:
+          name: Build summary
+          command: bash packaging-ci/pkg-build-summary.sh packages_to_build.txt
+      - store_artifacts:
+          path: build/dist_workspace
+      - persist_to_workspace:
+          root: ..
+          paths:
+            - packages/build/dist_workspace
+  publish_packages_job_steps: &publish_packages_job_steps
+    steps:
+      - attach_workspace:
+          at: ..
+      - run:
+          name: Publish package artifacts to Nexus
+          command: |
+            sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
+            bash ../zm-nexus/scripts/publish-packages-to-nexus.sh "build/dist_workspace"
+  deploy_s3_job_steps: &deploy_s3_job_steps
+    docker:
+      - image: 'cimg/python:3.10'
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: ..
+      - run:
+          name: Create a zip file for artifacts and upload them to the OCI bucket
+          command: |
+            cd build/dist_workspace
+            zip -r $CIRCLE_PROJECT_REPONAME.zip .
+            ZIP_FILE_PATH="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM/archives/$CIRCLE_PROJECT_REPONAME.zip"
+            curl -X PUT "$OCI_PAR_URL$ZIP_FILE_PATH" -T $CIRCLE_PROJECT_REPONAME.zip
+            echo "artifacts uploaded to $ZIP_FILE_PATH"
+###########################################################################################################################################################
+jobs:
+  checkout_and_resolve:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: small
+    <<: *checkout_and_resolve_steps
+  build_u24:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-24.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: u24
+    <<: *build_and_isolate_steps
+  build_u22:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: u22
+    <<: *build_and_isolate_steps
+  build_u20:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-20.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: u20
+    <<: *build_and_isolate_steps
+  build_c9:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-9
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: c9
+    <<: *build_and_isolate_steps
+  build_c8:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-centos-8
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: medium
+    environment:
+      PLATFORM_TAG: c8
+    <<: *build_and_isolate_steps
+  publish_packages:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    circleci_ip_ranges: true
+    docker:
+      - image: $DOCKER_REGISTRY/zm-base-os:devcore-ubuntu-22.04
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    resource_class: small
+    <<: *publish_packages_job_steps
+  deploy_s3:
+    working_directory: ~/packages
+    shell: /bin/bash -eo pipefail
+    <<: *deploy_s3_job_steps
+###########################################################################################################################################################
+workflows:
+  version: 2
+  develop-workflow:
+    when: *when_develop_workflow
+    jobs:
+      - checkout_and_resolve:
+          context:
+            - docker-dev-registry
+      - build_u24:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u22:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u20:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c9:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c8:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - publish_packages_hold:
+          type: approval
+          requires:
+            - build_u24
+            - build_u22
+            - build_u20
+            - build_c9
+            - build_c8
+      - publish_packages:
+          requires:
+            - publish_packages_hold
+          context:
+            - docker-dev-registry
+            - nexus-dev-artifactory
+  main:
+    when: *when_main_workflow
+    jobs:
+      - generate:
+          type: approval
+      - checkout_and_resolve:
+          requires:
+            - generate
+          context:
+            - docker-dev-registry
+      - build_u24:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u22:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_u20:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c9:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - build_c8:
+          requires:
+            - checkout_and_resolve
+          context:
+            - docker-dev-registry
+      - deploy_s3_hold:
+          type: approval
+          requires:
+            - build_u24
+            - build_u22
+            - build_u20
+            - build_c9
+            - build_c8
+      - deploy_s3:
+          context:
+            - oracle
+            - docker-dev-registry
+          requires:
+            - deploy_s3_hold
