@@ -10,7 +10,19 @@ purl := https://download.samba.org/pub/rsync/src/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean
+rsync_rpm_configure_options :=
+rsync_rpm_spec_edits := -e 's|data/tmp|data/tmp $(rsync_rpm_configure_options)|'
+ifeq ($(BUILD_PLATFORM),RHEL8_64)
+rsync_rpm_configure_options := --disable-xxhash --disable-zstd
+rsync_rpm_spec_edits := -e 's|data/tmp|data/tmp $(rsync_rpm_configure_options)|;' \
+	-e 's{, xxhash-devel}{};' \
+	-e 's{, xxhash-libs}{};'
+else ifeq ($(BUILD_PLATFORM),RHEL9_64)
+rsync_rpm_configure_options := --disable-zstd
+rsync_rpm_spec_edits := -e 's|data/tmp|data/tmp $(rsync_rpm_configure_options)|'
+endif
+
+.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb
 
 all: clean getsrc build
 
@@ -19,16 +31,31 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+pkgadd: pkgadd_$(PKG_EXT)
+
+pkgadd_rpm:
+ifeq ($(BUILD_PLATFORM),RHEL8_64)
+	$(PKG_EXTRACT) popt-devel openssl-devel lz4-devel
+else ifeq ($(BUILD_PLATFORM),RHEL9_64)
+	$(PKG_EXTRACT) popt-devel xxhash-devel openssl-devel lz4-devel
+else
+	$(PKG_EXTRACT) popt-devel xxhash-devel openssl-devel zstd-devel lz4-devel
+endif
+
+pkgadd_deb:
+	$(PKG_EXTRACT) debhelper m4 libpopt-dev libxxhash-dev libssl-dev libzstd-dev liblz4-dev
+
 setup:
 	$(generic-setup)
 
-build: setup build_$(PKG_EXT)
+build: setup pkgadd build_$(PKG_EXT)
 
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	perl -pi $(rsync_rpm_spec_edits) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
