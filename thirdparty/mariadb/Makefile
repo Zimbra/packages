@@ -10,7 +10,7 @@ purl := https://archive.mariadb.org/$(pname)-$(pvers)/source/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean pkgadd pkgrm
+.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
 
 all: clean getsrc build pkgrm1
 
@@ -19,9 +19,14 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
-pkgadd:
-	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV)
+pkgadd: pkgadd_$(PKG_EXT)
 
+pkgadd_rpm:
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) cmake libaio-devel ncurses-devel
+
+pkgadd_deb:
+	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) cmake libaio-dev libncurses5-dev
+	
 pkgrm: pkgrm%
 pkgrm%:
 	$(PKG_PURGE) zimbra-base
@@ -36,6 +41,9 @@ build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	perl -pi -e 's|zimbra-openssl-devel = ([^[:space:]]+)|zimbra-openssl-devel >= $$1|' $(specfile) && \
+	perl -pi -e 's|-DCMAKE_CXX_STANDARD=11|-DCMAKE_CXX_STANDARD=11 -DCMAKE_C_FLAGS=-fcommon -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE|' $(specfile) && \
+	perl -pi -e 's|libssl\.so\.1\.0\.0 /opt/zimbra/common/lib/libcrypto\.so\.1\.0\.0|libssl.so.* /opt/zimbra/common/lib/libcrypto.so.*|' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
@@ -47,6 +55,8 @@ build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
+	perl -pi -e 's|-DCMAKE_CXX_STANDARD=11|-DCMAKE_CXX_STANDARD=11 -DCMAKE_C_FLAGS=-fcommon -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE|' debian/rules && \
+	perl -pi -e 's|libssl\.so\.1\.0\.0 /opt/zimbra/common/lib/libcrypto\.so\.1\.0\.0|libssl.so.* /opt/zimbra/common/lib/libcrypto.so.*|' debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 --exclude=debian && \
