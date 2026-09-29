@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Add every reachable Zimbra repo line in genesis order: 87, 1000, 1010.
-# This lets package managers pick zimbra-base from 87 while newer packages can
-# still come from 1000 or 1010 when needed.
+# Configure reachable Zimbra repository releases in the standard order.
 
 set -euo pipefail
 

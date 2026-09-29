@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Runs AFTER packaging-ci/build-packages.sh finishes successfully.
-# Prints a clean, separate summary of what was built on OS platform.
+# Summarize the packages built successfully for this platform.
 
 set -euo pipefail
 : "${PLATFORM_TAG:?PLATFORM_TAG must be set}"

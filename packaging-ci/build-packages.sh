@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-# Path in repo: packaging-ci/build-packages.sh
-# This script builds the resolved package list for one platform. It installs only
-# the base tools the pipeline itself needs. Package-specific build deps still come
-# from each package manifest or Makefile.
+# Build the selected packages for this platform. Package build dependencies are
+# read from package metadata or installed by the package Makefile.
 
 set -euo pipefail
 
@@ -132,7 +130,7 @@ install_build_tooling() {
   fi
 }
 
-# Verify that declared zimbra-* build dependencies can be resolved.
+# Check that internal build dependencies are available.
 verify_build_deps() {
   local file="$1" prefix="$2"
   [ -f "$file" ] || { echo "verify-build-deps: $file not found, skipping"; return 0; }
@@ -287,7 +285,7 @@ verify_build_deps() {
   fi
 }
 
-# Add fresh packages to a local repo so later packages in the same job can use them.
+# Make built packages available to later builds in this job.
 register_local_repo() {
   local pkg_build_dir="$1"
   mkdir -p "$LOCAL_REPO"
@@ -335,7 +333,7 @@ REPOEOF
   fi
 }
 
-# Install only non-zimbra build deps from the manifest.
+# Install external build dependencies from package metadata.
 install_declared_build_deps() {
   local file="$1" prefix="$2"
   local deps
@@ -350,7 +348,7 @@ install_declared_build_deps() {
   fi
 }
 
-# If a package installs its own deps in pkgadd_deb/pkgadd_rpm, skip the generic install.
+# Avoid installing dependencies twice when the Makefile has a pkgadd target.
 is_migrated_pkgadd() {
   local pkgpath="$1" target="$2" makefile="${pkgpath}/Makefile"
   [ -f "$makefile" ] && grep -qE "^${target}:" "$makefile"
@@ -381,9 +379,7 @@ handle_build_deps() {
   fi
 }
 
-########################################################################
-# main
-########################################################################
+# Build packages in the order provided by the input file.
 install_build_tooling
 
 export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"

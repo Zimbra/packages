@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-# This script does TWO things:
-#   1. Sort that list into the sequence given by the master build-order
-#      file, so a package that depends on another changed package (e.g.
-#      zimbra/apache-components depends on thirdparty/httpd) always
-#      builds after it.
-#   2. Print a dry-run summary of the final, sorted build plan. 
+# Sort selected packages using build-order and print the resulting plan.
 set -euo pipefail
 INPUT="${1:?path to packages_to_build.txt required}"
 BUILD_ORDER="${BUILD_ORDER_FILE:-build-order}"

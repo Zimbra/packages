@@ -4,11 +4,11 @@ parameters:
   package_name:
     type: string
     default: "auto"
-    description: "Full package path, e.g. thirdparty/rsync or zimbra/osl. Leave as 'auto' to build every package changed on the branch."
+    description: "Use 'auto' to build packages changed on the branch, or provide one package path."
   change_base_branch:
     type: string
     default: "develop"
-    description: "Base branch used to find cumulative package changes on feature branches."
+    description: "Branch to compare against when selecting changed packages."
 references:
   when_main_workflow: &when_main_workflow
     or:
@@ -42,11 +42,11 @@ references:
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zimbra-package-stub.git ~/zimbra-package-stub
             git clone -b master --single-branch https://${GITHUB_ACCESS_TOKEN}:@github.com/Zimbra/zm-nexus.git ~/zm-nexus
       - run:
-          name: Identify cumulative package change set
+          name: Check branch changes
           command: |
             if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
               echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
-              echo "Package selection: manual override"
+              echo "Package selection: manual package path"
             else
               BASE_BRANCH="<< pipeline.parameters.change_base_branch >>"
               if [ "$CIRCLE_BRANCH" = "$BASE_BRANCH" ]; then
@@ -63,14 +63,20 @@ references:
               fi
 
               echo "============================================================"
-              echo " CUMULATIVE PACKAGE CHANGE SET"
+              echo " BRANCH COMMITS"
               echo "============================================================"
-              echo "Mode:     $SELECTION_MODE"
-              echo "Branch:   $CIRCLE_BRANCH"
-              echo "Baseline: $(git show -s --format='%h %s' "$BASE_COMMIT")"
-              echo "Current:  $(git show -s --format='%h %s' HEAD)"
-              echo "Commits included after baseline:"
-              git log --reverse --format='  %h %s' "$BASE_COMMIT"..HEAD
+              echo "Mode:    $SELECTION_MODE"
+              echo "Branch:  $CIRCLE_BRANCH"
+              echo "Base:    $(git show -s --format='%h %s' "$BASE_COMMIT")"
+              echo "Current: $(git show -s --format='%h %s' HEAD)"
+              COMMIT_COUNT="$(git rev-list --count "$BASE_COMMIT"..HEAD)"
+              echo "Commits after base: $COMMIT_COUNT"
+              n=0
+              while IFS= read -r commit; do
+                n=$((n + 1))
+                printf '  [%d/%d] ' "$n" "$COMMIT_COUNT"
+                git show -s --format='%h %s' "$commit"
+              done < <(git rev-list --reverse "$BASE_COMMIT"..HEAD)
               echo "============================================================"
 
               git diff --name-only "$BASE_COMMIT" HEAD -- thirdparty/ zimbra/ \
@@ -84,7 +90,7 @@ references:
             echo "Package(s) selected before build-order sorting:"
             cat packages_to_build.txt
       - run:
-          name: Sort changed Packages according to build-order
+          name: Order packages for build
           command: bash packaging-ci/resolve-package-build-order.sh packages_to_build.txt
       - persist_to_workspace:
           root: ..
