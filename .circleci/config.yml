@@ -1,14 +1,5 @@
 version: 2.1
 ############################################################################
-parameters:
-  package_name:
-    type: string
-    default: "auto"
-    description: "Use 'auto' to build packages changed on the branch, or provide one package path."
-  change_base_branch:
-    type: string
-    default: "develop"
-    description: "Branch to compare against when selecting changed packages."
 references:
   when_main_workflow: &when_main_workflow
     or:
@@ -44,45 +35,40 @@ references:
       - run:
           name: Check branch changes
           command: |
-            if [ "<< pipeline.parameters.package_name >>" != "auto" ]; then
-              echo "<< pipeline.parameters.package_name >>" > packages_to_build.txt
-              echo "Package selection: manual package path"
+            BASE_BRANCH="develop"
+            if [ "$CIRCLE_BRANCH" = "$BASE_BRANCH" ]; then
+              BASE_COMMIT="HEAD~1"
+              SELECTION_MODE="latest ${BASE_BRANCH} commit"
             else
-              BASE_BRANCH="<< pipeline.parameters.change_base_branch >>"
-              if [ "$CIRCLE_BRANCH" = "$BASE_BRANCH" ]; then
-                BASE_COMMIT="HEAD~1"
-                SELECTION_MODE="latest ${BASE_BRANCH} commit"
-              else
-                git fetch --no-tags origin "$BASE_BRANCH"
-                BASE_COMMIT="$(git merge-base "origin/${BASE_BRANCH}" HEAD)"
-                SELECTION_MODE="changes since ${BASE_BRANCH}"
-              fi
-              if ! git merge-base --is-ancestor "$BASE_COMMIT" HEAD; then
-                echo "ERROR: package selection baseline $BASE_COMMIT is not an ancestor of HEAD."
-                exit 1
-              fi
-
-              echo "============================================================"
-              echo " BRANCH COMMITS"
-              echo "============================================================"
-              echo "Mode:    $SELECTION_MODE"
-              echo "Branch:  $CIRCLE_BRANCH"
-              echo "Base:    $(git show -s --format='%h %s' "$BASE_COMMIT")"
-              echo "Current: $(git show -s --format='%h %s' HEAD)"
-              COMMIT_COUNT="$(git rev-list --count "$BASE_COMMIT"..HEAD)"
-              echo "Commits after base: $COMMIT_COUNT"
-              n=0
-              while IFS= read -r commit; do
-                n=$((n + 1))
-                printf '  [%d/%d] ' "$n" "$COMMIT_COUNT"
-                git show -s --format='%h %s' "$commit"
-              done < <(git rev-list --reverse "$BASE_COMMIT"..HEAD)
-              echo "============================================================"
-
-              git diff --name-only "$BASE_COMMIT" HEAD -- thirdparty/ zimbra/ \
-                | awk -F'/' 'NF >= 2 {print $1"/"$2}' \
-                | sort -u > packages_to_build.txt
+              git fetch --no-tags origin "$BASE_BRANCH"
+              BASE_COMMIT="$(git merge-base "origin/${BASE_BRANCH}" HEAD)"
+              SELECTION_MODE="changes since ${BASE_BRANCH}"
             fi
+            if ! git merge-base --is-ancestor "$BASE_COMMIT" HEAD; then
+              echo "ERROR: package selection baseline $BASE_COMMIT is not an ancestor of HEAD."
+              exit 1
+            fi
+
+            echo "============================================================"
+            echo " BRANCH COMMITS"
+            echo "============================================================"
+            echo "Mode:    $SELECTION_MODE"
+            echo "Branch:  $CIRCLE_BRANCH"
+            echo "Base:    $(git show -s --format='%h %s' "$BASE_COMMIT")"
+            echo "Current: $(git show -s --format='%h %s' HEAD)"
+            COMMIT_COUNT="$(git rev-list --count "$BASE_COMMIT"..HEAD)"
+            echo "Commits after base: $COMMIT_COUNT"
+            n=0
+            while IFS= read -r commit; do
+              n=$((n + 1))
+              printf '  [%d/%d] ' "$n" "$COMMIT_COUNT"
+              git show -s --format='%h %s' "$commit"
+            done < <(git rev-list --reverse "$BASE_COMMIT"..HEAD)
+            echo "============================================================"
+
+            git diff --name-only "$BASE_COMMIT" HEAD -- thirdparty/ zimbra/ \
+              | awk -F'/' 'NF >= 2 {print $1"/"$2}' \
+              | sort -u > packages_to_build.txt
             if [ ! -s packages_to_build.txt ]; then
               echo "No package changes found after the baseline - nothing to build."
               circleci-agent step halt
