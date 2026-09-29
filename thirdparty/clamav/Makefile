@@ -31,7 +31,7 @@ pkgadd_rpm:
 
 pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
-	zimbra-libmilter-$(PKG_DEV) libz-dev libncurses5-dev \
+	zimbra-libmilter-$(PKG_DEV) cmake libz-dev libncurses5-dev \
 	libpcre2-dev libjson-c-dev libbz2-dev check libcurl4-openssl-dev
 
 pkgrm: pkgrm%
