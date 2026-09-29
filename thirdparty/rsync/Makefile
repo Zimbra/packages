@@ -43,7 +43,7 @@ else
 endif
 
 pkgadd_deb:
-	$(PKG_EXTRACT) libpopt-dev libxxhash-dev libssl-dev libzstd-dev liblz4-dev
+	$(PKG_EXTRACT) debhelper m4 libpopt-dev libxxhash-dev libssl-dev libzstd-dev liblz4-dev
 
 setup:
 	$(generic-setup)
