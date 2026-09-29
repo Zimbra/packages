@@ -12,7 +12,7 @@ purl := https://cpan.metacpan.org/authors/id/S/SB/SBECK/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
-.PHONY: all clean build getsrc pkgadd pkgrm setup
+.PHONY: all clean build getsrc pkgadd pkgadd_rpm pkgadd_deb pkgrm setup
 
 all: clean getsrc build pkgrm1
 
@@ -24,7 +24,12 @@ $(psrc_file):
 setup:
 	$(generic-setup)
 
-pkgadd:
+pkgadd: pkgadd_$(PKG_EXT)
+
+pkgadd_rpm:
+	$(PKG_EXTRACT) zimbra-perl-base epel-release
+	$(PKG_EXTRACT) perl-Test-Inter
+pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-perl-base
 
 pkgrm: pkgrm%
