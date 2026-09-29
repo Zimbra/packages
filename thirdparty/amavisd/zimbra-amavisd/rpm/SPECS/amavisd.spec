@@ -16,7 +16,7 @@ AutoReqProv:        no
 URL:                https://gitlab.com/amavis/amavis
 
 %description
-The Zimbra amavisd build
+The Zimbra amavisd build..
 
 %define debug_package %{nil}
 
