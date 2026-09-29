@@ -10,7 +10,7 @@ purl := http://www.clamav.net/downloads/production/$(pfile)
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
-.PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
+.PHONY: all getsrc setup build clean install_rust pkgadd pkgadd_rpm pkgadd_deb pkgrm
 
 all: clean install_rust getsrc build pkgrm1
 
@@ -27,7 +27,7 @@ pkgadd: pkgadd_$(PKG_EXT)
 pkgadd_rpm:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
 	zimbra-libmilter-$(PKG_DEV) cmake zlib-devel ncurses-devel bzip2-devel \
-	check-devel json-c-devel pcre2-devel libcurl-devel python3
+	check-devel json-c-devel pcre2-devel libcurl-devel
 
 pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-base zimbra-openssl-$(PKG_DEV) zimbra-libxml2-$(PKG_DEV) \
