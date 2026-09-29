@@ -26,9 +26,15 @@ setup:
 
 pkgadd: pkgadd_$(PKG_EXT)
 
+# EPEL 8 does not provide Test::Inter, which is only needed by the upstream test suite.
+ifeq ($(BUILD_PLATFORM),RHEL8_64)
+pkgadd_rpm:
+	$(PKG_EXTRACT) zimbra-perl-base epel-release
+else
 pkgadd_rpm:
 	$(PKG_EXTRACT) zimbra-perl-base epel-release
 	$(PKG_EXTRACT) perl-Test-Inter
+endif
 pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-perl-base
 
@@ -44,6 +50,10 @@ build_rpm:
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
+	if [ "$(BUILD_PLATFORM)" = "RHEL8_64" ]; then \
+		perl -pi -e 's/, perl-Test-Inter//' $(specfile) && \
+		perl -pi -e 's/^PERL5LIB=.*make test\n?//' $(specfile); \
+	fi && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
