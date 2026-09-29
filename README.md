@@ -15,6 +15,20 @@ Install the build pre-requisites:
 
     sudo apt install m4 libpcre3-dev
 
+## Adding GNU Aspell language support using a Copilot agent
+
+This repository's `AGENTS.md` provides the workflow for adding GNU Aspell dictionary packages. Open the `packages` repository in a coding agent (Copilot CLI or Copilot desktop app) that reads `AGENTS.md` and ask, for example:
+
+```text
+Add Latvian Aspell language support. Use PREAPPS-1234 as the Jira ticket.
+```
+
+No separate skill, script, or translation service is required. The agent checks the [official GNU Aspell dictionary catalog](https://ftp.gnu.org/gnu/aspell/dict/) first. A package is added only when the requested dictionary is available there as an official archive; otherwise, the agent reports that it is unavailable and creates no package.
+
+For an available dictionary, the change adds a `thirdparty/aspell-<code>` Debian/RPM packaging wrapper and updates the repository's version definitions, build order, and `zimbra-spell-components` dependencies and changelogs. The upstream archive and extracted dictionary files are downloaded during package builds and are not committed to this repository.
+
+The `AGENTS.md` workflow covers the Jira and Git preflight, verifying the exact upstream archive and package identifiers, packaging conventions, required registration points, and validation. The agent shows its changes and validation results and asks before committing or pushing.
+
 ## Structural changes in packages repo with respect to nginx code:
 - Following to the upgraded Zimbra nginx 1.20.0, packages repo no more contains nginx specific code.
 - To do same forked repo from upstream nginx is maintained as [Zimbra/nginx](https://github.com/Zimbra/nginx/tree/zimbra/develop)
