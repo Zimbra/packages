@@ -10,7 +10,7 @@ AutoReqProv:        no
 URL:                http://www.pldaniels.com/altermime/
 
 %description
-The Zimbra altermime build
+The Zimbra altermime build..
 
 %prep
 %setup -n altermime-0.3-dev
