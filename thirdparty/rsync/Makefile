@@ -66,6 +66,9 @@ build_deb:
 	$(CD) $(PLATFORM_DIR)/$(zname) && \
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
+	( grep -q '^override_dh_shlibdeps:' debian/rules || \
+	printf '\noverride_dh_shlibdeps:\n\tdh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info\n' >> debian/rules ) && \
+	perl -pi -e 's|^(Depends: .*zimbra-base)$$|$$1, zimbra-openssl-lib| unless /zimbra-openssl-lib/' debian/control && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)

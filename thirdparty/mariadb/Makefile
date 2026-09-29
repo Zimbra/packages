@@ -36,11 +36,13 @@ setup:
 
 build: pkgadd setup build_$(PKG_EXT)
 
+# MariaDB bundles OpenSSL libraries under a second path; avoid duplicate RPM build-id links.
 build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	perl -pi -e 's|^Name:|%global _build_id_links none\nName:|' $(specfile) && \
 	perl -pi -e 's|zimbra-openssl-devel = ([^[:space:]]+)|zimbra-openssl-devel >= $$1|' $(specfile) && \
 	perl -pi -e 's|-DCMAKE_CXX_STANDARD=11|-DCMAKE_CXX_STANDARD=11 -DCMAKE_C_FLAGS=-fcommon -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE|' $(specfile) && \
 	perl -pi -e 's|libssl\.so\.1\.0\.0 /opt/zimbra/common/lib/libcrypto\.so\.1\.0\.0|libssl.so.* /opt/zimbra/common/lib/libcrypto.so.*|' $(specfile) && \
