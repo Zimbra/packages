@@ -15,7 +15,7 @@ Requires:       zimbra-openssl-libs >= 3.0.9-1zimbra8.8b1ZAPPEND
 AutoReqProv:    no
 
 %description
-The Zimbra erlang build
+The Zimbra erlang build..
 
 %define debug_package %{nil}
 
