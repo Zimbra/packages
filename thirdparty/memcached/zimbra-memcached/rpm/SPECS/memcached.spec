@@ -12,7 +12,7 @@ AutoReqProv:        no
 URL:                http://memcached.org/
 
 %description
-The Zimbra memcached build
+The Zimbra memcached build..
 
 %changelog
 * Tue Sep 26 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b1ZAPPEND
