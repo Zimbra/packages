@@ -41,7 +41,7 @@ build_rpm:
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.xz && \
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(CP) $(PKG_ROOT)/rabbitmq-env.conf SOURCES/ && \
-	$(PKG_BUILD) $(specfile)
+	PATH=/opt/zimbra/common/bin:$$PATH $(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.xz
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
@@ -53,7 +53,7 @@ build_deb:
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(CP) $(PKG_ROOT)/rabbitmq-env.conf debian/ && \
 	$(TAR) -xf ../$(z_tgz) --strip-components=1 && \
-	$(PKG_BUILD)
+	PATH=/opt/zimbra/common/bin:$$PATH $(PKG_BUILD)
 
 clean:  pkgrm
 	$(generic-clean)
