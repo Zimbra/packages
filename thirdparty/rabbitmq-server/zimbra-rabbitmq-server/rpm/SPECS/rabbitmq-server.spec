@@ -22,7 +22,7 @@ The Zimbra's RabbitMQ server
 %define debug_package %{nil}
 
 %changelog
-* Tue Jun 13 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
+* Tue Jun 13 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b2ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9
 * Mon Aug 08 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - Initial Release.
