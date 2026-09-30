@@ -17,7 +17,7 @@ The Zimbra Unbound build
 %define debug_package %{nil}
 
 %changelog
-* Mon Jun 12 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
+* Mon Jun 12 2023 Zimbra new Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.8b1ZAPPEND
 - ZBUG-3355, Upgraded OpenSSL to 3.0.9 and upgraded unbound to 1.17.1
 * Sat Aug 20 2022 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b4ZAPPEND
 - Fix ZCS-11941, remove anchor key generation
