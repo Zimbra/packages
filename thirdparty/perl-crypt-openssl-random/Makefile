@@ -39,6 +39,7 @@ build_rpm:
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
+	sed -i '/make install/a find %{buildroot} -type f -name "*.so" -exec chmod 755 {} +' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
