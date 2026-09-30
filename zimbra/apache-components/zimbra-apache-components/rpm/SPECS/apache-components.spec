@@ -15,7 +15,7 @@ Zimbra apache components pulls in all the packages used by
 zimbra-apache
 
 %changelog
-* Fri Aug 23 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.13
+* Fri Aug 23 2024 Zimbra new Packaging Services <packaging-devel@zimbra.com> - 2.0.13
 - ZCS-15706, Upgraded Apache to 2.4.62
 * Fri Dec 15 2023 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.12
 - Upgraded PHP to 8.3.0  (ZBUG-3082)
