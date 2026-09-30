@@ -10,7 +10,7 @@ AutoReqProv:        no
 URL:                http://www.voipsupport.it/pmwiki/pmwiki.php?n=Linux.PrePflog
 
 %description
-The script sanitizes mail log files that are to be passed to pflogsumm or awstats
+The script sanitizes mail log files that are to be to passed to pflogsumm or awstats
 disregarding the lines relating to the re-injection of messages into postfix. I
 use it with amavisd-new configured as a postfix after queue content filter which
 does anti spam checks through spamassassin and antivirus checks through a third
