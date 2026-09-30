@@ -10,6 +10,13 @@ purl := https://github.com/rabbitmq/$(pname)/releases/download/v$(pvers)/$(pname
 zname := zimbra-$(pname)
 zspec := $(pname).spec
 
+# RabbitMQ 3.10.7's rabbitmq_cli requires Elixir >= 1.10.4 and < 1.14.0.
+elixir_version := 1.12.2
+elixir_archive := Precompiled.zip
+elixir_dir := $(PLATFORM_DIR)/elixir-$(elixir_version)
+elixir_url := https://github.com/elixir-lang/elixir/releases/download/v$(elixir_version)/$(elixir_archive)
+elixir_sha512 := 38eb2281032b0cb096ef5e61f048c5374d6fb9bf4078ab8f9526a42e16e7c661732a632b55d6072328eedf87a47e6eeb3f0e3f90bba1086239c71350f90c75e5
+
 .PHONY: all getsrc setup build clean pkgadd pkgadd_rpm pkgadd_deb pkgrm
 
 all: clean getsrc build pkgrm1
@@ -22,11 +29,10 @@ $(psrc_file):
 pkgadd: pkgadd_$(PKG_EXT)
 
 pkgadd_rpm:
-	$(PKG_EXTRACT) epel-release
-	$(PKG_EXTRACT) zimbra-base zimbra-erlang zimbra-openssl-$(PKG_DEV) zip rsync gzip sed python3 elixir
+	$(PKG_EXTRACT) zimbra-base zimbra-erlang zimbra-openssl-$(PKG_DEV) zip rsync gzip sed python3 unzip
 
 pkgadd_deb:
-	$(PKG_EXTRACT) zimbra-base zimbra-erlang zimbra-openssl-$(PKG_DEV) zip rsync gzip sed python3 elixir
+	$(PKG_EXTRACT) zimbra-base zimbra-erlang zimbra-openssl-$(PKG_DEV) zip rsync gzip sed python3 unzip
 
 pkgrm: pkgrm%
 
@@ -35,6 +41,11 @@ pkgrm%:
 
 setup:
 	$(generic-setup)
+	$(CD) $(SRC_DIR) && \
+	$(WGET) $(elixir_url) && \
+	printf '%s  %s\n' '$(elixir_sha512)' '$(elixir_archive)' | sha512sum --check --status && \
+	$(MKDIR) $(elixir_dir) && \
+	unzip -q $(elixir_archive) -d $(elixir_dir)
 
 build: pkgadd setup build_$(PKG_EXT)
 
@@ -47,7 +58,7 @@ build_rpm:
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.xz && \
 	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(CP) $(PKG_ROOT)/rabbitmq-env.conf SOURCES/ && \
-	PATH=/opt/zimbra/common/bin:$$PATH $(PKG_BUILD) $(specfile)
+	PATH=$(elixir_dir)/bin:/opt/zimbra/common/bin:$$PATH $(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.xz
 build_deb: z_shlibs = $(subst $(zname)/,,$(wildcard $(zname)/debian/z*.shlibs))
@@ -59,7 +70,7 @@ build_deb:
 	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
 	$(CP) $(PKG_ROOT)/rabbitmq-env.conf debian/ && \
 	$(TAR) -xf ../$(z_tgz) --strip-components=1 && \
-	PATH=/opt/zimbra/common/bin:$$PATH $(PKG_BUILD)
+	PATH=$(elixir_dir)/bin:/opt/zimbra/common/bin:$$PATH $(PKG_BUILD)
 
 clean:  pkgrm
 	$(generic-clean)
