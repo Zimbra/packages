@@ -12,7 +12,7 @@ URL:                http://search.cpan.org/dist/Net-CIDR/
 %define perl_archname %(eval "`perl -V:archname`"; echo $archname)
 
 %description
-The Zimbra Net::CIDR Build
+The Zimbra Net::CIDR Build..
 
 %define debug_package %{nil}
 
