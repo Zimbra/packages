@@ -1,3 +1,9 @@
+zimbra-spell-components (2.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Added zimbra-aspell-sw dependency for Swahili (PREAPPS-9808)
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Thu, 1 Oct 2026 00:00:00 +0000
+
 zimbra-spell-components (2.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * ZCS-15706, Upgraded Apache to 2.4.62
