@@ -12,7 +12,7 @@ AutoReqProv:        no
 URL:                http://curl.haxx.se/
 
 %description
-The Zimbra Curl build..
+The Zimbra Curl build
 
 %define debug_package %{nil}
 

@@ -19,7 +19,7 @@ AutoReqProv:        no
 URL:                https://cyrusimap.org/
 
 %description
-The Zimbra Cyrus-SASL build..
+The Zimbra Cyrus-SASL build
 
 %define debug_package %{nil}
 
