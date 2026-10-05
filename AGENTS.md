@@ -91,7 +91,25 @@ licenses and build patterns.
 
 ### Package structure
 
-Follow a comparable current package. A normal package has this structure:
+Follow a comparable **current** package. Start from the most recently added Aspell package,
+not an older one such as Swedish, because older packages carry legacy values (old copyright
+years, old release strings, and settings that no longer agree with each other).
+
+**A copy is not verified.** Every line you leave unchanged in a copied package was never
+checked for the new language. After copying, diff the new package against its model and review
+each line that stayed identical, not only the ones you edited. In particular:
+
+- `debian/compat` is `N`, so `debian/control` must require `debhelper (>= N)` or newer. Never
+  keep a lower `debhelper` minimum than the `compat` level. Existing packages currently have
+  `compat` 10 with `debhelper (>= 9)`; do not copy that mismatch into a new package.
+- The `debian/*` copyright year is the year the package is added, not the model's year.
+- The dictionary's `Copyright` holders and license come from the new archive, never from the
+  model (this is already required below; check it again after copying).
+- `debian/watch`, the Makefile URL, and the RPM `%setup -n` directory match the new archive's
+  official filename and top-level directory.
+- Debian `Depends` and RPM `Requires` use the same package name and version constraints.
+
+A normal package has this structure:
 
 ```text
 thirdparty/aspell-<package-code>/
