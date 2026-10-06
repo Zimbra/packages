@@ -1,3 +1,9 @@
+zimbra-spell-components (2.0.17-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Added zimbra-aspell-am dependency for Amharic (PREAPPS-9808)
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Tue, 06 Oct 2026 00:00:00 +0000
+
 zimbra-spell-components (2.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Added zimbra-aspell-sw dependency for Swahili (PREAPPS-9808)
