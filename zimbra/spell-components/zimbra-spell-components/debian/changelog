@@ -1,3 +1,9 @@
+zimbra-spell-components (2.0.20-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
+
+  * Added zimbra-aspell-mg dependency for Malagasy (PREAPPS-9808)
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Wed, 07 Oct 2026 00:00:00 +0000
+
 zimbra-spell-components (2.0.19-1zimbra8.8b1ZAPPEND) unstable; urgency=medium
 
   * Added zimbra-aspell-af dependency for Afrikaans (PREAPPS-9808)
