@@ -21,7 +21,7 @@ The Zimbra Aspell Malagasy dictionary
 LDFLAGS="-Wl,-rpath,OZCL"; export LDFLAGS; \
 CFLAGS="-O2 -g"; export CFLAGS; \
 ./configure --vars ASPELL=OZCB/aspell \
- PREZIP=OZCB/prezip-bin
+ PREZIP=OZCB/word-list-compress
 make
 
 %install
