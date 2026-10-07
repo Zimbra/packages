@@ -35,6 +35,7 @@ thirdparty/pflogsumm
 thirdparty/prepflog
 thirdparty/apr
 thirdparty/aspell
+thirdparty/aspell-am
 thirdparty/aspell-ar
 thirdparty/aspell-ca
 thirdparty/aspell-da
@@ -51,6 +52,9 @@ thirdparty/aspell-pt-br
 thirdparty/aspell-ru
 thirdparty/aspell-sv
 thirdparty/aspell-sw
+thirdparty/aspell-zu
+thirdparty/aspell-af
+thirdparty/aspell-mg
 thirdparty/aspell-zimbra
 thirdparty/apr-util
 thirdparty/httpd

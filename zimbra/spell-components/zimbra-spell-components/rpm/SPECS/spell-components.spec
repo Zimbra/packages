@@ -1,9 +1,9 @@
 Summary:            Zimbra components for spell package
 Name:               zimbra-spell-components
-Version:            2.0.16
+Version:            2.0.20
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-spell-base, zimbra-aspell-ar >= 1.2.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-ca
+Requires:           zimbra-spell-base, zimbra-aspell-am >= 0.03.1-1zimbra8.7b2ZAPPEND, zimbra-aspell-ar >= 1.2.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-ca
 Requires:           zimbra-aspell-da >= 1.4.42.1-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-de >= 20030222.1-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-en >= 7.1.0-1zimbra8.7b2ZAPPEND
@@ -15,6 +15,9 @@ Requires:           zimbra-aspell-nl >= 0.50.2-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-pl >= 6.0.20061121.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-pt-br >= 20090702.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-ru >= 0.99f7.1-1zimbra8.7b2ZAPPEND, zimbra-aspell-sv >= 0.51.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-sw >= 0.50.0-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-aspell-zu >= 0.50.0-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-aspell-af >= 0.50.0-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-aspell-mg >= 0.03.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-httpd >= 2.4.62-1zimbra8.7b5ZAPPEND
 Requires:           zimbra-php >= 8.3.0-1zimbra8.7b3ZAPPEND, zimbra-aspell-zimbra >= 1.0.0-1zimbra8.7b2ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -28,6 +31,14 @@ Zimbra spell components pulls in all the packages used by
 zimbra-spell
 
 %changelog
+* Wed Oct 07 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.20
+- Added zimbra-aspell-mg dependency for Malagasy (PREAPPS-9808)
+* Wed Oct 07 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.19
+- Added zimbra-aspell-af dependency for Afrikaans (PREAPPS-9808)
+* Wed Oct 07 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.18
+- Added zimbra-aspell-zu dependency for Zulu (PREAPPS-9808)
+* Tue Oct 06 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.17
+- Added zimbra-aspell-am dependency for Amharic (PREAPPS-9808)
 * Thu Oct 01 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.16
 - Added zimbra-aspell-sw dependency for Swahili (PREAPPS-9808)
 * Fri Aug 23 2024 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.15
