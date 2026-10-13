@@ -15,7 +15,7 @@ zspec := $(pname_lc).spec
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target
+# $(@D) == directory part of the target..
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
@@ -37,7 +37,9 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	sed -i '/^make install /a chmod u+w %{buildroot}OZCL/perl5/%{perl_archname}/auto/Crypt/OpenSSL/RSA/RSA.so' $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
+	sed -i '/^%build/i perl -pi -e "s/^use Crypt::OpenSSL::Guess.*//; s/openssl_(?:lib|inc)_paths\\(\\)/q()/g" Makefile.PL' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
@@ -50,6 +52,8 @@ build_deb:
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	perl -pi -e "s/^use Crypt::OpenSSL::Guess.*//; s/openssl_(?:lib|inc)_paths\\(\\)/q()/g" Makefile.PL && \
+	EDITOR=true dpkg-source --commit . use-explicit-openssl-paths && \
 	$(PKG_BUILD)
 
 clean: pkgrm
