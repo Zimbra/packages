@@ -36,6 +36,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i 's/^perl -I /perl -I . -I /' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
