@@ -12,13 +12,6 @@ purl := https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
-module-build.UBUNTU20_64 = libmodule-build-perl
-module-build.UBUNTU22_64 = libmodule-build-perl
-module-build.UBUNTU24_64 = libmodule-build-perl
-module-build-purge.UBUNTU20_64 = libmodule-build-perl
-module-build-purge.UBUNTU22_64 = libmodule-build-perl
-module-build-purge.UBUNTU24_64 = libmodule-build-perl
-
 module-build = $(module-build.$(BUILD_PLATFORM))
 module-build-purge = $(module-build-purge.$(BUILD_PLATFORM))
 
