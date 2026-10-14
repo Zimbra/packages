@@ -16,7 +16,7 @@ zspec := $(pname_lc).spec
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target.
+# $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
@@ -39,6 +39,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^make install/a chmod u+w %{buildroot}OZCL/perl5/%{perl_archname}/auto/Bit/Vector/Vector.so' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	perl -pi -e 's|BuildRequires:      perl, zimbra-perl-carp-clan|BuildRequires:      perl, zimbra-perl-carp-clan, $(storable)|' $(specfile) && \
