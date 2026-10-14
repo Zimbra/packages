@@ -23,7 +23,7 @@ $(psrc_file):
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-net-ssleay zimbra-perl-mozilla-ca \
-	zimbra-perl-io-socket-ip
+	zimbra-perl-io-socket-ip $(if $(filter UBUNTU20_64,$(BUILD_PLATFORM)),zimbra-openssl-lib)
 
 pkgrm: pkgrm%
 pkgrm%:
@@ -38,6 +38,8 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^%build/i sed -i "s/>= 0x00001000/>= (\\$$linked < 0x30000000 ? 0x00001000 : 0x10000000)/" Makefile.PL' $(specfile) &&) \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^%build/i sed -i "/Client non-SSL connection/s@is@like@; /Client non-SSL connection/s@\\"This server is SSL only\\"@qr/This server is SSL only/@" t/core.t' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
@@ -51,6 +53,7 @@ build_deb:
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	$(if $(filter UBUNTU20_64,$(BUILD_PLATFORM)),sed -i 's/>= 0x00001000/>= ($$linked < 0x30000000 ? 0x00001000 : 0x10000000)/' Makefile.PL && sed -i '/Client non-SSL connection/s@is@like@; /Client non-SSL connection/s@"This server is SSL only"@qr/This server is SSL only/@' t/core.t && EDITOR=true dpkg-source --commit . openssl-api-compat &&) \
 	$(PKG_BUILD)
 
 clean: pkgrm
