@@ -1,6 +1,7 @@
 PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
+export PERL_CANARY_STABILITY_NOPROMPT := 1
 
 pvers := $(CONVERT_UULIB)
 pname := Convert-UUlib
