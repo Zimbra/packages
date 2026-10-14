@@ -23,8 +23,12 @@ $(psrc_file):
 
 zpzc = zimbra-perl-mailtools zimbra-perl-convert-binhex zimbra-perl-timedate
 
+ifneq ($(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),)
+zptest := perl-Test-Deep
+endif
+
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base $(zpzc)
+	$(PKG_EXTRACT) $(if $(filter RHEL8_64,$(BUILD_PLATFORM)),--enablerepo=powertools) $(if $(filter RHEL9_64,$(BUILD_PLATFORM)),--enablerepo=crb) zimbra-perl-base $(zpzc) $(zptest)
 
 pkgrm: pkgrm%
 pkgrm%:
