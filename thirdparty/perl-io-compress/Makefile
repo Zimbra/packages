@@ -38,9 +38,11 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	sed -i '/^%build/i patch -p1 -i %{_sourcedir}/fix-zlibng-test.patch' $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
+	$(CP) $(PKG_ROOT)/patches/*.patch SOURCES/ && \
 	$(PKG_BUILD) $(specfile)
 
 build_deb: z_tgz = $(zname)_$(pvers).orig.tar.gz
@@ -50,7 +52,9 @@ build_deb:
 	$(replace-pkginfo) debian/changelog $(z_shlibs) && \
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
-	$(if $(filter $(BUILD_PLATFORM),UBUNTU24_64),$(MKDIR) -p debian/patches && $(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && echo "fix-zlibng-test.patch" >> debian/patches/series &&) \
+	$(MKDIR) debian/patches && \
+	$(CP) $(PKG_ROOT)/patches/*.patch debian/patches/ && \
+	echo "fix-zlibng-test.patch" >> debian/patches/series && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
 	$(PKG_BUILD)
 
