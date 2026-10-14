@@ -1,6 +1,6 @@
 Summary:            Zimbra components for spell package
 Name:               zimbra-spell-components
-Version:            2.0.21
+Version:            2.0.22
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
 Requires:           zimbra-spell-base, zimbra-aspell-am >= 0.03.1-1zimbra8.7b2ZAPPEND, zimbra-aspell-ar >= 1.2.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-ca
@@ -19,6 +19,7 @@ Requires:           zimbra-aspell-zu >= 0.50.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-af >= 0.50.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-mg >= 0.03.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-tn >= 1.0.1.0-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-aspell-rw >= 0.50.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-httpd >= 2.4.62-1zimbra8.7b5ZAPPEND
 Requires:           zimbra-php >= 8.3.0-1zimbra8.7b3ZAPPEND, zimbra-aspell-zimbra >= 1.0.0-1zimbra8.7b2ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
@@ -32,6 +33,8 @@ Zimbra spell components pulls in all the packages used by
 zimbra-spell
 
 %changelog
+* Wed Oct 14 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.22
+- Added zimbra-aspell-rw dependency for Kinyarwanda (PREAPPS-9809)
 * Tue Oct 13 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.21
 - Added zimbra-aspell-tn dependency for Setswana (PREAPPS-9809)
 * Wed Oct 07 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.20
