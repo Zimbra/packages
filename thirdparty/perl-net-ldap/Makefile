@@ -13,11 +13,17 @@ zspec := $(pname_lc).spec
 
 text-soundex = $(text-soundex.$(BUILD_PLATFORM))
 
+ifneq ($(filter UBUNTU20_64 UBUNTU22_64 UBUNTU24_64,$(BUILD_PLATFORM)),)
+text-soundex := libtext-soundex-perl
+else ifneq ($(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),)
+text-soundex := perl-Text-Soundex
+endif
+
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target
+# $(@D) == directory part of the target..
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
@@ -40,6 +46,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i 's/PERL_MM_USE_DEFAULT=1 perl -I /PERL_MM_USE_DEFAULT=1 perl -I . -I /' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \

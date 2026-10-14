@@ -23,6 +23,9 @@ $(psrc_file):
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-socket
+ifneq ($(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),)
+	$(PKG_EXTRACT) perl-Socket6
+endif
 
 pkgrm: pkgrm%
 pkgrm%:
@@ -37,6 +40,8 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i 's/^BuildRequires:/& perl-Socket6 /; s/^Requires:/& perl-Socket6 /' $(specfile) &&) \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^%build/i if test -r /proc/sys/net/ipv6/conf/lo/disable_ipv6 && grep -qx 1 /proc/sys/net/ipv6/conf/lo/disable_ipv6; then sed -i "1i BEGIN { require Test::More; Test::More::plan(skip_all => q(IPv6 loopback is disabled in the build environment)); }" t/blocking.t t/host6.t t/io_sock6.t t/listen_port_only.t; fi' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \

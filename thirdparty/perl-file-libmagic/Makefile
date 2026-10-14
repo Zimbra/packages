@@ -14,7 +14,7 @@ zspec := $(pname_lc).spec
 
 libmagic = $(libmagic.$(BUILD_PLATFORM))
 
-.PHONY: all clean build getsrc pkgadd pkgrm setup
+.PHONY: all clean build getsrc pkgadd pkgadd_rpm pkgrm setup
 
 all: clean getsrc build pkgrm1
 
@@ -23,8 +23,20 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+ifeq ($(PKG_EXT),rpm)
+pkgadd: pkgadd_rpm
+else
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base $(libmagic)
+endif
+
+pkgadd_rpm:
+ifeq ($(BUILD_PLATFORM),RHEL8_64)
+	sudo yum -y --enablerepo=powertools install file-devel
+	$(PKG_EXTRACT) zimbra-perl-base
+else
+	$(PKG_EXTRACT) zimbra-perl-base file-devel
+endif
 
 pkgrm: pkgrm%
 pkgrm%:
@@ -39,6 +51,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^make install /a chmod u+w %{buildroot}OZCL/perl5/%{perl_archname}/auto/File/LibMagic/LibMagic.so' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
