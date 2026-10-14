@@ -16,7 +16,7 @@ zspec := $(pname_lc).spec
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target..
+# $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
@@ -37,6 +37,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	sed -i '/^%build/i rm -rf t/xs' $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
@@ -52,6 +53,8 @@ build_deb:
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	rm -rf t/xs && \
+	EDITOR=true dpkg-source --commit . remove-xs-tests && \
 	$(PKG_BUILD)
 
 clean: pkgrm
