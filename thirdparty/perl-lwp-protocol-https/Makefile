@@ -39,6 +39,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	sed -i '/^%build/i rm -f t/apache.t' $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
@@ -52,6 +53,8 @@ build_deb:
 	$(replace-pathinfo) debian/rules && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
+	rm -f t/apache.t && \
+	EDITOR=true dpkg-source --commit . remove-internet-test && \
 	$(PKG_BUILD)
 
 clean: pkgrm
