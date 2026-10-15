@@ -15,7 +15,7 @@ AutoReqProv:        no
 URL:                https://metacpan.org/release/MODNAME
 
 %description
-This module implements the various components of the DKIM and DomainKeys
+This module implements the various components new of the DKIM and DomainKeys
 message-signing and verifying standards for Internet mail. It currently
 tries to implement these specifications:
 RFC4871, for DKIM
