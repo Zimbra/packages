@@ -2,6 +2,13 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
+# Per-OS module-build definitions (safe to include even if package.def already does)
+ifneq ($(filter UBUNTU%,$(BUILD_PLATFORM)),)
+-include $(PKG_ROOT)/UBUNTU.def
+else
+-include $(PKG_ROOT)/RHEL.def
+endif
+
 pvers := $(NET_DNS_RESOLVER_PROGRAMMABLE)
 pname := Net-DNS-Resolver-Programmable
 pname_lc := net-dns-resolver-programmable
@@ -11,13 +18,6 @@ psrc_file := $(SRC_DIR)/$(pfile)
 purl := https://cpan.metacpan.org/authors/id/J/JM/JMEHNLE/net-dns-resolver-programmable/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
-
-module-build.UBUNTU20_64 = libmodule-build-perl
-module-build.UBUNTU22_64 = libmodule-build-perl
-module-build.UBUNTU24_64 = libmodule-build-perl
-module-build-purge.UBUNTU20_64 = libmodule-build-perl
-module-build-purge.UBUNTU22_64 = libmodule-build-perl
-module-build-purge.UBUNTU24_64 = libmodule-build-perl
 
 module-build = $(module-build.$(BUILD_PLATFORM))
 module-build-purge = $(module-build-purge.$(BUILD_PLATFORM))
