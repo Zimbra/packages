@@ -12,6 +12,8 @@ purl := https://www.cpan.org/modules/by-module/DBD/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
+devel-checklib = $(if $(filter UBUNTU20_64 UBUNTU22_64 UBUNTU24_64,$(BUILD_PLATFORM)),libdevel-checklib-perl)
+
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
@@ -23,11 +25,11 @@ $(psrc_file):
 
 pkgadd:
 	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-dbi \
-	zimbra-mariadb-$(PKG_DEV) zimbra-openssl-$(PKG_DEV)
+	zimbra-mariadb-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) $(devel-checklib)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(devel-checklib)
 
 setup:
 	$(generic-setup)
