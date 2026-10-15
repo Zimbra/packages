@@ -12,6 +12,13 @@ purl := https://cpan.metacpan.org/authors/id/J/JM/JMEHNLE/net-dns-resolver-progr
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
+module-build.UBUNTU20_64 = libmodule-build-perl
+module-build.UBUNTU22_64 = libmodule-build-perl
+module-build.UBUNTU24_64 = libmodule-build-perl
+module-build-purge.UBUNTU20_64 = libmodule-build-perl
+module-build-purge.UBUNTU22_64 = libmodule-build-perl
+module-build-purge.UBUNTU24_64 = libmodule-build-perl
+
 module-build = $(module-build.$(BUILD_PLATFORM))
 module-build-purge = $(module-build-purge.$(BUILD_PLATFORM))
 
@@ -19,7 +26,7 @@ module-build-purge = $(module-build-purge.$(BUILD_PLATFORM))
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target..
+# $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
