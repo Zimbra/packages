@@ -2,6 +2,13 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
+# Per-OS module-build definitions (safe to include even if package.def already does)
+ifneq ($(filter UBUNTU%,$(BUILD_PLATFORM)),)
+-include $(PKG_ROOT)/UBUNTU.def
+else
+-include $(PKG_ROOT)/RHEL.def
+endif
+
 pvers := $(MAIL_SPF)
 pname := Mail-SPF
 pname_lc := mail-spf
@@ -19,7 +26,7 @@ module-build-purge = $(module-build-purge.$(BUILD_PLATFORM))
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target..
+# $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
