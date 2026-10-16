@@ -12,19 +12,22 @@ purl := https://www.cpan.org/modules/by-module/DBD/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
-devel-checklib = $(if $(filter UBUNTU20_64 UBUNTU22_64 UBUNTU24_64,$(BUILD_PLATFORM)),libdevel-checklib-perl)
+devel-checklib = $(if $(filter UBUNTU20_64 UBUNTU22_64 UBUNTU24_64,$(BUILD_PLATFORM)),libdevel-checklib-perl)$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),perl-Devel-CheckLib)
+
+# perl-Devel-CheckLib may live in the PowerTools/CRB repos on RHEL
+extra-repo = $(if $(filter RHEL8_64,$(BUILD_PLATFORM)),--enablerepo=powertools)$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),--enablerepo=crb)
 
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target..
+# $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-dbi \
+	$(PKG_EXTRACT) $(extra-repo) zimbra-perl-base zimbra-perl-dbi \
 	zimbra-mariadb-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) $(devel-checklib)
 
 pkgrm: pkgrm%
