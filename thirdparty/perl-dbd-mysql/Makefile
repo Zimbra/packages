@@ -14,6 +14,9 @@ zspec := $(pname_lc).spec
 
 devel-checklib = $(if $(filter UBUNTU20_64 UBUNTU22_64 UBUNTU24_64,$(BUILD_PLATFORM)),libdevel-checklib-perl)$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),perl-Devel-CheckLib)
 
+# Makefile.PL checks that -lz can be linked, which needs zlib headers/libz.so on RHEL
+zlib-devel = $(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),zlib-devel)
+
 # perl-Devel-CheckLib may live in the PowerTools/CRB repos on RHEL
 extra-repo = $(if $(filter RHEL8_64,$(BUILD_PLATFORM)),--enablerepo=powertools)$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),--enablerepo=crb)
 
@@ -28,7 +31,7 @@ $(psrc_file):
 
 pkgadd:
 	$(PKG_EXTRACT) $(extra-repo) zimbra-perl-base zimbra-perl-dbi \
-	zimbra-mariadb-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) $(devel-checklib)
+	zimbra-mariadb-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) $(devel-checklib) $(zlib-devel)
 
 pkgrm: pkgrm%
 pkgrm%:
