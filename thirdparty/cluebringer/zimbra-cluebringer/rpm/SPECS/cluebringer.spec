@@ -19,7 +19,7 @@ The main goal is to implement as many spam combating and email compliance featur
 possible while at the same time maintaining the portability, stability and performance
 required for mission critical email hosting of today. Most of the ideas and methods
 implemented in PolicyD v2 stem from PolicyD v1 as well as the authors' long time
-involvement in large scale mail hosting industry.
+involvement in large scale mail hosting industry...
 
 %changelog
 * Tue Aug 10 2021 Zimbra Packaging Services <packaging-devel@zimbra.com> - VERSION-1zimbra8.7b2ZAPPEND
