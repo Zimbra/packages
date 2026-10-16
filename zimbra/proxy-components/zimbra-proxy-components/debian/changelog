@@ -1,3 +1,9 @@
+zimbra-proxy-components (1.0.16-1zimbra8.8b1ZAPPEND) unstable; urgency=low
+
+  * PREAPPS-9828: Add http_sub_module for the Modern UI CSP nonce
+
+ -- Zimbra Packaging Services <packaging-devel@zimbra.com>  Fri, 16 Oct 2026 13:03:11 +0000
+
 zimbra-proxy-components (1.0.15-1zimbra8.8b1ZAPPEND) unstable; urgency=low
 
   * Fix ZBUG-5593
