@@ -7,7 +7,7 @@ pname := swatchdog
 pname_lc := swatchdog
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://fossies.org/linux/misc/$(pfile)
+purl := https://downloads.sourceforge.net/project/swatch/swatchdog/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
@@ -15,7 +15,7 @@ zspec := $(pname_lc).spec
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target..
+# $(@D) == directory part of the target
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
