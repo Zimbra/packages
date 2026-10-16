@@ -8,7 +8,7 @@ pname_lc := mail-spamassassin
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl :=  https://downloads.apache.org/spamassassin/source/$(pfile)
+purl := https://archive.apache.org/dist/spamassassin/source/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
