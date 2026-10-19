@@ -12,6 +12,14 @@ purl := https://www.cpan.org/modules/by-module/DBD/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
+devel-checklib = $(if $(filter UBUNTU20_64 UBUNTU22_64 UBUNTU24_64,$(BUILD_PLATFORM)),libdevel-checklib-perl)$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),perl-Devel-CheckLib)
+
+# Makefile.PL checks that -lz can be linked, which needs zlib headers/libz.so on RHEL
+zlib-devel = $(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),zlib-devel)
+
+# perl-Devel-CheckLib may live in the PowerTools/CRB repos on RHEL
+extra-repo = $(if $(filter RHEL8_64,$(BUILD_PLATFORM)),--enablerepo=powertools)$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),--enablerepo=crb)
+
 .PHONY: all clean build getsrc pkgadd pkgrm setup
 
 all: clean getsrc build pkgrm1
@@ -22,12 +30,12 @@ $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base zimbra-perl-dbi \
-	zimbra-mariadb-$(PKG_DEV) zimbra-openssl-$(PKG_DEV)
+	$(PKG_EXTRACT) $(extra-repo) zimbra-perl-base zimbra-perl-dbi \
+	zimbra-mariadb-$(PKG_DEV) zimbra-openssl-$(PKG_DEV) $(devel-checklib) $(zlib-devel)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(devel-checklib)
 
 setup:
 	$(generic-setup)
@@ -38,6 +46,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+    $(if $(filter RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^make install/a chmod u+w %{buildroot}OZCL/perl5/%{perl_archname}/auto/DBD/mysql/mysql.so' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
