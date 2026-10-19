@@ -1,6 +1,7 @@
 PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
+export PERL_CANARY_STABILITY_NOPROMPT := 1
 
 pvers := $(CONVERT_UULIB)
 pname := Convert-UUlib
@@ -36,6 +37,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+    $(if $(filter RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^make install/a chmod u+w %{buildroot}OZCL/perl5/%{perl_archname}/auto/Convert/UUlib/UUlib.so' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
