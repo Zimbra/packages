@@ -2,6 +2,13 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
+# Per-OS module-build definitions (not auto-loaded in the CI build)
+ifneq ($(filter UBUNTU%,$(BUILD_PLATFORM)),)
+-include $(PKG_ROOT)/UBUNTU.def
+else
+-include $(PKG_ROOT)/RHEL.def
+endif
+
 pvers := $(CONFIG_INIFILES)
 pname := Config-IniFiles
 pname_lc := config-inifiles
