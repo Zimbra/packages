@@ -69,15 +69,20 @@ references:
             git diff --name-only "$BASE_COMMIT" HEAD -- thirdparty/ zimbra/ \
               | awk -F'/' 'NF >= 2 {print $1"/"$2}' \
               | sort -u > packages_to_build.txt
-            if [ ! -s packages_to_build.txt ]; then
-              echo "No package changes found after the baseline - nothing to build."
-              circleci-agent step halt
+            if [ -s packages_to_build.txt ]; then
+              echo "Package(s) selected before build-order sorting:"
+              cat packages_to_build.txt
+            else
+              echo "No package changes found after the baseline; downstream build jobs will no-op."
             fi
-            echo "Package(s) selected before build-order sorting:"
-            cat packages_to_build.txt
       - run:
           name: Order packages for build
-          command: bash packaging-ci/resolve-package-build-order.sh packages_to_build.txt
+          command: |
+            if [ -s packages_to_build.txt ]; then
+              bash packaging-ci/resolve-package-build-order.sh packages_to_build.txt
+            else
+              echo "resolve-package-build-order: no packages selected, skipping"
+            fi
       - persist_to_workspace:
           root: ..
           paths:
@@ -95,7 +100,12 @@ references:
           command: bash packaging-ci/build-packages.sh packages_to_build.txt
       - run:
           name: Build summary
-          command: bash packaging-ci/pkg-build-summary.sh packages_to_build.txt
+          command: |
+            if [ -s packages_to_build.txt ]; then
+              bash packaging-ci/pkg-build-summary.sh packages_to_build.txt
+            else
+              echo "pkg-build-summary: no packages selected, skipping"
+            fi
       - store_artifacts:
           path: build/dist_workspace
       - persist_to_workspace:
@@ -109,6 +119,10 @@ references:
       - run:
           name: Publish package artifacts to Nexus
           command: |
+            if [ -z "$(find build/dist_workspace -type f -print -quit 2>/dev/null)" ]; then
+              echo "publish-packages: no artifacts in build/dist_workspace, nothing to publish"
+              exit 0
+            fi
             sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
             bash ../zm-nexus/scripts/publish-packages-to-nexus.sh "build/dist_workspace"
   deploy_s3_job_steps: &deploy_s3_job_steps
@@ -121,6 +135,10 @@ references:
       - run:
           name: Create a zip file for artifacts and upload them to the OCI bucket
           command: |
+            if [ -z "$(find build/dist_workspace -type f -print -quit 2>/dev/null)" ]; then
+              echo "deploy-s3: no artifacts in build/dist_workspace, nothing to upload"
+              exit 0
+            fi
             cd build/dist_workspace
             zip -r $CIRCLE_PROJECT_REPONAME.zip .
             ZIP_FILE_PATH="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM/archives/$CIRCLE_PROJECT_REPONAME.zip"
