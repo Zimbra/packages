@@ -38,6 +38,8 @@ install_package_deps() {
 INPUT="${1:-packages_to_build.txt}"
 LOCAL_REPO="${LOCAL_REPO:-/tmp/local-pkg-repo}"
 
+mkdir -p "build/dist_workspace/${PLATFORM_TAG}"
+
 [ -s "$INPUT" ] || { echo "build: $INPUT is empty, nothing to build"; exit 0; }
 
 manifest_field() {
@@ -52,7 +54,7 @@ manifest_field() {
 filter_apt_output() {
   tr -d '\000' \
     | sed 's/\^@//g' \
-    | grep -Ev "NO_PUBKEY 5234D2B73B6996C7|^$" \
+    | grep -Ev "^$" \
     || true
 }
 
@@ -188,13 +190,21 @@ verify_build_deps() {
       rpm -q "$name" >/dev/null 2>&1 && rpm -q --qf '%{VERSION}-%{RELEASE}' "$name" 2>/dev/null
     fi
   }
+  # Newest published version. Do not parse "yum list" columns with a plain awk:
+  # long repo ids make yum/dnf wrap the row onto two lines and the version is lost.
   published_version() {
     local name="$1"
     if command -v apt-cache >/dev/null 2>&1; then
       apt-cache madison "$name" 2>/dev/null | awk -F'|' 'NR==1{gsub(/ /,"",$2); print $2}'
+    elif command -v dnf >/dev/null 2>&1; then
+      { dnf -q repoquery --latest-limit=1 --qf '%{version}-%{release}' "$name" 2>/dev/null || true; } | head -1
     elif command -v yum >/dev/null 2>&1; then
-      { yum --showduplicates list available "$name" 2>/dev/null || true; } \
-        | awk -v n="$name" '$1==n || index($1, n".")==1 {v=$2} END{print v}'
+      { yum -q --showduplicates list available "$name" 2>/dev/null || true; } \
+        | awk -v n="$name" '
+            NF==1 && index($1, n".")==1 { pend=1; next }
+            pend { v=$1; pend=0; next }
+            $1==n || index($1, n".")==1 { v=$2 }
+            END { print v }'
     fi
   }
 
@@ -335,17 +345,28 @@ REPOEOF
 
 # Install external build dependencies from package metadata.
 install_declared_build_deps() {
-  local file="$1" prefix="$2"
-  local deps
+  local file="$1" prefix="$2" mode="${3:-strict}"
+  local deps dep
   deps=$(manifest_field "$file" "$prefix" \
     | tr ',' '\n' \
     | sed -E 's/\(.*\)//; s/[<>=!].*//; s/^[[:space:]]+//; s/[[:space:]]+$//' \
     | grep -v '^$' \
     | grep -v '^zimbra-' \
     | sort -u || true)
-  if [ -n "$deps" ]; then
-    DEP_CONTEXT="Build dependencies" install_package_deps $deps
+  [ -n "$deps" ] || return 0
+  if [ "$mode" = "lenient" ]; then
+    # shellcheck disable=SC2086
+    if DEP_CONTEXT="Build dependencies" install_package_deps $deps 2>/dev/null; then
+      return 0
+    fi
+    for dep in $deps; do
+      DEP_CONTEXT="Build dependency" install_package_deps "$dep" 2>/dev/null \
+        || echo "handle_build_deps: WARNING - could not install external dependency '$dep', continuing"
+    done
+    return 0
   fi
+  # shellcheck disable=SC2086
+  DEP_CONTEXT="Build dependencies" install_package_deps $deps
 }
 
 # Avoid installing dependencies twice when the Makefile has a pkgadd target.
@@ -362,7 +383,8 @@ handle_build_deps() {
     [ -n "$file" ] || return 0
     verify_build_deps "$file" "$field"
     if is_migrated_pkgadd "$pkgpath" "pkgadd_deb"; then
-      echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_deb - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
+      echo "handle_build_deps: ${pkgpath}/Makefile handles internal zimbra deps via pkgadd; installing external metadata deps"
+      install_declared_build_deps "$file" "$field" lenient
       return 0
     fi
     install_declared_build_deps "$file" "$field"
@@ -372,10 +394,20 @@ handle_build_deps() {
     [ -n "$file" ] || return 0
     verify_build_deps "$file" "$field"
     if is_migrated_pkgadd "$pkgpath" "pkgadd_rpm"; then
-      echo "handle_build_deps: ${pkgpath}/Makefile defines pkgadd_rpm - it installs its own build-time deps via pkgadd, skipping generic install to avoid a duplicate"
+      echo "handle_build_deps: ${pkgpath}/Makefile handles internal zimbra deps via pkgadd; installing external metadata deps"
+      install_declared_build_deps "$file" "$field" lenient
       return 0
     fi
     install_declared_build_deps "$file" "$field"
+  fi
+}
+
+fmt_duration() {
+  local t="$1"
+  if [ "$t" -ge 60 ]; then
+    printf '%dm %02ds' "$((t / 60))" "$((t % 60))"
+  else
+    printf '%ds' "$t"
   fi
 }
 
@@ -383,6 +415,7 @@ handle_build_deps() {
 install_build_tooling
 
 export PKG_CONFIG_PATH="/opt/zimbra/common/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+export PATH="${HOME}/.cargo/bin:${PATH}"
 
 # Some packages do not build reliably with link-time optimization on newer Ubuntu.
 if command -v apt-get >/dev/null 2>&1; then
@@ -390,14 +423,27 @@ if command -v apt-get >/dev/null 2>&1; then
   echo "Build setting: LTO disabled for Debian compatibility"
 fi
 
-mkdir -p "build/dist_workspace/${PLATFORM_TAG}"
-
 total="$(grep -c . "$INPUT" || true)"
 n=0
+built=0
+CURRENT_PKG=""
+BUILD_START=$SECONDS
+
+# One clear line at the very end of the log if anything fails.
+on_exit() {
+  local rc=$?
+  if [ "$rc" -ne 0 ]; then
+    echo ""
+    echo "### BUILD FAILED (exit code ${rc}) while building: ${CURRENT_PKG:-setup} [${n}/${total}]"
+  fi
+}
+trap on_exit EXIT
 
 while IFS= read -r PKGPATH; do
   [ -n "$PKGPATH" ] || continue
   n=$((n + 1))
+  CURRENT_PKG="$PKGPATH"
+  PKG_START=$SECONDS
 
   echo ""
   echo "############################################################"
@@ -426,9 +472,12 @@ while IFS= read -r PKGPATH; do
     \( -name "*.deb" -o -name "*.rpm" \) ! -name "*.src.rpm" \
     -exec cp {} "build/dist_workspace/${PLATFORM_TAG}/" \;
 
-  echo "--- [${n}/${total}] ${PKGPATH}: done ---"
+  built=$((built + 1))
+  echo "--- [${n}/${total}] ${PKGPATH}: done in $(fmt_duration $((SECONDS - PKG_START))) ---"
 done < "$INPUT"
 
+CURRENT_PKG=""
 echo ""
+echo "=== BUILD SUMMARY (${PLATFORM_TAG}): ${built}/${total} package(s) built in $(fmt_duration $((SECONDS - BUILD_START))) ==="
 echo "=== build/dist_workspace/${PLATFORM_TAG} contents ==="
 ls -la "build/dist_workspace/${PLATFORM_TAG}/"
