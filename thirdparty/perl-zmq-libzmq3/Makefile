@@ -25,8 +25,14 @@ $(psrc_file):
 zpzc = zimbra-perl-zmq-constants
 zptest = $(zptest.$(BUILD_PLATFORM))
 
+ifneq ($(filter UBUNTU20_64 UBUNTU22_64 UBUNTU24_64,$(BUILD_PLATFORM)),)
+zptest := $(zptest.UBUNTU)
+else ifneq ($(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),)
+zptest := perl-Test-Fatal perl-Test-Requires
+endif
+
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base zimbra-zeromq-$(PKG_DEV) \
+	$(PKG_EXTRACT) $(if $(filter RHEL8_64,$(BUILD_PLATFORM)),--enablerepo=powertools) $(if $(filter RHEL9_64,$(BUILD_PLATFORM)),--enablerepo=crb) zimbra-perl-base zimbra-zeromq-$(PKG_DEV) \
 	zimbra-libsodium-$(PKG_DEV) $(zpzc) $(zptest)
 
 pkgrm: pkgrm%
@@ -42,6 +48,8 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i 's/ perl -I / perl -I . -I /' $(specfile) &&) \
+	$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^make install /a chmod u+w %{buildroot}OZCL/perl5/%{perl_archname}/auto/ZMQ/LibZMQ3/LibZMQ3.so' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
