@@ -1,8 +1,14 @@
 module-build.UBUNTU :=
+module-build.UBUNTU24_64 := libmodule-build-perl
+module-build.UBUNTU22_64 := libmodule-build-perl
+module-build.UBUNTU20_64 := libmodule-build-perl
 module-build.UBUNTU16_64 := libmodule-build-perl
 module-build.UBUNTU14_64 := $(module-build.UBUNTU)
 module-build.UBUNTU12_64 := $(module-build.UBUNTU)
 module-build-purge.UBUNTU :=
+module-build-purge.UBUNTU24_64 := libmodule-build-perl
+module-build-purge.UBUNTU22_64 := libmodule-build-perl
+module-build-purge.UBUNTU20_64 := libmodule-build-perl
 module-build-purge.UBUNTU16_64 := libalgorithm-c3-perl libb-hooks-endofscope-perl libb-hooks-op-check-perl libbareword-filehandles-perl libclass-c3-perl libclass-c3-xs-perl libclass-method-modifiers-perl \
   libclass-xsaccessor-perl libcpan-changes-perl libdata-optlist-perl libdata-perl-perl libdata-section-perl libdevel-caller-perl libdevel-globaldestruction-perl libdevel-lexalias-perl \
   libexporter-tiny-perl libfile-slurp-perl libgetopt-long-descriptive-perl libimport-into-perl libindirect-perl libio-stringy-perl liblexical-sealrequirehints-perl liblist-moreutils-perl \

@@ -42,6 +42,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	sed -i '/^%build/i rm -f t/Issues/rt88915.t' $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \

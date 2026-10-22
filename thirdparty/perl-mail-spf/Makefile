@@ -2,6 +2,13 @@ PKG_ROOT := $(shell pwd)
 
 include $(PKG_ROOT)/../../package.def
 
+# Per-OS module-build definitions (safe to include even if package.def already does)
+ifneq ($(filter UBUNTU%,$(BUILD_PLATFORM)),)
+-include $(PKG_ROOT)/UBUNTU.def
+else
+-include $(PKG_ROOT)/RHEL.def
+endif
+
 pvers := $(MAIL_SPF)
 pname := Mail-SPF
 pname_lc := mail-spf

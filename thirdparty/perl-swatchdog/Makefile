@@ -7,7 +7,7 @@ pname := swatchdog
 pname_lc := swatchdog
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl := https://fossies.org/linux/misc/$(pfile)
+purl := https://downloads.sourceforge.net/project/swatch/swatchdog/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
