@@ -14,7 +14,7 @@ zspec := $(pname).spec
 
 all: clean install_rust getsrc build pkgrm1
 
-# $(@D) == directory part of the target
+# $(@D) == directory part of the target..
 install_rust:
 	./install_rust_toolchain.sh
 
