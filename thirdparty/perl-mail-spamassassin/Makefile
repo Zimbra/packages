@@ -8,7 +8,7 @@ pname_lc := mail-spamassassin
 
 pfile := $(pname)-$(pvers).tar.gz
 psrc_file := $(SRC_DIR)/$(pfile)
-purl :=  https://downloads.apache.org/spamassassin/source/$(pfile)
+purl := https://archive.apache.org/dist/spamassassin/source/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
@@ -40,6 +40,7 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),sed -i '/make install DESTDIR/a chmod u+w %{buildroot}OZCB/spamc' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \

@@ -53,7 +53,7 @@ build_deb:
 	$(replace-perl-modinfo) debian/changelog debian/control debian/copyright debian/watch && \
 	$(CP) $(psrc_file) ../$(z_tgz) && \
 	$(TAR) xfz ../$(z_tgz) --strip-components=1 && \
-	$(PKG_BUILD)
+	DEB_BUILD_OPTIONS=parallel=1 $(PKG_BUILD)
 
 clean: pkgrm
 	$(generic-clean)

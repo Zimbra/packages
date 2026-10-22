@@ -21,12 +21,14 @@ getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) $(purl)
 
+html-tagset = $(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),perl-HTML-Tagset)
+
 pkgadd:
-	$(PKG_EXTRACT) zimbra-perl-base
+	$(PKG_EXTRACT) zimbra-perl-base $(html-tagset)
 
 pkgrm: pkgrm%
 pkgrm%:
-	$(PKG_PURGE) zimbra-base
+	$(PKG_PURGE) zimbra-base $(html-tagset)
 
 setup:
 	$(generic-setup)
@@ -37,6 +39,8 @@ build_rpm: specfile = SPECS/$(zspec)
 build_rpm:
 	$(CD) $(PLATFORM_DIR)/$(zname)/rpm && \
 	$(replace-pkginfo) $(specfile) && \
+	$(if $(filter RHEL8_64 RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^BuildRequires:/a BuildRequires:      $(html-tagset)\nRequires:           $(html-tagset)' $(specfile) &&) \
+	$(if $(filter RHEL9_64,$(BUILD_PLATFORM)),sed -i '/^make install /a chmod u+w %{buildroot}OZCL/perl5/%{perl_archname}/auto/HTML/Parser/Parser.so' $(specfile) &&) \
 	$(replace-pathinfo) $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
