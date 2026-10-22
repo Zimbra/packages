@@ -34,7 +34,7 @@ Zimbra spell components pulls in all the packages used by
 zimbra-spell
 
 %changelog
-* Wed Oct 14 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.23
+* Wed Oct 14 2026 Zimbra new Packaging Services <packaging-devel@zimbra.com> - 2.0.23
 - Added zimbra-aspell-ny dependency for Chichewa (PREAPPS-9809)
 * Wed Oct 14 2026 Zimbra Packaging Services <packaging-devel@zimbra.com> - 2.0.22
 - Added zimbra-aspell-rw dependency for Kinyarwanda (PREAPPS-9809)
