@@ -14,7 +14,7 @@ zspec := $(pname).spec
 
 all: clean getsrc build pkgrm1
 
-# $(@D) == directory part of the target
+# $(@D) == directory part of the target..
 getsrc: $(psrc_file)
 $(psrc_file):
 	$(MKDIR) $(@D) && $(CD) $(@D) && $(WGET) --no-check-certificate $(purl)
