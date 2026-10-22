@@ -12,7 +12,7 @@ purl := https://cpan.metacpan.org/authors/id/S/SB/SBECK/$(pfile)
 zname := zimbra-perl-$(pname_lc)
 zspec := $(pname_lc).spec
 
-.PHONY: all clean build getsrc pkgadd pkgrm setup
+.PHONY: all clean build getsrc pkgadd pkgadd_rpm pkgadd_deb pkgrm setup
 
 all: clean getsrc build pkgrm1
 
@@ -24,7 +24,18 @@ $(psrc_file):
 setup:
 	$(generic-setup)
 
-pkgadd:
+pkgadd: pkgadd_$(PKG_EXT)
+
+# Test::Inter is only used by the upstream tests and is unavailable in EPEL 8.
+rpm_deps := zimbra-perl-base epel-release
+ifneq ($(BUILD_PLATFORM),RHEL8_64)
+rpm_deps += perl-Test-Inter
+endif
+
+pkgadd_rpm:
+	$(PKG_EXTRACT) $(rpm_deps)
+
+pkgadd_deb:
 	$(PKG_EXTRACT) zimbra-perl-base
 
 pkgrm: pkgrm%
@@ -39,6 +50,7 @@ build_rpm:
 	$(replace-pkginfo) $(specfile) && \
 	$(replace-pathinfo) $(specfile) && \
 	$(replace-perl-modinfo) $(specfile) && \
+	perl -pi -e 'if ("$(BUILD_PLATFORM)" eq "RHEL8_64") { s/, perl-Test-Inter//; s/^PERL5LIB=.*make test\n?//; }' $(specfile) && \
 	$(MKDIR) BUILD BUILDROOT RPMS SOURCES SRPMS && \
 	$(CP) $(psrc_file) SOURCES/$(zname)-$(pvers).tar.gz && \
 	$(PKG_BUILD) $(specfile)
