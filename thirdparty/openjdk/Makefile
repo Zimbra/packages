@@ -13,7 +13,7 @@ openjdk = $(openjdk.$(BUILD_PLATFORM))
 openjdk-purge = $(openjdk-purge.$(BUILD_PLATFORM))
 
 # Work around Debian bug 742864 (See comment 99)
-# There is a bug in binutils with this release
+# There is a bug in binutils with this new release
 ifeq ($(BUILD_PLATFORM), UBUNTU12_64)
 UB_REPLACE	:= nostrip
 endif
