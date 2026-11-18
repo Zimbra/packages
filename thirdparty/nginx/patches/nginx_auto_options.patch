@@ -1,7 +1,7 @@
 --- nginx/auto/options	2023-08-18 17:02:49.224080200 +0530
 +++ nginx/auto/options	2023-09-14 18:47:11.483533400 +0530
 @@ -151,6 +151,12 @@
- USE_OPENSSL=NO
+ USE_OPENSSL_QUIC=NO
  OPENSSL=NONE
  
 +# Zimbra customizations start here: Implement SASL Authentication (Jira Tickets: )
