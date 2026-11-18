@@ -6,7 +6,6 @@ License:            BSD
 Source:             %{name}-%{version}.tgz
 Patch0:             liblmdb-soname.patch
 Patch1:             liblmdb-keysize.patch
-Patch2:             sha2-strict-aliasing-fix.patch
 BuildRequires:      zimbra-openssl-devel >= 3.0.9-1zimbra8.8b1ZAPPEND
 BuildRequires:      zimbra-cyrus-sasl-devel >= 2.1.28-1zimbra8.7b4ZAPPEND
 BuildRequires:      zimbra-libltdl-devel, zimbra-curl-devel, zimbra-heimdal-devel, zimbra-libxml2-devel
@@ -41,7 +40,6 @@ The Zimbra openldap build
 %setup -n openldap-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 # Alternate Makeargs: DEFINES="-DCHECK_CSN -DSLAP_SCHEMA_EXPOSE -DMDB_DEBUG=3"
