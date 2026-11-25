@@ -3,7 +3,7 @@ Name:               zimbra-spell-components
 Version:            2.0.23
 Release:            1zimbra8.8b1ZAPPEND
 License:            GPL-2
-Requires:           zimbra-spell-base, zimbra-aspell-am >= 0.03.1-1zimbra8.7b2ZAPPEND, zimbra-aspell-ar >= 1.2.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-ca
+Requires:           zimbra-spell-base, zimbra-aspell-am >= 0.03.1-1zimbra8.7b1ZAPPEND, zimbra-aspell-ar >= 1.2.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-ca
 Requires:           zimbra-aspell-da >= 1.4.42.1-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-de >= 20030222.1-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-en >= 7.1.0-1zimbra8.7b2ZAPPEND
@@ -14,13 +14,13 @@ Requires:           zimbra-aspell-it >= 2.2.20050523.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-nl >= 0.50.2-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-pl >= 6.0.20061121.0-1zimbra8.7b2ZAPPEND
 Requires:           zimbra-aspell-pt-br >= 20090702.0-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-aspell-ru >= 0.99f7.1-1zimbra8.7b2ZAPPEND, zimbra-aspell-sv >= 0.51.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-sw >= 0.50.0-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-aspell-zu >= 0.50.0-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-aspell-af >= 0.50.0-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-aspell-mg >= 0.03.0-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-aspell-tn >= 1.0.1.0-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-aspell-rw >= 0.50.0-1zimbra8.7b2ZAPPEND
-Requires:           zimbra-aspell-ny >= 0.01.0-1zimbra8.7b2ZAPPEND
+Requires:           zimbra-aspell-ru >= 0.99f7.1-1zimbra8.7b2ZAPPEND, zimbra-aspell-sv >= 0.51.0-1zimbra8.7b2ZAPPEND, zimbra-aspell-sw >= 0.50.0-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-aspell-zu >= 0.50.0-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-aspell-af >= 0.50.0-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-aspell-mg >= 0.03.0-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-aspell-tn >= 1.0.1.0-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-aspell-rw >= 0.50.0-1zimbra8.7b1ZAPPEND
+Requires:           zimbra-aspell-ny >= 0.01.0-1zimbra8.7b1ZAPPEND
 Requires:           zimbra-httpd >= 2.4.62-1zimbra8.7b5ZAPPEND
 Requires:           zimbra-php >= 8.3.0-1zimbra8.7b3ZAPPEND, zimbra-aspell-zimbra >= 1.0.0-1zimbra8.7b2ZAPPEND
 Packager:           Zimbra Packaging Services <packaging-devel@zimbra.com>
